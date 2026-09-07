@@ -37,6 +37,24 @@ export const prescriptionSchema = z.object({
   idempotencyKey: z.string().max(100).optional().nullable(),
 });
 
+export const prescriptionItemSchema = prescriptionSchema.omit({ idempotencyKey: true });
+export const diagnosisSchema = z.object({
+  patientId: z.string().min(1),
+  encounterId: z.string().min(1).optional().nullable(),
+  system: z.string().trim().min(1).max(80),
+  code: z.string().trim().min(1).max(40),
+  name: z.string().trim().min(1).max(160),
+  notes: z.string().max(1000).optional().nullable(),
+  status: z.enum(["active", "resolved"]).optional(),
+});
+export const followUpSchema = z.object({
+  patientId: z.string().min(1),
+  encounterId: z.string().min(1).optional().nullable(),
+  dueDate: z.string().date(),
+  reason: z.string().trim().min(1).max(200),
+  instructions: z.string().max(1000).optional().nullable(),
+});
+
 export type SoapNoteInput = z.infer<typeof soapNoteSchema>;
 export type VitalInput = z.infer<typeof vitalSchema>;
 export type PrescriptionInput = z.infer<typeof prescriptionSchema>;
