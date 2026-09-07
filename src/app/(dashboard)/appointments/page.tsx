@@ -160,6 +160,7 @@ function EditAppointmentDialog({
 function AppointmentsPageContent() {
   const searchParams = useSearchParams()
   const { appointments, patients, addAppointment, updateAppointment } = useMedical()
+  const [providers, setProviders] = React.useState<{ id: string; name: string }[]>([])
   const { t } = useLocale()
   const [searchQuery, setSearchQuery] = React.useState("")
   const [view, setView] = React.useState<"list" | "calendar">("list")
@@ -203,6 +204,19 @@ function AppointmentsPageContent() {
       setView("list")
     }
   }, [searchParams])
+
+  React.useEffect(() => {
+    void fetch("/api/staff")
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Unable to load providers")
+        const data = (await response.json()) as { id: string; name: string | null; email: string }[]
+        setProviders(data.map((provider) => ({ id: provider.id, name: provider.name ?? provider.email })))
+      })
+      .catch(() => {
+        setProviders([])
+        toast.error(t("appts_providerLoadError"))
+      })
+  }, [t])
 
   const statusMap: Record<string, Appointment["status"]> = {
     scheduled: "scheduled",
@@ -276,10 +290,12 @@ function AppointmentsPageContent() {
         
         <BookAppointmentDialog
           patients={patients}
+          providers={providers}
           onBook={(data) =>
             addAppointment({
               patientId: data.patientId,
-              provider: data.provider,
+              provider: providers.find((provider) => provider.id === data.providerId)?.name ?? "",
+              providerId: data.providerId,
               date: data.date,
               time: data.time,
               type: data.type,

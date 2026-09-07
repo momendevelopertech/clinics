@@ -58,16 +58,12 @@ const APPOINTMENT_TYPES = [
   { value: "Telehealth" },
 ];
 
-const PROVIDERS = [
-  { value: "Dr. Jane Smith", label: "Dr. Jane Smith" },
-  { value: "Dr. Robert Chen", label: "Dr. Robert Chen" },
-];
-
 interface BookAppointmentDialogProps {
   patients: Patient[];
+  providers: { id: string; name: string }[];
   onBook: (data: {
     patientId: string;
-    provider: string;
+    providerId: string;
     date: string;
     time: string;
     type: string;
@@ -81,6 +77,7 @@ interface BookAppointmentDialogProps {
 
 export function BookAppointmentDialog({
   patients,
+  providers,
   onBook,
   trigger,
   open: controlledOpen,
@@ -133,8 +130,10 @@ export function BookAppointmentDialog({
   });
 
   const onSubmit = (data: BookAppointmentFormValues) => {
+    const { provider, ...appointmentData } = data;
     onBook({
-      ...data,
+      ...appointmentData,
+      providerId: provider,
       duration: "30 min",
       status: "Scheduled",
     });
@@ -263,13 +262,13 @@ export function BookAppointmentDialog({
                         <SelectValue placeholder={t("book_selectProvider")} />
                       </SelectTrigger>
                       <SelectContent className="rounded-[5px] shadow-xl">
-                        {PROVIDERS.map((p) => (
+                        {providers.map((p) => (
                           <SelectItem
-                            key={p.value}
-                            value={p.value}
+                            key={p.id}
+                            value={p.id}
                             className="rounded-[5px] focus:bg-violet-50 dark:focus:bg-violet-950/30"
                           >
-                            {p.label}
+                            {p.name}
                           </SelectItem>
                         ))}
                       </SelectContent>

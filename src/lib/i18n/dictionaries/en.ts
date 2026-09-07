@@ -560,6 +560,7 @@ export const en: Dictionary = {
   appts_statusInProgress: "In progress",
   appts_statusCompleted: "Completed",
   appts_statusNoShow: "No show",
+  appts_providerLoadError: "Unable to load clinic providers.",
   appts_statusWaitingRoom: "In Waiting Room",
   appts_statusPending: "Pending",
   appts_saveChanges: "Save Changes",

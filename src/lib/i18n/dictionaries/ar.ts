@@ -559,6 +559,7 @@ export const ar: Dictionary = {
   appts_statusInProgress: "قيد التنفيذ",
   appts_statusCompleted: "مكتمل",
   appts_statusNoShow: "لم يحضر",
+  appts_providerLoadError: "تعذر تحميل أطباء وموظفي العيادة.",
   appts_statusWaitingRoom: "في غرفة الانتظار",
   appts_statusPending: "قيد الانتظار",
   appts_saveChanges: "حفظ التغييرات",

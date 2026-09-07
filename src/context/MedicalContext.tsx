@@ -26,6 +26,7 @@ export type Appointment = {
   id: string
   patientId: string
   provider: string
+  providerId?: string
   date: string
   time: string
   duration?: string
