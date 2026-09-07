@@ -64,6 +64,7 @@ export const en: Dictionary = {
   nav_plan: "Plan & Usage",
   nav_reports: "Reports",
   nav_availability: "My availability",
+  nav_locations: "Branches & rooms",
   nav_superAdmin: "Admin Console",
   nav_collapse: "Collapse",
 
@@ -110,6 +111,16 @@ export const en: Dictionary = {
   settings_newPatientAlertsHelp: "Notify staff when a new patient is registered",
   settings_billingNotifications: "Billing notifications",
   settings_billingNotificationsHelp: "Alert when invoices are due or overdue",
+  locations_title: "Branches and rooms",
+  locations_subtitle: "Manage active clinic locations and rooms for scheduling.",
+  locations_branches: "Branches",
+  locations_branchName: "Branch name",
+  locations_rooms: "Rooms",
+  locations_roomName: "Room name",
+  locations_roomNumber: "Number",
+  locations_unassigned: "Unassigned",
+  locations_loadError: "Could not load locations.",
+  locations_saveError: "Could not save this location.",
 
   // Header
   header_searchPlaceholder: "Search patients, visits, claims",

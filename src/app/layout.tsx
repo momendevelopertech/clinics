@@ -1,25 +1,8 @@
 import type { Metadata } from "next";
-import { Cairo, IBM_Plex_Mono, Manrope } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { getDirAndLocale } from "@/lib/i18n/server";
 import { LocaleProvider } from "@/components/locale/locale-provider";
 import "./globals.css";
-
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin"],
-});
-
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
-  weight: ["400", "500"],
-  subsets: ["latin"],
-});
-
-const cairo = Cairo({
-  variable: "--font-cairo",
-  subsets: ["arabic", "latin"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://pras75299-openhealthcrm.vercel.app/"),
@@ -57,7 +40,7 @@ export default async function RootLayout({
   return (
     <html lang={lang} dir={dir} suppressHydrationWarning>
       <body
-        className={`${manrope.variable} ${plexMono.variable} ${cairo.variable} min-h-screen antialiased`}
+        className="min-h-screen antialiased"
         suppressHydrationWarning
       >
         <LocaleProvider lang={lang}>

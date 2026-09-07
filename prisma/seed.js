@@ -290,6 +290,24 @@ async function main() {
 
   console.log("Organization:", organization.id);
 
+  let mainBranch = await prisma.branch.findFirst({
+    where: { organizationId: organization.id, name: "Main Branch" },
+  });
+  if (!mainBranch) {
+    mainBranch = await prisma.branch.create({
+      data: {
+        organizationId: organization.id,
+        name: "Main Branch",
+        address: "123 Medical Parkway",
+        city: "Boston",
+        state: "MA",
+        zip: "02110",
+        country: "USA",
+        status: "active",
+      },
+    });
+  }
+
   const allPermissions = [
     { action: "patients:read", resource: "patients" },
     { action: "patients:write", resource: "patients" },
@@ -396,14 +414,20 @@ async function main() {
       roomRecord = await prisma.room.create({
         data: {
           organizationId: organization.id,
+          branchId: mainBranch.id,
           name: room.name,
           type: room.type,
+          status: "active",
         },
       });
     } else {
       roomRecord = await prisma.room.update({
         where: { id: roomRecord.id },
-        data: { type: room.type },
+        data: { 
+          type: room.type,
+          branchId: mainBranch.id,
+          status: "active",
+        },
       });
     }
 

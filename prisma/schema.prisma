@@ -28,6 +28,7 @@ model Organization {
   updatedAt         DateTime           @updatedAt
   users             User[]
   patients          Patient[]
+  branches          Branch[]
   appointments      Appointment[]
   encounters        Encounter[]
   tasks             Task[]
@@ -201,10 +202,32 @@ model Consent {
 }
 
 // ============== APPOINTMENT, QUEUE & SCHEDULING ==============
+model Branch {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  name           String
+  address        String?
+  city           String?
+  state          String?
+  zip            String?
+  country        String?
+  phone          String?
+  email          String?
+  status         String       @default("active") // active, inactive
+  workingHours   String?      // JSON e.g. {"mon": {"open": "09:00", "close": "17:00"}, ...}
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  rooms          Room[]
+  appointments   Appointment[]
+}
+
 model Appointment {
   id             String        @id @default(cuid())
   organizationId String
   organization   Organization  @relation(fields: [organizationId], references: [id])
+  branchId       String?
+  branch         Branch?       @relation(fields: [branchId], references: [id])
   patientId      String
   patient        Patient       @relation(fields: [patientId], references: [id])
   providerId     String
@@ -244,8 +267,13 @@ model Room {
   id             String        @id @default(cuid())
   organizationId String
   organization   Organization  @relation(fields: [organizationId], references: [id])
+  branchId       String?
+  branch         Branch?       @relation(fields: [branchId], references: [id])
   name           String
+  number         String?       // Room number/identifier
   type           String?       // operatory, consultation, procedure
+  status         String        @default("active") // active, inactive
+  workingHours   String?       // JSON
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   appointments   Appointment[]

@@ -48,6 +48,9 @@
 }
 
 :root {
+  --font-manrope: "Trebuchet MS", Arial, sans-serif;
+  --font-plex-mono: "Courier New", monospace;
+  --font-cairo: Tahoma, Arial, sans-serif;
   --radius: 1.25rem;
   --background: oklch(0.98 0.01 95.1);
   --foreground: oklch(0.23 0.02 235.84);

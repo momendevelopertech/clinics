@@ -64,6 +64,7 @@ export const ar: Dictionary = {
   nav_plan: "الباقة والاستخدام",
   nav_reports: "التقارير",
   nav_availability: "توافري للمواعيد",
+  nav_locations: "الفروع والغرف",
   nav_superAdmin: "لوحة الإدارة",
   nav_collapse: "طي",
 
@@ -109,6 +110,16 @@ export const ar: Dictionary = {
   settings_newPatientAlertsHelp: "إخطار الموظفين عند تسجيل مريض جديد",
   settings_billingNotifications: "تنبيهات الفوترة",
   settings_billingNotificationsHelp: "التنبيه عند استحقاق الفواتير أو تأخرها",
+  locations_title: "الفروع والغرف",
+  locations_subtitle: "إدارة مواقع العيادة والغرف المستخدمة في جدولة المواعيد.",
+  locations_branches: "الفروع",
+  locations_branchName: "اسم الفرع",
+  locations_rooms: "الغرف",
+  locations_roomName: "اسم الغرفة",
+  locations_roomNumber: "الرقم",
+  locations_unassigned: "غير مخصصة",
+  locations_loadError: "تعذر تحميل المواقع.",
+  locations_saveError: "تعذر حفظ الموقع.",
 
   // Header
   header_searchPlaceholder: "ابحث عن المرضى والزيارات والمطالبات",
