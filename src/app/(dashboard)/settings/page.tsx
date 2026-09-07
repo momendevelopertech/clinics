@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { useLocale } from "@/components/locale/locale-provider"
+import { StaffProfiles } from "@/components/settings/staff-profiles"
 
 type Section = "general" | "billing" | "team" | "notifications"
 
@@ -125,22 +126,7 @@ export default function SettingsPage() {
             {activeSection === "team" && (
               <div>
                 <h3 className="text-lg font-medium border-b dark:border-neutral-800 pb-2 mb-4">{t("settings_teamMembers")}</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between py-3 border-b dark:border-neutral-800">
-                    <div>
-                      <p className="font-medium">Dr. Jane Smith</p>
-                      <p className="text-sm text-neutral-500">Doctor · jane.smith@clinic.com</p>
-                    </div>
-                    <span className="text-xs px-2 py-1 rounded-[5px] bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">{t("settings_active")}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-3 border-b dark:border-neutral-800">
-                    <div>
-                      <p className="font-medium">Dr. Robert Chen</p>
-                      <p className="text-sm text-neutral-500">Doctor · robert.chen@clinic.com</p>
-                    </div>
-                    <span className="text-xs px-2 py-1 rounded-[5px] bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">{t("settings_active")}</span>
-                  </div>
-                </div>
+                <StaffProfiles t={t} />
                 <Button variant="outline" size="sm" className="mt-4 rounded-[5px]">{t("settings_addTeamMember")}</Button>
               </div>
             )}

@@ -10,7 +10,7 @@ order: finish and verify one task before starting the next dependent task.
 ## Phase 1 — Foundation
 
 - [x] P1-T1 — Tenant branches and room foundations
-- [ ] P1-T2 — Staff/doctor operational profiles and assignments
+- [x] P1-T2 — Staff/doctor operational profiles and assignments
 - [ ] P1-T3 — Service and clinical catalogs
 - [ ] P1-T4 — Patient MRN, structured history, and archive workflow
 
