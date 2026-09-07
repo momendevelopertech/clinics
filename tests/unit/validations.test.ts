@@ -4,6 +4,8 @@ import {
   appointmentUpdateSchema,
 } from "../../src/lib/validations/appointment";
 import { patientCreateSchema } from "../../src/lib/validations/patient";
+import { ar } from "../../src/lib/i18n/dictionaries/ar";
+import { en } from "../../src/lib/i18n/dictionaries/en";
 
 describe("request validation", () => {
   it("accepts a valid appointment and rejects invalid time values", () => {
@@ -49,5 +51,12 @@ describe("request validation", () => {
         email: "invalid",
       }).success,
     ).toBe(false);
+  });
+
+  it("keeps English and Arabic dictionaries in sync", () => {
+    expect(Object.keys(en).sort()).toEqual(Object.keys(ar).sort());
+    for (const [key, value] of Object.entries(ar)) {
+      expect(value).not.toBe(key);
+    }
   });
 });

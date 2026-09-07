@@ -4,6 +4,7 @@ import { getToken } from "next-auth/jwt";
 import { takeRateLimitToken } from "@/lib/rate-limit";
 
 const PUBLIC_PAGE_PREFIXES = [
+  "/",
   "/login",
   "/patient-login",
   "/patient-portal",

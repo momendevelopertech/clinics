@@ -67,6 +67,50 @@ export const en: Dictionary = {
   nav_superAdmin: "Admin Console",
   nav_collapse: "Collapse",
 
+  // Analytics
+  analytics_title: "Analytics & Insights",
+  analytics_totalPatients: "Total patients",
+  analytics_appointmentsAll: "Appointments (all)",
+  analytics_encounters: "Clinical encounters",
+  analytics_avgWait: "Average wait time",
+  analytics_min: "min",
+  analytics_operationalMetrics: "Operational metrics",
+  analytics_metricsPlaceholder:
+    "Revenue sources, resource usage, and AI-powered insights will appear here. Connect your data to unlock live dashboards.",
+
+  // Settings
+  settings_title: "Settings",
+  settings_subtitle: "Manage clinic preferences, billing structures, and practitioner records.",
+  settings_saved: "Settings saved successfully!",
+  settings_saveChanges: "Save changes",
+  settings_general: "General",
+  settings_billing: "Billing & invoices",
+  settings_team: "Team members",
+  settings_notifications: "Notifications",
+  settings_clinicInformation: "Clinic information",
+  settings_clinicName: "Clinic name",
+  settings_registrationNumber: "Registration number",
+  settings_address: "Address",
+  settings_appointmentPreferences: "Appointment preferences",
+  settings_requireConfirmation: "Require patient confirmation",
+  settings_requireConfirmationHelp: "Send an SMS 24 hours prior requesting confirmation",
+  settings_allowOnlineBooking: "Allow online booking",
+  settings_allowOnlineBookingHelp: "Let patients schedule their own encounters",
+  settings_billingInvoices: "Billing & invoices",
+  settings_currency: "Currency",
+  settings_defaultTaxRate: "Default tax rate (%)",
+  settings_invoicePrefix: "Invoice number prefix",
+  settings_billingHelp: "Configure billing cycles, payment terms, and invoice templates.",
+  settings_teamMembers: "Team members",
+  settings_addTeamMember: "Add team member",
+  settings_active: "Active",
+  settings_appointmentReminders: "Appointment reminders",
+  settings_appointmentRemindersHelp: "Send reminders to patients before appointments",
+  settings_newPatientAlerts: "New patient alerts",
+  settings_newPatientAlertsHelp: "Notify staff when a new patient is registered",
+  settings_billingNotifications: "Billing notifications",
+  settings_billingNotificationsHelp: "Alert when invoices are due or overdue",
+
   // Header
   header_searchPlaceholder: "Search patients, visits, claims",
   header_notifications: "Notifications",
@@ -715,9 +759,6 @@ export const en: Dictionary = {
   audit_colAction: "Action",
   audit_colEntity: "Entity",
   audit_colId: "ID",
-
-  // Analytics
-  analytics_title: "Analytics & Insights",
 
   // Language
   lang_label: "Language",
