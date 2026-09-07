@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { getCurrentUserId, hasPermission } from "@/lib/auth";
 import { logServerError } from "@/lib/safe-logger";
+import { invoiceCreateSchema } from "@/lib/validations";
 
 export async function GET(request: Request) {
   try {
@@ -53,15 +54,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const body = await request.json();
-    const { patientId, dueDate, lineItems, idempotencyKey } = body;
-
-    if (!patientId || !Array.isArray(lineItems) || lineItems.length === 0) {
-      return NextResponse.json(
-        { error: "Patient ID and line items are required" },
-        { status: 400 },
-      );
-    }
+    const parsed = invoiceCreateSchema.safeParse(await request.json());
+    if (!parsed.success) return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
+    const { patientId, dueDate, lineItems, idempotencyKey } = parsed.data;
 
     if (idempotencyKey) {
       const existing = await prisma.invoice.findUnique({
@@ -78,27 +73,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
 
+    const catalogIds = lineItems.flatMap((item) => item.serviceCatalogId ? [item.serviceCatalogId] : []);
+    const catalogItems = await prisma.serviceCatalog.findMany({ where: { organizationId: orgId, active: true, id: { in: [...new Set(catalogIds)] } } });
+    if (catalogItems.length !== new Set(catalogIds).size) return NextResponse.json({ error: "One or more catalog items are invalid" }, { status: 400 });
     let totalAmount = 0;
-    const validLineItems = lineItems.map(
-      (li: {
-        description?: string;
-        quantity?: number;
-        unitPrice?: number;
-        cptCode?: string;
-      }) => {
-        const qty = typeof li.quantity === "number" ? li.quantity : 1;
-        const price = typeof li.unitPrice === "number" ? li.unitPrice : 0;
-        const amount = qty * price;
-        totalAmount += amount;
-        return {
-          description: li.description || "Line item",
-          quantity: qty,
-          unitPrice: price.toString(),
-          amount: amount.toString(),
-          cptCode: li.cptCode || null,
-        };
-      },
-    );
+    const validLineItems = lineItems.map((li) => {
+      const catalog = catalogItems.find((item) => item.id === li.serviceCatalogId);
+      const qty = li.quantity;
+      const price = catalog ? Number(catalog.price) : (li.unitPrice ?? 0);
+      const subtotal = qty * price;
+      const amount = Math.max(0, subtotal - li.discountAmount + li.taxAmount);
+      totalAmount += amount;
+      return { serviceCatalogId: li.serviceCatalogId ?? null, description: li.description || catalog?.name || "Line item", quantity: qty, unitPrice: price.toFixed(2), discountAmount: li.discountAmount.toFixed(2), taxAmount: li.taxAmount.toFixed(2), amount: amount.toFixed(2), cptCode: li.cptCode ?? null };
+    });
 
     const invoiceNumber = `INV-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 
@@ -126,6 +113,9 @@ export async function POST(request: Request) {
             unitPrice: li.unitPrice,
             amount: li.amount,
             cptCode: li.cptCode,
+            serviceCatalogId: li.serviceCatalogId,
+            discountAmount: li.discountAmount,
+            taxAmount: li.taxAmount,
           },
         });
       }

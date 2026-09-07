@@ -73,16 +73,19 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     return;
   }
 
-  // Update payment status
-  await prisma.payment.update({
-    where: { id: payment.id },
-    data: { status: "completed" },
-  });
-
-  // Update invoice status
-  await prisma.invoice.update({
-    where: { id: payment.invoiceId },
-    data: { status: "paid" },
+  if (payment.status === "completed") return;
+  const allocation = await prisma.$transaction(async (tx) => {
+    const updatedPayment = await tx.payment.update({
+      where: { id: payment.id },
+      data: { status: "completed" },
+    });
+    const paid = Number(payment.invoice.amountPaid) + Number(payment.amount);
+    const total = Number(payment.invoice.totalAmount);
+    const updatedInvoice = await tx.invoice.update({
+      where: { id: payment.invoiceId },
+      data: { amountPaid: paid.toFixed(2), status: paid >= total ? "paid" : "partially_paid" },
+    });
+    return { updatedPayment, updatedInvoice };
   });
 
   await createAuditLog({
@@ -93,7 +96,7 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     actorType: "webhook",
     actorIdentifier: "payment_intent.succeeded",
     beforeState: JSON.stringify({ status: payment.status }),
-    afterState: JSON.stringify({ status: "completed", stripePaymentId }),
+    afterState: JSON.stringify({ status: allocation.updatedPayment.status, amount: payment.amount, stripePaymentId }),
   });
 
   await createAuditLog({
@@ -104,7 +107,7 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     actorType: "webhook",
     actorIdentifier: "payment_intent.succeeded",
     beforeState: JSON.stringify({ status: payment.invoice.status }),
-    afterState: JSON.stringify({ status: "paid" }),
+    afterState: JSON.stringify({ status: allocation.updatedInvoice.status, amountPaid: allocation.updatedInvoice.amountPaid }),
   });
 
   console.log(
@@ -163,10 +166,13 @@ async function handleRefund(charge: Stripe.Charge) {
     return;
   }
 
-  // Update payment status
-  await prisma.payment.update({
-    where: { id: payment.id },
-    data: { status: "refunded" },
+  if (payment.status === "refunded") return;
+  const refundedAmount = (charge.amount_refunded ?? Math.round(Number(payment.amount) * 100)) / 100;
+  const allocation = await prisma.$transaction(async (tx) => {
+    const updatedPayment = await tx.payment.update({ where: { id: payment.id }, data: { status: "refunded", refundedAmount: refundedAmount.toFixed(2) } });
+    const paid = Math.max(0, Number(payment.invoice.amountPaid) - refundedAmount);
+    const updatedInvoice = await tx.invoice.update({ where: { id: payment.invoiceId }, data: { amountPaid: paid.toFixed(2), status: paid === 0 ? "sent" : "partially_paid" } });
+    return { updatedPayment, updatedInvoice };
   });
 
   await createAuditLog({
@@ -177,7 +183,7 @@ async function handleRefund(charge: Stripe.Charge) {
     actorType: "webhook",
     actorIdentifier: "charge.refunded",
     beforeState: JSON.stringify({ status: payment.status }),
-    afterState: JSON.stringify({ status: "refunded" }),
+    afterState: JSON.stringify({ status: allocation.updatedPayment.status, refundedAmount }),
   });
 
   console.log(`Payment ${payment.id} refunded`);

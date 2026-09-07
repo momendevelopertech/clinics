@@ -30,8 +30,8 @@ order: finish and verify one task before starting the next dependent task.
 
 ## Phase 4 — Financial
 
-- [ ] P4-T1 — Catalog-backed invoice items and server totals *(in progress)*
-- [ ] P4-T2 — Payment allocation, refunds, and balances
+- [x] P4-T1 — Catalog-backed invoice items and server totals
+- [x] P4-T2 — Payment allocation, refunds, and balances
 - [ ] P4-T3 — Charge-generation policy *(blocked: product decision required)*
 
 ## Phase 5 — Platform and security

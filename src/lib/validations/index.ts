@@ -3,3 +3,4 @@ export * from "./appointment";
 export * from "./encounter";
 export * from "./labs";
 export * from "./procedures";
+export * from "./billing";

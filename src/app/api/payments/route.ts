@@ -6,6 +6,7 @@ import { getCurrentUserId, hasPermission } from "@/lib/auth";
 import { createAuditLog } from "@/lib/audit";
 import stripe from "@/lib/stripe";
 import { logServerError } from "@/lib/safe-logger";
+import { paymentSchema } from "@/lib/validations";
 
 export async function POST(request: Request) {
   try {
@@ -23,15 +24,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const body = await request.json();
-    const { invoiceId, amount, currency = "usd", description } = body;
-
-    if (!invoiceId || !amount) {
-      return NextResponse.json(
-        { error: "invoiceId and amount are required" },
-        { status: 400 },
-      );
-    }
+    const parsed = paymentSchema.safeParse(await request.json());
+    if (!parsed.success) return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
+    const { invoiceId, amount, currency, description } = parsed.data;
 
     // Verify invoice exists and belongs to org
     const invoice = await prisma.invoice.findFirst({
@@ -42,6 +37,8 @@ export async function POST(request: Request) {
     if (!invoice) {
       return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
     }
+    const outstanding = Number(invoice.totalAmount) - Number(invoice.amountPaid);
+    if (amount > outstanding + 0.005) return NextResponse.json({ error: "Payment exceeds invoice balance" }, { status: 400 });
 
     // Create Stripe payment intent
     const paymentIntent = await stripe.paymentIntents.create({
