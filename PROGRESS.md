@@ -11,7 +11,7 @@ order: finish and verify one task before starting the next dependent task.
 
 - [x] P1-T1 — Tenant branches and room foundations
 - [x] P1-T2 — Staff/doctor operational profiles and assignments
-- [ ] P1-T3 — Service and clinical catalogs
+- [x] P1-T3 — Service and clinical catalogs
 - [ ] P1-T4 — Patient MRN, structured history, and archive workflow
 
 ## Phase 2 — Clinic operations

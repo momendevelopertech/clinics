@@ -45,6 +45,8 @@ model Organization {
   pricingTiers      PricingTier[]
   waitlistEntries   WaitlistEntry[]
   prescriptions     Prescription[]
+  serviceCatalogs   ServiceCatalog[]
+  clinicalCatalogs  ClinicalCatalog[]
 }
 
 model WaitlistEntry {
@@ -465,6 +467,41 @@ model PricingTier {
   name           String
   description    String?
   createdAt      DateTime @default(now())
+}
+
+model ServiceCatalog {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  code           String
+  name           String
+  description    String?
+  category       String?
+  durationMins   Int?
+  price          Decimal      @db.Decimal(12, 2)
+  active         Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([organizationId, code])
+  @@index([organizationId, active])
+}
+
+model ClinicalCatalog {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  system         String
+  code           String
+  name           String
+  category       String
+  description    String?
+  active         Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([organizationId, system, code])
+  @@index([organizationId, category, active])
 }
 
 // ============== PHARMACY & INVENTORY ==============

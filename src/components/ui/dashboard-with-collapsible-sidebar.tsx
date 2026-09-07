@@ -129,6 +129,7 @@ function CollapsibleSidebar({
         { icon: Activity, label: t("nav_reports"), href: "/reports" },
         { icon: Calendar, label: t("nav_availability"), href: "/availability" },
         { icon: Settings, label: t("nav_locations"), href: "/locations" },
+        { icon: ClipboardList, label: t("nav_catalogs"), href: "/catalogs" },
         { icon: Settings, label: t("nav_settings"), href: "/settings" },
         { icon: HelpCircle, label: t("nav_help"), href: "/help" },
       ],

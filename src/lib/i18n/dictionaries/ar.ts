@@ -65,6 +65,13 @@ export const ar: Dictionary = {
   nav_reports: "التقارير",
   nav_availability: "توافري للمواعيد",
   nav_locations: "الفروع والغرف",
+  nav_catalogs: "الكتالوجات",
+  catalogs_title: "كتالوج الخدمات والبيانات السريرية",
+  catalogs_subtitle: "إدارة الخدمات والرموز السريرية الخاصة بالمؤسسة.",
+  catalogs_services: "الخدمات",
+  catalogs_clinical: "الرموز السريرية",
+  catalogs_empty: "لا توجد بيانات بعد.",
+  catalogs_loadError: "تعذر تحميل الكتالوجات.",
   nav_superAdmin: "لوحة الإدارة",
   nav_collapse: "طي",
 

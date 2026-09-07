@@ -65,6 +65,13 @@ export const en: Dictionary = {
   nav_reports: "Reports",
   nav_availability: "My availability",
   nav_locations: "Branches & rooms",
+  nav_catalogs: "Catalogs",
+  catalogs_title: "Service & clinical catalogs",
+  catalogs_subtitle: "Manage tenant-scoped services and clinical coding entries.",
+  catalogs_services: "Services",
+  catalogs_clinical: "Clinical codes",
+  catalogs_empty: "No entries yet.",
+  catalogs_loadError: "Unable to load catalogs.",
   nav_superAdmin: "Admin Console",
   nav_collapse: "Collapse",
 
