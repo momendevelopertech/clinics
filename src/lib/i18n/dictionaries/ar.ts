@@ -90,12 +90,15 @@ export const ar: Dictionary = {
   // Analytics
   analytics_title: "التحليلات والرؤى",
   analytics_totalPatients: "إجمالي المرضى",
-  analytics_appointmentsAll: "المواعيد (الكل)",
+  analytics_appointmentsToday: "مواعيد اليوم",
   analytics_encounters: "الجلسات السريرية",
-  analytics_avgWait: "متوسط وقت الانتظار",
+  analytics_avgVisit: "متوسط مدة الزيارة",
   analytics_min: "دقيقة",
   analytics_operationalMetrics: "مؤشرات تشغيلية",
-  analytics_metricsPlaceholder: "سيتم عرض مصادر الإيرادات واستخدام الموارد والرؤى المدعومة بالذكاء الاصطناعي هنا. اربط بياناتك لعرض لوحات تحكم فورية.",
+  analytics_completionRate: "نسبة الإكمال الشهرية",
+  analytics_noShowRate: "نسبة عدم الحضور الشهرية",
+  analytics_revenue: "إيرادات هذا الشهر",
+  analytics_outstanding: "الرصيد المستحق",
 
   // Settings
   settings_title: "الإعدادات",

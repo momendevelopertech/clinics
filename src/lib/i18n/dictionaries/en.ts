@@ -90,13 +90,15 @@ export const en: Dictionary = {
   // Analytics
   analytics_title: "Analytics & Insights",
   analytics_totalPatients: "Total patients",
-  analytics_appointmentsAll: "Appointments (all)",
+  analytics_appointmentsToday: "Appointments today",
   analytics_encounters: "Clinical encounters",
-  analytics_avgWait: "Average wait time",
+  analytics_avgVisit: "Average visit duration",
   analytics_min: "min",
   analytics_operationalMetrics: "Operational metrics",
-  analytics_metricsPlaceholder:
-    "Revenue sources, resource usage, and AI-powered insights will appear here. Connect your data to unlock live dashboards.",
+  analytics_completionRate: "Monthly completion rate",
+  analytics_noShowRate: "Monthly no-show rate",
+  analytics_revenue: "Revenue this month",
+  analytics_outstanding: "Outstanding balance",
 
   // Settings
   settings_title: "Settings",

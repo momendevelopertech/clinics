@@ -2,41 +2,45 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { BarChart3, Users, Calendar, Clock } from "lucide-react";
+import { BarChart3, Users, Calendar, Clock, Wallet, UserX } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocale } from "@/components/locale/locale-provider";
 
+type DashboardKpis = {
+  activePatients: number;
+  appointmentsToday: number;
+  activeAppointmentsToday: number;
+  completedEncountersThisMonth: number;
+  averageVisitMinutes: number;
+  monthlyCompletionRate: number;
+  monthlyNoShowRate: number;
+  revenueThisMonth: number;
+  outstandingBalance: number;
+};
+
 export default function AnalyticsPage() {
   const { t } = useLocale();
-  const [stats, setStats] = React.useState<{
-    patients: number;
-    appointments: number;
-    encounters: number;
-    avgWait?: number;
-  } | null>(null);
+  const [stats, setStats] = React.useState<DashboardKpis | null>(null);
 
   React.useEffect(() => {
-    Promise.all([
-      fetch("/api/patients").then((r) => r.json()),
-      fetch("/api/appointments").then((r) => r.json()),
-      fetch("/api/encounters").then((r) => r.json()),
-    ])
-      .then(([patients, appointments, encounters]) => {
-        setStats({
-          patients: Array.isArray(patients) ? patients.length : 0,
-          appointments: Array.isArray(appointments) ? appointments.length : 0,
-          encounters: Array.isArray(encounters) ? encounters.length : 0,
-          avgWait: 14,
-        });
+    fetch("/api/analytics/dashboard", { cache: "no-store" })
+      .then((response) => {
+        if (!response.ok) throw new Error("Failed to load analytics");
+        return response.json();
       })
-      .catch(() => setStats({ patients: 0, appointments: 0, encounters: 0 }));
+      .then((payload: { kpis: DashboardKpis }) => setStats(payload.kpis))
+      .catch(() => setStats(null));
   }, []);
 
   const cards = [
-    { label: t("analytics_totalPatients"), value: stats?.patients ?? "—", icon: Users },
-    { label: t("analytics_appointmentsAll"), value: stats?.appointments ?? "—", icon: Calendar },
-    { label: t("analytics_encounters"), value: stats?.encounters ?? "—", icon: BarChart3 },
-    { label: t("analytics_avgWait"), value: stats?.avgWait != null ? `${stats.avgWait} ${t("analytics_min")}` : "—", icon: Clock },
+    { label: t("analytics_totalPatients"), value: stats?.activePatients ?? "—", icon: Users },
+    { label: t("analytics_appointmentsToday"), value: stats?.appointmentsToday ?? "—", icon: Calendar },
+    { label: t("analytics_encounters"), value: stats?.completedEncountersThisMonth ?? "—", icon: BarChart3 },
+    {
+      label: t("analytics_avgVisit"),
+      value: stats ? `${stats.averageVisitMinutes} ${t("analytics_min")}` : "—",
+      icon: Clock,
+    },
   ];
 
   return (
@@ -79,11 +83,32 @@ export default function AnalyticsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-neutral-500">
-            {t("analytics_metricsPlaceholder")}
-          </p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Metric label={t("analytics_completionRate")} value={`${stats?.monthlyCompletionRate ?? "—"}%`} />
+            <Metric label={t("analytics_noShowRate")} value={`${stats?.monthlyNoShowRate ?? "—"}%`} icon={UserX} />
+            <Metric label={t("analytics_revenue")} value={stats ? `$${stats.revenueThisMonth.toFixed(2)}` : "—"} icon={Wallet} />
+            <Metric label={t("analytics_outstanding")} value={stats ? `$${stats.outstandingBalance.toFixed(2)}` : "—"} icon={Wallet} />
+          </div>
         </CardContent>
       </Card>
     </motion.div>
+  );
+}
+
+function Metric({
+  label,
+  value,
+  icon: Icon = BarChart3,
+}: {
+  label: string;
+  value: string;
+  icon?: typeof BarChart3;
+}) {
+  return (
+    <div className="rounded-xl border border-border/60 p-4">
+      <Icon className="mb-2 h-4 w-4 text-primary" />
+      <p className="text-xl font-semibold">{value}</p>
+      <p className="text-xs text-neutral-500">{label}</p>
+    </div>
   );
 }

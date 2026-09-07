@@ -43,7 +43,7 @@ order: finish and verify one task before starting the next dependent task.
 
 ## Phase 6 — Analytics
 
-- [ ] P6-T1 — Dashboard KPI and report projections *(in progress)*
+- [x] P6-T1 — Dashboard KPI and report projections
 
 ## Phase 7 — AI and automation
 
