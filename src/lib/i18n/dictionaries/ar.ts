@@ -753,6 +753,16 @@ export const ar: Dictionary = {
   enc_start: "بدء جلسة",
   enc_recent: "أحدث الجلسات",
   enc_empty: "لا توجد جلسات.",
+  enc_subtitle: "بدء وتوثيق وإكمال الجلسات السريرية الخاصة بالمؤسسة.",
+  enc_patient: "المريض",
+  enc_selectPatient: "اختر المريض",
+  enc_loadError: "تعذر تحميل الجلسات.",
+  enc_startError: "تعذر بدء الجلسة.",
+  enc_complete: "إكمال",
+  enc_completeError: "تعذر إكمال الجلسة.",
+  enc_addNote: "إضافة ملاحظة",
+  enc_notePlaceholder: "الملاحظة السريرية",
+  enc_noteError: "تعذر حفظ الملاحظة السريرية.",
 
   // Waitlist
   wl_title: "قائمة الانتظار",

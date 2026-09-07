@@ -19,13 +19,13 @@ order: finish and verify one task before starting the next dependent task.
 - [x] P2-T1 — Appointment lifecycle and scheduling validation
 - [x] P2-T2 — Tenant-backed scheduling UI
 - [x] P2-T3 — Check-in, walk-in, and queue projection
-- [ ] P2-T4 — Encounter lifecycle and clinical capture *(in progress)*
+- [x] P2-T4 — Encounter lifecycle and clinical capture
 - [ ] P2-T3 — Check-in, walk-in, and queue projection
 - [ ] P2-T4 — Encounter lifecycle and clinical capture
 
 ## Phase 3 — Clinical
 
-- [ ] P3-T1 — Diagnoses, follow-ups, and itemized prescriptions
+- [ ] P3-T1 — Diagnoses, follow-ups, and itemized prescriptions *(in progress)*
 - [ ] P3-T2 — Lab and imaging orders through reviewed results
 - [ ] P3-T3 — Procedure orders and clinical documents
 - [ ] P3-T4 — Read-only patient medical timeline

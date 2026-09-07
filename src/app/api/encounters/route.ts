@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { logServerError } from "@/lib/safe-logger";
+import { encounterCreateSchema } from "@/lib/validations";
 
 export async function GET(request: Request) {
   try {
@@ -46,21 +47,19 @@ export async function POST(request: Request) {
     if (authz.response) return authz.response;
     const { userId } = authz;
 
-    const body = await request.json();
-    const { patientId, appointmentId, encounterType } = body;
-
-    if (!patientId) {
-      return NextResponse.json(
-        { error: "Patient ID is required" },
-        { status: 400 },
-      );
-    }
+    const parsed = encounterCreateSchema.safeParse(await request.json());
+    if (!parsed.success) return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
+    const { patientId, appointmentId, encounterType } = parsed.data;
 
     const patient = await prisma.patient.findFirst({
       where: { id: patientId, organizationId: orgId },
     });
     if (!patient) {
       return NextResponse.json({ error: "Patient not found" }, { status: 404 });
+    }
+    if (appointmentId) {
+      const appointment = await prisma.appointment.findFirst({ where: { id: appointmentId, organizationId: orgId, patientId } });
+      if (!appointment) return NextResponse.json({ error: "Appointment not found for patient" }, { status: 400 });
     }
 
     const encounter = await prisma.$transaction(

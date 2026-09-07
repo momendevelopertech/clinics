@@ -7,6 +7,16 @@ export const soapNoteSchema = z.object({
   plan: z.string().max(5000).optional().nullable(),
 });
 
+export const encounterCreateSchema = z.object({
+  patientId: z.string().min(1),
+  appointmentId: z.string().min(1).optional().nullable(),
+  encounterType: z.string().max(80).optional().nullable(),
+});
+
+export const encounterUpdateSchema = z.object({
+  status: z.enum(["in_progress", "completed"]).optional(),
+});
+
 export const vitalSchema = z.object({
   weightKg: z.number().positive().optional().nullable(),
   heightCm: z.number().positive().optional().nullable(),

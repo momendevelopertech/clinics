@@ -754,6 +754,16 @@ export const en: Dictionary = {
   enc_start: "Start Encounter",
   enc_recent: "Recent Encounters",
   enc_empty: "No encounters found.",
+  enc_subtitle: "Start, document, and complete tenant-scoped clinical encounters.",
+  enc_patient: "Patient",
+  enc_selectPatient: "Select patient",
+  enc_loadError: "Unable to load encounters.",
+  enc_startError: "Unable to start encounter.",
+  enc_complete: "Complete",
+  enc_completeError: "Unable to complete encounter.",
+  enc_addNote: "Add note",
+  enc_notePlaceholder: "Clinical note",
+  enc_noteError: "Unable to save clinical note.",
 
   // Waitlist
   wl_title: "Waitlist",
