@@ -36,6 +36,7 @@ import {
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/components/locale/locale-provider";
 import { patientCreateSchema, type PatientCreateInput } from "@/lib/validations";
 
 const GENDERS = ["Male", "Female", "Other", "Prefer not to say"] as const;
@@ -48,6 +49,19 @@ interface AddPatientDialogProps {
 
 export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) {
   const [open, setOpen] = React.useState(false);
+  const { t } = useLocale();
+
+  const genderLabel = (g: string) => {
+    const map: Record<string, string> = {
+      "Male": t("gender_male"),
+      "Female": t("gender_female"),
+      "Other": t("gender_other"),
+      "Prefer not to say": t("gender_preferNot"),
+    };
+    return map[g] ?? g;
+  };
+
+  const bloodLabel = (b: string) => (b === "Unknown" ? t("bloodType_unknown") : b);
 
   const form = useForm<PatientCreateInput>({
     resolver: zodResolver(patientCreateSchema),
@@ -104,15 +118,15 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || "Failed to add patient");
+        throw new Error(err.error || t("common_error"));
       }
 
       setOpen(false);
       form.reset();
-      toast.success("Patient added successfully!");
+      toast.success(t("addPatient_success"));
       onSuccess?.();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to add patient");
+      toast.error(error instanceof Error ? error.message : t("common_error"));
     }
   };
 
@@ -122,7 +136,7 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
         {trigger ?? (
           <Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm rounded-[5px]">
             <Plus className="mr-2 h-4 w-4" />
-            Add Patient
+            {t("addPatient_trigger")}
           </Button>
         )}
       </DialogTrigger>
@@ -143,28 +157,27 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
           />
           <DialogHeader className="px-6 pt-6 pb-4">
             <DialogTitle className="text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-              Add New Patient
+              {t("addPatient_title")}
             </DialogTitle>
             <DialogDescription className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
-              Enter the patient&apos;s details to register them in the system.
+              {t("addPatient_desc")}
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="px-6 pb-6 space-y-5 max-h-[60vh] overflow-y-auto">
-              {/* Basic Info */}
               <div className="space-y-4">
                 <h4 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-2">
                   <User className="w-4 h-4 text-indigo-500" />
-                  Basic Information
+                  {t("addPatient_basicInfo")}
                 </h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name *</Label>
+                    <Label htmlFor="firstName">{t("addPatient_firstName")}</Label>
                     <Input
                       id="firstName"
                       className="rounded-[5px]"
-                      placeholder="John"
+                      placeholder={t("firstName_placeholder")}
                       {...form.register("firstName")}
                     />
                     {form.formState.errors.firstName && (
@@ -172,11 +185,11 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name *</Label>
+                    <Label htmlFor="lastName">{t("addPatient_lastName")}</Label>
                     <Input
                       id="lastName"
                       className="rounded-[5px]"
-                      placeholder="Doe"
+                      placeholder={t("lastName_placeholder")}
                       {...form.register("lastName")}
                     />
                     {form.formState.errors.lastName && (
@@ -187,7 +200,7 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="dateOfBirth" className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5" /> Date of Birth
+                      <Calendar className="w-3.5 h-3.5" /> {t("addPatient_dob")}
                     </Label>
                     <Input
                       id="dateOfBirth"
@@ -197,18 +210,18 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="gender">Gender</Label>
+                    <Label htmlFor="gender">{t("addPatient_gender")}</Label>
                     <Select
                       value={form.watch("gender") ?? ""}
                       onValueChange={(v) => form.setValue("gender", v || undefined)}
                     >
                       <SelectTrigger id="gender" className="rounded-[5px]">
-                        <SelectValue placeholder="Select" />
+                        <SelectValue placeholder={t("addPatient_select")} />
                       </SelectTrigger>
                       <SelectContent>
                         {GENDERS.map((g) => (
                           <SelectItem key={g} value={g}>
-                            {g}
+                            {genderLabel(g)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -217,19 +230,18 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
                 </div>
               </div>
 
-              {/* Contact */}
               <div className="space-y-4">
                 <h4 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-2">
                   <Mail className="w-4 h-4 text-indigo-500" />
-                  Contact Information
+                  {t("addPatient_contactInfo")}
                 </h4>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t("addPatient_email")}</Label>
                   <Input
                     id="email"
                     type="email"
                     className="rounded-[5px]"
-                    placeholder="john@example.com"
+                    placeholder={t("email_placeholder")}
                     {...form.register("email")}
                   />
                   {form.formState.errors.email && (
@@ -239,80 +251,78 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="phone" className="flex items-center gap-1">
-                      <Phone className="w-3.5 h-3.5" /> Phone
+                      <Phone className="w-3.5 h-3.5" /> {t("addPatient_phone")}
                     </Label>
                     <Input
                       id="phone"
                       type="tel"
                       className="rounded-[5px]"
-                      placeholder="555-0100"
+                      placeholder={t("phone_placeholder")}
                       {...form.register("phone")}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="phoneSecondary">Secondary Phone</Label>
+                    <Label htmlFor="phoneSecondary">{t("addPatient_secondaryPhone")}</Label>
                     <Input
                       id="phoneSecondary"
                       type="tel"
                       className="rounded-[5px]"
-                      placeholder="555-0101"
+                      placeholder={t("secondaryPhone_placeholder")}
                       {...form.register("phoneSecondary")}
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Address */}
               <div className="space-y-4">
                 <h4 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-indigo-500" />
-                  Address
+                  {t("addPatient_address")}
                 </h4>
                 <div className="space-y-2">
-                  <Label htmlFor="address">Street Address</Label>
+                  <Label htmlFor="address">{t("addPatient_street")}</Label>
                   <Input
                     id="address"
                     className="rounded-[5px]"
-                    placeholder="123 Main St"
+                    placeholder={t("street_placeholder")}
                     {...form.register("address")}
                   />
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="city">City</Label>
-                    <Input id="city" className="rounded-[5px]" placeholder="City" {...form.register("city")} />
+                    <Label htmlFor="city">{t("addPatient_city")}</Label>
+                    <Input id="city" className="rounded-[5px]" placeholder={t("city_placeholder")} {...form.register("city")} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="state">State</Label>
-                    <Input id="state" className="rounded-[5px]" placeholder="State" {...form.register("state")} />
+                    <Label htmlFor="state">{t("addPatient_state")}</Label>
+                    <Input id="state" className="rounded-[5px]" placeholder={t("state_placeholder")} {...form.register("state")} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="zip">ZIP</Label>
-                    <Input id="zip" className="rounded-[5px]" placeholder="ZIP" {...form.register("zip")} />
+                    <Label htmlFor="zip">{t("addPatient_zip")}</Label>
+                    <Input id="zip" className="rounded-[5px]" placeholder={t("zip_placeholder")} {...form.register("zip")} />
                   </div>
                 </div>
               </div>
 
-              {/* Medical */}
               <div className="space-y-4">
                 <h4 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-2">
                   <Heart className="w-4 h-4 text-indigo-500" />
-                  Medical Information
+                  {t("addPatient_medical")}
                 </h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="bloodType">Blood Type</Label>
+                    <Label htmlFor="bloodType">{t("addPatient_bloodType")}</Label>
                     <Select
                       value={form.watch("bloodType") ?? ""}
                       onValueChange={(v) => form.setValue("bloodType", v || undefined)}
                     >
                       <SelectTrigger id="bloodType" className="rounded-[5px]">
-                        <SelectValue placeholder="Select" />
+                        <SelectValue placeholder={t("addPatient_select")} />
                       </SelectTrigger>
                       <SelectContent>
                         {BLOOD_TYPES.map((b) => (
                           <SelectItem key={b} value={b}>
-                            {b}
+                            {bloodLabel(b)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -320,62 +330,61 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="primaryCareProvider" className="flex items-center gap-1">
-                      <Stethoscope className="w-3.5 h-3.5" /> Primary Care
+                      <Stethoscope className="w-3.5 h-3.5" /> {t("addPatient_primaryCare")}
                     </Label>
                     <Input
                       id="primaryCareProvider"
                       className="rounded-[5px]"
-                      placeholder="Dr. Smith"
+                      placeholder={t("primaryCare_placeholder")}
                       {...form.register("primaryCareProvider")}
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="allergies" className="flex items-center gap-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> Allergies
+                    <AlertCircle className="w-3.5 h-3.5" /> {t("addPatient_allergies")}
                   </Label>
                   <Textarea
                     id="allergies"
                     className="rounded-[5px] min-h-[60px]"
-                    placeholder="List known allergies (e.g. Penicillin, nuts)"
+                    placeholder={t("addPatient_allergiesPlaceholder")}
                     {...form.register("allergies")}
                   />
                 </div>
               </div>
 
-              {/* Emergency Contact */}
               <div className="space-y-4">
                 <h4 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-indigo-500" />
-                  Emergency Contact
+                  {t("addPatient_emergency")}
                 </h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="emergencyContactName">Name</Label>
+                    <Label htmlFor="emergencyContactName">{t("addPatient_name")}</Label>
                     <Input
                       id="emergencyContactName"
                       className="rounded-[5px]"
-                      placeholder="Contact name"
+                      placeholder={t("emergencyName_placeholder")}
                       {...form.register("emergencyContactName")}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="emergencyContactPhone">Phone</Label>
+                    <Label htmlFor="emergencyContactPhone">{t("addPatient_phone")}</Label>
                     <Input
                       id="emergencyContactPhone"
                       type="tel"
                       className="rounded-[5px]"
-                      placeholder="555-0102"
+                      placeholder={t("emergencyPhone_placeholder")}
                       {...form.register("emergencyContactPhone")}
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="emergencyContactRelationship">Relationship</Label>
+                  <Label htmlFor="emergencyContactRelationship">{t("addPatient_relationship")}</Label>
                   <Input
                     id="emergencyContactRelationship"
                     className="rounded-[5px]"
-                    placeholder="e.g. Spouse, Parent"
+                    placeholder={t("addPatient_relationshipPlaceholder")}
                     {...form.register("emergencyContactRelationship")}
                   />
                 </div>
@@ -384,10 +393,10 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
 
             <DialogFooter className="px-6 py-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 rounded-b-[5px]">
               <Button type="button" variant="outline" onClick={() => setOpen(false)} className="rounded-[5px]">
-                Cancel
+                {t("appts_cancel")}
               </Button>
               <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-[5px]">
-                Save Patient
+                {t("addPatient_save")}
               </Button>
             </DialogFooter>
           </form>

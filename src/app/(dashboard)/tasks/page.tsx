@@ -5,8 +5,10 @@ import { motion } from "framer-motion";
 import { MessageSquare, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLocale } from "@/components/locale/locale-provider";
 
 export default function TasksPage() {
+  const { t } = useLocale();
   const [tasks, setTasks] = React.useState<Array<{
     id: string;
     title: string;
@@ -42,10 +44,10 @@ export default function TasksPage() {
       transition={{ duration: 0.3 }}
     >
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Tasks & Follow-ups</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t("tasks_title")}</h1>
         <Button className="bg-indigo-600 hover:bg-indigo-700">
           <Plus className="w-4 h-4 mr-2" />
-          Create Task
+          {t("tasks_create")}
         </Button>
       </div>
 
@@ -53,15 +55,15 @@ export default function TasksPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MessageSquare className="w-5 h-5" />
-            My Tasks
+            {t("tasks_my")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="p-8 text-center text-neutral-500">Loading...</div>
+            <div className="p-8 text-center text-neutral-500">{t("common_loading")}</div>
           ) : tasks.length === 0 ? (
             <div className="p-8 text-center text-neutral-500 border rounded-[5px]">
-              No pending tasks. Create one to assign follow-ups, lab reviews, or claim follow-ups.
+              {t("tasks_empty")}
             </div>
           ) : (
             <div className="space-y-3">
@@ -80,7 +82,7 @@ export default function TasksPage() {
                         <span>{task.patient.firstName} {task.patient.lastName}</span>
                       )}
                       {task.dueDate && (
-                        <span>Due {new Date(task.dueDate).toLocaleDateString()}</span>
+                        <span>{t("tasks_due").replace("{date}", new Date(task.dueDate).toLocaleDateString())}</span>
                       )}
                     </div>
                   </div>

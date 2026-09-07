@@ -33,25 +33,29 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/components/locale/locale-provider";
 
 import type { Patient } from "@/context/MedicalContext";
 
-const bookAppointmentSchema = z.object({
-  patientId: z.string().min(1, "Please select a patient"),
-  provider: z.string().min(1, "Please select a provider"),
-  date: z.string().min(1, "Date is required"),
-  time: z.string().min(1, "Time is required"),
-  type: z.string().min(1, "Please select appointment type"),
-});
+const buildBookAppointmentSchema = (t: (key: string) => string) =>
+  z.object({
+    patientId: z.string().min(1, t("book_requirePatient")),
+    provider: z.string().min(1, t("book_requireProvider")),
+    date: z.string().min(1, t("book_requireDate")),
+    time: z.string().min(1, t("book_requireTime")),
+    type: z.string().min(1, t("book_requireType")),
+  });
 
-type BookAppointmentFormValues = z.infer<typeof bookAppointmentSchema>;
+type BookAppointmentFormValues = z.infer<
+  ReturnType<typeof buildBookAppointmentSchema>
+>;
 
 const APPOINTMENT_TYPES = [
-  { value: "consultation", label: "Consultation" },
-  { value: "Follow-up", label: "Follow-up" },
-  { value: "New Patient", label: "New Patient" },
-  { value: "Procedure", label: "Procedure" },
-  { value: "Telehealth", label: "Telehealth" },
+  { value: "consultation" },
+  { value: "Follow-up" },
+  { value: "New Patient" },
+  { value: "Procedure" },
+  { value: "Telehealth" },
 ];
 
 const PROVIDERS = [
@@ -87,6 +91,24 @@ export function BookAppointmentDialog({
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? controlledOnOpenChange : setInternalOpen;
 
+  const { t } = useLocale();
+
+  const bookAppointmentSchema = React.useMemo(
+    () => buildBookAppointmentSchema(t),
+    [t]
+  );
+
+  const apptTypeLabel = (v: string) => {
+    const map: Record<string, string> = {
+      consultation: t("apptType_consultation"),
+      "Follow-up": t("apptType_followup"),
+      "New Patient": t("apptType_newPatient"),
+      Procedure: t("apptType_procedure"),
+      Telehealth: t("apptType_telehealth"),
+    };
+    return map[v] ?? v;
+  };
+
   const form = useForm<BookAppointmentFormValues>({
     resolver: zodResolver(bookAppointmentSchema),
     defaultValues: {
@@ -118,7 +140,7 @@ export function BookAppointmentDialog({
     });
     setOpen(false);
     form.reset();
-    toast.success("Appointment booked successfully!");
+    toast.success(t("book_success"));
   };
 
   return (
@@ -136,7 +158,7 @@ export function BookAppointmentDialog({
           >
             <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity" />
             <CalendarDays className="w-4 h-4 mr-2" />
-            Book Appointment
+            {t("book_title")}
           </Button>
         )}
       </DialogTrigger>
@@ -158,10 +180,10 @@ export function BookAppointmentDialog({
           />
           <DialogHeader className="px-6 pt-6 pb-4">
             <DialogTitle className="text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-              Book Appointment
+              {t("book_title")}
             </DialogTitle>
             <DialogDescription className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
-              Schedule a new appointment for a patient.
+              {t("book_desc")}
             </DialogDescription>
           </DialogHeader>
 
@@ -181,7 +203,7 @@ export function BookAppointmentDialog({
                       className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-2"
                     >
                       <User className="w-3.5 h-3.5 text-violet-500" />
-                      Patient
+                      {t("book_patient")}
                     </Label>
                     <Select
                       onValueChange={(v) => form.setValue("patientId", v)}
@@ -196,7 +218,7 @@ export function BookAppointmentDialog({
                           "transition-colors duration-200"
                         )}
                       >
-                        <SelectValue placeholder="Select a patient" />
+                        <SelectValue placeholder={t("book_selectPatient")} />
                       </SelectTrigger>
                       <SelectContent className="rounded-[5px] border-neutral-200 dark:border-neutral-800 shadow-xl">
                         {patients.map((p) => (
@@ -224,7 +246,7 @@ export function BookAppointmentDialog({
                       className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-2"
                     >
                       <Stethoscope className="w-3.5 h-3.5 text-violet-500" />
-                      Provider
+                      {t("appts_provider")}
                     </Label>
                     <Select
                       onValueChange={(v) => form.setValue("provider", v)}
@@ -238,7 +260,7 @@ export function BookAppointmentDialog({
                           "focus-visible:ring-violet-500/30"
                         )}
                       >
-                        <SelectValue placeholder="Select a provider" />
+                        <SelectValue placeholder={t("book_selectProvider")} />
                       </SelectTrigger>
                       <SelectContent className="rounded-[5px] shadow-xl">
                         {PROVIDERS.map((p) => (
@@ -267,7 +289,7 @@ export function BookAppointmentDialog({
                         className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-2"
                       >
                         <Calendar className="w-3.5 h-3.5 text-violet-500" />
-                        Date
+                        {t("appts_date")}
                       </Label>
                       <div className="relative">
                         <Input
@@ -297,7 +319,7 @@ export function BookAppointmentDialog({
                         className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-2"
                       >
                         <Clock className="w-3.5 h-3.5 text-violet-500" />
-                        Time
+                        {t("appts_time")}
                       </Label>
                       <div className="relative">
                         <Input
@@ -329,7 +351,7 @@ export function BookAppointmentDialog({
                       htmlFor="type"
                       className="text-sm font-semibold text-neutral-700 dark:text-neutral-300"
                     >
-                      Appointment Type
+                      {t("book_type")}
                     </Label>
                     <Select
                       onValueChange={(v) => form.setValue("type", v)}
@@ -343,16 +365,16 @@ export function BookAppointmentDialog({
                           "focus-visible:ring-violet-500/30"
                         )}
                       >
-                        <SelectValue placeholder="Select appointment type" />
+                        <SelectValue placeholder={t("book_selectType")} />
                       </SelectTrigger>
                       <SelectContent className="rounded-[5px] shadow-xl">
-                        {APPOINTMENT_TYPES.map((t) => (
+                        {APPOINTMENT_TYPES.map((typeOpt) => (
                           <SelectItem
-                            key={t.value}
-                            value={t.value}
+                            key={typeOpt.value}
+                            value={typeOpt.value}
                             className="rounded-[5px] focus:bg-violet-50 dark:focus:bg-violet-950/30"
                           >
-                            {t.label}
+                            {apptTypeLabel(typeOpt.value)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -383,7 +405,7 @@ export function BookAppointmentDialog({
                   "hover:bg-neutral-100 dark:hover:bg-neutral-800"
                 )}
               >
-                Cancel
+                {t("common_cancel")}
               </Button>
               <Button
                 type="submit"
@@ -397,7 +419,7 @@ export function BookAppointmentDialog({
                   "transition-all duration-300 active:scale-[0.98]"
                 )}
               >
-                {form.formState.isSubmitting ? "Booking…" : "Book"}
+                {form.formState.isSubmitting ? t("book_booking") : t("book_book")}
               </Button>
             </DialogFooter>
           </form>

@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useLocale } from "@/components/locale/locale-provider";
 
 export interface CalendarEvent {
   id: string;
@@ -75,6 +76,7 @@ export function FullScreenCalendar({
   onEventClick,
 }: FullScreenCalendarProps) {
   const today = startOfToday();
+  const { t } = useLocale();
   const [selectedDay, setSelectedDay] = React.useState(today);
   const [currentMonth, setCurrentMonth] = React.useState(format(today, "MMM-yyyy"));
   const firstDayCurrentMonth = parse(currentMonth, "MMM-yyyy", new Date());
@@ -138,7 +140,7 @@ export function FullScreenCalendar({
             variant="outline"
             size="icon"
             className="hidden lg:flex rounded-[5px]"
-            aria-label="Search appointments"
+            aria-label={t("calendar_search")}
           >
             <SearchIcon size={16} strokeWidth={2} aria-hidden="true" />
           </Button>
@@ -151,7 +153,7 @@ export function FullScreenCalendar({
               className="rounded-none rounded-s-[5px] shadow-none first:rounded-s-[5px] last:rounded-e-[5px] focus-visible:z-10"
               variant="outline"
               size="icon"
-              aria-label="Previous month"
+              aria-label={t("calendar_prevMonth")}
             >
               <ChevronLeftIcon size={16} strokeWidth={2} aria-hidden="true" />
             </Button>
@@ -160,14 +162,14 @@ export function FullScreenCalendar({
               className="w-full rounded-none shadow-none first:rounded-s-[5px] last:rounded-e-[5px] focus-visible:z-10 md:w-auto"
               variant="outline"
             >
-              Today
+              {t("calendar_today")}
             </Button>
             <Button
               onClick={nextMonth}
               className="rounded-none rounded-e-[5px] shadow-none first:rounded-s-[5px] last:rounded-e-[5px] focus-visible:z-10"
               variant="outline"
               size="icon"
-              aria-label="Next month"
+              aria-label={t("calendar_nextMonth")}
             >
               <ChevronRightIcon size={16} strokeWidth={2} aria-hidden="true" />
             </Button>
@@ -182,13 +184,13 @@ export function FullScreenCalendar({
       <div className="lg:flex lg:flex-auto lg:flex-col">
         {/* Week Days Header */}
         <div className="grid grid-cols-7 border-y border-x text-center text-xs font-semibold leading-6 text-muted-foreground">
-          <div className="border-r py-2.5">Sun</div>
-          <div className="border-r py-2.5">Mon</div>
-          <div className="border-r py-2.5">Tue</div>
-          <div className="border-r py-2.5">Wed</div>
-          <div className="border-r py-2.5">Thu</div>
-          <div className="border-r py-2.5">Fri</div>
-          <div className="py-2.5">Sat</div>
+          <div className="border-r py-2.5">{t("availability_sun")}</div>
+          <div className="border-r py-2.5">{t("availability_mon")}</div>
+          <div className="border-r py-2.5">{t("availability_tue")}</div>
+          <div className="border-r py-2.5">{t("availability_wed")}</div>
+          <div className="border-r py-2.5">{t("availability_thu")}</div>
+          <div className="border-r py-2.5">{t("availability_fri")}</div>
+          <div className="py-2.5">{t("availability_sat")}</div>
         </div>
 
         {/* Calendar Days */}
@@ -270,7 +272,7 @@ export function FullScreenCalendar({
                         })}
                         {dayGroup.events.length > 2 && (
                           <div className="text-xs text-muted-foreground pl-2">
-                            +{dayGroup.events.length - 2} more
+                            {t("calendar_more").replace("{n}", String(dayGroup.events.length - 2))}
                           </div>
                         )}
                       </div>

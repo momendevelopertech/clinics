@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Manrope } from "next/font/google";
+import { Cairo, IBM_Plex_Mono, Manrope } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { getDirAndLocale } from "@/lib/i18n/server";
+import { LocaleProvider } from "@/components/locale/locale-provider";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -12,6 +14,11 @@ const plexMono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
   weight: ["400", "500"],
   subsets: ["latin"],
+});
+
+const cairo = Cairo({
+  variable: "--font-cairo",
+  subsets: ["arabic", "latin"],
 });
 
 export const metadata: Metadata = {
@@ -33,37 +40,6 @@ export const metadata: Metadata = {
     "Prescription management",
   ],
   applicationName: "Healthcare CRM",
-  authors: [{ name: "pras75299" }],
-  creator: "pras75299",
-  publisher: "pras75299",
-  robots: {
-    index: true,
-    follow: true,
-  },
-  openGraph: {
-    title: "Healthcare CRM | Patient, Appointment & Billing Management",
-    description:
-      "A modern healthcare CRM to manage patients, appointments, billing, prescriptions, communications, and analytics.",
-    url: "https://pras75299-openhealthcrm.vercel.app/",
-    siteName: "Healthcare CRM",
-    locale: "en_US",
-    type: "website",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Healthcare CRM Dashboard",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Healthcare CRM | Patient, Appointment & Billing Management",
-    description:
-      "Manage patients, appointments, billing, prescriptions, and analytics with a modern healthcare CRM.",
-    images: ["/og-image.png"],
-  },
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
@@ -71,35 +47,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: "Healthcare CRM",
-    applicationCategory: "BusinessApplication",
-    operatingSystem: "Web",
-    description:
-      "A comprehensive healthcare CRM for managing patients, appointments, encounters, prescriptions, billing, inventory, communications, and analytics.",
-    url: "https://pras75299-openhealthcrm.vercel.app/",
-  };
+  const { lang, dir } = await getDirAndLocale();
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={lang} dir={dir} suppressHydrationWarning>
       <body
-        className={`${manrope.variable} ${plexMono.variable} min-h-screen antialiased`}
+        className={`${manrope.variable} ${plexMono.variable} ${cairo.variable} min-h-screen antialiased`}
         suppressHydrationWarning
       >
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
-        </ThemeProvider>
+        <LocaleProvider lang={lang}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            {children}
+          </ThemeProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

@@ -5,6 +5,7 @@ import { getOrgId, assertOrgScope } from "@/lib/org";
 import { getCurrentUserId, hasPermission } from "@/lib/auth";
 import { patientCreateSchema } from "@/lib/validations";
 import { logServerError } from "@/lib/safe-logger";
+import { checkPlanLimit } from "@/lib/plans";
 import {
   buildEncryptedEmergencyContactFields,
   buildEncryptedPatientFields,
@@ -104,6 +105,12 @@ export async function POST(request: Request) {
         { error: "Validation failed", details: parsed.error.flatten() },
         { status: 400 },
       );
+    }
+
+    // SaaS plan limiting: patients are a metered resource.
+    const limitCheck = await checkPlanLimit(orgId, "patients");
+    if (!limitCheck.allowed) {
+      return NextResponse.json({ error: limitCheck.reason }, { status: 403 });
     }
 
     const data = parsed.data;

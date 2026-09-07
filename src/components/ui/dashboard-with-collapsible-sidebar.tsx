@@ -42,57 +42,32 @@ import { useMedical } from "@/context/MedicalContext";
 import { getLocalNavigationTarget } from "@/lib/redirects";
 import { logClientError } from "@/lib/client-logger";
 import { toast } from "sonner";
+import { useLocale } from "@/components/locale/locale-provider";
+import { LanguageSwitcher } from "@/components/locale/language-switcher";
 
-const navGroups = [
-  {
-    label: "Overview",
-    items: [
-      { icon: Home, label: "Dashboard", href: "/" },
-      { icon: Users, label: "Patients", href: "/patients" },
-      { icon: Calendar, label: "Appointments", href: "/appointments" },
-      { icon: ClipboardList, label: "Encounters", href: "/encounters" },
-      { icon: Activity, label: "Analytics", href: "/analytics" },
-    ],
-  },
-  {
-    label: "Operations",
-    items: [
-      { icon: DollarSign, label: "Billing", href: "/billing" },
-      { icon: Wallet, label: "Payments", href: "/payments" },
-      { icon: FlaskConical, label: "Labs", href: "/labs" },
-      { icon: Package, label: "Inventory", href: "/inventory" },
-      { icon: Stethoscope, label: "Tasks", href: "/tasks" },
-    ],
-  },
-  {
-    label: "System",
-    items: [
-      { icon: Settings, label: "Settings", href: "/settings" },
-      { icon: HelpCircle, label: "Help", href: "/help" },
-    ],
-  },
+const routeTitleKeys: Array<[string, string]> = [
+  ["/", "nav_dashboard"],
+  ["/patients", "nav_patients"],
+  ["/appointments", "nav_appointments"],
+  ["/encounters", "nav_encounters"],
+  ["/analytics", "nav_analytics"],
+  ["/billing", "nav_billing"],
+  ["/payments", "nav_payments"],
+  ["/labs", "nav_labs"],
+  ["/inventory", "nav_inventory"],
+  ["/tasks", "nav_tasks"],
+  ["/settings", "nav_settings"],
+  ["/help", "nav_help"],
+  ["/plan", "nav_plan"],
+  ["/reports", "nav_reports"],
+  ["/availability", "nav_availability"],
+  ["/documents", "nav_documents"],
+  ["/communications", "nav_communications"],
+  ["/campaigns", "nav_campaigns"],
+  ["/audit", "nav_audit"],
+  ["/consents", "nav_consents"],
+  ["/waitlist", "nav_waitlist"],
 ];
-
-const routeTitles: Record<string, string> = {
-  "/": "Dashboard",
-  "/patients": "Patients",
-  "/appointments": "Appointments",
-  "/encounters": "Encounters",
-  "/analytics": "Analytics",
-  "/billing": "Billing",
-  "/payments": "Payments",
-  "/labs": "Labs",
-  "/inventory": "Inventory",
-  "/tasks": "Tasks",
-  "/settings": "Settings",
-  "/help": "Help",
-  "/documents": "Documents",
-  "/communications": "Communications",
-  "/campaigns": "Campaigns",
-  "/audit": "Audit Trail",
-  "/consents": "Consents",
-  "/waitlist": "Waitlist",
-};
 
 interface DashboardWithCollapsibleSidebarProps {
   children: React.ReactNode;
@@ -123,6 +98,41 @@ function CollapsibleSidebar({
   open: boolean;
   setOpen: (value: boolean) => void;
 }) {
+  const { t } = useLocale();
+
+  const navGroups = [
+    {
+      label: t("nav_overview"),
+      items: [
+        { icon: Home, label: t("nav_dashboard"), href: "/" },
+        { icon: Users, label: t("nav_patients"), href: "/patients" },
+        { icon: Calendar, label: t("nav_appointments"), href: "/appointments" },
+        { icon: ClipboardList, label: t("nav_encounters"), href: "/encounters" },
+        { icon: Activity, label: t("nav_analytics"), href: "/analytics" },
+      ],
+    },
+    {
+      label: t("nav_operations"),
+      items: [
+        { icon: DollarSign, label: t("nav_billing"), href: "/billing" },
+        { icon: Wallet, label: t("nav_payments"), href: "/payments" },
+        { icon: FlaskConical, label: t("nav_labs"), href: "/labs" },
+        { icon: Package, label: t("nav_inventory"), href: "/inventory" },
+        { icon: Stethoscope, label: t("nav_tasks"), href: "/tasks" },
+      ],
+    },
+    {
+      label: t("nav_system"),
+      items: [
+        { icon: ClipboardList, label: t("nav_plan"), href: "/plan" },
+        { icon: Activity, label: t("nav_reports"), href: "/reports" },
+        { icon: Calendar, label: t("nav_availability"), href: "/availability" },
+        { icon: Settings, label: t("nav_settings"), href: "/settings" },
+        { icon: HelpCircle, label: t("nav_help"), href: "/help" },
+      ],
+    },
+  ];
+
   return (
     <aside
       className={cn(
@@ -143,10 +153,10 @@ function CollapsibleSidebar({
         {open ? (
           <div className="ml-3 min-w-0">
             <p className="truncate text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
-              Care Desk
+              {t("shell_brandEyebrow")}
             </p>
             <p className="truncate text-lg font-semibold text-foreground">
-              HealthCRM
+              {t("appName")}
             </p>
           </div>
         ) : null}
@@ -156,11 +166,11 @@ function CollapsibleSidebar({
         {open ? (
           <>
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-              Clinic Pulse
+              {t("shell_clinicPulse")}
             </p>
             <p className="mt-2 text-2xl font-semibold text-foreground">94%</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Schedule confidence across today&apos;s care flow
+              {t("header_clinicPulse")}
             </p>
           </>
         ) : (
@@ -198,7 +208,7 @@ function CollapsibleSidebar({
         <div className="grid size-8 place-content-center rounded-[12px] bg-primary/10 text-primary">
           <ChevronRight className={cn("h-4 w-4 transition-transform", open ? "rotate-180" : "")} />
         </div>
-        {open ? <span className="ml-2 text-sm font-medium">Collapse</span> : null}
+        {open ? <span className="ml-2 text-sm font-medium">{t("header_collapse")}</span> : null}
       </Button>
     </aside>
   );
@@ -217,6 +227,7 @@ function NavLink({
       ? pathname === "/"
       : pathname === item.href || pathname.startsWith(`${item.href}/`);
   const Icon = item.icon;
+  const { t } = useLocale();
 
   return (
     <Link
@@ -247,7 +258,7 @@ function NavLink({
               isSelected ? "text-black/90" : "text-muted-foreground",
             )}
           >
-            {item.label === "Dashboard" ? "Practice snapshot" : "Open workspace"}
+            {item.href === "/" ? t("appTagline") : t("appSubtitle")}
           </p>
         </div>
       ) : null}
@@ -274,12 +285,15 @@ function DashboardHeader({
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { t } = useLocale();
 
   const title = useMemo(() => {
-    if (routeTitles[pathname]) return routeTitles[pathname];
-    const rootPath = `/${pathname.split("/").filter(Boolean)[0] ?? ""}`;
-    return routeTitles[rootPath] ?? "Workspace";
-  }, [pathname]);
+    const match = routeTitleKeys.find(([href]) => {
+      if (href === "/") return pathname === "/";
+      return pathname === href || pathname.startsWith(`${href}/`);
+    });
+    return t(match?.[1] ?? "appSubtitle");
+  }, [pathname, t]);
 
   const searchResults = useMemo(() => {
     const normalized = searchQuery.trim().toLowerCase();
@@ -305,7 +319,7 @@ function DashboardHeader({
         id: `patient-${patient.id}`,
         href: `/patients?q=${encodeURIComponent(`${patient.firstName} ${patient.lastName}`)}`,
         title: `${patient.firstName} ${patient.lastName}`,
-        subtitle: `Patient · ${patient.mrn}`,
+        subtitle: t("shell_searchPatient").replace("{mrn}", patient.mrn),
         icon: Users,
       }));
 
@@ -321,23 +335,26 @@ function DashboardHeader({
         id: `appointment-${appointment.id}`,
         href: `/appointments?q=${encodeURIComponent(appointment.type)}`,
         title: `${appointment.type} · ${appointment.date}`,
-        subtitle: `Appointment · ${appointment.provider}`,
+        subtitle: t("shell_searchAppointment").replace("{provider}", appointment.provider),
         icon: Calendar,
       }));
 
-    const workspaceMatches = Object.entries(routeTitles)
-      .filter(([href, value]) => href !== pathname && value.toLowerCase().includes(normalized))
+    const workspaceMatches = routeTitleKeys
+      .filter(
+        ([href, key]) =>
+          href !== pathname && t(key).toLowerCase().includes(normalized),
+      )
       .slice(0, 4)
-      .map(([href, value]) => ({
+      .map(([href, key]) => ({
         id: `route-${href}`,
         href,
-        title: value,
-        subtitle: "Workspace",
+        title: t(key),
+        subtitle: t("appSubtitle"),
         icon: Home,
       }));
 
     return [...patientMatches, ...appointmentMatches, ...workspaceMatches].slice(0, 6);
-  }, [appointments, pathname, patients, searchQuery]);
+  }, [appointments, pathname, patients, searchQuery, t]);
 
   const notifications = useMemo(() => {
     const today = new Date().toISOString().split("T")[0];
@@ -353,8 +370,8 @@ function DashboardHeader({
     if (todaysAppointments.length > 0) {
       items.push({
         id: "appointments-today",
-        title: `${todaysAppointments.length} appointments today`,
-        description: "Review today's live schedule and patient flow.",
+        title: `${todaysAppointments.length} ${t("shell_notifAppointmentsToday")}`,
+        description: t("shell_notifAppointmentsTodayDesc"),
         href: "/appointments",
         icon: Calendar,
       });
@@ -366,8 +383,8 @@ function DashboardHeader({
     if (confirmedAppointments.length > 0) {
       items.push({
         id: "confirmed-appointments",
-        title: `${confirmedAppointments.length} confirmed visits`,
-        description: "Patients are ready for intake or provider review.",
+        title: `${confirmedAppointments.length} ${t("shell_notifConfirmedVisits")}`,
+        description: t("shell_notifConfirmedVisitsDesc"),
         href: "/appointments",
         icon: Bell,
       });
@@ -376,8 +393,8 @@ function DashboardHeader({
     if (patients.length > 0) {
       items.push({
         id: "patients-directory",
-        title: `${patients.length} patients in directory`,
-        description: "Open the patient workspace to review records.",
+        title: `${patients.length} ${t("shell_notifPatientsInDir")}`,
+        description: t("shell_notifPatientsInDirDesc"),
         href: "/patients",
         icon: Users,
       });
@@ -385,14 +402,14 @@ function DashboardHeader({
 
     items.push({
       id: "labs-review",
-      title: "Lab review queue available",
-      description: "Check recent abnormal and pending results.",
+      title: t("shell_notifLabQueue"),
+      description: t("shell_notifLabQueueDesc"),
       href: "/labs",
       icon: Microscope,
     });
 
     return items.slice(0, 4);
-  }, [appointments, patients]);
+  }, [appointments, patients, t]);
 
   const unreadNotifications = notifications.length;
 
@@ -429,7 +446,7 @@ function DashboardHeader({
       router.refresh();
     } catch (error) {
       logClientError("Staff logout failed", error);
-      toast.error("Unable to log out. Please try again.");
+      toast.error(t("common_error"));
     } finally {
       setIsLoggingOut(false);
     }
@@ -444,13 +461,13 @@ function DashboardHeader({
             size="icon-sm"
             onClick={() => setOpen(!open)}
             className="rounded-[14px] md:hidden"
-            aria-label="Toggle navigation"
+            aria-label={t("header_toggleNav")}
           >
             <Menu className="h-4 w-4" />
           </Button>
           <div className="min-w-0">
             <p className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-              Operational Workspace
+              {t("appSubtitle")}
             </p>
             <h1 className="truncate text-2xl font-semibold text-foreground">
               {title}
@@ -470,9 +487,9 @@ function DashboardHeader({
                   onBlur={() => {
                     window.setTimeout(() => setIsSearchFocused(false), 120);
                   }}
-                  placeholder="Search patients, visits, claims"
+                  placeholder={t("header_searchPlaceholder")}
                   className="w-full bg-transparent text-foreground outline-none placeholder:text-muted-foreground"
-                  aria-label="Search patients, visits, claims"
+                  aria-label={t("header_searchPlaceholder")}
                 />
               </label>
             </form>
@@ -510,7 +527,7 @@ function DashboardHeader({
                 variant="ghost"
                 size="icon"
                 className="relative rounded-[16px] border border-white/55 bg-white/60 dark:border-white/6 dark:bg-white/[0.03]"
-                aria-label="Notifications"
+                aria-label={t("header_notifications")}
               >
                 <Bell className="h-4 w-4" />
                 {unreadNotifications > 0 ? (
@@ -521,11 +538,11 @@ function DashboardHeader({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80 rounded-[18px] p-2">
-              <DropdownMenuLabel className="px-3 py-2">Notifications</DropdownMenuLabel>
+              <DropdownMenuLabel className="px-3 py-2">{t("header_notifications")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {notifications.length === 0 ? (
                 <div className="px-3 py-4 text-sm text-muted-foreground">
-                  No new notifications.
+                  {t("header_noNotifications")}
                 </div>
               ) : (
                 notifications.map((notification) => (
@@ -553,13 +570,15 @@ function DashboardHeader({
             </DropdownMenuContent>
           </DropdownMenu>
 
+          <LanguageSwitcher compact />
+
           {mounted ? (
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="rounded-[16px] border border-white/55 bg-white/60 dark:border-white/6 dark:bg-white/[0.03]"
-              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              aria-label={theme === "dark" ? t("shell_themeLight") : t("shell_themeDark")}
             >
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
@@ -575,19 +594,19 @@ function DashboardHeader({
                   <User className="h-4 w-4" />
                 </div>
                 <div className="hidden text-left sm:block">
-                  <p className="text-sm font-medium text-foreground">Admin Doctor</p>
+                  <p className="text-sm font-medium text-foreground">{t("shell_accountStaff")}</p>
                   <p className="text-xs text-muted-foreground">Acme Clinic</p>
                 </div>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 rounded-[18px]">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("header_account")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/settings">Settings</Link>
+                <Link href="/settings">{t("nav_settings")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/help">Help</Link>
+                <Link href="/help">{t("nav_help")}</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -598,7 +617,7 @@ function DashboardHeader({
                 }}
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                {isLoggingOut ? "Logging out..." : "Log out"}
+                {isLoggingOut ? `${t("header_logout")}...` : t("header_logout")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

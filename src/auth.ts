@@ -75,9 +75,11 @@ async function authenticateUser(
   email: string,
   password: string,
 ): Promise<AuthenticatedUser | null> {
+  const normalizedEmail = email.trim().toLowerCase();
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { email: normalizedEmail },
     include: {
+      organization: true,
       userRoles: {
         include: {
           role: true,
@@ -87,6 +89,16 @@ async function authenticateUser(
   });
 
   if (!user || !user.organizationId || !isPasswordValid(user.passwordHash, password)) {
+    return null;
+  }
+
+  // Tenant lifecycle gating: pending/suspended orgs and inactive staff are blocked.
+  const orgStatus = user.organization?.status ?? "active";
+  if (orgStatus !== "active") {
+    return null;
+  }
+
+  if (user.active === false) {
     return null;
   }
 

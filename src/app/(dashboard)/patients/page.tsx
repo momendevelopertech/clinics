@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
+import Link from "next/link"
 import { Filter as FilterIcon, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,11 +22,20 @@ import { toast } from "sonner"
 import { useMedical, Patient } from "@/context/MedicalContext"
 import { PatientProfileSheet } from "@/components/patients/patient-profile-sheet"
 import { AddPatientDialog } from "@/components/patients/add-patient-dialog"
+import { useLocale } from "@/components/locale/locale-provider"
 
 function PatientsPageContent() {
   const searchParams = useSearchParams()
   const [searchQuery, setSearchQuery] = React.useState("")
   const { patients, refetchPatients } = useMedical()
+  const { t } = useLocale()
+
+  const statusLabel = (status: string) => {
+    const s = status.toLowerCase()
+    if (s === "active") return t("patients_active")
+    if (s === "inactive" || s === "archived") return t("patients_archived")
+    return status
+  }
 
   React.useEffect(() => {
     const query = searchParams.get("q") ?? ""
@@ -33,25 +43,25 @@ function PatientsPageContent() {
   }, [searchParams])
 
   const handleExport = () => {
-    toast.success("Exporting patient list to CSV...")
+    toast.success(t("patients_exporting"))
   }
 
   return (
     <div className="flex flex-col gap-6 w-full h-full">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">Patients</h2>
-          <p className="text-sm text-neutral-500">Manage your clinic&apos;s patients, medical histories, and health records.</p>
+          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">{t("patients_title")}</h2>
+          <p className="text-sm text-neutral-500">{t("patients_subtitle")}</p>
         </div>
-        
+
         <AddPatientDialog onSuccess={refetchPatients} />
       </div>
 
       <div className="bg-white dark:bg-neutral-900 border rounded-[5px] flex-1 shadow-sm flex flex-col pt-2">
          <div className="px-6 py-4 border-b flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-             <Input 
-                type="search" 
-                placeholder="Search MRN, Name, or Phone..."
+             <Input
+                type="search"
+                placeholder={t("patients_searchPlaceholder")}
                 className="w-full sm:max-w-sm"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -60,20 +70,20 @@ function PatientsPageContent() {
                  <DropdownMenu>
                    <DropdownMenuTrigger asChild>
                      <Button variant="outline" size="sm" className="flex items-center gap-2">
-                       <FilterIcon className="w-4 h-4" /> Filter
+                       <FilterIcon className="w-4 h-4" /> {t("patients_filter")}
                      </Button>
                    </DropdownMenuTrigger>
                    <DropdownMenuContent align="end" className="w-48">
-                     <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+                     <DropdownMenuLabel>{t("patients_filterByStatus")}</DropdownMenuLabel>
                      <DropdownMenuSeparator />
-                     <DropdownMenuCheckboxItem checked>Active</DropdownMenuCheckboxItem>
-                     <DropdownMenuCheckboxItem>Inactive</DropdownMenuCheckboxItem>
-                     <DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
+                     <DropdownMenuCheckboxItem checked>{t("patients_active")}</DropdownMenuCheckboxItem>
+                     <DropdownMenuCheckboxItem>{t("patients_inactive")}</DropdownMenuCheckboxItem>
+                     <DropdownMenuCheckboxItem>{t("patients_archived")}</DropdownMenuCheckboxItem>
                    </DropdownMenuContent>
                  </DropdownMenu>
 
                  <Button variant="outline" size="sm" onClick={handleExport} className="flex items-center gap-2">
-                   <Download className="w-4 h-4" /> Export
+                   <Download className="w-4 h-4" /> {t("patients_export")}
                  </Button>
              </div>
          </div>
@@ -81,12 +91,12 @@ function PatientsPageContent() {
              <table className="w-full text-sm text-left">
                  <thead className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 font-medium">
                      <tr>
-                         <th className="px-6 py-4 border-b">Patient</th>
-                         <th className="px-6 py-4 border-b">MRN</th>
-                         <th className="px-6 py-4 border-b">Status</th>
-                         <th className="px-6 py-4 border-b">Contact</th>
-                         <th className="px-6 py-4 border-b hidden md:table-cell">Reg. Date</th>
-                         <th className="px-6 py-4 border-b">Actions</th>
+                         <th className="px-6 py-4 border-b">{t("patients_colPatient")}</th>
+                         <th className="px-6 py-4 border-b">{t("patients_colMrn")}</th>
+                         <th className="px-6 py-4 border-b">{t("patients_colStatus")}</th>
+                         <th className="px-6 py-4 border-b">{t("patients_colContact")}</th>
+                         <th className="px-6 py-4 border-b hidden md:table-cell">{t("patients_colRegDate")}</th>
+                         <th className="px-6 py-4 border-b">{t("common_actions")}</th>
                      </tr>
                  </thead>
                  <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
@@ -110,7 +120,7 @@ function PatientsPageContent() {
                                    <div>
                                      <p className="font-medium">{patient.firstName} {patient.lastName}</p>
                                      <p className="text-xs text-neutral-500">
-                                       DOB: {new Date(patient.dob).toLocaleDateString()}
+                                       {t("patients_dob")}: {new Date(patient.dob).toLocaleDateString()}
                                      </p>
                                    </div>
                                 </div>
@@ -118,7 +128,7 @@ function PatientsPageContent() {
                              <td className="px-6 py-4 font-mono text-xs text-neutral-500">{patient.mrn}</td>
                              <td className="px-6 py-4">
                                  <span className="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-[5px] text-xs font-medium">
-                                     {patient.status}
+                                     {statusLabel(patient.status)}
                                  </span>
                              </td>
                              <td className="px-6 py-4">
@@ -126,14 +136,22 @@ function PatientsPageContent() {
                                <p className="text-xs text-neutral-500">{patient.email}</p>
                              </td>
                              <td className="px-6 py-4 text-neutral-500 hidden md:table-cell">{new Date(patient.regDate).toLocaleDateString()}</td>
-                             <td className="px-6 py-4">
-                               <Sheet>
-                                 <SheetTrigger asChild>
-                                   <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0 h-auto">Manage</Button>
-                                 </SheetTrigger>
-                                 <PatientProfileSheet patient={patient} />
-                               </Sheet>
-                             </td>
+<td className="px-6 py-4">
+                                <div className="flex items-center gap-3">
+                                  <Sheet>
+                                    <SheetTrigger asChild>
+                                      <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0 h-auto">{t("patients_manage")}</Button>
+                                    </SheetTrigger>
+                                    <PatientProfileSheet patient={patient} />
+                                  </Sheet>
+                                  <Link
+                                    href={`/patients/${patient.id}`}
+                                    className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+                                  >
+                                    {t("patients_timeline")}
+                                  </Link>
+                                </div>
+                              </td>
                          </tr>
                      ))}
                  </tbody>

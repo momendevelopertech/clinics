@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import { AddToWaitlistDialog } from "@/components/waitlist/add-to-waitlist-dialog";
 import { logClientError } from "@/lib/client-logger";
+import { useLocale } from "@/components/locale/locale-provider";
 
 interface WaitlistEntry {
   id: string;
@@ -34,6 +35,7 @@ interface WaitlistEntry {
 }
 
 export default function WaitlistPage() {
+  const { t } = useLocale();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [entries, setEntries] = React.useState<WaitlistEntry[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -51,7 +53,7 @@ export default function WaitlistPage() {
       const data = await response.json();
       setEntries(data);
     } catch (error) {
-      toast.error("Failed to load waitlist");
+      toast.error(t("wl_loadError"));
       logClientError("Waitlist fetch failed", error);
     } finally {
       setLoading(false);
@@ -80,7 +82,7 @@ export default function WaitlistPage() {
     a.download = `waitlist-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
-    toast.success("Waitlist exported successfully");
+    toast.success(t("wl_exportSuccess"));
   };
 
   const filteredEntries = entries.filter((entry) => {
@@ -93,6 +95,17 @@ export default function WaitlistPage() {
 
     return matchesSearch && matchesStatus;
   });
+
+  const statusLabel = (status: string) => {
+    const map: Record<string, string> = {
+      Waiting: t("wl_waiting"),
+      Contacted: t("wl_contacted"),
+      Scheduled: t("wl_scheduled"),
+      Cancelled: t("wl_cancelled"),
+    };
+    const key = status.charAt(0).toUpperCase() + status.slice(1);
+    return map[key] ?? status;
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -115,10 +128,10 @@ export default function WaitlistPage() {
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
             <Clock className="w-6 h-6 inline mr-2" />
-            Waitlist
+            {t("wl_title")}
           </h2>
           <p className="text-sm text-neutral-500">
-            Manage appointments waitlist and preferred scheduling.
+            {t("wl_subtitle")}
           </p>
         </div>
 
@@ -129,7 +142,7 @@ export default function WaitlistPage() {
         <div className="px-6 py-4 border-b flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <Input
             type="search"
-            placeholder="Search patient name, email, or phone..."
+            placeholder={t("wl_search")}
             className="w-full sm:max-w-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -142,17 +155,17 @@ export default function WaitlistPage() {
                   size="sm"
                   className="flex items-center gap-2"
                 >
-                  <FilterIcon className="w-4 h-4" /> Status
+                  <FilterIcon className="w-4 h-4" /> {t("common_status")}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+                <DropdownMenuLabel>{t("wl_filterByStatus")}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
                   checked={!statusFilter}
                   onCheckedChange={() => setStatusFilter(null)}
                 >
-                  All
+                  {t("common_all")}
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={statusFilter === "waiting"}
@@ -162,7 +175,7 @@ export default function WaitlistPage() {
                     )
                   }
                 >
-                  Waiting
+                  {t("wl_waiting")}
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={statusFilter === "contacted"}
@@ -172,7 +185,7 @@ export default function WaitlistPage() {
                     )
                   }
                 >
-                  Contacted
+                  {t("wl_contacted")}
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={statusFilter === "scheduled"}
@@ -182,7 +195,7 @@ export default function WaitlistPage() {
                     )
                   }
                 >
-                  Scheduled
+                  {t("wl_scheduled")}
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={statusFilter === "cancelled"}
@@ -192,7 +205,7 @@ export default function WaitlistPage() {
                     )
                   }
                 >
-                  Cancelled
+                  {t("wl_cancelled")}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -203,7 +216,7 @@ export default function WaitlistPage() {
               onClick={handleExport}
               className="flex items-center gap-2"
             >
-              <Download className="w-4 h-4" /> Export
+              <Download className="w-4 h-4" /> {t("wl_export")}
             </Button>
           </div>
         </div>
@@ -211,25 +224,25 @@ export default function WaitlistPage() {
         <div className="p-0 overflow-x-auto flex-1">
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <p className="text-neutral-500">Loading waitlist...</p>
+              <p className="text-neutral-500">{t("wl_loading")}</p>
             </div>
           ) : filteredEntries.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-center">
               <Calendar className="w-12 h-12 text-neutral-300 mb-4" />
-              <p className="text-neutral-600">No waitlist entries found</p>
+              <p className="text-neutral-600">{t("wl_empty")}</p>
             </div>
           ) : (
             <table className="w-full text-sm text-left">
               <thead className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 font-medium">
                 <tr>
-                  <th className="px-6 py-4 border-b">Patient</th>
-                  <th className="px-6 py-4 border-b">Contact</th>
-                  <th className="px-6 py-4 border-b">Preferred Date</th>
-                  <th className="px-6 py-4 border-b">Status</th>
+                  <th className="px-6 py-4 border-b">{t("wl_colPatient")}</th>
+                  <th className="px-6 py-4 border-b">{t("wl_colContact")}</th>
+                  <th className="px-6 py-4 border-b">{t("wl_colPreferredDate")}</th>
+                  <th className="px-6 py-4 border-b">{t("wl_colStatus")}</th>
                   <th className="px-6 py-4 border-b hidden md:table-cell">
-                    Added
+                    {t("wl_colAdded")}
                   </th>
-                  <th className="px-6 py-4 border-b">Actions</th>
+                  <th className="px-6 py-4 border-b">{t("common_actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
@@ -272,7 +285,7 @@ export default function WaitlistPage() {
                       <span
                         className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(entry.status)}`}
                       >
-                        {entry.status}
+                        {statusLabel(entry.status)}
                       </span>
                     </td>
                     <td className="px-6 py-4 hidden md:table-cell">
@@ -280,7 +293,7 @@ export default function WaitlistPage() {
                     </td>
                     <td className="px-6 py-4">
                       <Button variant="ghost" size="sm">
-                        View
+                        {t("wl_view")}
                       </Button>
                     </td>
                   </tr>

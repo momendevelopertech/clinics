@@ -5,6 +5,14 @@ import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { logServerError } from "@/lib/safe-logger";
+import {
+  hasAppointmentConflict,
+  isDoctorAvailable,
+  nextWalkInToken,
+} from "@/lib/appointments";
+import { checkPlanLimit } from "@/lib/plans";
+
+const ACTIVE_STATUSES = ["scheduled", "confirmed", "arrived", "in_progress"];
 
 export async function GET() {
   try {
@@ -54,6 +62,8 @@ export async function GET() {
         duration: `${durationMins} min`,
         type: a.appointmentType ?? a.notes ?? "Standard",
         status: a.status,
+        tokenNumber: a.tokenNumber,
+        isWalkIn: a.isWalkIn,
       };
     });
 
@@ -89,6 +99,7 @@ export async function POST(request: Request) {
       status,
       type,
       idempotencyKey,
+      isWalkIn,
     } = body;
 
     if (!patientId) {
@@ -117,10 +128,18 @@ export async function POST(request: Request) {
             duration: "30 min",
             type: existing.appointmentType ?? existing.notes ?? "Standard",
             status: existing.status,
+            tokenNumber: existing.tokenNumber,
+            isWalkIn: existing.isWalkIn,
           },
           { status: 200 },
         );
       }
+    }
+
+    // SaaS plan limiting: appointments are a metered resource.
+    const limitCheck = await checkPlanLimit(orgId, "appointments");
+    if (!limitCheck.allowed) {
+      return NextResponse.json({ error: limitCheck.reason }, { status: 403 });
     }
 
     let provider = providerId
@@ -155,6 +174,17 @@ export async function POST(request: Request) {
       );
     }
 
+    if (
+      !Number.isFinite(startDateTime.getTime()) ||
+      !Number.isFinite(endDateTime.getTime()) ||
+      endDateTime <= startDateTime
+    ) {
+      return NextResponse.json(
+        { error: "Invalid appointment time range" },
+        { status: 400 },
+      );
+    }
+
     const patient = await prisma.patient.findFirst({
       where: { id: patientId, organizationId: orgId },
     });
@@ -162,53 +192,99 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
 
-    const newAppointment = await prisma.appointment.create({
-      data: {
-        organizationId: orgId,
-        patientId,
-        providerId: provider.id,
-        roomId: roomId || null,
-        startTime: startDateTime,
-        endTime: endDateTime,
-        status: status ?? "scheduled",
-        appointmentType: type ?? null,
-        notes: type ?? null,
-        idempotencyKey: idempotencyKey ?? null,
-      },
-      include: { provider: true },
+    // Doctor availability windows (regular schedule pattern).
+    const availability = isDoctorAvailable(provider, startDateTime);
+    if (!availability.available) {
+      return NextResponse.json(
+        { error: "Doctor is not available at this time." },
+        { status: 400 },
+      );
+    }
+
+    const isWalkInFlag = isWalkIn === true;
+    const appointmentStatus = status ?? (isWalkInFlag ? "arrived" : "scheduled");
+
+    // Transactional double-booking protection: the conflict check runs inside
+    // the request transaction, backstopped by the partial unique index
+    // `appointment_active_slot_unique` on (providerId, startTime).
+    const newAppointment = await prisma.$transaction(async (tx) => {
+      const conflict = await hasAppointmentConflict(tx, provider.id, startDateTime, endDateTime);
+      if (conflict) {
+        return { conflict: true as const };
+      }
+
+      const tokenNumber = isWalkInFlag
+        ? await nextWalkInToken(tx, orgId, startDateTime)
+        : null;
+
+      const created = await tx.appointment.create({
+        data: {
+          organizationId: orgId,
+          patientId,
+          providerId: provider.id,
+          roomId: roomId || null,
+          startTime: startDateTime,
+          endTime: endDateTime,
+          status: appointmentStatus,
+          appointmentType: type ?? null,
+          notes: type ?? null,
+          idempotencyKey: idempotencyKey ?? null,
+          isWalkIn: isWalkInFlag,
+          tokenNumber,
+        },
+        include: { provider: true },
+      });
+
+      return { conflict: false as const, created };
     });
+
+    if (newAppointment.conflict) {
+      return NextResponse.json(
+        {
+          error:
+            "This time slot conflicts with an existing appointment for this doctor.",
+        },
+        { status: 409 },
+      );
+    }
+
+    const appointment = newAppointment.created!;
 
     await createAuditLog({
       organizationId: orgId,
       userId,
       action: "CREATE",
       entityType: "Appointment",
-      entityId: newAppointment.id,
+      entityId: appointment.id,
       afterState: JSON.stringify({
-        patientId: newAppointment.patientId,
-        providerId: newAppointment.providerId,
-        roomId: newAppointment.roomId,
-        startTime: newAppointment.startTime,
-        endTime: newAppointment.endTime,
-        status: newAppointment.status,
-        appointmentType: newAppointment.appointmentType,
+        patientId: appointment.patientId,
+        providerId: appointment.providerId,
+        roomId: appointment.roomId,
+        startTime: appointment.startTime,
+        endTime: appointment.endTime,
+        status: appointment.status,
+        appointmentType: appointment.appointmentType,
+        isWalkIn: appointment.isWalkIn,
+        tokenNumber: appointment.tokenNumber,
       }),
     });
 
     return NextResponse.json(
       {
-        id: newAppointment.id,
-        patientId: newAppointment.patientId,
-        provider: newAppointment.provider?.name ?? "Unknown Provider",
-        date: newAppointment.startTime.toISOString().split("T")[0],
-        time: newAppointment.startTime.toLocaleTimeString([], {
+        id: appointment.id,
+        patientId: appointment.patientId,
+        provider: appointment.provider?.name ?? "Unknown Provider",
+        date: appointment.startTime.toISOString().split("T")[0],
+        time: appointment.startTime.toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         }),
-        duration: `${Math.round((newAppointment.endTime.getTime() - newAppointment.startTime.getTime()) / 60000)} min`,
+        duration: `${Math.round((appointment.endTime.getTime() - appointment.startTime.getTime()) / 60000)} min`,
         type:
-          newAppointment.appointmentType ?? newAppointment.notes ?? "Standard",
-        status: newAppointment.status,
+          appointment.appointmentType ?? appointment.notes ?? "Standard",
+        status: appointment.status,
+        tokenNumber: appointment.tokenNumber,
+        isWalkIn: appointment.isWalkIn,
       },
       { status: 201 },
     );
@@ -251,17 +327,41 @@ export async function PATCH(request: Request) {
       );
     }
 
+    const isCancellation = updates.status === "cancelled" || updates.status === "no_show";
+
     const updateData: Record<string, unknown> = {};
     if (updates.status) updateData.status = updates.status;
+    if (updates.cancellationReason) updateData.cancellationReason = updates.cancellationReason;
+    if (updates.roomId !== undefined) updateData.roomId = updates.roomId || null;
+
+    let nextStart = existing.startTime;
+    let nextEnd = existing.endTime;
+    let rescheduling = false;
     if (updates.date || updates.time) {
       const dateStr =
         updates.date ?? existing.startTime.toISOString().split("T")[0];
       const timeStr =
         updates.time ?? existing.startTime.toTimeString().substring(0, 5);
-      updateData.startTime = new Date(`${dateStr}T${timeStr}`);
-      updateData.endTime = new Date(
-        (updateData.startTime as Date).getTime() + 30 * 60000,
-      );
+      nextStart = new Date(`${dateStr}T${timeStr}`);
+      nextEnd = new Date(nextStart.getTime() + 30 * 60000);
+      updateData.startTime = nextStart;
+      updateData.endTime = nextEnd;
+      rescheduling = true;
+    }
+
+    if (rescheduling && !isCancellation) {
+      const conflict = await prisma.$transaction(async (tx) => {
+        return hasAppointmentConflict(tx, existing.providerId, nextStart, nextEnd, existing.id);
+      });
+      if (conflict) {
+        return NextResponse.json(
+          {
+            error:
+              "This time slot conflicts with an existing appointment for this doctor.",
+          },
+          { status: 409 },
+        );
+      }
     }
 
     const updated = await prisma.appointment.update({
@@ -285,6 +385,7 @@ export async function PATCH(request: Request) {
         startTime: updated.startTime,
         endTime: updated.endTime,
         status: updated.status,
+        cancellationReason: updated.cancellationReason,
       }),
     });
 
@@ -300,6 +401,8 @@ export async function PATCH(request: Request) {
       duration: "30 min",
       type: updated.appointmentType ?? updated.notes ?? "Standard",
       status: updated.status,
+      tokenNumber: updated.tokenNumber,
+      isWalkIn: updated.isWalkIn,
     });
   } catch (error) {
     logServerError("Error updating appointment", error);
@@ -309,3 +412,5 @@ export async function PATCH(request: Request) {
     );
   }
 }
+
+export const ACTIVE_APPOINTMENT_STATUSES = ACTIVE_STATUSES;

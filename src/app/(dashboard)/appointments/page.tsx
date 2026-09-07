@@ -29,6 +29,7 @@ import {
   FullScreenCalendar,
   type CalendarEvent,
 } from "@/components/ui/fullscreen-calendar"
+import { useLocale } from "@/components/locale/locale-provider"
 import { cn } from "@/lib/utils"
 
 function toStatusValue(s: Appointment["status"]): string {
@@ -72,6 +73,8 @@ function EditAppointmentDialog({
     return [current, ...DEFAULT_PROVIDERS]
   }, [apt.provider])
 
+  const { t } = useLocale()
+
   const [provider, setProvider] = React.useState(apt.provider?.trim() || DEFAULT_PROVIDERS[0])
   const [date, setDate] = React.useState(apt.date)
   const [time, setTime] = React.useState(toTimeValue(apt.time))
@@ -94,17 +97,17 @@ function EditAppointmentDialog({
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Edit Appointment</DialogTitle>
+            <DialogTitle>{t("appts_editTitle")}</DialogTitle>
             <DialogDescription>
-              Update details for {patientName}&apos;s appointment.
+              {t("appts_editDesc").replace("{name}", patientName)}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="edit-provider">Provider</Label>
+              <Label htmlFor="edit-provider">{t("appts_provider")}</Label>
               <Select value={provider || providerOptions[0]} onValueChange={setProvider}>
                 <SelectTrigger id="edit-provider" className="w-full">
-                  <SelectValue placeholder="Select a provider" />
+                  <SelectValue placeholder={t("appts_selectProvider")} />
                 </SelectTrigger>
                 <SelectContent>
                   {providerOptions.map((p) => (
@@ -117,32 +120,32 @@ function EditAppointmentDialog({
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="edit-date">Date</Label>
+                <Label htmlFor="edit-date">{t("appts_date")}</Label>
                 <Input id="edit-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="edit-time">Time</Label>
+                <Label htmlFor="edit-time">{t("appts_time")}</Label>
                 <Input id="edit-time" type="time" value={time} onChange={(e) => setTime(e.target.value)} required />
               </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-status">Status</Label>
+              <Label htmlFor="edit-status">{t("appts_status")}</Label>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger id="edit-status">
-                  <SelectValue placeholder="Appointment status" />
+                  <SelectValue placeholder={t("appts_apptStatus")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="scheduled">Scheduled</SelectItem>
-                  <SelectItem value="confirmed">Confirmed</SelectItem>
-                  <SelectItem value="waiting">In Waiting Room</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="scheduled">{t("appts_statusScheduled")}</SelectItem>
+                  <SelectItem value="confirmed">{t("appts_statusConfirmed")}</SelectItem>
+                  <SelectItem value="waiting">{t("appts_statusWaitingRoom")}</SelectItem>
+                  <SelectItem value="pending">{t("appts_statusPending")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
-            <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white">Save Changes</Button>
+            <Button type="button" variant="outline" onClick={onCancel}>{t("common_cancel")}</Button>
+            <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white">{t("appts_saveChanges")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -153,9 +156,33 @@ function EditAppointmentDialog({
 function AppointmentsPageContent() {
   const searchParams = useSearchParams()
   const { appointments, patients, addAppointment, updateAppointment } = useMedical()
+  const { t } = useLocale()
   const [searchQuery, setSearchQuery] = React.useState("")
   const [view, setView] = React.useState<"list" | "calendar">("list")
   const [editAptId, setEditAptId] = React.useState<string | null>(null)
+
+  const statusLabel = (s: string) => {
+    const map: Record<string, string> = {
+      "Scheduled": t("appts_statusScheduled"),
+      "Confirmed": t("appts_statusConfirmed"),
+      "Pending": t("appts_statusPending"),
+      "Walk-in": t("appts_walkIn"),
+      "Cancelled": t("appts_cancel"),
+      "In Waiting Room": t("appts_statusWaitingRoom"),
+    }
+    return map[s] ?? s
+  }
+
+  const apptTypeLabel = (s: string) => {
+    const map: Record<string, string> = {
+      consultation: t("apptType_consultation"),
+      "Follow-up": t("apptType_followup"),
+      "New Patient": t("apptType_newPatient"),
+      Procedure: t("apptType_procedure"),
+      Telehealth: t("apptType_telehealth"),
+    }
+    return map[s] ?? s
+  }
 
   React.useEffect(() => {
     const query = searchParams.get("q") ?? ""
@@ -178,7 +205,7 @@ function AppointmentsPageContent() {
       time: data.time,
       status: statusMap[data.status] || "Pending",
     })
-    toast.success("Appointment updated successfully!")
+    toast.success(t("appts_updated"))
   }
 
   // Map appointments to CalendarEvent for 3D calendar (exclude cancelled)
@@ -189,7 +216,7 @@ function AppointmentsPageContent() {
         const patient = patients.find((p) => p.id === apt.patientId)
         const patientName = patient
           ? `${patient.firstName} ${patient.lastName}`
-          : "Unknown Patient"
+          : t("appts_unknownPatient")
         const apiApt = apt as { startTime?: string }
         const dateIso = apiApt.startTime
           ? apiApt.startTime
@@ -200,7 +227,7 @@ function AppointmentsPageContent() {
           date: dateIso,
         }
       })
-  }, [appointments, patients])
+  }, [appointments, patients, t])
 
   const filteredAppointments = appointments.filter((appointment) => {
     const normalized = searchQuery.trim().toLowerCase()
@@ -227,8 +254,8 @@ function AppointmentsPageContent() {
     <div className="flex flex-col gap-6 w-full h-full">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">Appointments</h2>
-          <p className="text-sm text-neutral-500">Manage schedules, book appointments, and view daily calendars.</p>
+          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">{t("appts_title")}</h2>
+          <p className="text-sm text-neutral-500">{t("appts_subtitle")}</p>
         </div>
         
         <BookAppointmentDialog
@@ -253,12 +280,12 @@ function AppointmentsPageContent() {
                <div className="flex items-center gap-2 text-lg font-medium">
                  <CalendarIcon className="w-5 h-5 text-neutral-500" />
                  {view === "list"
-                   ? "Today, Oct 24"
-                   : "Month view"}
+                   ? t("appts_todayList")
+                   : t("appts_monthView")}
                </div>
                <Input
                  type="search"
-                 placeholder="Search appointments, provider, or patient..."
+                 placeholder={t("appts_searchPlaceholder")}
                  className="w-full sm:max-w-sm"
                  value={searchQuery}
                  onChange={(e) => setSearchQuery(e.target.value)}
@@ -267,9 +294,9 @@ function AppointmentsPageContent() {
              <div className="flex gap-2">
                  <Button variant="outline" size="sm" className="flex items-center">
                      <Filter className="w-4 h-4 mr-2" />
-                     All Providers
+                     {t("appts_allProviders")}
                  </Button>
-                 <div className="bg-neutral-100 dark:bg-neutral-800 rounded-[5px] p-1 flex" role="tablist" aria-label="View mode">
+                 <div className="bg-neutral-100 dark:bg-neutral-800 rounded-[5px] p-1 flex" role="tablist" aria-label={t("appts_viewMode")}>
                      <button
                        role="tab"
                        aria-selected={view === "list"}
@@ -282,7 +309,7 @@ function AppointmentsPageContent() {
                        )}
                      >
                        <List className="w-3.5 h-3.5" />
-                       List
+                       {t("appts_list")}
                      </button>
                      <button
                        role="tab"
@@ -296,7 +323,7 @@ function AppointmentsPageContent() {
                        )}
                      >
                        <CalendarDays className="w-3.5 h-3.5" />
-                       Calendar
+                       {t("appts_calendar")}
                      </button>
                  </div>
              </div>
@@ -313,50 +340,65 @@ function AppointmentsPageContent() {
          <div className="p-0 overflow-x-auto flex-1">
              <table className="w-full text-sm text-left">
                  <thead className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 font-medium">
-                     <tr>
-                         <th className="px-6 py-4 border-b">Time</th>
-                         <th className="px-6 py-4 border-b">Patient</th>
-                         <th className="px-6 py-4 border-b">Type</th>
-                         <th className="px-6 py-4 border-b hidden md:table-cell">Provider</th>
-                         <th className="px-6 py-4 border-b">Status</th>
-                         <th className="px-6 py-4 border-b">Actions</th>
-                     </tr>
+<tr>
+                          <th className="px-6 py-4 border-b">{t("appts_colTime")}</th>
+                          <th className="px-6 py-4 border-b">{t("appts_colPatient")}</th>
+                          <th className="px-6 py-4 border-b">{t("appts_colType")}</th>
+                          <th className="px-6 py-4 border-b hidden md:table-cell">{t("appts_colProvider")}</th>
+                          <th className="px-6 py-4 border-b">{t("appts_status")}</th>
+                          <th className="px-6 py-4 border-b">{t("common_actions")}</th>
+                      </tr>
                  </thead>
                  <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
                      {filteredAppointments.map((apt: Appointment) => {
                          const patient = patients.find(p => p.id === apt.patientId);
-                         const patientName = patient ? `${patient.firstName} ${patient.lastName}` : "Unknown Patient";
+                         const patientName = patient ? `${patient.firstName} ${patient.lastName}` : t("appts_unknownPatient");
                          return (
                          <tr key={apt.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition">
-                             <td className="px-6 py-4">
-                                <div className="font-medium">{apt.time}</div>
-                                <div className="text-xs text-neutral-500 flex items-center mt-1">
-                                    <Clock className="w-3 h-3 mr-1" /> {apt.duration}
-                                </div>
-                             </td>
-                             <td className="px-6 py-4 font-medium">{patientName}</td>
-                             <td className="px-6 py-4">{apt.type}</td>
-                             <td className="px-6 py-4 hidden md:table-cell text-neutral-500">{apt.provider}</td>
-                             <td className="px-6 py-4">
-                               <span className={`px-2 py-1 rounded-[5px] text-xs font-medium ${
-                                    apt.status === "Confirmed" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
-                                    apt.status === "In Waiting Room" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" :
-                                    apt.status === "Scheduled" ? "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300" :
-                                    "bg-neutral-100 text-neutral-500"
-                               }`}>
-                                    {apt.status}
-                               </span>
-                             </td>
-                             <td className="px-6 py-4">
-                                <Button
-                                  variant="link"
-                                  className="text-indigo-600 hover:text-indigo-700 p-0 h-auto mr-3"
-                                  onClick={() => setEditAptId(apt.id)}
-                                >
-                                  Edit
-                                </Button>
-                                <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { updateAppointment(apt.id, { status: "Cancelled" }); toast.success("Appointment cancelled!"); }}>Cancel</Button>
-                             </td>
+<td className="px-6 py-4">
+                                 <div className="font-medium">{apt.time}</div>
+                                 <div className="text-xs text-neutral-500 flex items-center mt-1">
+                                     <Clock className="w-3 h-3 mr-1" /> {apt.duration}
+                                 </div>
+{apt.tokenNumber ? (
+                                   <span className="mt-1 inline-flex items-center gap-1 rounded-[5px] bg-violet-100 px-2 py-0.5 text-[11px] font-bold text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
+                                     {apt.isWalkIn ? t("appts_walkIn") : t("appts_queue")} · {apt.tokenNumber}
+                                   </span>
+                                 ) : null}
+                               </td>
+                              <td className="px-6 py-4 font-medium">{patientName}</td>
+                              <td className="px-6 py-4">{apptTypeLabel(apt.type)}</td>
+                              <td className="px-6 py-4 hidden md:table-cell text-neutral-500">{apt.provider}</td>
+                              <td className="px-6 py-4">
+                                <span className={`px-2 py-1 rounded-[5px] text-xs font-medium ${
+                                     apt.status === "Confirmed" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
+                                     apt.status === "In Waiting Room" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" :
+                                     apt.status === "Scheduled" ? "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300" :
+                                     "bg-neutral-100 text-neutral-500"
+                                }`}>
+                                     {statusLabel(apt.status)}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4">
+                                 <Button
+                                   variant="link"
+                                   className="text-indigo-600 hover:text-indigo-700 p-0 h-auto mr-3"
+                                   onClick={() => setEditAptId(apt.id)}
+                                 >
+                                   {t("appts_edit")}
+                                 </Button>
+                                 <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}>{t("appts_cancel")}</Button>
+                                 {!apt.isWalkIn && apt.status !== "Cancelled" ? (
+                                   <Button variant="link" className="text-violet-600 hover:text-violet-700 p-0 h-auto" onClick={() => {
+                                     updateAppointment(apt.id, {
+                                       status: "In Waiting Room",
+                                       isWalkIn: true,
+                                       tokenNumber: apt.tokenNumber ?? `T-${String((appointments.filter((a) => a.tokenNumber).length + 1)).padStart(2, "0")}`,
+                                     });
+                                     toast.success(t("appts_markedWalkIn"));
+                                   }}>{t("appts_walkIn")}</Button>
+                                 ) : null}
+                              </td>
                          </tr>
                      )})}
                  </tbody>
@@ -369,7 +411,7 @@ function AppointmentsPageContent() {
         const apt = appointments.find((a) => a.id === editAptId)
         if (!apt) return null
         const patient = patients.find((p) => p.id === apt.patientId)
-        const patientName = patient ? `${patient.firstName} ${patient.lastName}` : "Unknown Patient"
+        const patientName = patient ? `${patient.firstName} ${patient.lastName}` : t("appts_unknownPatient")
         return (
           <EditAppointmentDialog
             key={apt.id}

@@ -17,8 +17,10 @@ import { useMedical, Patient } from "@/context/MedicalContext";
 import { PatientProfileSheet } from "@/components/patients/patient-profile-sheet";
 import { AddPatientDialog } from "@/components/patients/add-patient-dialog";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/components/locale/locale-provider";
 
 export default function DashboardPage() {
+  const { t, lang } = useLocale();
   const { patients, appointments, refetchPatients } = useMedical();
 
   const [today] = React.useState(() => new Date().toISOString().split("T")[0]);
@@ -54,28 +56,28 @@ export default function DashboardPage() {
 
   const stats = [
     {
-      name: "Total Patients",
+      name: t("dash_totalPatients"),
       value: patients.length.toLocaleString(),
       change: "+12%",
       icon: Users,
       color: "cyan",
     },
     {
-      name: "Appointments Today",
+      name: t("dash_appointmentsToday"),
       value: appointmentsToday.length.toString(),
       change: "+4%",
       icon: Calendar,
       color: "emerald",
     },
     {
-      name: "Active Encounters",
+      name: t("dash_activeEncounters"),
       value: activeEncounters.toString(),
       change: "+2%",
       icon: Activity,
       color: "violet",
     },
     {
-      name: "Avg Wait Time",
+      name: t("dash_avgWait"),
       value: "14 min",
       change: "-2%",
       icon: Clock,
@@ -84,10 +86,16 @@ export default function DashboardPage() {
   ];
 
   const quickStats = [
-    { label: "Patient Retention", value: "92%", pct: 92, color: "cyan" },
-    { label: "No-Show Rate", value: "4.2%", pct: 4.2, color: "amber" },
-    { label: "Visit Frequency", value: "8.7/mo", pct: 87, color: "emerald" },
+    { label: t("dash_patientRetention"), value: "92%", pct: 92, color: "cyan" },
+    { label: t("dash_noShowRate"), value: "4.2%", pct: 4.2, color: "amber" },
+    { label: t("dash_visitFrequency"), value: "8.7/mo", pct: 87, color: "emerald" },
   ];
+
+  const timeAgo = (minutes: number, hours: number) => {
+    if (minutes) return `${minutes} ${t("dash_minAgo")}`;
+    if (hours === 1) return `${hours} ${t("dash_hourAgo")}`;
+    return `${hours} ${t("dash_hoursAgo")}`;
+  };
 
   const activityItems = React.useMemo(() => {
     const items: Array<{
@@ -101,21 +109,26 @@ export default function DashboardPage() {
     patients.slice(0, 3).forEach((patient, index) => {
       items.push({
         icon: Users,
-        title: "New patient registered",
+        title: t("dash_actNewPatient"),
         desc: `${patient.firstName} ${patient.lastName}`,
-        time: index === 0 ? "2 min ago" : index === 1 ? "15 min ago" : "1 hour ago",
+        time:
+          index === 0
+            ? timeAgo(2, 0)
+            : index === 1
+              ? timeAgo(15, 0)
+              : timeAgo(0, 1),
         color: "cyan",
       });
     });
 
     appointments.slice(0, 2).forEach((appointment, index) => {
       const patient = patients.find((entry) => entry.id === appointment.patientId);
-      const name = patient ? `${patient.firstName} ${patient.lastName}` : "Patient";
+      const name = patient ? `${patient.firstName} ${patient.lastName}` : t("dash_patient");
       items.push({
         icon: Calendar,
-        title: "Appointment scheduled",
+        title: t("dash_actApptScheduled"),
         desc: `${name} · ${appointment.date} ${appointment.time}`,
-        time: index === 0 ? "5 min ago" : "30 min ago",
+        time: index === 0 ? timeAgo(5, 0) : timeAgo(30, 0),
         color: "emerald",
       });
     });
@@ -123,22 +136,22 @@ export default function DashboardPage() {
     items.push(
       {
         icon: Activity,
-        title: "System update",
-        desc: "Scheduled backup completed",
-        time: "1 hour ago",
+        title: t("dash_actSystemUpdate"),
+        desc: t("dash_actBackup"),
+        time: timeAgo(0, 1),
         color: "amber",
       },
       {
         icon: Bell,
-        title: "Care campaign",
-        desc: "Follow-up reminders sent",
-        time: "2 hours ago",
+        title: t("dash_actCareCampaign"),
+        desc: t("dash_actFollowups"),
+        time: timeAgo(0, 2),
         color: "violet",
       },
     );
 
     return items.slice(0, 6);
-  }, [appointments, patients]);
+  }, [appointments, patients, t]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -180,32 +193,32 @@ export default function DashboardPage() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-primary dark:border-white/8 dark:bg-white/[0.04]">
               <HeartPulse className="h-3.5 w-3.5" />
-              Daily Careboard
+              {t("dash_dailyCareboard")}
             </div>
             <h2 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.05em] text-foreground sm:text-5xl">
-              Care operations look healthy, but the waiting room is your next pressure point.
+              {t("dash_heroTitle")}
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
-              Today&apos;s schedule is active, patients are moving through intake, and your upcoming appointments are already clustering into the next few hours.
+              {t("dash_heroBody")}
             </p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
             {[
               {
-                label: "Live queue",
-                value: `${activeEncounters} active`,
-                copy: "Patients currently in flow",
+                label: t("dash_liveQueue"),
+                value: lang === "ar" ? `${t("dash_active")} ${activeEncounters}` : `${activeEncounters} ${t("dash_active")}`,
+                copy: t("dash_patientsInFlow"),
               },
               {
-                label: "Today",
-                value: `${appointmentsToday.length} visits`,
-                copy: "Appointments not cancelled",
+                label: t("dash_today"),
+                value: lang === "ar" ? `${t("dash_visits")} ${appointmentsToday.length}` : `${appointmentsToday.length} ${t("dash_visits")}`,
+                copy: t("dash_apptsNotCancelled"),
               },
               {
-                label: "Momentum",
-                value: "Low no-show risk",
-                copy: "Schedule confidence is stable",
+                label: t("dash_momentum"),
+                value: t("dash_lowNoShow"),
+                copy: t("dash_scheduleConfidence"),
               },
             ].map((item) => (
               <div
@@ -268,7 +281,7 @@ export default function DashboardPage() {
               >
                 {stat.change}
               </span>
-              <span className="ml-2 text-muted-foreground">from last month</span>
+              <span className="ml-2 text-muted-foreground">{t("dash_fromLastMonth")}</span>
             </div>
           </motion.div>
         ))}
@@ -282,7 +295,7 @@ export default function DashboardPage() {
           >
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-lg font-semibold tracking-[-0.03em] text-foreground">
-                Recent Activity
+                {t("dash_recentActivity")}
               </h2>
               <Button
                 variant="link"
@@ -290,7 +303,7 @@ export default function DashboardPage() {
                 asChild
               >
                 <a href="#" className="inline-flex items-center gap-1">
-                  View all
+                  {t("common_view_all")}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </a>
               </Button>
@@ -324,7 +337,7 @@ export default function DashboardPage() {
             className="surface-panel rounded-[30px] border border-white/60 p-6 dark:border-white/6"
           >
             <h2 className="mb-4 text-lg font-semibold tracking-[-0.03em] text-foreground">
-              Quick Stats
+              {t("dash_quickStats")}
             </h2>
             <div className="space-y-4">
               {quickStats.map((quickStat, index) => (
@@ -358,11 +371,11 @@ export default function DashboardPage() {
             className="surface-panel rounded-[30px] border border-white/60 p-6 dark:border-white/6"
           >
             <h2 className="mb-4 text-lg font-semibold tracking-[-0.03em] text-foreground">
-              Upcoming Appointments
+              {t("dash_upcomingAppointments")}
             </h2>
             <div className="space-y-3">
               {upcomingAppointments.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No upcoming appointments.</p>
+                <p className="text-sm text-muted-foreground">{t("dash_noUpcoming")}</p>
               ) : (
                 upcomingAppointments.map((appointment) => {
                   const patient = patients.find((entry) => entry.id === appointment.patientId);
@@ -392,7 +405,11 @@ export default function DashboardPage() {
                           !appointment.status && "bg-muted text-muted-foreground",
                         )}
                       >
-                        {appointment.status || "—"}
+                        {appointment.status?.toLowerCase() === "confirmed" && t("appts_statusConfirmed")}
+                      {appointment.status?.toLowerCase() === "scheduled" && t("appts_statusScheduled")}
+                      {appointment.status?.toLowerCase() === "in waiting room" && t("appts_statusWaitingRoom")}
+                      {appointment.status?.toLowerCase() === "pending" && t("appts_statusPending")}
+                      {!appointment.status && "—"}
                       </span>
                     </div>
                   );
@@ -409,7 +426,7 @@ export default function DashboardPage() {
       >
         <div className="flex items-center justify-between border-b border-white/60 bg-white/40 p-6 dark:border-white/6 dark:bg-white/[0.02]">
           <h2 className="text-lg font-semibold tracking-[-0.03em] text-foreground">
-            Recent Patients
+            {t("dash_recentPatients")}
           </h2>
           <AddPatientDialog onSuccess={refetchPatients} />
         </div>
@@ -418,11 +435,11 @@ export default function DashboardPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-white/32 text-muted-foreground dark:bg-white/[0.015]">
               <tr>
-                <th className="px-6 py-4">Name</th>
-                <th className="px-6 py-4">ID / MRN</th>
-                <th className="px-6 py-4">Last Visit</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Actions</th>
+                <th className="px-6 py-4">{t("dash_name")}</th>
+                <th className="px-6 py-4">{t("dash_idMrn")}</th>
+                <th className="px-6 py-4">{t("dash_lastVisit")}</th>
+                <th className="px-6 py-4">{t("common_status")}</th>
+                <th className="px-6 py-4">{t("common_actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/60 text-foreground dark:divide-white/6">
@@ -440,7 +457,14 @@ export default function DashboardPage() {
                   </td>
                   <td className="px-6 py-4">
                     <span className="rounded-full border border-emerald-500/20 bg-emerald-500/12 px-2.5 py-1 text-xs font-semibold tracking-wide text-emerald-700 dark:text-emerald-300">
-                      {patient.status}
+                      {patient.status?.toLowerCase() === "active" && t("patients_active")}
+                      {patient.status?.toLowerCase() === "inactive" && t("patients_inactive")}
+                      {patient.status?.toLowerCase() === "archived" && t("patients_archived")}
+                      {patient.status &&
+                        patient.status.toLowerCase() !== "active" &&
+                        patient.status.toLowerCase() !== "inactive" &&
+                        patient.status.toLowerCase() !== "archived" &&
+                        patient.status}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -450,7 +474,7 @@ export default function DashboardPage() {
                           variant="link"
                           className="h-auto p-0 font-semibold text-primary transition-transform hover:no-underline group-hover:translate-x-1"
                         >
-                          View Profile
+                          {t("dash_viewProfile")}
                         </Button>
                       </SheetTrigger>
                       <PatientProfileSheet patient={patient} />

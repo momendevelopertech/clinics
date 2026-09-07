@@ -4,8 +4,10 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { BarChart3, Users, Calendar, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLocale } from "@/components/locale/locale-provider";
 
 export default function AnalyticsPage() {
+  const { t } = useLocale();
   const [stats, setStats] = React.useState<{
     patients: number;
     appointments: number;
@@ -31,10 +33,10 @@ export default function AnalyticsPage() {
   }, []);
 
   const cards = [
-    { label: "Total Patients", value: stats?.patients ?? "—", icon: Users },
-    { label: "Appointments (All)", value: stats?.appointments ?? "—", icon: Calendar },
-    { label: "Encounters", value: stats?.encounters ?? "—", icon: BarChart3 },
-    { label: "Avg Wait Time", value: stats?.avgWait != null ? `${stats.avgWait} min` : "—", icon: Clock },
+    { label: t("analytics_totalPatients"), value: stats?.patients ?? "—", icon: Users },
+    { label: t("analytics_appointmentsAll"), value: stats?.appointments ?? "—", icon: Calendar },
+    { label: t("analytics_encounters"), value: stats?.encounters ?? "—", icon: BarChart3 },
+    { label: t("analytics_avgWait"), value: stats?.avgWait != null ? `${stats.avgWait} ${t("analytics_min")}` : "—", icon: Clock },
   ];
 
   return (
@@ -44,7 +46,7 @@ export default function AnalyticsPage() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <h1 className="text-2xl font-bold tracking-tight">Analytics & Insights</h1>
+      <h1 className="text-2xl font-bold tracking-tight">{t("analytics_title")}</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((c, i) => (
@@ -73,13 +75,12 @@ export default function AnalyticsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="w-5 h-5" />
-            Operational Metrics
+            {t("analytics_operationalMetrics")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-neutral-500">
-            Revenue streams, resource utilization, and AI-driven insights will be displayed here.
-            Connect your data to see real-time dashboards.
+            {t("analytics_metricsPlaceholder")}
           </p>
         </CardContent>
       </Card>

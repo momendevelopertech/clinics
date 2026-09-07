@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import { AddLabResultDialog } from "@/components/labs/add-lab-result-dialog";
 import { logClientError } from "@/lib/client-logger";
+import { useLocale } from "@/components/locale/locale-provider";
 
 interface LabResult {
   id: string;
@@ -36,6 +37,7 @@ interface LabResult {
 }
 
 export default function LabResultsPage() {
+  const { t } = useLocale();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [results, setResults] = React.useState<LabResult[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -53,7 +55,7 @@ export default function LabResultsPage() {
       const data = await response.json();
       setResults(data);
     } catch (error) {
-      toast.error("Failed to load lab results");
+      toast.error(t("labs_loadError"));
       logClientError("Lab results fetch failed", error);
     } finally {
       setLoading(false);
@@ -91,7 +93,7 @@ export default function LabResultsPage() {
     a.download = `lab-results-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
-    toast.success("Lab results exported successfully");
+    toast.success(t("labs_exportSuccess"));
   };
 
   const filteredResults = results.filter((result) => {
@@ -103,6 +105,17 @@ export default function LabResultsPage() {
 
     return matchesSearch && matchesStatus;
   });
+
+  const statusLabel = (status: string) => {
+    const map: Record<string, string> = {
+      Completed: t("labs_completed"),
+      Pending: t("labs_pending"),
+      Abnormal: t("labs_abnormal"),
+      Reviewed: t("labs_reviewed"),
+    };
+    const key = status.charAt(0).toUpperCase() + status.slice(1);
+    return map[key] ?? status;
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -128,10 +141,10 @@ export default function LabResultsPage() {
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
             <Beaker className="w-6 h-6 inline mr-2" />
-            Lab Results
+            {t("labs_title")}
           </h2>
           <p className="text-sm text-neutral-500">
-            Track and manage patient laboratory test results.
+            {t("labs_subtitle")}
           </p>
         </div>
 
@@ -142,7 +155,7 @@ export default function LabResultsPage() {
         <div className="px-6 py-4 border-b flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <Input
             type="search"
-            placeholder="Search patient name or test name..."
+            placeholder={t("labs_search")}
             className="w-full sm:max-w-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -155,17 +168,17 @@ export default function LabResultsPage() {
                   size="sm"
                   className="flex items-center gap-2"
                 >
-                  <FilterIcon className="w-4 h-4" /> Status
+                  <FilterIcon className="w-4 h-4" /> {t("common_status")}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+                <DropdownMenuLabel>{t("labs_filterByStatus")}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
                   checked={!statusFilter}
                   onCheckedChange={() => setStatusFilter(null)}
                 >
-                  All
+                  {t("common_all")}
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={statusFilter === "completed"}
@@ -175,7 +188,7 @@ export default function LabResultsPage() {
                     )
                   }
                 >
-                  Completed
+                  {t("labs_completed")}
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={statusFilter === "pending"}
@@ -185,7 +198,7 @@ export default function LabResultsPage() {
                     )
                   }
                 >
-                  Pending
+                  {t("labs_pending")}
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={statusFilter === "abnormal"}
@@ -195,7 +208,7 @@ export default function LabResultsPage() {
                     )
                   }
                 >
-                  Abnormal
+                  {t("labs_abnormal")}
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={statusFilter === "reviewed"}
@@ -205,7 +218,7 @@ export default function LabResultsPage() {
                     )
                   }
                 >
-                  Reviewed
+                  {t("labs_reviewed")}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -216,7 +229,7 @@ export default function LabResultsPage() {
               onClick={handleExport}
               className="flex items-center gap-2"
             >
-              <Download className="w-4 h-4" /> Export
+              <Download className="w-4 h-4" /> {t("labs_export")}
             </Button>
           </div>
         </div>
@@ -224,25 +237,25 @@ export default function LabResultsPage() {
         <div className="p-0 overflow-x-auto flex-1">
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <p className="text-neutral-500">Loading lab results...</p>
+              <p className="text-neutral-500">{t("labs_loading")}</p>
             </div>
           ) : filteredResults.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-center">
               <Beaker className="w-12 h-12 text-neutral-300 mb-4" />
-              <p className="text-neutral-600">No lab results found</p>
+              <p className="text-neutral-600">{t("labs_empty")}</p>
             </div>
           ) : (
             <table className="w-full text-sm text-left">
               <thead className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 font-medium">
                 <tr>
-                  <th className="px-6 py-4 border-b">Patient</th>
-                  <th className="px-6 py-4 border-b">Test Name</th>
-                  <th className="px-6 py-4 border-b">Result</th>
-                  <th className="px-6 py-4 border-b">Status</th>
+                  <th className="px-6 py-4 border-b">{t("labs_colPatient")}</th>
+                  <th className="px-6 py-4 border-b">{t("labs_colTest")}</th>
+                  <th className="px-6 py-4 border-b">{t("labs_colResult")}</th>
+                  <th className="px-6 py-4 border-b">{t("labs_colStatus")}</th>
                   <th className="px-6 py-4 border-b hidden md:table-cell">
-                    Performed
+                    {t("labs_colPerformed")}
                   </th>
-                  <th className="px-6 py-4 border-b">Actions</th>
+                  <th className="px-6 py-4 border-b">{t("common_actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
@@ -285,7 +298,7 @@ export default function LabResultsPage() {
                                     : "text-neutral-500"
                                 }`}
                               >
-                                Range: {result.referenceRange}
+                                {t("labs_range")}: {result.referenceRange}
                               </p>
                             )}
                           </>
@@ -302,7 +315,7 @@ export default function LabResultsPage() {
                         {isAbnormal(result.status) && (
                           <TrendingUp className="w-3 h-3 inline mr-1" />
                         )}
-                        {result.status}
+                        {statusLabel(result.status)}
                       </span>
                     </td>
                     <td className="px-6 py-4 hidden md:table-cell">
@@ -326,7 +339,7 @@ export default function LabResultsPage() {
                                 : undefined
                             }
                           >
-                            View Report
+                            {t("labs_viewReport")}
                           </Button>
                         </a>
                       ) : (
@@ -339,7 +352,7 @@ export default function LabResultsPage() {
                               : undefined
                           }
                         >
-                          View
+                          {t("labs_view")}
                         </Button>
                       )}
                     </td>

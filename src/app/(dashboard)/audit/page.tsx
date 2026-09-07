@@ -4,8 +4,10 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLocale } from "@/components/locale/locale-provider";
 
 export default function AuditPage() {
+  const { t } = useLocale();
   const [logs, setLogs] = React.useState<Array<{
     id: string;
     action: string;
@@ -37,32 +39,32 @@ export default function AuditPage() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <h1 className="text-2xl font-bold tracking-tight">Audit Log</h1>
+      <h1 className="text-2xl font-bold tracking-tight">{t("audit_title")}</h1>
 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="w-5 h-5" />
-            Append-Only Audit Trail
+            {t("audit_trail")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="p-8 text-center text-neutral-500">Loading...</div>
+            <div className="p-8 text-center text-neutral-500">{t("common_loading")}</div>
           ) : logs.length === 0 ? (
             <div className="p-8 text-center text-neutral-500 border rounded-[5px]">
-              No audit entries yet. All Create, Update, and Delete actions are logged here.
+              {t("audit_empty")}
             </div>
           ) : (
             <div className="rounded-[5px] border overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="bg-neutral-50 dark:bg-neutral-800/50">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium">Time</th>
-                    <th className="px-4 py-3 text-left font-medium">User</th>
-                    <th className="px-4 py-3 text-left font-medium">Action</th>
-                    <th className="px-4 py-3 text-left font-medium">Entity</th>
-                    <th className="px-4 py-3 text-left font-medium">ID</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("audit_colTime")}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("audit_colUser")}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("audit_colAction")}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("audit_colEntity")}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("audit_colId")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">

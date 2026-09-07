@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getClientErrorMessage, logClientError } from "@/lib/client-logger";
+import { useLocale } from "@/components/locale/locale-provider";
 
 type InvoiceOption = {
   id: string;
@@ -37,6 +38,7 @@ interface PaymentDialogProps {
 }
 
 export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
+  const { t } = useLocale();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [invoices, setInvoices] = React.useState<InvoiceOption[]>([]);
@@ -58,13 +60,12 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
       const response = await fetch("/api/billing/invoices");
       if (!response.ok) throw new Error("Failed to fetch invoices");
       const data = await response.json();
-      // Filter for unpaid invoices
       const unpaidInvoices = (data as InvoiceOption[]).filter(
         (inv) => inv.status !== "paid",
       );
       setInvoices(unpaidInvoices);
     } catch (error) {
-      toast.error("Failed to load invoices");
+      toast.error(t("pay_failedLoad"));
       logClientError("Payment dialog invoice fetch failed", error);
     }
   };
@@ -83,14 +84,13 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
     e.preventDefault();
 
     if (!formData.invoiceId || !formData.amount) {
-      toast.error("Please fill in required fields");
+      toast.error(t("pay_fillRequired"));
       return;
     }
 
     try {
       setLoading(true);
 
-      // Create payment intent
       const response = await fetch("/api/payments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -109,8 +109,7 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
 
       const data = await response.json();
 
-      // In a real implementation, you would redirect to Stripe Checkout or use the clientSecret
-      toast.success(`Payment intent created: ${data.id}`);
+      toast.success(t("pay_intentCreated").replace("{id}", data.id));
       console.log("Payment details:", data);
 
       setFormData({
@@ -122,7 +121,7 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
       setOpen(false);
       onSuccess?.();
     } catch (error) {
-      toast.error(getClientErrorMessage(error, "Failed to process payment"));
+      toast.error(getClientErrorMessage(error, t("pay_failedProcess")));
       logClientError("Payment dialog submission failed", error);
     } finally {
       setLoading(false);
@@ -133,20 +132,20 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2">
-          <Plus className="w-4 h-4" /> Process Payment
+          <Plus className="w-4 h-4" /> {t("pay_processPayment")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Process Payment</DialogTitle>
+          <DialogTitle>{t("pay_processPayment")}</DialogTitle>
           <DialogDescription>
-            Create a payment for an unpaid invoice via Stripe.
+            {t("pay_desc")}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="gap-2 flex flex-col">
-            <Label htmlFor="invoice">Invoice *</Label>
+            <Label htmlFor="invoice">{t("pay_invoiceLabel")}</Label>
             <Select
               value={formData.invoiceId}
               onValueChange={(value) => {
@@ -158,7 +157,7 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
               }}
             >
               <SelectTrigger id="invoice">
-                <SelectValue placeholder="Select an invoice" />
+                <SelectValue placeholder={t("pay_selectInvoice")} />
               </SelectTrigger>
               <SelectContent>
                 {invoices.map((invoice) => (
@@ -176,7 +175,7 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="gap-2 flex flex-col">
-              <Label htmlFor="amount">Amount *</Label>
+              <Label htmlFor="amount">{t("pay_amountLabel")}</Label>
               <Input
                 id="amount"
                 type="number"
@@ -192,7 +191,7 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
             </div>
 
             <div className="gap-2 flex flex-col">
-              <Label htmlFor="currency">Currency</Label>
+              <Label htmlFor="currency">{t("pay_currencyLabel")}</Label>
               <Select
                 value={formData.currency}
                 onValueChange={(value) =>
@@ -213,10 +212,10 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
           </div>
 
           <div className="gap-2 flex flex-col">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t("pay_descriptionLabel")}</Label>
             <Input
               id="description"
-              placeholder="Payment note (optional)"
+              placeholder={t("pay_paymentNote")}
               value={formData.description}
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
@@ -225,8 +224,8 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
           </div>
 
           <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
-            <p className="font-medium mb-1">Secure Payment via Stripe</p>
-            <p>Your payment information is processed securely by Stripe.</p>
+            <p className="font-medium mb-1">{t("pay_secureStripe")}</p>
+            <p>{t("pay_secureStripeDesc")}</p>
           </div>
 
           <div className="flex gap-2 justify-end">
@@ -236,7 +235,7 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              Cancel
+              {t("common_cancel")}
             </Button>
             <Button
               type="submit"
@@ -244,7 +243,7 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
               className="flex items-center gap-2"
             >
               <CreditCard className="w-4 h-4" />
-              {loading ? "Processing..." : "Create Payment"}
+              {loading ? t("pay_processing") : t("pay_createPayment")}
             </Button>
           </div>
         </form>

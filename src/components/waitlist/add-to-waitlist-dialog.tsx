@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { logClientError } from "@/lib/client-logger";
+import { useLocale } from "@/components/locale/locale-provider";
 
 type PatientOption = {
   id: string;
@@ -36,6 +37,7 @@ interface AddToWaitlistDialogProps {
 }
 
 export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
+  const { t } = useLocale();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [patients, setPatients] = React.useState<PatientOption[]>([]);
@@ -58,7 +60,7 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
       const data = await response.json();
       setPatients(data);
     } catch (error) {
-      toast.error("Failed to load patients");
+      toast.error(t("common_loadPatientsError"));
       logClientError("Waitlist patient lookup failed", error);
     }
   };
@@ -67,7 +69,7 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
     e.preventDefault();
 
     if (!formData.patientId) {
-      toast.error("Please select a patient");
+      toast.error(t("wl_requirePatient"));
       return;
     }
 
@@ -85,12 +87,12 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
 
       if (!response.ok) throw new Error("Failed to add to waitlist");
 
-      toast.success("Patient added to waitlist");
+      toast.success(t("wl_addedSuccess"));
       setFormData({ patientId: "", preferredDate: "", notes: "" });
       setOpen(false);
       onSuccess();
     } catch (error) {
-      toast.error("Failed to add to waitlist");
+      toast.error(t("wl_addError"));
       logClientError("Create waitlist entry failed", error);
     } finally {
       setLoading(false);
@@ -101,21 +103,18 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2">
-          <Plus className="w-4 h-4" /> Add to Waitlist
+          <Plus className="w-4 h-4" /> {t("wl_addTrigger")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Patient to Waitlist</DialogTitle>
-          <DialogDescription>
-            Add a patient to the appointment waitlist with preferred scheduling
-            options.
-          </DialogDescription>
+          <DialogTitle>{t("wl_addTitle")}</DialogTitle>
+          <DialogDescription>{t("wl_addDesc")}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="gap-2 flex flex-col">
-            <Label htmlFor="patient">Patient *</Label>
+            <Label htmlFor="patient">{t("wl_patientRequired")}</Label>
             <Select
               value={formData.patientId}
               onValueChange={(value) =>
@@ -123,7 +122,7 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
               }
             >
               <SelectTrigger id="patient">
-                <SelectValue placeholder="Select a patient" />
+                <SelectValue placeholder={t("wl_selectPatient")} />
               </SelectTrigger>
               <SelectContent>
                 {patients.map((patient) => (
@@ -136,7 +135,7 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
           </div>
 
           <div className="gap-2 flex flex-col">
-            <Label htmlFor="preferred-date">Preferred Date</Label>
+            <Label htmlFor="preferred-date">{t("wl_colPreferredDate")}</Label>
             <Input
               id="preferred-date"
               type="date"
@@ -148,10 +147,10 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
           </div>
 
           <div className="gap-2 flex flex-col">
-            <Label htmlFor="notes">Notes</Label>
+            <Label htmlFor="notes">{t("common_notes")}</Label>
             <Textarea
               id="notes"
-              placeholder="Add any notes or special requests..."
+              placeholder={t("wl_notesPlaceholder")}
               value={formData.notes}
               onChange={(e) =>
                 setFormData({ ...formData, notes: e.target.value })
@@ -167,10 +166,10 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              Cancel
+              {t("common_cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Adding..." : "Add to Waitlist"}
+              {loading ? t("wl_adding") : t("wl_addTrigger")}
             </Button>
           </div>
         </form>

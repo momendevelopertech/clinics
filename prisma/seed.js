@@ -198,13 +198,92 @@ async function clearOperationalData({ orgId, patientIds, appointmentIds, encount
 async function main() {
   console.log("Starting seed...");
 
-  let organization = await prisma.organization.findFirst();
+  const adminPasswordHash = hashPassword("admin123");
+  const patientPasswordHash = hashPassword("patient123");
+
+  const superOrg = await prisma.organization.upsert({
+    where: { slug: "platform-admin" },
+    update: {
+      name: "Platform Administration",
+      status: "active",
+      plan: "plus",
+      onboardingSource: "manual",
+      settingsJson: JSON.stringify({ appointmentDurationMins: 30 }),
+    },
+    create: {
+      name: "Platform Administration",
+      slug: "platform-admin",
+      status: "active",
+      plan: "plus",
+      onboardingSource: "manual",
+      settingsJson: JSON.stringify({ appointmentDurationMins: 30 }),
+      timezone: "UTC",
+      currency: "USD",
+    },
+  });
+
+  const superAdminRole = await ensureRole(superOrg.id, "Super Admin", [
+    { action: "patients:read", resource: "patients" },
+    { action: "patients:write", resource: "patients" },
+    { action: "appointments:read", resource: "appointments" },
+    { action: "appointments:write", resource: "appointments" },
+    { action: "encounters:read", resource: "encounters" },
+    { action: "encounters:write", resource: "encounters" },
+    { action: "inventory:read", resource: "inventory" },
+    { action: "inventory:write", resource: "inventory" },
+    { action: "billing:read", resource: "billing" },
+    { action: "billing:write", resource: "billing" },
+  ]);
+
+  const superAdminUser = await prisma.user.upsert({
+    where: { email: "superadmin@acmeclinic.com" },
+    update: {
+      organizationId: superOrg.id,
+      name: "Platform Super Admin",
+      role: "superAdmin",
+      active: true,
+      emailVerified: true,
+    },
+    create: {
+      organizationId: superOrg.id,
+      email: "superadmin@acmeclinic.com",
+      name: "Platform Super Admin",
+      role: "superAdmin",
+      active: true,
+      emailVerified: true,
+      passwordHash: adminPasswordHash,
+    },
+  });
+  await ensureUserRole(superAdminUser.id, superAdminRole.id);
+
+  let organization = await prisma.organization.findFirst({
+    where: { name: "Acme Clinic" },
+  });
   if (!organization) {
     organization = await prisma.organization.create({
       data: {
         name: "Acme Clinic",
+        slug: "acme-clinic",
         timezone: "America/New_York",
         currency: "USD",
+        status: "active",
+        plan: "clinic",
+        onboardingSource: "manual",
+        settingsJson: JSON.stringify({
+          appointmentDurationMins: 30,
+          openTime: "09:00",
+          closeTime: "17:00",
+        }),
+      },
+    });
+  } else {
+    organization = await prisma.organization.update({
+      where: { id: organization.id },
+      data: {
+        slug: "acme-clinic",
+        status: "active",
+        plan: "clinic",
+        onboardingSource: "manual",
       },
     });
   }
@@ -233,21 +312,32 @@ async function main() {
     { action: "billing:write", resource: "billing" },
   ]);
 
-  const adminPasswordHash = hashPassword("admin123");
-  const patientPasswordHash = hashPassword("patient123");
-
   const adminUser = await prisma.user.upsert({
     where: { email: "admin@acmeclinic.com" },
     update: {
       organizationId: organization.id,
       name: "Dr. Meredith Cole",
       passwordHash: adminPasswordHash,
+      role: "doctor",
+      specialty: "Internal Medicine",
+      consultationFee: "150",
+      availabilityType: "regular",
+      availableDays: JSON.stringify(["sun", "mon", "tue", "wed", "thu"]),
+      availableFrom: "09:00",
+      availableTo: "17:00",
     },
     create: {
       organizationId: organization.id,
       email: "admin@acmeclinic.com",
       name: "Dr. Meredith Cole",
       passwordHash: adminPasswordHash,
+      role: "doctor",
+      specialty: "Internal Medicine",
+      consultationFee: "150",
+      availabilityType: "regular",
+      availableDays: JSON.stringify(["sun", "mon", "tue", "wed", "thu"]),
+      availableFrom: "09:00",
+      availableTo: "17:00",
     },
   });
 
@@ -257,12 +347,14 @@ async function main() {
       organizationId: organization.id,
       name: "Jamie Rivera",
       passwordHash: adminPasswordHash,
+      role: "receptionist",
     },
     create: {
       organizationId: organization.id,
       email: "ops@acmeclinic.com",
       name: "Jamie Rivera",
       passwordHash: adminPasswordHash,
+      role: "receptionist",
     },
   });
 
@@ -272,12 +364,14 @@ async function main() {
       organizationId: organization.id,
       name: "Taylor Brooks",
       passwordHash: adminPasswordHash,
+      role: "biller",
     },
     create: {
       organizationId: organization.id,
       email: "billing@acmeclinic.com",
       name: "Taylor Brooks",
       passwordHash: adminPasswordHash,
+      role: "biller",
     },
   });
 

@@ -3,7 +3,16 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { takeRateLimitToken } from "@/lib/rate-limit";
 
-const PUBLIC_PAGE_PREFIXES = ["/login", "/patient-login", "/patient-portal"];
+const PUBLIC_PAGE_PREFIXES = [
+  "/login",
+  "/patient-login",
+  "/patient-portal",
+  "/signup",
+  "/forgot-password",
+  "/reset-password",
+  "/verify-email",
+  "/suspended",
+];
 const PUBLIC_API_PREFIXES = [
   "/api/auth",
   "/api/patient-auth",
@@ -12,6 +21,10 @@ const PUBLIC_API_PREFIXES = [
   "/api/communications/scheduled",
   "/api/communications/appointment-reminders",
   "/api/webhooks/stripe",
+  "/api/signup",
+  "/api/auth/verify-email",
+  "/api/auth/forgot-password",
+  "/api/auth/reset-password",
 ];
 
 function isPublicPage(pathname: string) {
@@ -34,6 +47,13 @@ function getClientKey(request: NextRequest) {
 function maybeRateLimitRequest(request: NextRequest, tokenUserId?: string) {
   const { pathname } = request.nextUrl;
   const ip = getClientKey(request);
+
+  if (pathname === "/api/signup") {
+    return takeRateLimitToken(`signup:${ip}`, {
+      max: 3,
+      windowMs: 60 * 60 * 1000,
+    });
+  }
 
   const authRoute =
     pathname.startsWith("/api/auth") || pathname === "/api/patient-auth/login";
@@ -84,7 +104,10 @@ export async function proxy(request: NextRequest) {
     );
   }
 
-  if (pathname === "/login" && token) {
+  if (
+    (pathname === "/login" || pathname === "/signup") &&
+    token
+  ) {
     return NextResponse.redirect(new URL("/patients", request.url));
   }
 

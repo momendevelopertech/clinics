@@ -32,6 +32,8 @@ export type Appointment = {
   status: string
   startTime?: string
   endTime?: string
+  tokenNumber?: string
+  isWalkIn?: boolean
 }
 
 type MedicalContextType = {
