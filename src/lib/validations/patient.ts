@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const patientCreateSchema = z.object({
+  mrn: z.string().trim().regex(/^MRN-[A-Z0-9-]+$/i).max(40).optional().nullable(),
   firstName: z.string().min(1, "First name is required").max(100),
   lastName: z.string().min(1, "Last name is required").max(100),
   dateOfBirth: z.string().optional().nullable(),
@@ -24,6 +25,15 @@ export const patientCreateSchema = z.object({
 });
 
 export const patientUpdateSchema = patientCreateSchema.partial();
+
+export const patientHistorySchema = z.object({
+  category: z.string().trim().min(1).max(60),
+  title: z.string().trim().min(1).max(160),
+  details: z.string().trim().max(4000).optional().nullable(),
+  onsetDate: z.string().date().optional().nullable(),
+  resolvedAt: z.string().date().optional().nullable(),
+  status: z.enum(["active", "resolved"]).default("active"),
+});
 
 export type PatientCreateInput = z.infer<typeof patientCreateSchema>;
 export type PatientUpdateInput = z.infer<typeof patientUpdateSchema>;

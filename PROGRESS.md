@@ -12,11 +12,11 @@ order: finish and verify one task before starting the next dependent task.
 - [x] P1-T1 — Tenant branches and room foundations
 - [x] P1-T2 — Staff/doctor operational profiles and assignments
 - [x] P1-T3 — Service and clinical catalogs
-- [ ] P1-T4 — Patient MRN, structured history, and archive workflow *(in progress)*
+- [x] P1-T4 — Patient MRN, structured history, and archive workflow
 
 ## Phase 2 — Clinic operations
 
-- [ ] P2-T1 — Appointment lifecycle and scheduling validation
+- [ ] P2-T1 — Appointment lifecycle and scheduling validation *(in progress)*
 - [ ] P2-T2 — Tenant-backed scheduling UI
 - [ ] P2-T3 — Check-in, walk-in, and queue projection
 - [ ] P2-T4 — Encounter lifecycle and clinical capture

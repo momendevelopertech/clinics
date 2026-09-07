@@ -1,17 +1,37 @@
 "use client"
 import * as React from "react"
-import { Phone, Mail, MapPin, Activity, Calendar, AlertCircle, Droplet, User, FileText } from "lucide-react"
+import { Phone, Mail, MapPin, Activity, Calendar, AlertCircle, Droplet, User, FileText, ArchiveRestore } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import { Patient } from "@/context/MedicalContext"
 import { useLocale } from "@/components/locale/locale-provider"
+import { toast } from "sonner"
 
 interface PatientProfileSheetProps {
   patient: Patient
+  onStatusChange?: () => void
 }
 
-export function PatientProfileSheet({ patient }: PatientProfileSheetProps) {
+export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileSheetProps) {
   const { t } = useLocale()
+  const [updatingStatus, setUpdatingStatus] = React.useState(false)
+
+  const toggleArchive = async () => {
+    setUpdatingStatus(true)
+    try {
+      const response = await fetch(`/api/patients/${patient.id}/archive`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ archived: patient.status !== "Archived" }),
+      })
+      if (!response.ok) throw new Error(t("common_error"))
+      onStatusChange?.()
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("common_error"))
+    } finally {
+      setUpdatingStatus(false)
+    }
+  }
 
   const statusLabel = (status: string) => {
     const s = status.toLowerCase()
@@ -73,6 +93,12 @@ export function PatientProfileSheet({ patient }: PatientProfileSheetProps) {
               <Activity className="w-5 h-5 text-emerald-500 mb-1" />
               <span className="text-[10px] uppercase font-semibold text-emerald-500/70 tracking-wider">{t("profile_status")}</span>
               <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">{statusLabel(patient.status)}</span>
+            </div>
+            <div className="rounded-[5px] border bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+              <h3 className="mb-2 text-sm font-bold uppercase tracking-wider text-neutral-400">{t("profile_familyHistory")}</h3>
+              <p className="whitespace-pre-wrap text-sm text-neutral-700 dark:text-neutral-300">
+                {patient.familyHistory || t("profile_noHistory")}
+              </p>
             </div>
             <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-[5px] border border-blue-100 dark:border-blue-800/30 flex flex-col items-center justify-center text-center">
               <Calendar className="w-5 h-5 text-blue-500 mb-1" />
@@ -143,6 +169,10 @@ export function PatientProfileSheet({ patient }: PatientProfileSheetProps) {
           <Button variant="outline" className="w-full border-indigo-200 dark:border-indigo-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-neutral-950">
             <Calendar className="w-4 h-4 mr-2" />
             {t("profile_schedule")}
+          </Button>
+          <Button variant="outline" onClick={toggleArchive} disabled={updatingStatus} className="w-full">
+            <ArchiveRestore className="mr-2 h-4 w-4" />
+            {patient.status === "Archived" ? t("profile_restore") : t("profile_archive")}
           </Button>
         </div>
       </div>

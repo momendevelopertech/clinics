@@ -47,6 +47,7 @@ model Organization {
   prescriptions     Prescription[]
   serviceCatalogs   ServiceCatalog[]
   clinicalCatalogs  ClinicalCatalog[]
+  patientHistories  PatientHistory[]
 }
 
 model WaitlistEntry {
@@ -170,6 +171,7 @@ model Patient {
   documents           Document[]
   waitlistEntries     WaitlistEntry[]
   sessions            PatientSession[]
+  histories           PatientHistory[]
 }
 
 model PatientSession {
@@ -183,6 +185,24 @@ model PatientSession {
   userAgent  String?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
+}
+
+model PatientHistory {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  patientId      String
+  patient        Patient      @relation(fields: [patientId], references: [id])
+  category       String
+  title          String
+  details        String?
+  onsetDate      DateTime?
+  resolvedAt     DateTime?
+  status         String       @default("active")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId, patientId, status])
 }
 
 model EmergencyContact {

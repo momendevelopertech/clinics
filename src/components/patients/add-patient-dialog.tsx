@@ -80,6 +80,7 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
       country: "",
       bloodType: undefined,
       allergies: "",
+      familyHistory: "",
       primaryCareProvider: undefined,
       emergencyContactName: "",
       emergencyContactPhone: "",
@@ -269,6 +270,15 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
                       className="rounded-[5px]"
                       placeholder={t("secondaryPhone_placeholder")}
                       {...form.register("phoneSecondary")}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="familyHistory">{t("addPatient_familyHistory")}</Label>
+                    <Textarea
+                      id="familyHistory"
+                      className="min-h-[80px] rounded-[5px]"
+                      placeholder={t("addPatient_familyHistoryPlaceholder")}
+                      {...form.register("familyHistory")}
                     />
                   </div>
                 </div>

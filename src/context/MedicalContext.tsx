@@ -18,6 +18,7 @@ export type Patient = {
   gender: string
   bloodType: string
   allergies: string
+  familyHistory: string
   primaryCare: string
 }
 

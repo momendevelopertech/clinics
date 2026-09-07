@@ -27,6 +27,7 @@ import { useLocale } from "@/components/locale/locale-provider"
 function PatientsPageContent() {
   const searchParams = useSearchParams()
   const [searchQuery, setSearchQuery] = React.useState("")
+  const [statusFilter, setStatusFilter] = React.useState<"all" | "Active" | "Inactive" | "Archived">("all")
   const { patients, refetchPatients } = useMedical()
   const { t } = useLocale()
 
@@ -76,9 +77,10 @@ function PatientsPageContent() {
                    <DropdownMenuContent align="end" className="w-48">
                      <DropdownMenuLabel>{t("patients_filterByStatus")}</DropdownMenuLabel>
                      <DropdownMenuSeparator />
-                     <DropdownMenuCheckboxItem checked>{t("patients_active")}</DropdownMenuCheckboxItem>
-                     <DropdownMenuCheckboxItem>{t("patients_inactive")}</DropdownMenuCheckboxItem>
-                     <DropdownMenuCheckboxItem>{t("patients_archived")}</DropdownMenuCheckboxItem>
+                     <DropdownMenuCheckboxItem checked={statusFilter === "Active"} onCheckedChange={() => setStatusFilter("Active")}>{t("patients_active")}</DropdownMenuCheckboxItem>
+                     <DropdownMenuCheckboxItem checked={statusFilter === "Inactive"} onCheckedChange={() => setStatusFilter("Inactive")}>{t("patients_inactive")}</DropdownMenuCheckboxItem>
+                     <DropdownMenuCheckboxItem checked={statusFilter === "Archived"} onCheckedChange={() => setStatusFilter("Archived")}>{t("patients_archived")}</DropdownMenuCheckboxItem>
+                     <DropdownMenuCheckboxItem checked={statusFilter === "all"} onCheckedChange={() => setStatusFilter("all")}>{t("common_all")}</DropdownMenuCheckboxItem>
                    </DropdownMenuContent>
                  </DropdownMenu>
 
@@ -103,7 +105,7 @@ function PatientsPageContent() {
                      {patients
                        .filter(patient => {
                          const searchStr = searchQuery.toLowerCase();
-                         return (
+                         return (statusFilter === "all" || patient.status === statusFilter) && (
                            patient.firstName.toLowerCase().includes(searchStr) ||
                            patient.lastName.toLowerCase().includes(searchStr) ||
                            patient.mrn.toLowerCase().includes(searchStr) ||
@@ -142,7 +144,7 @@ function PatientsPageContent() {
                                     <SheetTrigger asChild>
                                       <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0 h-auto">{t("patients_manage")}</Button>
                                     </SheetTrigger>
-                                    <PatientProfileSheet patient={patient} />
+                                    <PatientProfileSheet patient={patient} onStatusChange={refetchPatients} />
                                   </Sheet>
                                   <Link
                                     href={`/patients/${patient.id}`}

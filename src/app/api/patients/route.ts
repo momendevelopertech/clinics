@@ -34,6 +34,7 @@ function mapPatientToResponse(p: {
   createdAt: Date;
   updatedAt: Date;
   sensitiveDataEncrypted?: string | null;
+  familyHistory?: string | null;
 }) {
   const sensitive = readPatientSensitiveFields(p);
 
@@ -54,7 +55,8 @@ function mapPatientToResponse(p: {
     bloodType: p.bloodType ?? "Unknown",
     allergies: p.allergies ?? "None",
     primaryCareProvider: p.primaryCareProvider ?? "Unassigned",
-    mrn: p.mrn ?? `PT-${p.id.substring(0, 5).toUpperCase()}`,
+    mrn: p.mrn ?? `MRN-${p.id.substring(0, 8).toUpperCase()}`,
+    familyHistory: sensitive.familyHistory ?? "",
     status: p.status ?? "Active",
     lastVisit: p.updatedAt.toISOString().split("T")[0],
     regDate: p.createdAt.toISOString().split("T")[0],
@@ -130,6 +132,7 @@ export async function POST(request: Request) {
       const patient = await tx.patient.create({
         data: {
           organizationId: orgId,
+          mrn: data.mrn?.trim().toUpperCase() ?? null,
           firstName: data.firstName,
           lastName: data.lastName,
           dateOfBirth: sensitiveData.dateOfBirth,
@@ -175,6 +178,12 @@ export async function POST(request: Request) {
         },
       });
 
+      if (!patient.mrn) {
+        return tx.patient.update({
+          where: { id: patient.id },
+          data: { mrn: `MRN-${patient.id.substring(0, 8).toUpperCase()}` },
+        });
+      }
       return patient;
       },
     );
