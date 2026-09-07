@@ -2,6 +2,12 @@ export type OrgSettings = {
   appointmentDurationMins?: number;
   openTime?: string;
   closeTime?: string;
+  currency?: string;
+  defaultTaxRate?: number;
+  invoicePrefix?: string;
+  appointmentReminders?: boolean;
+  newPatientAlerts?: boolean;
+  billingNotifications?: boolean;
 };
 
 export function parseOrgSettings(settingsJson: string | null | undefined): OrgSettings {
@@ -15,6 +21,12 @@ export function parseOrgSettings(settingsJson: string | null | undefined): OrgSe
       appointmentDurationMins: parsed.appointmentDurationMins ?? 30,
       openTime: parsed.openTime,
       closeTime: parsed.closeTime,
+      currency: parsed.currency,
+      defaultTaxRate: parsed.defaultTaxRate ?? 0,
+      invoicePrefix: parsed.invoicePrefix ?? "INV-",
+      appointmentReminders: parsed.appointmentReminders ?? true,
+      newPatientAlerts: parsed.newPatientAlerts ?? true,
+      billingNotifications: parsed.billingNotifications ?? true,
     };
   } catch {
     return { appointmentDurationMins: 30 };

@@ -5,3 +5,5 @@ export * from "./labs";
 export * from "./procedures";
 export * from "./billing";
 export * from "./roles";
+export * from "./notifications";
+export * from "./settings";

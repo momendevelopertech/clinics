@@ -37,13 +37,13 @@ order: finish and verify one task before starting the next dependent task.
 ## Phase 5 — Platform and security
 
 - [x] P5-T1 — Complete role/permission matrix and staff management
-- [ ] P5-T2 — Centralized audit event capture *(in progress)*
-- [ ] P5-T3 — Event-driven notification records and adapters
-- [ ] P5-T4 — Persisted clinic settings
+- [x] P5-T2 — Centralized audit event capture
+- [x] P5-T3 — Event-driven notification records and adapters
+- [x] P5-T4 — Persisted clinic settings
 
 ## Phase 6 — Analytics
 
-- [ ] P6-T1 — Dashboard KPI and report projections
+- [ ] P6-T1 — Dashboard KPI and report projections *(in progress)*
 
 ## Phase 7 — AI and automation
 

@@ -16,8 +16,18 @@ type Section = "general" | "billing" | "team" | "notifications"
 export default function SettingsPage() {
   const { t } = useLocale()
   const [activeSection, setActiveSection] = React.useState<Section>("general")
+  const [settings, setSettings] = React.useState({ appointmentDurationMins: 30, currency: "USD", defaultTaxRate: 0, invoicePrefix: "INV-", appointmentReminders: true, newPatientAlerts: true, billingNotifications: true })
 
-  const handleSave = () => {
+  React.useEffect(() => {
+    fetch("/api/settings").then((response) => response.ok ? response.json() : Promise.reject(new Error("Failed to load settings"))).then(setSettings).catch(() => toast.error(t("settings_loadError")))
+  }, [t])
+
+  const handleSave = async () => {
+    const response = await fetch("/api/settings", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(settings) })
+    if (!response.ok) {
+      toast.error(t("settings_saveError"))
+      return
+    }
     toast.success(t("settings_saved"))
   }
 
@@ -108,15 +118,15 @@ export default function SettingsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="currency">{t("settings_currency")}</Label>
-                    <Input id="currency" defaultValue="USD" />
+                    <Input id="currency" value={settings.currency} onChange={(event) => setSettings({ ...settings, currency: event.target.value.toUpperCase() })} />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="taxRate">{t("settings_defaultTaxRate")}</Label>
-                    <Input id="taxRate" type="number" defaultValue="0" />
+                    <Input id="taxRate" type="number" value={settings.defaultTaxRate} onChange={(event) => setSettings({ ...settings, defaultTaxRate: Number(event.target.value) })} />
                   </div>
                   <div className="grid gap-2 sm:col-span-2">
                     <Label htmlFor="invoicePrefix">{t("settings_invoicePrefix")}</Label>
-                    <Input id="invoicePrefix" defaultValue="INV-" />
+                    <Input id="invoicePrefix" value={settings.invoicePrefix} onChange={(event) => setSettings({ ...settings, invoicePrefix: event.target.value })} />
                   </div>
                 </div>
                 <p className="text-sm text-neutral-500 mt-4">{t("settings_billingHelp")}</p>
@@ -140,21 +150,21 @@ export default function SettingsPage() {
                       <p className="font-medium text-sm">{t("settings_appointmentReminders")}</p>
                       <p className="text-xs text-neutral-500">{t("settings_appointmentRemindersHelp")}</p>
                     </div>
-                    <Checkbox defaultChecked />
+                    <Checkbox checked={settings.appointmentReminders} onCheckedChange={(checked) => setSettings({ ...settings, appointmentReminders: checked === true })} />
                   </div>
                   <div className="flex items-center justify-between py-2">
                     <div>
                       <p className="font-medium text-sm">{t("settings_newPatientAlerts")}</p>
                       <p className="text-xs text-neutral-500">{t("settings_newPatientAlertsHelp")}</p>
                     </div>
-                    <Checkbox defaultChecked />
+                    <Checkbox checked={settings.newPatientAlerts} onCheckedChange={(checked) => setSettings({ ...settings, newPatientAlerts: checked === true })} />
                   </div>
                   <div className="flex items-center justify-between py-2">
                     <div>
                       <p className="font-medium text-sm">{t("settings_billingNotifications")}</p>
                       <p className="text-xs text-neutral-500">{t("settings_billingNotificationsHelp")}</p>
                     </div>
-                    <Checkbox defaultChecked />
+                    <Checkbox checked={settings.billingNotifications} onCheckedChange={(checked) => setSettings({ ...settings, billingNotifications: checked === true })} />
                   </div>
                 </div>
               </div>

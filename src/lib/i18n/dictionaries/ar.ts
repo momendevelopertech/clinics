@@ -730,6 +730,8 @@ export const ar: Dictionary = {
   labs_addError: "فشل إضافة نتيجة المختبر",
   settings_selectRole: "اختر الدور",
   settings_staffRoleError: "فشل تحديث دور الموظف",
+  settings_loadError: "فشل تحميل إعدادات العيادة",
+  settings_saveError: "فشل حفظ إعدادات العيادة",
   timeline_diagnosis: "التشخيص",
   timeline_followUp: "المتابعة",
   timeline_procedure: "الإجراء",

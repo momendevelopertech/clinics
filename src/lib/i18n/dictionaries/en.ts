@@ -731,6 +731,8 @@ export const en: Dictionary = {
   labs_addError: "Failed to add lab result",
   settings_selectRole: "Select role",
   settings_staffRoleError: "Failed to update staff role",
+  settings_loadError: "Failed to load clinic settings",
+  settings_saveError: "Failed to save clinic settings",
   timeline_diagnosis: "Diagnosis",
   timeline_followUp: "Follow-up",
   timeline_procedure: "Procedure",

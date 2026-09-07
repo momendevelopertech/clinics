@@ -52,6 +52,7 @@ model Organization {
   followUps            FollowUp[]
   labOrders            LabOrder[]
   labResults           LabResult[]
+  notifications        Notification[]
   procedureOrders      ProcedureOrder[]
 }
 
@@ -107,6 +108,7 @@ model User {
   labOrders              LabOrder[]       @relation("LabOrderAuthor")
   reviewedLabResults     LabResult[]      @relation("LabResultReviewer")
   procedureOrders        ProcedureOrder[] @relation("ProcedureOrderAuthor")
+  notifications          Notification[]
 }
 
 model Role {
@@ -779,4 +781,24 @@ model AuditLog {
   ipAddress       String?
   userAgent       String?
   createdAt       DateTime     @default(now())
+}
+
+model Notification {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  recipientId    String
+  recipient      User         @relation(fields: [recipientId], references: [id])
+  channel        String       @default("in_app")
+  title          String
+  body           String
+  entityType     String?
+  entityId       String?
+  status         String       @default("unread")
+  deliveredAt    DateTime?
+  readAt         DateTime?
+  failureReason  String?
+  createdAt      DateTime     @default(now())
+
+  @@index([recipientId, status, createdAt])
 }

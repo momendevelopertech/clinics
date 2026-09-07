@@ -17,6 +17,7 @@ export interface CreateAuditParams {
   ipAddress?: string;
   userAgent?: string;
   db?: AuditDbClient;
+  request?: Request;
 }
 
 /**
@@ -24,6 +25,9 @@ export interface CreateAuditParams {
  */
 export async function createAuditLog(params: CreateAuditParams) {
   const db = params.db ?? prisma;
+  const forwardedFor = params.request?.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  const ipAddress = params.ipAddress ?? forwardedFor ?? params.request?.headers.get("x-real-ip");
+  const userAgent = params.userAgent ?? params.request?.headers.get("user-agent");
 
   return db.auditLog.create({
     data: {
@@ -36,8 +40,8 @@ export async function createAuditLog(params: CreateAuditParams) {
       entityId: params.entityId,
       beforeState: params.beforeState ?? null,
       afterState: params.afterState ?? null,
-      ipAddress: params.ipAddress ?? null,
-      userAgent: params.userAgent ?? null,
+      ipAddress: ipAddress ?? null,
+      userAgent: userAgent ?? null,
     },
   });
 }
