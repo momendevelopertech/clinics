@@ -52,6 +52,7 @@ model Organization {
   followUps            FollowUp[]
   labOrders            LabOrder[]
   labResults           LabResult[]
+  procedureOrders      ProcedureOrder[]
 }
 
 model WaitlistEntry {
@@ -68,15 +69,15 @@ model WaitlistEntry {
 }
 
 model User {
-  id                     String          @id @default(cuid())
+  id                     String           @id @default(cuid())
   organizationId         String
-  organization           Organization    @relation(fields: [organizationId], references: [id])
-  email                  String          @unique
+  organization           Organization     @relation(fields: [organizationId], references: [id])
+  email                  String           @unique
   name                   String?
   passwordHash           String?
   avatarUrl              String?
-  active                 Boolean         @default(true)
-  emailVerified          Boolean         @default(false)
+  active                 Boolean          @default(true)
+  emailVerified          Boolean          @default(false)
   verifyTokenHash        String?
   verifyTokenExp         DateTime?
   resetTokenHash         String?
@@ -85,26 +86,27 @@ model User {
   licenseNumber          String?
   workingHours           String? // JSON schedule
   branchId               String?
-  branch                 Branch?         @relation(fields: [branchId], references: [id])
+  branch                 Branch?          @relation(fields: [branchId], references: [id])
   roomId                 String?
-  room                   Room?           @relation(fields: [roomId], references: [id])
-  consultationFee        Decimal?        @db.Decimal(12, 2)
+  room                   Room?            @relation(fields: [roomId], references: [id])
+  consultationFee        Decimal?         @db.Decimal(12, 2)
   availabilityType       String? // regular, onCall, byAppointment
   availableDays          String? // JSON array e.g. ["mon","tue","wed"]
   availableFrom          String? // "09:00"
   availableTo            String? // "17:00"
   role                   String? // denormalized: superAdmin, owner, doctor, receptionist
-  createdAt              DateTime        @default(now())
-  updatedAt              DateTime        @updatedAt
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
   userRoles              UserRole[]
-  appointmentsAsProvider Appointment[]   @relation("ProviderAppointments")
-  tasksAssigned          Task[]          @relation("AssignedTasks")
-  tasksCreated           Task[]          @relation("CreatedTasks")
+  appointmentsAsProvider Appointment[]    @relation("ProviderAppointments")
+  tasksAssigned          Task[]           @relation("AssignedTasks")
+  tasksCreated           Task[]           @relation("CreatedTasks")
   auditLogs              AuditLog[]
   encounterNotes         EncounterNote[]
   prescriptions          Prescription[]
-  labOrders              LabOrder[]      @relation("LabOrderAuthor")
-  reviewedLabResults     LabResult[]     @relation("LabResultReviewer")
+  labOrders              LabOrder[]       @relation("LabOrderAuthor")
+  reviewedLabResults     LabResult[]      @relation("LabResultReviewer")
+  procedureOrders        ProcedureOrder[] @relation("ProcedureOrderAuthor")
 }
 
 model Role {
@@ -173,6 +175,7 @@ model Patient {
   prescriptions          Prescription[]
   labResults             LabResult[]
   labOrders              LabOrder[]
+  procedureOrders        ProcedureOrder[]
   insurancePolicies      InsurancePolicy[]
   invoices               Invoice[]
   documents              Document[]
@@ -331,25 +334,26 @@ model Equipment {
 
 // ============== CLINICAL (EMR/EHR) ==============
 model Encounter {
-  id             String          @id @default(cuid())
-  organizationId String
-  organization   Organization    @relation(fields: [organizationId], references: [id])
-  patientId      String
-  patient        Patient         @relation(fields: [patientId], references: [id])
-  appointmentId  String?         @unique
-  appointment    Appointment?    @relation(fields: [appointmentId], references: [id])
-  startTime      DateTime
-  endTime        DateTime?
-  status         String // in_progress, completed
-  encounterType  String? // office_visit, telehealth
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  notes          EncounterNote[]
-  vitals         Vital[]
-  prescriptions  Prescription[]
-  diagnoses      Diagnosis[]
-  followUps      FollowUp[]
-  labOrders      LabOrder[]
+  id              String           @id @default(cuid())
+  organizationId  String
+  organization    Organization     @relation(fields: [organizationId], references: [id])
+  patientId       String
+  patient         Patient          @relation(fields: [patientId], references: [id])
+  appointmentId   String?          @unique
+  appointment     Appointment?     @relation(fields: [appointmentId], references: [id])
+  startTime       DateTime
+  endTime         DateTime?
+  status          String // in_progress, completed
+  encounterType   String? // office_visit, telehealth
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  notes           EncounterNote[]
+  vitals          Vital[]
+  prescriptions   Prescription[]
+  diagnoses       Diagnosis[]
+  followUps       FollowUp[]
+  labOrders       LabOrder[]
+  procedureOrders ProcedureOrder[]
 }
 
 model EncounterNote {
@@ -584,18 +588,19 @@ model PricingTier {
 }
 
 model ServiceCatalog {
-  id             String       @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  code           String
-  name           String
-  description    String?
-  category       String?
-  durationMins   Int?
-  price          Decimal      @db.Decimal(12, 2)
-  active         Boolean      @default(true)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id              String           @id @default(cuid())
+  organizationId  String
+  organization    Organization     @relation(fields: [organizationId], references: [id])
+  code            String
+  name            String
+  description     String?
+  category        String?
+  durationMins    Int?
+  price           Decimal          @db.Decimal(12, 2)
+  active          Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  procedureOrders ProcedureOrder[]
 
   @@unique([organizationId, code])
   @@index([organizationId, active])
@@ -707,16 +712,42 @@ model Task {
 
 // ============== DOCUMENTS & COMPLIANCE ==============
 model Document {
-  id             String       @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  patientId      String
-  patient        Patient      @relation(fields: [patientId], references: [id])
-  name           String
-  type           String // imaging, lab_report, consent, id
-  storageKey     String // S3/GCS key
-  mimeType       String?
-  createdAt      DateTime     @default(now())
+  id               String          @id @default(cuid())
+  organizationId   String
+  organization     Organization    @relation(fields: [organizationId], references: [id])
+  patientId        String
+  patient          Patient         @relation(fields: [patientId], references: [id])
+  procedureOrderId String?
+  procedureOrder   ProcedureOrder? @relation(fields: [procedureOrderId], references: [id])
+  name             String
+  type             String // imaging, lab_report, consent, id
+  storageKey       String // S3/GCS key
+  mimeType         String?
+  createdAt        DateTime        @default(now())
+}
+
+model ProcedureOrder {
+  id               String          @id @default(cuid())
+  organizationId   String
+  organization     Organization    @relation(fields: [organizationId], references: [id])
+  patientId        String
+  patient          Patient         @relation(fields: [patientId], references: [id])
+  encounterId      String?
+  encounter        Encounter?      @relation(fields: [encounterId], references: [id])
+  orderedById      String
+  orderedBy        User            @relation("ProcedureOrderAuthor", fields: [orderedById], references: [id])
+  serviceCatalogId String?
+  serviceCatalog   ServiceCatalog? @relation(fields: [serviceCatalogId], references: [id])
+  procedureName    String
+  status           String          @default("ordered")
+  scheduledAt      DateTime?
+  notes            String?
+  completedAt      DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  documents        Document[]
+
+  @@index([organizationId, patientId, status])
 }
 
 // ============== AUDIT (Append-Only) ==============

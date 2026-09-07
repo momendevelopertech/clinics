@@ -67,7 +67,14 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { patientId, type, name, storageKey, mimeType } = body;
+    const {
+      patientId,
+      type = body.documentType,
+      name = body.fileName,
+      storageKey = body.fileUrl,
+      mimeType,
+      procedureOrderId,
+    } = body;
 
     if (!patientId || !type || !name) {
       return NextResponse.json(
@@ -84,6 +91,15 @@ export async function POST(request: Request) {
     if (!patient) {
       return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
+    if (procedureOrderId) {
+      const procedureOrder = await prisma.procedureOrder.findFirst({
+        where: { id: procedureOrderId, organizationId: orgId, patientId },
+        select: { id: true },
+      });
+      if (!procedureOrder) {
+        return NextResponse.json({ error: "Procedure order not found for patient" }, { status: 400 });
+      }
+    }
 
     const document = await prisma.document.create({
       data: {
@@ -93,6 +109,7 @@ export async function POST(request: Request) {
         type,
         storageKey: storageKey || `documents/${patientId}/${Date.now()}`,
         mimeType,
+        procedureOrderId: procedureOrderId ?? null,
       },
       include: {
         patient: { select: { firstName: true, lastName: true } },

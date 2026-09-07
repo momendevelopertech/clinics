@@ -96,12 +96,12 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           patientId: formData.patientId,
-          documentType: formData.documentType,
-          fileName:
+          type: formData.documentType,
+          name:
             formData.file?.name ||
             formData.fileUrl.split("/").pop() ||
             "document",
-          fileUrl:
+          storageKey:
             formData.fileUrl ||
             `https://example.com/documents/${formData.file?.name}`,
           fileSize: formData.file?.size || 0,
