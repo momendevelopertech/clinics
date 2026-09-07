@@ -26,11 +26,11 @@ order: finish and verify one task before starting the next dependent task.
 - [x] P3-T1 — Diagnoses, follow-ups, and itemized prescriptions
 - [x] P3-T2 — Lab and imaging orders through reviewed results
 - [x] P3-T3 — Procedure orders and clinical documents
-- [ ] P3-T4 — Read-only patient medical timeline *(in progress)*
+- [x] P3-T4 — Read-only patient medical timeline
 
 ## Phase 4 — Financial
 
-- [ ] P4-T1 — Catalog-backed invoice items and server totals
+- [ ] P4-T1 — Catalog-backed invoice items and server totals *(in progress)*
 - [ ] P4-T2 — Payment allocation, refunds, and balances
 - [ ] P4-T3 — Charge-generation policy *(blocked: product decision required)*
 

@@ -17,7 +17,16 @@ import { getDictionary } from "@/lib/i18n/server";
 
 type TimelineEvent = {
   id: string;
-  kind: "appointment" | "encounter" | "prescription" | "invoice" | "lab";
+  kind:
+    | "appointment"
+    | "encounter"
+    | "prescription"
+    | "invoice"
+    | "lab"
+    | "diagnosis"
+    | "followUp"
+    | "procedure"
+    | "document";
   date: Date;
   title: string;
   subtitle?: string | null;
@@ -49,7 +58,7 @@ export default async function PatientTimelinePage({
 
   if (!patient) notFound();
 
-  const [appointments, encounters, prescriptions, invoices, labResults] =
+  const [appointments, encounters, prescriptions, invoices, labResults, diagnoses, followUps, procedureOrders, documents] =
     await Promise.all([
       prisma.appointment.findMany({
         where: { patientId, organizationId },
@@ -86,7 +95,7 @@ export default async function PatientTimelinePage({
         select: { id: true, createdAt: true, invoiceNumber: true, totalAmount: true },
       }),
       prisma.labResult.findMany({
-        where: { patientId },
+        where: { patientId, organizationId },
         select: {
           id: true,
           createdAt: true,
@@ -95,6 +104,22 @@ export default async function PatientTimelinePage({
           resultValue: true,
           status: true,
         },
+      }),
+      prisma.diagnosis.findMany({
+        where: { patientId, organizationId },
+        select: { id: true, createdAt: true, code: true, name: true, status: true },
+      }),
+      prisma.followUp.findMany({
+        where: { patientId, organizationId },
+        select: { id: true, dueDate: true, createdAt: true, reason: true, status: true },
+      }),
+      prisma.procedureOrder.findMany({
+        where: { patientId, organizationId },
+        select: { id: true, createdAt: true, procedureName: true, status: true },
+      }),
+      prisma.document.findMany({
+        where: { patientId, organizationId },
+        select: { id: true, createdAt: true, name: true, type: true },
       }),
     ]);
 
@@ -150,6 +175,34 @@ export default async function PatientTimelinePage({
       title: lab.testName,
       subtitle: lab.resultValue ?? lab.status,
     })),
+    ...diagnoses.map((diagnosis) => ({
+      id: `diagnosis-${diagnosis.id}`,
+      kind: "diagnosis" as const,
+      date: diagnosis.createdAt,
+      title: `${diagnosis.code} · ${diagnosis.name}`,
+      subtitle: diagnosis.status,
+    })),
+    ...followUps.map((followUp) => ({
+      id: `follow-up-${followUp.id}`,
+      kind: "followUp" as const,
+      date: followUp.dueDate,
+      title: followUp.reason,
+      subtitle: `${t["timeline_due"]}: ${followUp.status}`,
+    })),
+    ...procedureOrders.map((procedure) => ({
+      id: `procedure-${procedure.id}`,
+      kind: "procedure" as const,
+      date: procedure.createdAt,
+      title: procedure.procedureName,
+      subtitle: procedure.status,
+    })),
+    ...documents.map((document) => ({
+      id: `document-${document.id}`,
+      kind: "document" as const,
+      date: document.createdAt,
+      title: document.name,
+      subtitle: document.type,
+    })),
   ];
 
   events.sort((a, b) => b.date.getTime() - a.date.getTime());
@@ -159,6 +212,10 @@ export default async function PatientTimelinePage({
     if (event.kind === "prescription") return Pill;
     if (event.kind === "invoice") return ReceiptText;
     if (event.kind === "lab") return FlaskConical;
+    if (event.kind === "diagnosis") return Stethoscope;
+    if (event.kind === "followUp") return CalendarCheck2;
+    if (event.kind === "procedure") return Stethoscope;
+    if (event.kind === "document") return FileText;
     const status = (event as unknown as { apptStatus?: string }).apptStatus;
     if (status === "cancelled") return CalendarX2;
     if (status === "no_show") return UserX;
@@ -170,6 +227,10 @@ export default async function PatientTimelinePage({
     if (event.kind === "prescription") return t["timeline_prescription"];
     if (event.kind === "invoice") return t["timeline_invoice"];
     if (event.kind === "lab") return t["timeline_lab"];
+    if (event.kind === "diagnosis") return t["timeline_diagnosis"];
+    if (event.kind === "followUp") return t["timeline_followUp"];
+    if (event.kind === "procedure") return t["timeline_procedure"];
+    if (event.kind === "document") return t["timeline_document"];
     const status = (event as unknown as { apptStatus?: string }).apptStatus;
     if (status === "cancelled") return t["timeline_cancelled"];
     if (status === "no_show") return t["timeline_noShow"];
