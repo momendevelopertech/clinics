@@ -4,6 +4,7 @@ import { requireOrgContext } from "@/lib/org";
 import { requireOwner } from "@/lib/roles";
 import { createAuditLog } from "@/lib/audit";
 import { staffProfileUpdateSchema } from "@/lib/validations/staff";
+import { logServerError } from "@/lib/safe-logger";
 
 export async function GET() {
   try {
@@ -17,10 +18,12 @@ export async function GET() {
         availableDays: true, availableFrom: true, availableTo: true,
         branch: { select: { id: true, name: true } },
         room: { select: { id: true, name: true, number: true } },
+        userRoles: { select: { role: { select: { id: true, name: true, permissions: true } } } },
       },
     });
     return NextResponse.json(staff);
-  } catch {
+  } catch (error) {
+    logServerError("Error fetching staff", error);
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
 }
@@ -63,7 +66,8 @@ export async function PATCH(request: Request) {
       beforeState: JSON.stringify(existing), afterState: JSON.stringify(updated),
     });
     return NextResponse.json(updated);
-  } catch {
+  } catch (error) {
+    logServerError("Error updating staff profile", error);
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
 }

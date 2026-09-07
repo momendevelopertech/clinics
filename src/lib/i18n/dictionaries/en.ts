@@ -729,6 +729,8 @@ export const en: Dictionary = {
   labs_requiredFields: "Please fill in required fields",
   labs_addedSuccess: "Lab result added successfully",
   labs_addError: "Failed to add lab result",
+  settings_selectRole: "Select role",
+  settings_staffRoleError: "Failed to update staff role",
   timeline_diagnosis: "Diagnosis",
   timeline_followUp: "Follow-up",
   timeline_procedure: "Procedure",

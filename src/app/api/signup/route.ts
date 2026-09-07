@@ -44,6 +44,8 @@ const OWNER_PERMISSIONS = [
   { action: "inventory:write", resource: "inventory" },
   { action: "billing:read", resource: "billing" },
   { action: "billing:write", resource: "billing" },
+  { action: "staff:read", resource: "staff" },
+  { action: "staff:write", resource: "staff" },
 ];
 
 const DOCTOR_PERMISSIONS = [

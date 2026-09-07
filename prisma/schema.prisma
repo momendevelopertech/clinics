@@ -136,6 +136,8 @@ model UserRole {
   roleId    String
   role      Role     @relation(fields: [roleId], references: [id])
   createdAt DateTime @default(now())
+
+  @@unique([userId, roleId])
 }
 
 // ============== PATIENT MANAGEMENT ==============

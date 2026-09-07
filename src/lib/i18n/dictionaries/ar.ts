@@ -728,6 +728,8 @@ export const ar: Dictionary = {
   labs_requiredFields: "يرجى ملء الحقول المطلوبة",
   labs_addedSuccess: "تمت إضافة نتيجة المختبر بنجاح",
   labs_addError: "فشل إضافة نتيجة المختبر",
+  settings_selectRole: "اختر الدور",
+  settings_staffRoleError: "فشل تحديث دور الموظف",
   timeline_diagnosis: "التشخيص",
   timeline_followUp: "المتابعة",
   timeline_procedure: "الإجراء",
