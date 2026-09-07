@@ -18,7 +18,8 @@ order: finish and verify one task before starting the next dependent task.
 
 - [x] P2-T1 — Appointment lifecycle and scheduling validation
 - [x] P2-T2 — Tenant-backed scheduling UI
-- [ ] P2-T3 — Check-in, walk-in, and queue projection *(in progress)*
+- [x] P2-T3 — Check-in, walk-in, and queue projection
+- [ ] P2-T4 — Encounter lifecycle and clinical capture *(in progress)*
 - [ ] P2-T3 — Check-in, walk-in, and queue projection
 - [ ] P2-T4 — Encounter lifecycle and clinical capture
 

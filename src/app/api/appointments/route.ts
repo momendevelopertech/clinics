@@ -344,6 +344,7 @@ export async function PATCH(request: Request) {
     const parsedUpdates = appointmentUpdateSchema.safeParse({
       ...(normalizedStatus ? { status: normalizedStatus } : {}),
       ...(updates.roomId !== undefined ? { roomId: updates.roomId } : {}),
+      ...(updates.isWalkIn !== undefined ? { isWalkIn: updates.isWalkIn } : {}),
     });
     if (!parsedUpdates.success) {
       return NextResponse.json({ error: "Invalid appointment update", details: parsedUpdates.error.flatten() }, { status: 400 });
@@ -358,6 +359,7 @@ export async function PATCH(request: Request) {
     if (normalizedStatus) updateData.status = normalizedStatus;
     if (updates.cancellationReason) updateData.cancellationReason = updates.cancellationReason;
     if (updates.roomId !== undefined) updateData.roomId = updates.roomId || null;
+    if (updates.isWalkIn !== undefined) updateData.isWalkIn = updates.isWalkIn === true;
 
     let nextStart = existing.startTime;
     let nextEnd = existing.endTime;
@@ -389,10 +391,16 @@ export async function PATCH(request: Request) {
       }
     }
 
-    const updated = await prisma.appointment.update({
-      where: { id },
-      data: updateData,
-      include: { provider: true },
+    const updated = await prisma.$transaction(async (tx) => {
+      if (updates.isWalkIn === true && !existing.isWalkIn) {
+        updateData.tokenNumber = await nextWalkInToken(tx, orgId, nextStart);
+        updateData.status = normalizedStatus ?? "arrived";
+      }
+      return tx.appointment.update({
+        where: { id },
+        data: updateData,
+        include: { provider: true },
+      });
     });
 
     await createAuditLog({

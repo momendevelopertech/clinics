@@ -425,7 +425,6 @@ function AppointmentsPageContent() {
                                      updateAppointment(apt.id, {
                                        status: "In Waiting Room",
                                        isWalkIn: true,
-                                       tokenNumber: apt.tokenNumber ?? `T-${String((appointments.filter((a) => a.tokenNumber).length + 1)).padStart(2, "0")}`,
                                      });
                                      toast.success(t("appts_markedWalkIn"));
                                    }}>{t("appts_walkIn")}</Button>

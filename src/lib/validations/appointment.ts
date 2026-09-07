@@ -21,6 +21,7 @@ export const appointmentUpdateSchema = z.object({
   bufferMinutes: z.number().int().min(0).max(120).optional().nullable(),
   appointmentType: z.string().max(100).optional().nullable(),
   status: z.enum(["scheduled", "arrived", "in_progress", "completed", "cancelled", "no_show"]).optional(),
+  isWalkIn: z.boolean().optional(),
   notes: z.string().max(1000).optional().nullable(),
 });
 
