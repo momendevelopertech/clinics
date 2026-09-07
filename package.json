@@ -8,7 +8,7 @@
   },
   "scripts": {
     "postinstall": "prisma generate",
-    "prepare": "husky",
+    "prepare": "node scripts/prepare-husky.mjs",
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
@@ -48,6 +48,8 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.2",
+    "resend": "^6.17.2",
+    "resend": "^6.26.0",
     "sonner": "^2.0.7",
     "stripe": "^20.4.1",
     "tailwind-merge": "^3.5.0",

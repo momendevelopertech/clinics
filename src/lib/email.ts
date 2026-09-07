@@ -95,8 +95,6 @@ export async function sendAuthEmail({
           devUrl: ctaUrl,
         };
       }
-      // Optional provider: package is only needed when EMAIL_PROVIDER=resend.
-      // @ts-expect-error - "resend" is an optional dependency; absence falls back to console logging.
       const resendModule = await import("resend");
       const resend = new resendModule.Resend(resendKey);
       const { data } = await resend.emails.send({
