@@ -5,6 +5,7 @@ import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { createAuditLog } from "@/lib/audit";
 import { logServerError } from "@/lib/safe-logger";
+import { labResultSchema } from "@/lib/validations";
 
 export async function GET(request: Request) {
   try {
@@ -22,6 +23,7 @@ export async function GET(request: Request) {
       },
       include: {
         patient: { select: { firstName: true, lastName: true } },
+        order: { select: { id: true, orderType: true, priority: true, status: true } },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -30,6 +32,7 @@ export async function GET(request: Request) {
       labResults.map((l: Prisma.LabResultGetPayload<{
         include: {
           patient: { select: { firstName: true; lastName: true } };
+          order: { select: { id: true; orderType: true; priority: true; status: true } };
         };
       }>) => ({
         id: l.id,
@@ -42,6 +45,7 @@ export async function GET(request: Request) {
         status: l.status,
         performedAt: l.performedAt?.toISOString() ?? null,
         reportUrl: l.reportUrl,
+        order: l.order,
         createdAt: l.createdAt.toISOString(),
       })),
     );
@@ -65,24 +69,11 @@ export async function POST(request: Request) {
     if (authz.response) return authz.response;
     const { userId } = authz;
 
-    const body = await request.json();
-    const {
-      patientId,
-      testName,
-      resultValue,
-      unit,
-      referenceRange,
-      status,
-      performedAt,
-      reportUrl,
-    } = body;
-
-    if (!patientId || !testName) {
-      return NextResponse.json(
-        { error: "patientId and testName are required" },
-        { status: 400 },
-      );
+    const parsed = labResultSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
     }
+    const { orderId, patientId, testName, resultValue, unit, referenceRange, status, performedAt, reportUrl } = parsed.data;
 
     const patient = await prisma.patient.findFirst({
       where: { id: patientId, organizationId: orgId },
@@ -90,10 +81,18 @@ export async function POST(request: Request) {
     if (!patient) {
       return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
+    if (orderId) {
+      const order = await prisma.labOrder.findFirst({ where: { id: orderId, organizationId: orgId, patientId }, select: { id: true, status: true } });
+      if (!order) return NextResponse.json({ error: "Lab order not found for patient" }, { status: 400 });
+      if (order.status === "cancelled" || order.status === "reviewed") return NextResponse.json({ error: "This lab order cannot receive results" }, { status: 409 });
+    }
 
-    const labResult = await prisma.labResult.create({
+    const labResult = await prisma.$transaction(async (tx) => {
+      const result = await tx.labResult.create({
       data: {
+        organizationId: orgId,
         patientId,
+        orderId: orderId ?? null,
         testName,
         resultValue: resultValue ?? null,
         unit: unit ?? null,
@@ -103,6 +102,9 @@ export async function POST(request: Request) {
         reportUrl: reportUrl ?? null,
       },
       include: { patient: { select: { firstName: true, lastName: true } } },
+      });
+      if (orderId) await tx.labOrder.update({ where: { id: orderId }, data: { status: "resulted" } });
+      return result;
     });
 
     await createAuditLog({
@@ -111,7 +113,7 @@ export async function POST(request: Request) {
       action: "CREATE",
       entityType: "LabResult",
       entityId: labResult.id,
-      afterState: JSON.stringify({ patientId, testName, status }),
+      afterState: JSON.stringify({ patientId, orderId, testName, status }),
     });
 
     return NextResponse.json(
@@ -125,6 +127,7 @@ export async function POST(request: Request) {
         referenceRange: labResult.referenceRange,
         status: labResult.status,
         performedAt: labResult.performedAt?.toISOString() ?? null,
+        orderId: labResult.orderId,
         createdAt: labResult.createdAt.toISOString(),
       },
       { status: 201 },

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { AddLabResultDialog } from "@/components/labs/add-lab-result-dialog";
+import { AddLabOrderDialog } from "@/components/labs/add-lab-order-dialog";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
 
@@ -148,7 +149,10 @@ export default function LabResultsPage() {
           </p>
         </div>
 
-        <AddLabResultDialog onSuccess={fetchLabResults} />
+        <div className="flex gap-2">
+          <AddLabOrderDialog onSuccess={fetchLabResults} />
+          <AddLabResultDialog onSuccess={fetchLabResults} />
+        </div>
       </div>
 
       <div className="bg-white dark:bg-neutral-900 border rounded-[5px] flex-1 shadow-sm flex flex-col pt-2">

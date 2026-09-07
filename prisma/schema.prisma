@@ -50,6 +50,8 @@ model Organization {
   patientHistories     PatientHistory[]
   diagnoses            Diagnosis[]
   followUps            FollowUp[]
+  labOrders            LabOrder[]
+  labResults           LabResult[]
 }
 
 model WaitlistEntry {
@@ -101,6 +103,8 @@ model User {
   auditLogs              AuditLog[]
   encounterNotes         EncounterNote[]
   prescriptions          Prescription[]
+  labOrders              LabOrder[]      @relation("LabOrderAuthor")
+  reviewedLabResults     LabResult[]     @relation("LabResultReviewer")
 }
 
 model Role {
@@ -168,6 +172,7 @@ model Patient {
   vitals                 Vital[]
   prescriptions          Prescription[]
   labResults             LabResult[]
+  labOrders              LabOrder[]
   insurancePolicies      InsurancePolicy[]
   invoices               Invoice[]
   documents              Document[]
@@ -344,6 +349,7 @@ model Encounter {
   prescriptions  Prescription[]
   diagnoses      Diagnosis[]
   followUps      FollowUp[]
+  labOrders      LabOrder[]
 }
 
 model EncounterNote {
@@ -453,17 +459,49 @@ model FollowUp {
 }
 
 model LabResult {
-  id             String    @id @default(cuid())
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
   patientId      String
-  patient        Patient   @relation(fields: [patientId], references: [id])
+  patient        Patient      @relation(fields: [patientId], references: [id])
+  orderId        String?
+  order          LabOrder?    @relation(fields: [orderId], references: [id])
   testName       String
   resultValue    String?
   unit           String?
   referenceRange String?
-  status         String // pending, completed, abnormal
+  status         String // pending, completed, abnormal, reviewed
   performedAt    DateTime?
   reportUrl      String?
-  createdAt      DateTime  @default(now())
+  reviewedById   String?
+  reviewedBy     User?        @relation("LabResultReviewer", fields: [reviewedById], references: [id])
+  reviewedAt     DateTime?
+  reviewNote     String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model LabOrder {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  patientId      String
+  patient        Patient      @relation(fields: [patientId], references: [id])
+  encounterId    String?
+  encounter      Encounter?   @relation(fields: [encounterId], references: [id])
+  orderedById    String
+  orderedBy      User         @relation("LabOrderAuthor", fields: [orderedById], references: [id])
+  orderType      String // lab, imaging
+  testName       String
+  priority       String       @default("routine") // routine, urgent, stat
+  indication     String?
+  status         String       @default("ordered") // ordered, collected, resulted, reviewed, cancelled
+  orderedAt      DateTime     @default(now())
+  results        LabResult[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId, patientId, status])
 }
 
 // ============== BILLING & RCM ==============

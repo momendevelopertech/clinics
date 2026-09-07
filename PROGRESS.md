@@ -26,8 +26,8 @@ order: finish and verify one task before starting the next dependent task.
 ## Phase 3 — Clinical
 
 - [x] P3-T1 — Diagnoses, follow-ups, and itemized prescriptions
-- [ ] P3-T2 — Lab and imaging orders through reviewed results *(in progress)*
-- [ ] P3-T3 — Procedure orders and clinical documents
+- [x] P3-T2 — Lab and imaging orders through reviewed results
+- [ ] P3-T3 — Procedure orders and clinical documents *(in progress)*
 - [ ] P3-T4 — Read-only patient medical timeline
 
 ## Phase 4 — Financial
