@@ -11,6 +11,8 @@ import {
   nextWalkInToken,
 } from "@/lib/appointments";
 import { checkPlanLimit } from "@/lib/plans";
+import { appointmentUpdateSchema } from "@/lib/validations/appointment";
+import { isAppointmentTransitionAllowed } from "@/lib/appointments";
 
 const ACTIVE_STATUSES = ["scheduled", "confirmed", "arrived", "in_progress"];
 
@@ -191,6 +193,13 @@ export async function POST(request: Request) {
     if (!patient) {
       return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
+    if (patient.status === "Archived") {
+      return NextResponse.json({ error: "Archived patients cannot be scheduled" }, { status: 400 });
+    }
+    if (roomId) {
+      const room = await prisma.room.findFirst({ where: { id: roomId, organizationId: orgId } });
+      if (!room) return NextResponse.json({ error: "Room not found" }, { status: 404 });
+    }
 
     // Doctor availability windows (regular schedule pattern).
     const availability = isDoctorAvailable(provider, startDateTime);
@@ -327,10 +336,26 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const isCancellation = updates.status === "cancelled" || updates.status === "no_show";
+    const normalizedStatus = typeof updates.status === "string"
+      ? (updates.status.toLowerCase().replace("in waiting room", "arrived") === "pending"
+        ? "scheduled"
+        : updates.status.toLowerCase().replace("in waiting room", "arrived"))
+      : undefined;
+    const parsedUpdates = appointmentUpdateSchema.safeParse({
+      ...(normalizedStatus ? { status: normalizedStatus } : {}),
+      ...(updates.roomId !== undefined ? { roomId: updates.roomId } : {}),
+    });
+    if (!parsedUpdates.success) {
+      return NextResponse.json({ error: "Invalid appointment update", details: parsedUpdates.error.flatten() }, { status: 400 });
+    }
+    if (normalizedStatus && !isAppointmentTransitionAllowed(existing.status, normalizedStatus)) {
+      return NextResponse.json({ error: `Cannot change appointment from ${existing.status} to ${normalizedStatus}` }, { status: 409 });
+    }
+
+    const isCancellation = normalizedStatus === "cancelled" || normalizedStatus === "no_show";
 
     const updateData: Record<string, unknown> = {};
-    if (updates.status) updateData.status = updates.status;
+    if (normalizedStatus) updateData.status = normalizedStatus;
     if (updates.cancellationReason) updateData.cancellationReason = updates.cancellationReason;
     if (updates.roomId !== undefined) updateData.roomId = updates.roomId || null;
 

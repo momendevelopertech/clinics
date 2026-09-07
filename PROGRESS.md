@@ -16,8 +16,8 @@ order: finish and verify one task before starting the next dependent task.
 
 ## Phase 2 — Clinic operations
 
-- [ ] P2-T1 — Appointment lifecycle and scheduling validation *(in progress)*
-- [ ] P2-T2 — Tenant-backed scheduling UI
+- [x] P2-T1 — Appointment lifecycle and scheduling validation
+- [ ] P2-T2 — Tenant-backed scheduling UI *(in progress)*
 - [ ] P2-T3 — Check-in, walk-in, and queue projection
 - [ ] P2-T4 — Encounter lifecycle and clinical capture
 

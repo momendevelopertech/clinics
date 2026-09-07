@@ -48,6 +48,20 @@ export function isDoctorAvailable(
 
 const ACTIVE_STATUSES = ["scheduled", "confirmed", "arrived", "in_progress"];
 
+const ALLOWED_TRANSITIONS: Record<string, readonly string[]> = {
+  scheduled: ["scheduled", "confirmed", "arrived", "cancelled", "no_show"],
+  confirmed: ["confirmed", "arrived", "cancelled", "no_show"],
+  arrived: ["arrived", "in_progress", "cancelled", "no_show"],
+  in_progress: ["in_progress", "completed", "cancelled"],
+  completed: ["completed"],
+  cancelled: ["cancelled"],
+  no_show: ["no_show"],
+};
+
+export function isAppointmentTransitionAllowed(current: string, next: string): boolean {
+  return ALLOWED_TRANSITIONS[current]?.includes(next) ?? false;
+}
+
 type AppointmentDb = {
   appointment: Pick<typeof prisma.appointment, "findFirst" | "count">;
 };

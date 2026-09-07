@@ -139,6 +139,10 @@ function EditAppointmentDialog({
                   <SelectItem value="confirmed">{t("appts_statusConfirmed")}</SelectItem>
                   <SelectItem value="waiting">{t("appts_statusWaitingRoom")}</SelectItem>
                   <SelectItem value="pending">{t("appts_statusPending")}</SelectItem>
+                  <SelectItem value="in_progress">{t("appts_statusInProgress")}</SelectItem>
+                  <SelectItem value="completed">{t("appts_statusCompleted")}</SelectItem>
+                  <SelectItem value="cancelled">{t("appts_cancel")}</SelectItem>
+                  <SelectItem value="no_show">{t("appts_statusNoShow")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -164,11 +168,19 @@ function AppointmentsPageContent() {
   const statusLabel = (s: string) => {
     const map: Record<string, string> = {
       "Scheduled": t("appts_statusScheduled"),
-      "Confirmed": t("appts_statusConfirmed"),
-      "Pending": t("appts_statusPending"),
-      "Walk-in": t("appts_walkIn"),
-      "Cancelled": t("appts_cancel"),
-      "In Waiting Room": t("appts_statusWaitingRoom"),
+        scheduled: t("appts_statusScheduled"),
+        "Confirmed": t("appts_statusConfirmed"),
+        confirmed: t("appts_statusConfirmed"),
+        "Pending": t("appts_statusPending"),
+        pending: t("appts_statusPending"),
+        "Walk-in": t("appts_walkIn"),
+        "Cancelled": t("appts_cancel"),
+        cancelled: t("appts_cancel"),
+        "In Waiting Room": t("appts_statusWaitingRoom"),
+        arrived: t("appts_statusWaitingRoom"),
+        in_progress: t("appts_statusInProgress"),
+        completed: t("appts_statusCompleted"),
+        no_show: t("appts_statusNoShow"),
     }
     return map[s] ?? s
   }
@@ -193,10 +205,14 @@ function AppointmentsPageContent() {
   }, [searchParams])
 
   const statusMap: Record<string, Appointment["status"]> = {
-    scheduled: "Scheduled",
-    confirmed: "Confirmed",
-    waiting: "In Waiting Room",
-    pending: "Pending",
+    scheduled: "scheduled",
+    confirmed: "confirmed",
+    waiting: "arrived",
+    pending: "scheduled",
+    in_progress: "in_progress",
+    completed: "completed",
+    cancelled: "cancelled",
+    no_show: "no_show",
   }
   const handleEdit = (id: string, data: { provider: string; date: string; time: string; status: string }) => {
     updateAppointment(id, {
