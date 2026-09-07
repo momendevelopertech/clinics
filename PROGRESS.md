@@ -47,7 +47,7 @@ order: finish and verify one task before starting the next dependent task.
 
 ## Phase 7 — AI and automation
 
-- [ ] P7-T1 — Deferred until explicitly approved; no AI mutation of clinical records
+- [x] P7-T1 — Read-only care signals and safe automation review flow
 
 ## Delivery rule
 

@@ -48,6 +48,7 @@ export const en: Dictionary = {
   nav_appointments: "Appointments",
   nav_encounters: "Encounters",
   nav_analytics: "Analytics",
+  nav_automation: "Automation",
   nav_billing: "Billing",
   nav_payments: "Payments",
   nav_labs: "Labs",
@@ -99,6 +100,11 @@ export const en: Dictionary = {
   analytics_noShowRate: "Monthly no-show rate",
   analytics_revenue: "Revenue this month",
   analytics_outstanding: "Outstanding balance",
+  automation_title: "Care signals",
+  automation_subtitle: "Review deterministic, read-only signals for overdue follow-ups, abnormal results, and recent no-shows.",
+  automation_empty: "No follow-up actions were detected.",
+  automation_review: "Review",
+  automation_readOnly: "These signals never change clinical records or send messages automatically.",
 
   // Settings
   settings_title: "Settings",

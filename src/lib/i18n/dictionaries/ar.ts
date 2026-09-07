@@ -48,6 +48,7 @@ export const ar: Dictionary = {
   nav_appointments: "المواعيد",
   nav_encounters: "الجلسات السريرية",
   nav_analytics: "التحليلات",
+  nav_automation: "الأتمتة",
   nav_billing: "الفواتير",
   nav_payments: "المدفوعات",
   nav_labs: "المختبر",
@@ -99,6 +100,11 @@ export const ar: Dictionary = {
   analytics_noShowRate: "نسبة عدم الحضور الشهرية",
   analytics_revenue: "إيرادات هذا الشهر",
   analytics_outstanding: "الرصيد المستحق",
+  automation_title: "إشارات الرعاية",
+  automation_subtitle: "راجع إشارات للمتابعات المتأخرة والنتائج غير الطبيعية وحالات عدم الحضور، بدون تعديل تلقائي للسجلات.",
+  automation_empty: "لا توجد إجراءات متابعة مكتشفة.",
+  automation_review: "مراجعة",
+  automation_readOnly: "هذه الإشارات لا تعدّل السجلات السريرية ولا ترسل رسائل تلقائيًا.",
 
   // Settings
   settings_title: "الإعدادات",

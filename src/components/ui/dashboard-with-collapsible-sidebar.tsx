@@ -24,6 +24,7 @@ import {
   Settings,
   Stethoscope,
   Sun,
+  Sparkles,
   User,
   Users,
   Wallet,
@@ -52,6 +53,7 @@ const routeTitleKeys: Array<[string, string]> = [
   ["/appointments", "nav_appointments"],
   ["/encounters", "nav_encounters"],
   ["/analytics", "nav_analytics"],
+  ["/automation", "nav_automation"],
   ["/billing", "nav_billing"],
   ["/payments", "nav_payments"],
   ["/labs", "nav_labs"],
@@ -112,6 +114,7 @@ function CollapsibleSidebar({
         { icon: Clock, label: t("nav_queue"), href: "/queue" },
         { icon: ClipboardList, label: t("nav_encounters"), href: "/encounters" },
         { icon: Activity, label: t("nav_analytics"), href: "/analytics" },
+        { icon: Sparkles, label: t("nav_automation"), href: "/automation" },
       ],
     },
     {
