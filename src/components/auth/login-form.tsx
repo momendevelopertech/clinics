@@ -2,15 +2,14 @@
 
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Activity, ArrowRight, ShieldPlus, Stethoscope, TimerReset } from "lucide-react";
-import { getLocalNavigationTarget } from "@/lib/redirects";
 import type { Dictionary } from "@/lib/i18n/locale";
 import { LanguageSwitcher } from "@/components/locale/language-switcher";
 
 type LoginFormProps = {
   callbackUrl: string;
+  error: string | null;
   t: Dictionary;
 };
 
@@ -20,34 +19,26 @@ const demoStaffLogins = [
   { email: "billing@acmeclinic.com", password: "admin123" },
 ];
 
-export function LoginForm({ callbackUrl, t }: LoginFormProps) {
-  const router = useRouter();
+export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const authError = error === "CredentialsSignin" ? t["auth_invalidCredentials"] : null;
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError(null);
     setIsSubmitting(true);
 
-    const result = await signIn("credentials", {
+    // Use NextAuth's built-in server redirect (redirect: true): the session
+    // cookie is set in the SAME response as the 302, so the auth proxy sees it
+    // immediately and no login<->dashboard redirect loop occurs on Vercel.
+    void signIn("credentials", {
       email,
       password,
-      redirect: false,
+      redirect: true,
       callbackUrl,
     });
-
-    setIsSubmitting(false);
-
-    if (!result || result.error) {
-      setError(t["auth_invalidCredentials"]);
-      return;
-    }
-
-    router.push(getLocalNavigationTarget(result.url, callbackUrl));
-    router.refresh();
   }
 
   return (
@@ -155,9 +146,9 @@ export function LoginForm({ callbackUrl, t }: LoginFormProps) {
                 />
               </label>
 
-              {error ? (
+              {authError ? (
                 <p className="rounded-[18px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/25 dark:bg-red-500/10 dark:text-red-300">
-                  {error}
+                  {authError}
                 </p>
               ) : null}
 

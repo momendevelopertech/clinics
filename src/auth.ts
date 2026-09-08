@@ -8,6 +8,27 @@ function getLocalhostAwareAuthUrl() {
   const configuredAuthUrl = process.env.NEXTAUTH_URL?.trim();
 
   if (process.env.NODE_ENV === "production") {
+    // In production we must never force a localhost/plain-http URL: NextAuth v4
+    // uses it to compute the session cookie's host + secure flag, and a wrong
+    // value makes the auth middleware/proxy reject the cookie and loop back to
+    // /login?callbackUrl=... . If the injected value is not a real https origin
+    // (or is missing), leave NEXTAUTH_URL unset so NextAuth infers it from the
+    // request origin (Vercel auto-inflates it during the build).
+    if (!configuredAuthUrl) {
+      return undefined;
+    }
+    try {
+      const parsed = new URL(configuredAuthUrl);
+      const isLocalhost =
+        parsed.hostname === "localhost" ||
+        parsed.hostname === "127.0.0.1" ||
+        parsed.hostname === "0.0.0.0";
+      if (parsed.protocol !== "https:" || isLocalhost) {
+        return undefined;
+      }
+    } catch {
+      return undefined;
+    }
     return configuredAuthUrl;
   }
 
