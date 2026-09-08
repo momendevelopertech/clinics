@@ -25,11 +25,14 @@ export async function POST(
 
   const existing = await prisma.organization.findUnique({
     where: { id: orgId },
-    select: { status: true, name: true },
+    select: { status: true, name: true, slug: true },
   });
 
   if (!existing) {
     return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+  }
+  if (existing.slug === "platform-admin") {
+    return NextResponse.json({ error: "Platform organization is not a clinic" }, { status: 400 });
   }
 
   const updated = await prisma.organization.update({
@@ -42,7 +45,7 @@ export async function POST(
     organizationId: orgId,
     userId: guard.userId,
     action: "UPDATE",
-    entityType: "organization",
+    entityType: "platform_organization_status",
     entityId: orgId,
     beforeState: JSON.stringify({ status: existing.status }),
     afterState: JSON.stringify({ status: updated.status }),

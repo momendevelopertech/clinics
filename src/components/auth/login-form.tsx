@@ -208,6 +208,15 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
                 </span>
               </div>
 
+              <Link
+                href="/demo-accounts"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex w-full items-center justify-center rounded-[14px] border border-cyan-200 bg-white/80 px-3 py-2.5 text-xs font-semibold text-cyan-800 transition hover:bg-white dark:border-cyan-400/20 dark:bg-white/[0.04] dark:text-cyan-200"
+              >
+                {t["auth_viewDemoAccounts"]}
+              </Link>
+
               <div className="mt-4 grid gap-2">
                 {demoStaffLogins.map((login) => (
                   <div

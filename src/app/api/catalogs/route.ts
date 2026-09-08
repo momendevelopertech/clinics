@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
+import { requireModulePermission } from "@/lib/permissions";
 import { requireOwner } from "@/lib/roles";
 import { createAuditLog } from "@/lib/audit";
 import { clinicalCatalogSchema, serviceCatalogSchema } from "@/lib/validations/catalog";
@@ -13,6 +14,8 @@ function kindFrom(request: Request) {
 export async function GET(request: Request) {
   try {
     const { organizationId } = await requireOrgContext();
+    const moduleAuthz = await requireModulePermission(organizationId, "catalogs");
+    if (moduleAuthz.response) return moduleAuthz.response;
     const authz = await requireAnyPermission(organizationId, [
       { action: "patients:read", resource: "patients" },
       { action: "appointments:read", resource: "appointments" },

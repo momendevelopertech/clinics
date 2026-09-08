@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
+import { requireModulePermission } from "@/lib/permissions";
 import { diagnosisSchema, followUpSchema } from "@/lib/validations";
 import { logServerError } from "@/lib/safe-logger";
 
@@ -9,6 +10,8 @@ export async function GET(request: Request) {
   try {
     const organizationId = await getOrgId();
     assertOrgScope(organizationId);
+    const moduleAuthz = await requireModulePermission(organizationId, "encounters");
+    if (moduleAuthz.response) return moduleAuthz.response;
     const params = new URL(request.url).searchParams;
     const patientId = params.get("patientId");
     const [diagnoses, followUps] = await Promise.all([
@@ -26,6 +29,8 @@ export async function POST(request: Request) {
   try {
     const organizationId = await getOrgId();
     assertOrgScope(organizationId);
+    const moduleAuthz = await requireModulePermission(organizationId, "encounters");
+    if (moduleAuthz.response) return moduleAuthz.response;
     const authz = await requireAnyPermission(organizationId, [{ action: "encounters:write", resource: "encounters" }, { action: "patients:write", resource: "patients" }]);
     if (authz.response) return authz.response;
     const body = await request.json() as { kind?: string };

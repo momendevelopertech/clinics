@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
 import { buildAutomationSignals } from "@/lib/automation";
+import { requireModulePermission } from "@/lib/permissions";
 
 export async function GET() {
   const context = await requireOrgContext().catch(() => null);
@@ -10,6 +11,8 @@ export async function GET() {
   }
 
   const { organizationId } = context;
+  const moduleAuthz = await requireModulePermission(organizationId, "automation");
+  if (moduleAuthz.response) return moduleAuthz.response;
   const now = new Date();
   const recentStart = new Date(now);
   recentStart.setDate(recentStart.getDate() - 30);
@@ -77,4 +80,3 @@ export async function GET() {
     signals,
   });
 }
-

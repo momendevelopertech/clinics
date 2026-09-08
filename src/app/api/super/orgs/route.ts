@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireSuperAdmin } from "@/lib/roles";
+import { getPlanLimits } from "@/lib/plans";
 
 export async function GET() {
   const guard = await requireSuperAdmin();
@@ -9,6 +10,7 @@ export async function GET() {
   }
 
   const orgs = await prisma.organization.findMany({
+    where: { NOT: { slug: "platform-admin" } },
     orderBy: [{ createdAt: "desc" }],
     select: {
       id: true,
@@ -30,5 +32,30 @@ export async function GET() {
     },
   });
 
-  return NextResponse.json({ orgs });
+  const orgsWithUsage = await Promise.all(
+    orgs.map(async (org) => {
+      const [appointmentsThisMonth] = await Promise.all([
+        prisma.appointment.count({
+          where: {
+            organizationId: org.id,
+            startTime: {
+              gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+            },
+          },
+        }),
+      ]);
+
+      return {
+        ...org,
+        usage: {
+          patients: org._count.patients,
+          staff: org._count.users,
+          appointmentsThisMonth,
+        },
+        limits: getPlanLimits(org.plan),
+      };
+    }),
+  );
+
+  return NextResponse.json({ orgs: orgsWithUsage });
 }

@@ -1,245 +1,183 @@
 # Role Capability Guide — OpenHealthCRM
 
-**Version:** 1.0 (2026-09-08) — matches the seeded data and code at commit `e5c24cf`.
-**Scope:** What every role can view, create, or modify in the staff application, and
-**where** that is enforced (sidebar UI, server API guards, or platform checks).
-**Sources:** `prisma/seed.js` (role/permission definitions), `src/lib/roles.ts`,
-`src/lib/auth.ts` (`hasPermission`), `src/lib/authorization.ts`
-(`requireAnyPermission`), `src/components/ui/dashboard-with-collapsible-sidebar.tsx`,
-`src/app/api/signup/route.ts`.
+**Status:** Final state after Parts A, B, and C (2026-09-08)
+**Scope:** Clinic roles, the approved sidebar, and the enforcement and demo-seed
+behavior that backs it.
 
----
+## 1. Role model
 
-## 1. How access control works
+There are six clinic roles:
 
-Access is decided by **two layers that must agree**:
-
-1. **RBAC (authoritative).** Every staff user has one or more `UserRole → Role`
-   assignments. Each `Role` holds a flat set of `RolePermission` rows
-   (`action`, `resource`). The session exposes the RBAC **role names** as
-   `session.user.roles` (`src/auth.ts` `authenticateUser`).
-   - `hasPermission(userId, orgId, action, resource)` (`src/lib/auth.ts`) checks
-     the user's roles for a matching `action` and grants `resource:null` wildcards.
-   - **Super Admin short-circuit:** a role literally named `"Super Admin"` bypasses
-     every permission check and is allowed to do anything.
-2. **Org scope.** Every org-scoped API resolves the org from the session
-   (`getOrgId`/`requireOrgContext`) and asserts it before any permission decision,
-   so staff can never read another tenant's data even with a valid permission.
-
-**Where each layer is enforced:**
-
-| Surface | Mechanism | Notes |
+| Displayed role | Persisted RBAC role | Purpose |
 |---|---|---|
-| Sidebar navigation | Client-side `canAccess(roles[])` | Cosmetic only — never a security boundary. `Owner` and `Super Admin` always pass. An item with **no** `roles` array (Dashboard, Automation, Plan, Catalogs, Help) is visible to every role. |
-| API reads/writes | `requireAnyPermission(orgId, [...])` → 403 on miss | Applied across patients, appointments, encounters, billing, payments, labs, lab-orders, clinical-orders, procedure-orders, vitals/stream, inventory, tasks, documents, consents, communications, campaigns, waitlist, settings, queue, branches, rooms, reports, analytics, prescriptions, notifications, audit. |
-| Page-level | `/super` uses `requireSuperAdmin`; `/plan` flags `isOwner` via `requireOwner` (display only; does not block the page) | No other page blocks by role server-side — URL access to a page is possible, but its data APIs will 403 without the right permission. |
-| Payment/insurance writes | `billing:write` etc. | Same guard path as above. |
+| Owner | `Owner` | Full access to the clinic |
+| Doctor | `Doctor` | Clinical access |
+| Receptionist | `Care Coordinator` | Scheduling and front-desk coordination |
+| Nurse | `Nurse` | Clinical support and inventory/lab read access |
+| Biller | `Biller` | Billing and payment operations |
+| Pharmacist | `Pharmacist` | Inventory, pharmacy, and lab read access |
 
----
+**Receptionist is a display label only.** The role persisted in `Role.name` and
+assigned through `UserRole` is `Care Coordinator`. The denormalized
+`User.role` value for this account is `receptionist`. Role matching and the
+sidebar translate `Care Coordinator` to `Receptionist` where required.
 
-## 2. Permission matrix (authoritative)
+`Super Admin` is not a clinic role. It is a platform account role and is
+limited to the platform console described in §4.
 
-`✓` = granted in the seeded `RolePermission` set (or by Super Admin short-circuit).
-`—` = not granted (the API will return 403 on an action requiring it).
+## 2. Approved sidebar matrix
 
-Rows are `resource:action`. Column "Receptionist*" is the **Care Coordinator** RBAC
-role that the receptionist demo account uses — see §5. “Owner” here is the RBAC
-**Owner** role (12 perms), distinct from the GitHub-style super-owner.
+`✓` means the item is shown in the clinic sidebar. Owner is intentionally
+granted every clinic item. The Receptionist column represents the persisted
+`Care Coordinator` role.
 
-| Resource / action | Super Admin | Owner | Doctor | Nurse | Care Coordinator (Receptionist\*) | Biller | Pharmacist |
-|---|---|---|---|---|---|---|---|
-| patients:read | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| patients:write | ✓ | ✓ | ✓ | ✓ | ✓ | — | — |
-| appointments:read | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| appointments:write | ✓ | ✓ | ✓ | ✓ | ✓ | — | — |
-| encounters:read | ✓ | ✓ | ✓ | ✓ | ✓ | — | — |
-| encounters:write | ✓ | ✓ | ✓ | ✓ | ✓ | — | — |
-| inventory:read | ✓ | ✓ | ✓ | ✓ | ✓ | — | ✓ |
-| inventory:write | ✓ | ✓ | ✓ | — | ✓ | — | ✓ |
-| billing:read | ✓ | ✓ | ✓ | — | ✓ | ✓ | — |
-| billing:write | ✓ | ✓ | ✓ | — | ✓ | ✓ | — |
-| lab:read | ✓ | — | ✓ | ✓ | ✓ | — | ✓ |
-| lab:write | ✓ | — | ✓ | — | ✓ | — | — |
-| pharmacy:read | ✓ | — | ✓ | ✓ | ✓ | — | ✓ |
-| pharmacy:write | ✓ | — | ✓ | — | ✓ | — | ✓ |
-| staff:read | ✓ | ✓ | — | — | — | — | — |
-| staff:write | ✓ | ✓ | — | — | — | — | — |
+| Sidebar item | Owner | Doctor | Receptionist | Nurse | Biller | Pharmacist |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| Dashboard | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Patients | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Appointments | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Queue | ✓ | ✓ | ✓ | ✓ | — | — |
+| Encounters | ✓ | ✓ | — | ✓ | — | — |
+| Analytics | ✓ | ✓ | — | ✓ | ✓ | — |
+| Consents | ✓ | ✓ | ✓ | ✓ | — | — |
+| Audit | ✓ | ✓ | — | — | ✓ | — |
+| Billing | ✓ | — | — | — | ✓ | — |
+| Payments | ✓ | — | — | — | ✓ | — |
+| Labs | ✓ | ✓ | — | ✓ | — | ✓ |
+| Inventory | ✓ | — | — | ✓ | — | ✓ |
+| Tasks | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Documents | ✓ | ✓ | ✓ | ✓ | — | — |
+| Communications | ✓ | — | ✓ | — | — | — |
+| Plan | ✓ | — | — | — | — | — |
+| Reports | ✓ | ✓ | — | ✓ | ✓ | — |
+| Availability | ✓ | ✓ | — | ✓ | — | — |
+| Locations | ✓ | — | ✓ | — | — | — |
+| Catalogs | ✓ | ✓ | — | ✓ | — | ✓ |
+| Settings | ✓ | — | — | — | — | — |
+| Waitlist | ✓ | — | ✓ | — | — | — |
+| Help | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
-Key details:
-- **Super Admin** (`superadmin@acmeclinic.com`, platform org): implicit `✓` for
-  everything via the short-circuit, plus `requireSuperAdmin` (needs the
-  denormalized flag too) for `/super` + `/api/super/*`.
-- **Doctor == Care Coordinator == Receptionist\*** on permissions: all three are
-  seeded with the same 14-permission clinical stack (`prisma/seed.js`
-  `allPermissions` / `CLINICAL_ROLE_PERMISSIONS` in the signup route).
-- **Owner cannot see Lab or Pharmacy** (`lab:read/write`, `pharmacy:read/write`
-  are absent from `ownerPermissions`) but owns `staff:read/write`.
-- **Nurse** reads inventory/lab/pharmacy but writes **only** clinical records;
-  no billing read.
-- **Pharmacist** owns inventory+pharmacy writes, read-only patients/appointments/lab.
+The sidebar is a usability filter, not a security boundary. A user can
+manually request a route that is not shown, but the route's server/API guards
+still apply.
 
----
+## 3. Server enforcement
 
-## 3. Sidebar visibility per role
+### Clinic modules and APIs
 
-From `src/components/ui/dashboard-with-collapsible-sidebar.tsx`. Items without a
-role list show for everyone; `Owner`/`Super Admin` always see everything.
+Org-scoped API routes resolve the organization from the authenticated session
+before accessing data. Module routes use
+`requireModulePermission(organizationId, module, action)`, which delegates to
+`requireAnyPermission` and returns HTTP 403 when the required permission is
+missing. Read and write checks use `<module>:read` and `<module>:write`.
 
-| Nav item | Owner / Super Admin | Doctor | Nurse | Receptionist\* | Biller | Pharmacist | Care Coordinator |
-|---|---|---|---|---|---|---|---|
-| Dashboard, Automation, Plan, Catalogs, Help | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Patients | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Appointments | ✓ | ✓ | ✓ | ✓ | — | — | ✓ |
-| Queue | ✓ | ✓ | ✓ | ✓ | — | — | ✓ |
-| Encounters | ✓ | ✓ | ✓ | — | — | — | ✓ |
-| Analytics | ✓ | ✓ | ✓ | ✓ | ✓ | — | ✓ |
-| Consents | ✓ | ✓ | ✓ | ✓ | — | — | ✓ |
-| Audit | ✓ | ✓ | ✓ | ✓ | ✓ | — | ✓ |
-| Billing | ✓ | ✓ | — | — | ✓ | — | ✓ |
-| Payments | ✓ | — | — | — | ✓ | — | — |
-| Labs | ✓ | ✓ | ✓ | — | — | ✓ | ✓ |
-| Inventory | ✓ | ✓ | ✓ | ✓ | — | ✓ | ✓ |
-| Tasks | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Documents | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Communications | ✓ | ✓ | ✓ | ✓ | — | — | ✓ |
-| Campaigns | ✓ | ✓ | ✓ | ✓ | — | — | ✓ |
-| Reports | ✓ | ✓ | ✓ | ✓ | ✓ | — | ✓ |
-| Availability | ✓ | ✓ | ✓ | — | — | — | — |
-| Locations | ✓ | ✓ | ✓ | ✓ | — | — | ✓ |
-| Settings | ✓ | ✓ | ✓ | ✓ | — | — | ✓ |
-| Waitlist | ✓ | ✓ | ✓ | ✓ | — | — | ✓ |
-| Super Admin console | only `isSuperAdmin` prop (server `requireSuperAdmin`) | | | | | | |
+`ROLE_MODULE_ACCESS` in `src/lib/permissions.ts` is the module-access
+allow-list used by the final role model. It is also used by the demo seed:
 
-Sidebar-vs-permission mismatches to be aware of (cosmetic; the server is the
-authority):
-- **Biller** sees Patients/Appointments/Analytics/Audit/Reports/Documents/Tasks but
-  has no `write` permissions for those modules — reads only.
-- **Nurse** sees Billing? No — Billing row above shows Nurse `—`. Nurse sees
-  Analytics/Audit/Reports (read-only aggregates) but no Billing or Payments.
-- **Pharmacist** sees Labs, Inventory, Documents, Tasks, Patients (read).
-
----
-
-## 4. Server-side enforcement map
-
-Read endpoints require the listed `read` permission; write endpoints require the
-`write` permission. Representative coverage (not exhaustive — every org-scoped
-route under `src/app/api` runs `requireAnyPermission`):
-
-| Module | Required permission (read / write) |
+| RBAC role | Seeded modules |
 |---|---|
-| `/api/patients` | `patients:read` / `patients:write` |
-| `/api/appointments` (+ recurrence) | `appointments:read` / `appointments:write` |
-| `/api/encounters` (+ `/[id]` + notes) | `encounters:read` / `encounters:write` |
-| `/api/billing/invoices`, `/api/payments` | `billing:read` / `billing:write` |
-| `/api/labs`, `/api/lab-orders` | `lab:read`(or `encounters:read`) / `encounters:write`+`patients:write` |
-| `/api/clinical-orders`, `/api/procedure-orders`, `/api/prescriptions` | `encounters:write`+`patients:write` |
-| `/api/vitals`, `/api/vitals/stream` | `patients:read`+`encounters:read` / `encounters:write` |
-| `/api/inventory` (+ `/[id]/transaction`) | `inventory:read` / `inventory:write` |
-| `/api/documents` | `patients:read` / `patients:write` |
-| `/api/consents` | `encounters:read`+`patients:write` / `patients:write` |
-| `/api/communications`, `/api/communications/campaigns` | `patients:write`+`appointments:write` |
-| `/api/tasks` | `patients:read`+`appointments:read` / `patients:write`+`appointments:write` |
-| `/api/waitlist` (+ `/[id]`) | `appointments:write` / `patients:write`+`appointments:write` |
-| `/api/queue`, `/api/branches`, `/api/rooms` | `appointments:write` |
-| `/api/settings`, `/api/notifications` | `staff:read`+`patients:write`+… / `staff:write` |
-| `/api/analytics/dashboard`, `/api/reports/monthly` | `billing:read`+`encounters:read` |
-| `/api/audit` | any of `patients:read` / `encounters:read` / `billing:read` |
+| Owner | All clinic modules |
+| Doctor | Dashboard, Patients, Appointments, Queue, Encounters, Analytics, Consents, Audit, Labs, Tasks, Documents, Reports, Availability, Catalogs, Help |
+| Care Coordinator (displayed Receptionist) | Dashboard, Patients, Appointments, Queue, Consents, Tasks, Documents, Communications, Locations, Waitlist, Help |
+| Nurse | Dashboard, Patients, Appointments, Encounters, Analytics, Consents, Labs, Inventory, Tasks, Documents, Reports, Availability, Catalogs, Help |
+| Biller | Dashboard, Patients, Appointments, Analytics, Audit, Billing, Payments, Tasks, Reports, Help |
+| Pharmacist | Dashboard, Patients, Appointments, Labs, Inventory, Tasks, Catalogs, Help |
 
-Hence a Pharmacist (7 perms) can open the Labs page, read lab results, and run
-inventory + pharmacy; attempting `patients:write` (e.g. editing a patient) returns
-HTTP 403. A Biller can read patients/appointments and write billing, but creating
-an appointment (`appointments:write`) returns 403 even though the sidebar shows the
-Appointments item.
+The read path has an intentional **legacy role fallback**. If a legacy clinic
+does not yet have the new module permission rows, `requireModulePermission`
+checks the user's RBAC role name against `ROLE_MODULE_ACCESS`; denormalized
+`owner` and `superAdmin` users are also recognized. This avoids requiring a
+data migration. Write checks continue to require the normal permission path.
 
----
+Owner-only operations (including staff, settings, branches/rooms, catalog
+administration, plan ownership actions, and upgrade requests) use
+`requireOwner`. Owner means the `Owner` RBAC role or the denormalized owner
+flag; it is not a synonym for platform administration.
 
-## 5. Role capability summaries
+The seeded resource-action grants that complement the module list are:
 
-### Super Admin (platform) — `superadmin@acmeclinic.com`
-- Everything, everywhere, in the **platform org** (`إدارة المنصة`).
-- `hasPermission` short-circuits to `true`; `/super` console + `/api/super/*`
-  additionally demand `User.role === "superAdmin"` (prevents tenants self-granting).
-- Sidebar shows the extra **Super Admin** item; can approve/change org status,
-  plan, and upgrade requests.
+| Role | Additional resource actions |
+|---|---|
+| Owner | Read/write patients, appointments, encounters, inventory, billing, lab, and pharmacy; read/write staff |
+| Doctor | Read/write patients, appointments, encounters, and lab |
+| Care Coordinator (displayed Receptionist) | Read/write patients and appointments |
+| Nurse | Read/write patients, appointments, and encounters; read inventory and lab |
+| Biller | Read patients and appointments; read/write billing |
+| Pharmacist | Read patients, appointments, and lab; read/write inventory |
 
-### Owner — `owner@acmeclinic.com` (RBAC "Owner", 12 perms)
-- Full clinical ops (patients, appointments, encounters), inventory, and billing,
-  **plus staff management** (`staff:read`/`staff:write` → Settings staff/roles).
-- **Cannot** access Lab or Pharmacy data (`lab:*`, `pharmacy:*` missing).
-- `requireOwner()` gates upgrade actions on `/plan`.
+### Proxy page guards
 
-### Doctor — `admin@acmeclinic.com` (14 perms)
-- Full read/write over patients, appointments, encounters, inventory, billing,
-  labs, and pharmacy (itemized prescriptions, lab orders, results review).
-- No staff management.
+`src/proxy.ts` applies the approved page-level guard map before rendering
+clinic pages. The guarded pages are:
 
-### Doctor / Pediatrician (2nd provider) — `dr.fatma@acmeclinic.com`
-- Same 14 perms and clinical access as Doctor; seeded as the pediatric specialist
-  (branch 2, "طب الأطفال") and used as the second provider on child appointments.
+- Owner: `/plan`, `/settings`, `/automation`, `/campaigns`
+- Doctor, Nurse, Receptionist: `/queue` (Receptionist is the displayed
+  Care Coordinator role)
+- Doctor, Nurse: `/encounters`, `/availability`
+- Doctor, Nurse, Biller: `/analytics`, `/reports`
+- Doctor, Nurse, Receptionist: `/consents`
+- Doctor, Biller: `/audit`
+- Doctor, Nurse, Pharmacist: `/labs`, `/catalogs`
+- Doctor, Nurse, Receptionist, Biller, Pharmacist: `/tasks`
+- Doctor, Nurse, Receptionist: `/documents`
+- Receptionist: `/communications`, `/locations`, `/waitlist`
+- Biller: `/billing`, `/payments`
+- Nurse, Pharmacist: `/inventory`
 
-### Nurse — `nurse@acmeclinic.com` (9 perms)
-- Read/write patients, appointments, encounters (vitals, SOAP notes, check-in).
-- **Read-only** inventory, lab results, and pharmacy (dispense view) — cannot
-  adjust stock, order labs, or change billing.
+Owner and Super Admin bypass the clinic page map. APIs remain authoritative
+even for pages that are reachable by URL.
 
-### Care Coordinator — `ops@acmeclinic.com` (14 perms)
-- Full clinical stack identical to Doctor (reception-front + coordination).
-- Demo `ops@` account is the scheduling/operations persona.
+## 4. Super Admin platform access
 
-### Receptionist (via "Care Coordinator" role) — `receptionist@acmeclinic.com`
-- Sidebar renders under the legacy `Receptionist` name (supported), but the
-  account is assigned the **Care Coordinator** RBAC role (14 perms) in the seed —
-  i.e. the same read/write clinical stack as Doctor/CC.
-- **Naming drift note:** `User.role` carries `"receptionist"` (denormalized);
-  the RBAC role name is `"Care Coordinator"`. Both `hasRoleName("Care Coordinator")`
-  and sidebar legacy `Receptionist` matching are honored.
+Super Admin is platform-only. A valid platform account must have both:
 
-### Biller — `billing@acmeclinic.com` (4 perms)
-- `patients:read`, `appointments:read`, `billing:read`, `billing:write`.
-- Payments, invoices, outstanding/collected; **read-only** across every other
-  module it can see (Patients, Appointments, Analytics, Audit, Reports, Documents,
-  Tasks).
+1. the RBAC role `Super Admin`, and
+2. the denormalized `User.role === "superAdmin"` flag, with an active user.
 
-### Pharmacist — `pharmacist@acmeclinic.com` (7 perms)
-- `patients:read`, `appointments:read`, `inventory:*`, `pharmacy:*`, `lab:read`.
-- Full stock + dispensing control; read-only lab/patients/appointments; no
-  clinical or billing writes.
+`requireSuperAdmin` enforces both conditions for `/super` and every
+`/api/super/*` route. The platform sidebar contains only these `/super`
+sections:
 
----
+- Organizations
+- Approvals
+- Billing
+- Audit
+- Settings
 
-## 6. Demo accounts quick reference
+The proxy redirects an authenticated Super Admin away from clinic pages to
+`/super` (API requests are handled by their own guards). Super Admin does not
+receive the clinic sidebar merely because the RBAC permission short-circuit
+allows permission checks.
 
-All demo passwords are `admin123`; the login page lists every account with a
-fast-login button.
+## 5. Demo tenants and seed command
 
-| Account | `User.role` | RBAC role | Quick capability |
-|---|---|---|---|
-| `superadmin@acmeclinic.com` | `superAdmin` | Super Admin | Everything + `/super` console |
-| `owner@acmeclinic.com` | `owner` | Owner | Clinical full + inventory/billing + staff mgmt |
-| `admin@acmeclinic.com` | `doctor` | Doctor | Clinical full (14 perms) |
-| `dr.fatma@acmeclinic.com` | `doctor` | Doctor | Clinical full; pediatric provider |
-| `nurse@acmeclinic.com` | `nurse` | Nurse | Clinical r/w; read-only stock/lab/pharmacy |
-| `ops@acmeclinic.com` | `receptionist` | Care Coordinator | Clinical full (14 perms) |
-| `receptionist@acmeclinic.com` | `receptionist` | Care Coordinator | Clinical full (14 perms) |
-| `billing@acmeclinic.com` | `biller` | Biller | Billing r/w; read elsewhere |
-| `pharmacist@acmeclinic.com` | `pharmacist` | Pharmacist | Inventory + pharmacy r/w; read-only patients/lab |
+The public demo data is created by the separate additive script:
 
----
+```bash
+npm run db:seed:demo
+# equivalent: node scripts/seed-demo-tenants.js
+```
 
-## 7. Known gaps & intentional deviations
+This script is deliberately separate from `prisma/seed.js`. It creates or
+updates exactly two demo clinics:
 
-1. **Sidebar is cosmetic.** It is role-driven but client-side; enforcement lives in
-   the API layer. Navigating directly to a page works, but data calls 403 without
-   the right permission.
-2. **Read-only realms for Biller/Pharmacist/Nurse**: the sidebar shows some read
-   surfaces (Analytics/Audit/Reports to Biller, Labs to Pharmacist, etc.) yet the
-   matching write actions are not granted — by design, but worth a UI “read-only”
-   hint in future.
-3. **Owner vs Lab/Pharmacy**: an Owner cannot open Lab or Pharmacy data until
-   `ownerPermissions` gains `lab:*`/`pharmacy:*`; deliberate today (owner focuses on
-   ops + staff). Revisit when the Settings role editor becomes self-serve.
-4. **Receptionist is “Care Coordinator” under the hood** — historical naming drift
-   documented in `SYSTEM_SIDEBAR_AUDIT.md` §3/§5.
-5. **No dedicated Patient RBAC role** — the patient portal is a separate
-   `PatientSession` token path, not a `User` role.
+- **Harborview Family Clinic** — Seattle, United States
+- **Northstar Wellness & Pediatrics** — Denver, United States
+
+Each clinic receives six staff accounts—Owner, Doctor, Receptionist,
+Nurse, Biller, and Pharmacist. The Receptionist account is assigned the
+persisted `Care Coordinator` RBAC role and is displayed as Receptionist.
+The stable account prefixes are `owner`, `doctor`, `reception`, `nurse`,
+`biller`, and `pharmacist` at each clinic's demo email domain. The demo
+password is `DemoClinic!2026`.
+
+The script seeds the role module permissions listed in §3 plus representative
+clinic data: a branch and room, four patients, service and clinical catalogs,
+past and upcoming appointments, an encounter with vitals/diagnosis/note,
+lab order and result, prescription, invoices and payment, inventory and
+transaction data, task, waitlist entry, consent, document, communication, and
+campaign.
+
+The demo seed is **additive and idempotent**. It uses stable slugs, emails,
+MRNs, content markers, and idempotency keys; it does not delete existing rows.
+No schema migration is required for Parts A, B, or C.

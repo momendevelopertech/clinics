@@ -44,37 +44,79 @@ const OWNER_PERMISSIONS = [
   { action: "inventory:write", resource: "inventory" },
   { action: "billing:read", resource: "billing" },
   { action: "billing:write", resource: "billing" },
+  { action: "lab:read", resource: "lab" },
+  { action: "lab:write", resource: "lab" },
+  { action: "pharmacy:read", resource: "pharmacy" },
+  { action: "pharmacy:write", resource: "pharmacy" },
   { action: "staff:read", resource: "staff" },
   { action: "staff:write", resource: "staff" },
 ];
 
-// Shared 14-permission clinical stack, identical to the seeded "Doctor" and
-// "Care Coordinator" roles so signup defaults never drift from seed data.
-const CLINICAL_ROLE_PERMISSIONS = [
+const modulePermissions = (modules: string[]) =>
+  modules.map((module) => ({ action: `${module}:read`, resource: module }));
+
+const withModulePermissions = (
+  permissions: Array<{ action: string; resource: string }>,
+  modules: string[],
+) => {
+  const all = [...permissions, ...modulePermissions(modules)];
+  return all.filter(
+    (permission, index) =>
+      all.findIndex(
+        (candidate) =>
+          candidate.action === permission.action &&
+          candidate.resource === permission.resource,
+      ) === index,
+  );
+};
+
+const OWNER_MODULES = [
+  "dashboard", "patients", "appointments", "queue", "encounters", "analytics",
+  "consents", "audit", "labs", "tasks", "documents", "reports", "availability",
+  "catalogs", "communications", "locations", "waitlist", "billing", "payments",
+  "inventory", "automation", "campaigns", "settings", "plan", "help",
+];
+
+const DOCTOR_MODULES = [
+  "dashboard", "patients", "appointments", "queue", "encounters", "analytics",
+  "consents", "audit", "labs", "tasks", "documents", "reports", "availability",
+  "catalogs", "help",
+];
+
+const RECEPTIONIST_MODULES = [
+  "dashboard", "patients", "appointments", "queue", "consents", "tasks",
+  "documents", "communications", "locations", "waitlist", "help",
+];
+
+const OWNER_ROLE_PERMISSIONS = withModulePermissions(OWNER_PERMISSIONS, OWNER_MODULES);
+
+const DOCTOR_ROLE_PERMISSIONS = withModulePermissions([
   { action: "patients:read", resource: "patients" },
   { action: "patients:write", resource: "patients" },
   { action: "appointments:read", resource: "appointments" },
   { action: "appointments:write", resource: "appointments" },
   { action: "encounters:read", resource: "encounters" },
   { action: "encounters:write", resource: "encounters" },
-  { action: "inventory:read", resource: "inventory" },
-  { action: "inventory:write", resource: "inventory" },
-  { action: "billing:read", resource: "billing" },
-  { action: "billing:write", resource: "billing" },
   { action: "lab:read", resource: "lab" },
   { action: "lab:write", resource: "lab" },
-  { action: "pharmacy:read", resource: "pharmacy" },
-  { action: "pharmacy:write", resource: "pharmacy" },
-];
+], DOCTOR_MODULES);
+
+const RECEPTIONIST_ROLE_PERMISSIONS = withModulePermissions([
+  { action: "patients:read", resource: "patients" },
+  { action: "patients:write", resource: "patients" },
+  { action: "appointments:read", resource: "appointments" },
+  { action: "appointments:write", resource: "appointments" },
+], RECEPTIONIST_MODULES);
 
 async function createDefaultRoles(
   db: Pick<typeof prisma, "role" | "rolePermission">,
   organizationId: string,
 ) {
   const roles: Array<{ name: string; permissions: Array<{ action: string; resource: string }> }> = [
-    { name: "Owner", permissions: OWNER_PERMISSIONS },
-    { name: "Doctor", permissions: CLINICAL_ROLE_PERMISSIONS },
-    { name: "Care Coordinator", permissions: CLINICAL_ROLE_PERMISSIONS },
+    { name: "Owner", permissions: OWNER_ROLE_PERMISSIONS },
+    { name: "Doctor", permissions: DOCTOR_ROLE_PERMISSIONS },
+    // Persist the canonical role name; the UI displays this as Receptionist.
+    { name: "Care Coordinator", permissions: RECEPTIONIST_ROLE_PERMISSIONS },
   ];
 
   const created: Array<{ id: string; name: string }> = [];

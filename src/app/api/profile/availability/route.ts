@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
+import { requireModulePermission } from "@/lib/permissions";
 import { createAuditLog } from "@/lib/audit";
 
 const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
@@ -11,6 +12,8 @@ export async function PATCH(request: Request) {
   if (!context) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
+  const moduleAuthz = await requireModulePermission(context.organizationId, "availability");
+  if (moduleAuthz.response) return moduleAuthz.response;
 
   const body = (await request.json().catch(() => ({}))) as {
     availabilityType?: string;

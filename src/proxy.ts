@@ -6,6 +6,7 @@ import { takeRateLimitToken } from "@/lib/rate-limit";
 const PUBLIC_PAGE_PREFIXES = [
   "/",
   "/login",
+  "/demo-accounts",
   "/patient-login",
   "/patient-portal",
   "/signup",
@@ -28,6 +29,30 @@ const PUBLIC_API_PREFIXES = [
   "/api/auth/reset-password",
 ];
 
+const CLINIC_PAGE_ACCESS: Record<string, string[]> = {
+  "/plan": ["Owner"],
+  "/settings": ["Owner"],
+  "/automation": ["Owner"],
+  "/campaigns": ["Owner"],
+  "/queue": ["Doctor", "Nurse", "Receptionist"],
+  "/encounters": ["Doctor", "Nurse"],
+  "/analytics": ["Doctor", "Nurse", "Biller"],
+  "/consents": ["Doctor", "Nurse", "Receptionist"],
+  "/audit": ["Doctor", "Biller"],
+  "/labs": ["Doctor", "Nurse", "Pharmacist"],
+  "/tasks": ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"],
+  "/documents": ["Doctor", "Nurse", "Receptionist"],
+  "/reports": ["Doctor", "Nurse", "Biller"],
+  "/availability": ["Doctor", "Nurse"],
+  "/catalogs": ["Doctor", "Nurse", "Pharmacist"],
+  "/communications": ["Receptionist"],
+  "/locations": ["Receptionist"],
+  "/waitlist": ["Receptionist"],
+  "/billing": ["Biller"],
+  "/payments": ["Biller"],
+  "/inventory": ["Nurse", "Pharmacist"],
+};
+
 function isPublicPage(pathname: string) {
   return PUBLIC_PAGE_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
@@ -38,6 +63,18 @@ function isPublicApi(pathname: string) {
   return PUBLIC_API_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
+}
+
+function clinicPageAllowed(pathname: string, roles: string[]) {
+  const match = Object.entries(CLINIC_PAGE_ACCESS).find(
+    ([prefix]) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+  if (!match) return true;
+  if (roles.includes("Owner") || roles.includes("Super Admin")) return true;
+  const displayRoles = roles.map((role) =>
+    role === "Care Coordinator" ? "Receptionist" : role,
+  );
+  return match[1].some((role) => displayRoles.includes(role));
 }
 
 function getClientKey(request: NextRequest) {
@@ -116,7 +153,14 @@ export async function proxy(request: NextRequest) {
     (pathname === "/login" || pathname === "/signup") &&
     token
   ) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(
+      new URL(
+        (token.roles as string[] | undefined)?.includes("Super Admin")
+          ? "/super"
+          : "/dashboard",
+        request.url,
+      ),
+    );
   }
 
   if (isPublicPage(pathname) || isPublicApi(pathname)) {
@@ -124,6 +168,16 @@ export async function proxy(request: NextRequest) {
   }
 
   if (token) {
+    if (
+      (token.roles as string[] | undefined)?.includes("Super Admin") &&
+      !pathname.startsWith("/super") &&
+      !pathname.startsWith("/api/")
+    ) {
+      return NextResponse.redirect(new URL("/super", request.url));
+    }
+    if (!pathname.startsWith("/api/") && !clinicPageAllowed(pathname, (token.roles as string[] | undefined) ?? [])) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
     return NextResponse.next();
   }
 

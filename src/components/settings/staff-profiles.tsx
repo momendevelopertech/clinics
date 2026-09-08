@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { displayRoleName } from "@/lib/role-labels";
 
 type Staff = {
   id: string;
@@ -69,7 +70,7 @@ export function StaffProfiles({ t }: { t: (key: string) => string }) {
             <span className="text-xs text-muted-foreground">{member.specialty ?? t("settings_specialtyUnset")}</span>
             <Select value={member.userRoles[0]?.role.id} onValueChange={(roleId) => void assignRole(member.id, roleId)}>
               <SelectTrigger className="w-40"><SelectValue placeholder={t("settings_selectRole")} /></SelectTrigger>
-              <SelectContent>{roles.map((role) => <SelectItem key={role.id} value={role.id}>{role.name}</SelectItem>)}</SelectContent>
+              <SelectContent>{roles.map((role) => <SelectItem key={role.id} value={role.id}>{displayRoleName(role.name)}</SelectItem>)}</SelectContent>
             </Select>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">

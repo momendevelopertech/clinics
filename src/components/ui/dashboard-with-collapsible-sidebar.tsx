@@ -8,8 +8,10 @@ import { useTheme } from "next-themes";
 import {
   Activity,
   Bell,
+  Building2,
   Calendar,
   CalendarClock,
+  Check,
   ChevronRight,
   ClipboardList,
   DollarSign,
@@ -18,7 +20,6 @@ import {
   FlaskConical,
   HelpCircle,
   Home,
-  Megaphone,
   MessageSquare,
   Microscope,
   Menu,
@@ -29,8 +30,6 @@ import {
   Settings,
   Stethoscope,
   Sun,
-  Sparkles,
-  ShieldCheck,
   User,
   Users,
   Wallet,
@@ -52,6 +51,7 @@ import { logClientError } from "@/lib/client-logger";
 import { toast } from "sonner";
 import { useLocale } from "@/components/locale/locale-provider";
 import { LanguageSwitcher } from "@/components/locale/language-switcher";
+import { displayRoleName } from "@/lib/role-labels";
 
 const routeTitleKeys: Array<[string, string]> = [
   ["/dashboard", "nav_dashboard"],
@@ -132,6 +132,7 @@ function CollapsibleSidebar({
   // Roles that can access a nav item. "Owner" and "Super Admin" can always
   // access every item, so they are not listed per-item.
   type NavRole =
+    | "Owner"
     | "Doctor"
     | "Nurse"
     | "Receptionist"
@@ -144,7 +145,9 @@ function CollapsibleSidebar({
       return true;
     }
     if (!allowed) return true;
-    return roles.some((role) => (allowed as string[]).includes(role));
+    return roles
+      .map(displayRoleName)
+      .some((role) => (allowed as string[]).includes(role));
   };
 
   const navGroups = [
@@ -152,45 +155,55 @@ function CollapsibleSidebar({
       label: t("nav_overview"),
       items: [
         { icon: Home, label: t("nav_dashboard"), href: "/dashboard" },
-        { icon: Users, label: t("nav_patients"), href: "/patients", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist", "Care Coordinator"] as NavRole[] },
-        { icon: Calendar, label: t("nav_appointments"), href: "/appointments", roles: ["Doctor", "Nurse", "Receptionist", "Care Coordinator"] as NavRole[] },
-        { icon: CalendarClock, label: t("nav_queue"), href: "/queue", roles: ["Doctor", "Nurse", "Receptionist", "Care Coordinator"] as NavRole[] },
-        { icon: ClipboardList, label: t("nav_encounters"), href: "/encounters", roles: ["Doctor", "Nurse", "Care Coordinator"] as NavRole[] },
-        { icon: Activity, label: t("nav_analytics"), href: "/analytics", roles: ["Doctor", "Nurse", "Biller", "Care Coordinator"] as NavRole[] },
-        { icon: FileCheck2, label: t("nav_consents"), href: "/consents", roles: ["Doctor", "Nurse", "Receptionist", "Care Coordinator"] as NavRole[] },
-        { icon: ScrollText, label: t("nav_audit"), href: "/audit", roles: ["Doctor", "Nurse", "Biller", "Care Coordinator"] as NavRole[] },
-        { icon: Sparkles, label: t("nav_automation"), href: "/automation" },
+        { icon: Users, label: t("nav_patients"), href: "/patients", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"] as NavRole[] },
+        { icon: Calendar, label: t("nav_appointments"), href: "/appointments", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"] as NavRole[] },
+        { icon: CalendarClock, label: t("nav_queue"), href: "/queue", roles: ["Doctor", "Nurse", "Receptionist"] as NavRole[] },
+        { icon: ClipboardList, label: t("nav_encounters"), href: "/encounters", roles: ["Doctor", "Nurse"] as NavRole[] },
+        { icon: Activity, label: t("nav_analytics"), href: "/analytics", roles: ["Doctor", "Nurse", "Biller"] as NavRole[] },
+        { icon: FileCheck2, label: t("nav_consents"), href: "/consents", roles: ["Doctor", "Nurse", "Receptionist"] as NavRole[] },
+        { icon: ScrollText, label: t("nav_audit"), href: "/audit", roles: ["Doctor", "Biller"] as NavRole[] },
       ].filter((item) => canAccess(item.roles as NavRole[] | undefined)),
     },
     {
       label: t("nav_operations"),
       items: [
-        { icon: DollarSign, label: t("nav_billing"), href: "/billing", roles: ["Doctor", "Biller", "Care Coordinator"] as NavRole[] },
+        { icon: DollarSign, label: t("nav_billing"), href: "/billing", roles: ["Biller"] as NavRole[] },
         { icon: Wallet, label: t("nav_payments"), href: "/payments", roles: ["Biller"] as NavRole[] },
-        { icon: FlaskConical, label: t("nav_labs"), href: "/labs", roles: ["Doctor", "Nurse", "Pharmacist", "Care Coordinator"] as NavRole[] },
-        { icon: Package, label: t("nav_inventory"), href: "/inventory", roles: ["Doctor", "Nurse", "Receptionist", "Pharmacist", "Care Coordinator"] as NavRole[] },
-        { icon: Stethoscope, label: t("nav_tasks"), href: "/tasks", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist", "Care Coordinator"] as NavRole[] },
-        { icon: FileText, label: t("nav_documents"), href: "/documents", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist", "Care Coordinator"] as NavRole[] },
-        { icon: MessageSquare, label: t("nav_communications"), href: "/communications", roles: ["Doctor", "Nurse", "Receptionist", "Care Coordinator"] as NavRole[] },
-        { icon: Megaphone, label: t("nav_campaigns"), href: "/campaigns", roles: ["Doctor", "Nurse", "Receptionist", "Care Coordinator"] as NavRole[] },
+        { icon: FlaskConical, label: t("nav_labs"), href: "/labs", roles: ["Doctor", "Nurse", "Pharmacist"] as NavRole[] },
+        { icon: Package, label: t("nav_inventory"), href: "/inventory", roles: ["Nurse", "Pharmacist"] as NavRole[] },
+        { icon: Stethoscope, label: t("nav_tasks"), href: "/tasks", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"] as NavRole[] },
+        { icon: FileText, label: t("nav_documents"), href: "/documents", roles: ["Doctor", "Nurse", "Receptionist"] as NavRole[] },
+        { icon: MessageSquare, label: t("nav_communications"), href: "/communications", roles: ["Receptionist"] as NavRole[] },
       ].filter((item) => canAccess(item.roles as NavRole[] | undefined)),
     },
   ];
+  if (isSuperAdmin) {
+    // A platform account is not a clinic tenant. Keep clinic navigation out
+    // of the shell even though Super Admin has broad RBAC permissions.
+    navGroups.length = 0;
+  }
 
   const systemItems = [
-    { icon: ClipboardList, label: t("nav_plan"), href: "/plan" },
-    { icon: Activity, label: t("nav_reports"), href: "/reports", roles: ["Doctor", "Nurse", "Biller", "Care Coordinator"] as NavRole[] },
+    { icon: ClipboardList, label: t("nav_plan"), href: "/plan", roles: ["Owner"] as NavRole[] },
+    { icon: Activity, label: t("nav_reports"), href: "/reports", roles: ["Doctor", "Nurse", "Biller"] as NavRole[] },
     { icon: Calendar, label: t("nav_availability"), href: "/availability", roles: ["Doctor", "Nurse"] as NavRole[] },
-    { icon: Settings, label: t("nav_locations"), href: "/locations", roles: ["Doctor", "Nurse", "Receptionist", "Care Coordinator"] as NavRole[] },
-    { icon: ClipboardList, label: t("nav_catalogs"), href: "/catalogs" },
-    { icon: Settings, label: t("nav_settings"), href: "/settings", roles: ["Doctor", "Nurse", "Receptionist", "Care Coordinator"] as NavRole[] },
-    { icon: CalendarClock, label: t("nav_waitlist"), href: "/waitlist", roles: ["Doctor", "Nurse", "Receptionist", "Care Coordinator"] as NavRole[] },
+    { icon: Settings, label: t("nav_locations"), href: "/locations", roles: ["Receptionist"] as NavRole[] },
+    { icon: ClipboardList, label: t("nav_catalogs"), href: "/catalogs", roles: ["Doctor", "Nurse", "Pharmacist"] as NavRole[] },
+    { icon: Settings, label: t("nav_settings"), href: "/settings", roles: ["Owner"] as NavRole[] },
+    { icon: CalendarClock, label: t("nav_waitlist"), href: "/waitlist", roles: ["Receptionist"] as NavRole[] },
     { icon: HelpCircle, label: t("nav_help"), href: "/help" },
   ]
     .filter((item) => canAccess(item.roles as NavRole[] | undefined));
 
   if (isSuperAdmin) {
-    systemItems.push({ icon: ShieldCheck, label: t("nav_superAdmin"), href: "/super" });
+    systemItems.length = 0;
+    systemItems.push(
+      { icon: Building2, label: t("super_navOrganizations"), href: "/super?section=organizations" },
+      { icon: Check, label: t("super_navApprovals"), href: "/super?section=approvals" },
+      { icon: Wallet, label: t("super_navBilling"), href: "/super?section=billing" },
+      { icon: ScrollText, label: t("super_navAudit"), href: "/super?section=audit" },
+      { icon: Settings, label: t("super_navSettings"), href: "/super?section=settings" },
+    );
   }
 
   navGroups.push({ label: t("nav_system"), items: systemItems });

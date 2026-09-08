@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
+import { requireModulePermission } from "@/lib/permissions";
 import { averageMinutes, percentage } from "@/lib/analytics";
 
 function getDateBounds() {
@@ -21,6 +22,8 @@ export async function GET() {
   }
 
   const { organizationId } = context;
+  const moduleAuthz = await requireModulePermission(organizationId, "analytics");
+  if (moduleAuthz.response) return moduleAuthz.response;
 
   const authz = await requireAnyPermission(organizationId, [
     { action: "billing:read", resource: "billing" },
@@ -120,4 +123,3 @@ export async function GET() {
     },
   });
 }
-

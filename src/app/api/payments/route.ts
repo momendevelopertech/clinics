@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
+import { requireModulePermission } from "@/lib/permissions";
 import { createAuditLog } from "@/lib/audit";
 import stripe from "@/lib/stripe";
 import { logServerError } from "@/lib/safe-logger";
@@ -11,6 +12,8 @@ import { paymentSchema } from "@/lib/validations";
 export async function POST(request: Request) {
   try {
     const orgId = await getOrgId();
+    const moduleAuthz = await requireModulePermission(orgId, "payments");
+    if (moduleAuthz.response) return moduleAuthz.response;
     assertOrgScope(orgId);
     const authz = await requireAnyPermission(orgId, [
       { action: "billing:write", resource: "billing" },
@@ -93,6 +96,8 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     const orgId = await getOrgId();
+    const moduleAuthz = await requireModulePermission(orgId, "payments");
+    if (moduleAuthz.response) return moduleAuthz.response;
     assertOrgScope(orgId);
 
     const authz = await requireAnyPermission(orgId, [

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
+import { requireModulePermission } from "@/lib/permissions";
 import { createAuditLog } from "@/lib/audit";
 import { labOrderSchema } from "@/lib/validations";
 import { logServerError } from "@/lib/safe-logger";
@@ -10,6 +11,8 @@ export async function GET(request: Request) {
   try {
     const organizationId = await getOrgId();
     assertOrgScope(organizationId);
+    const moduleAuthz = await requireModulePermission(organizationId, "labs");
+    if (moduleAuthz.response) return moduleAuthz.response;
     const patientId = new URL(request.url).searchParams.get("patientId");
     const orders = await prisma.labOrder.findMany({
       where: { organizationId, ...(patientId ? { patientId } : {}) },
@@ -30,6 +33,8 @@ export async function POST(request: Request) {
   try {
     const organizationId = await getOrgId();
     assertOrgScope(organizationId);
+    const moduleAuthz = await requireModulePermission(organizationId, "labs");
+    if (moduleAuthz.response) return moduleAuthz.response;
     const authz = await requireAnyPermission(organizationId, [
       { action: "encounters:write", resource: "encounters" },
       { action: "patients:write", resource: "patients" },

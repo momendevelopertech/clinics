@@ -424,7 +424,47 @@ async function main() {
   }
   const mainBranch = branches[0];
 
-  const allPermissions = [
+  const modulePermissions = (modules) =>
+    modules.map((module) => ({ action: `${module}:read`, resource: module }));
+  const withModulePermissions = (permissions, modules) => {
+    const seen = new Set();
+    return [...permissions, ...modulePermissions(modules)].filter((permission) => {
+      const key = `${permission.action}:${permission.resource}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  };
+  const ownerModules = [
+    "dashboard", "patients", "appointments", "queue", "encounters", "analytics",
+    "consents", "audit", "labs", "tasks", "documents", "reports", "availability",
+    "catalogs", "communications", "locations", "waitlist", "billing", "payments",
+    "inventory", "automation", "campaigns", "settings", "plan", "help",
+  ];
+  const doctorModules = [
+    "dashboard", "patients", "appointments", "queue", "encounters", "analytics",
+    "consents", "audit", "labs", "tasks", "documents", "reports", "availability",
+    "catalogs", "help",
+  ];
+  const receptionistModules = [
+    "dashboard", "patients", "appointments", "queue", "consents", "tasks",
+    "documents", "communications", "locations", "waitlist", "help",
+  ];
+  const nurseModules = [
+    "dashboard", "patients", "appointments", "encounters", "analytics", "consents",
+    "labs", "inventory", "tasks", "documents", "reports", "availability", "catalogs",
+    "help",
+  ];
+  const billerModules = [
+    "dashboard", "patients", "appointments", "analytics", "audit", "billing",
+    "payments", "tasks", "reports", "help",
+  ];
+  const pharmacistModules = [
+    "dashboard", "patients", "appointments", "labs", "inventory", "tasks",
+    "catalogs", "help",
+  ];
+
+  const ownerPermissions = withModulePermissions([
     { action: "patients:read", resource: "patients" },
     { action: "patients:write", resource: "patients" },
     { action: "appointments:read", resource: "appointments" },
@@ -439,33 +479,26 @@ async function main() {
     { action: "lab:write", resource: "lab" },
     { action: "pharmacy:read", resource: "pharmacy" },
     { action: "pharmacy:write", resource: "pharmacy" },
-  ];
-
-  const doctorRole = await ensureRole(organization.id, "Doctor", allPermissions);
-  const coordinatorRole = await ensureRole(organization.id, "Care Coordinator", allPermissions);
-  const billerRole = await ensureRole(organization.id, "Biller", [
-    { action: "patients:read", resource: "patients" },
-    { action: "appointments:read", resource: "appointments" },
-    { action: "billing:read", resource: "billing" },
-    { action: "billing:write", resource: "billing" },
-  ]);
-
-  // Mirrors the signup defaults (OWNER_PERMISSIONS in src/app/api/signup/route.ts).
-  const ownerPermissions = [
-    { action: "patients:read", resource: "patients" },
-    { action: "patients:write", resource: "patients" },
-    { action: "appointments:read", resource: "appointments" },
-    { action: "appointments:write", resource: "appointments" },
-    { action: "encounters:read", resource: "encounters" },
-    { action: "encounters:write", resource: "encounters" },
-    { action: "inventory:read", resource: "inventory" },
-    { action: "inventory:write", resource: "inventory" },
-    { action: "billing:read", resource: "billing" },
-    { action: "billing:write", resource: "billing" },
     { action: "staff:read", resource: "staff" },
     { action: "staff:write", resource: "staff" },
-  ];
-  const nursePermissions = [
+  ], ownerModules);
+  const doctorPermissions = withModulePermissions([
+    { action: "patients:read", resource: "patients" },
+    { action: "patients:write", resource: "patients" },
+    { action: "appointments:read", resource: "appointments" },
+    { action: "appointments:write", resource: "appointments" },
+    { action: "encounters:read", resource: "encounters" },
+    { action: "encounters:write", resource: "encounters" },
+    { action: "lab:read", resource: "lab" },
+    { action: "lab:write", resource: "lab" },
+  ], doctorModules);
+  const receptionistPermissions = withModulePermissions([
+    { action: "patients:read", resource: "patients" },
+    { action: "patients:write", resource: "patients" },
+    { action: "appointments:read", resource: "appointments" },
+    { action: "appointments:write", resource: "appointments" },
+  ], receptionistModules);
+  const nursePermissions = withModulePermissions([
     { action: "patients:read", resource: "patients" },
     { action: "patients:write", resource: "patients" },
     { action: "appointments:read", resource: "appointments" },
@@ -474,18 +507,24 @@ async function main() {
     { action: "encounters:write", resource: "encounters" },
     { action: "inventory:read", resource: "inventory" },
     { action: "lab:read", resource: "lab" },
-    { action: "pharmacy:read", resource: "pharmacy" },
-  ];
-  const pharmacistPermissions = [
+  ], nurseModules);
+  const billerPermissions = withModulePermissions([
+    { action: "patients:read", resource: "patients" },
+    { action: "appointments:read", resource: "appointments" },
+    { action: "billing:read", resource: "billing" },
+    { action: "billing:write", resource: "billing" },
+  ], billerModules);
+  const pharmacistPermissions = withModulePermissions([
     { action: "patients:read", resource: "patients" },
     { action: "appointments:read", resource: "appointments" },
     { action: "inventory:read", resource: "inventory" },
     { action: "inventory:write", resource: "inventory" },
-    { action: "pharmacy:read", resource: "pharmacy" },
-    { action: "pharmacy:write", resource: "pharmacy" },
     { action: "lab:read", resource: "lab" },
-  ];
+  ], pharmacistModules);
 
+  const doctorRole = await ensureRole(organization.id, "Doctor", doctorPermissions);
+  const coordinatorRole = await ensureRole(organization.id, "Care Coordinator", receptionistPermissions);
+  const billerRole = await ensureRole(organization.id, "Biller", billerPermissions);
   const ownerRole = await ensureRole(organization.id, "Owner", ownerPermissions);
   const nurseRole = await ensureRole(organization.id, "Nurse", nursePermissions);
   const pharmacistRole = await ensureRole(organization.id, "Pharmacist", pharmacistPermissions);

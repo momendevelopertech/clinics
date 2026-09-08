@@ -4,6 +4,7 @@ import { createAuditLog } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
+import { requireModulePermission } from "@/lib/permissions";
 import { logServerError } from "@/lib/safe-logger";
 
 export async function POST(
@@ -13,6 +14,8 @@ export async function POST(
   try {
     const { id: itemId } = await params;
     const orgId = await getOrgId();
+    const moduleAuthz = await requireModulePermission(orgId, "inventory");
+    if (moduleAuthz.response) return moduleAuthz.response;
     assertOrgScope(orgId);
     const authz = await requireAnyPermission(orgId, [
       { action: "inventory:write", resource: "inventory" },

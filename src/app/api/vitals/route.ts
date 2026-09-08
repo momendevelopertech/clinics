@@ -3,6 +3,7 @@ import { createAuditLog } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
+import { requireModulePermission } from "@/lib/permissions";
 import { vitalSchema } from "@/lib/validations";
 import { logServerError } from "@/lib/safe-logger";
 
@@ -10,6 +11,8 @@ export async function GET(request: Request) {
   try {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
+    const moduleAuthz = await requireModulePermission(orgId, "encounters");
+    if (moduleAuthz.response) return moduleAuthz.response;
     const authz = await requireAnyPermission(orgId, [
       { action: "patients:read", resource: "patients" },
       { action: "encounters:read", resource: "encounters" },
@@ -56,6 +59,8 @@ export async function POST(request: Request) {
   try {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
+    const moduleAuthz = await requireModulePermission(orgId, "encounters");
+    if (moduleAuthz.response) return moduleAuthz.response;
     const authz = await requireAnyPermission(orgId, [
       { action: "encounters:write", resource: "encounters" },
       { action: "patients:write", resource: "patients" },

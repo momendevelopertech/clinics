@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
+import { requireModulePermission } from "@/lib/permissions";
 import { encounterUpdateSchema } from "@/lib/validations";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -9,6 +10,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     const { id } = await params;
     const organizationId = await getOrgId();
     assertOrgScope(organizationId);
+    const moduleAuthz = await requireModulePermission(organizationId, "encounters");
+    if (moduleAuthz.response) return moduleAuthz.response;
     const authz = await requireAnyPermission(organizationId, [{ action: "encounters:write", resource: "encounters" }]);
     if (authz.response) return authz.response;
     const existing = await prisma.encounter.findFirst({ where: { id, organizationId } });

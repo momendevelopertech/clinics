@@ -2,11 +2,14 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
+import { requireModulePermission } from "@/lib/permissions";
 
 export async function GET() {
   try {
     const organizationId = await getOrgId();
     assertOrgScope(organizationId);
+    const moduleAuthz = await requireModulePermission(organizationId, "queue");
+    if (moduleAuthz.response) return moduleAuthz.response;
     const authz = await requireAnyPermission(organizationId, [
       { action: "appointments:write", resource: "appointments" },
     ]);

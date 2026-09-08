@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
+import { requireModulePermission } from "@/lib/permissions";
 import { createAuditLog } from "@/lib/audit";
 import { logServerError } from "@/lib/safe-logger";
 
@@ -10,6 +11,8 @@ export async function GET(request: Request) {
   try {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
+    const moduleAuthz = await requireModulePermission(orgId, "consents");
+    if (moduleAuthz.response) return moduleAuthz.response;
 
     const authz = await requireAnyPermission(orgId, [
       { action: "encounters:read", resource: "encounters" },
@@ -60,6 +63,8 @@ export async function POST(request: Request) {
   try {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
+    const moduleAuthz = await requireModulePermission(orgId, "consents");
+    if (moduleAuthz.response) return moduleAuthz.response;
     const authz = await requireAnyPermission(orgId, [
       { action: "patients:write", resource: "patients" },
     ]);

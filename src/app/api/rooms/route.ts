@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
+import { requireModulePermission } from "@/lib/permissions";
 import { requireOwner } from "@/lib/roles";
 import { createAuditLog } from "@/lib/audit";
 import { roomCreateSchema } from "@/lib/validations/location";
@@ -9,6 +10,8 @@ import { roomCreateSchema } from "@/lib/validations/location";
 export async function GET() {
   try {
     const { organizationId } = await requireOrgContext();
+    const moduleAuthz = await requireModulePermission(organizationId, "locations");
+    if (moduleAuthz.response) return moduleAuthz.response;
     const authz = await requireAnyPermission(organizationId, [
       { action: "appointments:write", resource: "appointments" },
     ]);

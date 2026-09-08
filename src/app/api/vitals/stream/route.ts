@@ -5,6 +5,7 @@ import { logServerError } from "@/lib/safe-logger";
 import { prisma } from "@/lib/prisma";
 import { requireOrgContext, isAuthContextError } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
+import { requireModulePermission } from "@/lib/permissions";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -31,6 +32,8 @@ async function resolveVitalsStreamAccess(request: Request, patientId: string) {
 
   try {
     const { organizationId } = await requireOrgContext();
+    const moduleAuthz = await requireModulePermission(organizationId, "encounters");
+    if (moduleAuthz.response) return moduleAuthz.response;
     const authz = await requireAnyPermission(organizationId, [
       { action: "patients:read", resource: "patients" },
       { action: "encounters:read", resource: "encounters" },

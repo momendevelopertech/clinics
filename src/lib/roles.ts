@@ -15,7 +15,15 @@ export type SessionLike = {
 
 export function hasRoleName(
   session: SessionLike,
-  roleName: "Super Admin" | "Owner" | "Doctor" | "Receptionist" | "Biller",
+  roleName:
+    | "Super Admin"
+    | "Owner"
+    | "Doctor"
+    | "Nurse"
+    | "Care Coordinator"
+    | "Receptionist"
+    | "Biller"
+    | "Pharmacist",
 ): boolean {
   return session?.user?.roles?.includes(roleName) ?? false;
 }

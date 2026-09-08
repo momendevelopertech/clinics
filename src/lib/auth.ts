@@ -3,8 +3,10 @@ import { requireOrgContext } from "./org";
 
 export type RoleName =
   | "Super Admin"
+  | "Owner"
   | "Doctor"
   | "Nurse"
+  | "Care Coordinator"
   | "Receptionist"
   | "Patient"
   | "Biller"
