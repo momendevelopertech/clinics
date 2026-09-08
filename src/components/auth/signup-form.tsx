@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import {
   Activity,
@@ -17,6 +17,10 @@ type SignupFormProps = { t: Dictionary };
 
 export function SignupForm({ t }: SignupFormProps) {
   const { lang } = useLocale();
+  // Records when the user starts filling the form (first interaction), so the
+  // server-side min-fill-time anti-bot check compares against a real human
+  // start time instead of the submission moment (which would always be <3s).
+  const startedAtRef = useRef(0);
   const [form, setForm] = useState({
     clinicName: "",
     ownerName: "",
@@ -27,13 +31,15 @@ export function SignupForm({ t }: SignupFormProps) {
     country: "",
     website: "",
     company: "",
-    startedAt: 0,
   });
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [created, setCreated] = useState(false);
 
   function update(field: keyof typeof form, value: string) {
+    if (startedAtRef.current === 0) {
+      startedAtRef.current = Date.now();
+    }
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
@@ -52,7 +58,7 @@ export function SignupForm({ t }: SignupFormProps) {
       country: form.country,
       website: form.website,
       company: form.company,
-      startedAt: form.startedAt || Date.now(),
+      startedAt: startedAtRef.current || Date.now(),
     };
 
     try {

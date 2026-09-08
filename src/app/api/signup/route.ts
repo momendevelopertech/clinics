@@ -10,7 +10,7 @@ import {
 } from "@/lib/email";
 import { logServerError } from "@/lib/safe-logger";
 
-const signupSchema = z.object({
+export const signupSchema = z.object({
   clinicName: z.string().trim().min(2).max(120),
   ownerName: z.string().trim().min(2).max(120),
   email: z.string().trim().email().max(254),

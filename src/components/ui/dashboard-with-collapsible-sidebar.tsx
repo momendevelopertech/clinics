@@ -25,6 +25,7 @@ import {
   Stethoscope,
   Sun,
   Sparkles,
+  ShieldCheck,
   User,
   Users,
   Wallet,
@@ -48,7 +49,7 @@ import { useLocale } from "@/components/locale/locale-provider";
 import { LanguageSwitcher } from "@/components/locale/language-switcher";
 
 const routeTitleKeys: Array<[string, string]> = [
-  ["/", "nav_dashboard"],
+  ["/dashboard", "nav_dashboard"],
   ["/patients", "nav_patients"],
   ["/appointments", "nav_appointments"],
   ["/encounters", "nav_encounters"],
@@ -71,20 +72,25 @@ const routeTitleKeys: Array<[string, string]> = [
   ["/audit", "nav_audit"],
   ["/consents", "nav_consents"],
   ["/waitlist", "nav_waitlist"],
+  ["/super", "nav_superAdmin"],
 ];
 
 interface DashboardWithCollapsibleSidebarProps {
   children: React.ReactNode;
+  roles?: string[];
+  isSuperAdmin?: boolean;
 }
 
 export function DashboardWithCollapsibleSidebar({
   children,
+  roles = [],
+  isSuperAdmin = false,
 }: DashboardWithCollapsibleSidebarProps) {
   const [open, setOpen] = useState(true);
 
   return (
     <div className="app-shell flex min-h-screen w-full text-foreground">
-      <CollapsibleSidebar open={open} setOpen={setOpen} />
+      <CollapsibleSidebar open={open} setOpen={setOpen} roles={roles} isSuperAdmin={isSuperAdmin} />
       <div className="flex min-w-0 flex-1 flex-col">
         <DashboardHeader open={open} setOpen={setOpen} />
         <main className="flex-1 overflow-auto px-4 pb-6 pt-4 sm:px-6 lg:px-8">
@@ -98,48 +104,75 @@ export function DashboardWithCollapsibleSidebar({
 function CollapsibleSidebar({
   open,
   setOpen,
+  roles,
+  isSuperAdmin,
 }: {
   open: boolean;
   setOpen: (value: boolean) => void;
+  roles: string[];
+  isSuperAdmin: boolean;
 }) {
   const { t } = useLocale();
+
+  // Roles that can access a nav item. "Owner" and "Super Admin" can always
+  // access every item, so they are not listed per-item.
+  type NavRole =
+    | "Doctor"
+    | "Nurse"
+    | "Receptionist"
+    | "Biller"
+    | "Pharmacist"
+    | "Care Coordinator";
+
+  const canAccess = (allowed?: NavRole[]) => {
+    if (roles.some((role) => role === "Owner" || role === "Super Admin")) {
+      return true;
+    }
+    if (!allowed) return true;
+    return roles.some((role) => (allowed as string[]).includes(role));
+  };
 
   const navGroups = [
     {
       label: t("nav_overview"),
       items: [
-        { icon: Home, label: t("nav_dashboard"), href: "/" },
-        { icon: Users, label: t("nav_patients"), href: "/patients" },
-        { icon: Calendar, label: t("nav_appointments"), href: "/appointments" },
-        { icon: Clock, label: t("nav_queue"), href: "/queue" },
-        { icon: ClipboardList, label: t("nav_encounters"), href: "/encounters" },
-        { icon: Activity, label: t("nav_analytics"), href: "/analytics" },
+        { icon: Home, label: t("nav_dashboard"), href: "/dashboard" },
+        { icon: Users, label: t("nav_patients"), href: "/patients", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist", "Care Coordinator"] as NavRole[] },
+        { icon: Calendar, label: t("nav_appointments"), href: "/appointments", roles: ["Doctor", "Nurse", "Receptionist", "Care Coordinator"] as NavRole[] },
+        { icon: Clock, label: t("nav_queue"), href: "/queue", roles: ["Doctor", "Nurse", "Receptionist", "Care Coordinator"] as NavRole[] },
+        { icon: ClipboardList, label: t("nav_encounters"), href: "/encounters", roles: ["Doctor", "Nurse", "Care Coordinator"] as NavRole[] },
+        { icon: Activity, label: t("nav_analytics"), href: "/analytics", roles: ["Doctor", "Biller", "Care Coordinator"] as NavRole[] },
         { icon: Sparkles, label: t("nav_automation"), href: "/automation" },
-      ],
+      ].filter((item) => canAccess(item.roles as NavRole[] | undefined)),
     },
     {
       label: t("nav_operations"),
       items: [
-        { icon: DollarSign, label: t("nav_billing"), href: "/billing" },
-        { icon: Wallet, label: t("nav_payments"), href: "/payments" },
-        { icon: FlaskConical, label: t("nav_labs"), href: "/labs" },
-        { icon: Package, label: t("nav_inventory"), href: "/inventory" },
-        { icon: Stethoscope, label: t("nav_tasks"), href: "/tasks" },
-      ],
-    },
-    {
-      label: t("nav_system"),
-      items: [
-        { icon: ClipboardList, label: t("nav_plan"), href: "/plan" },
-        { icon: Activity, label: t("nav_reports"), href: "/reports" },
-        { icon: Calendar, label: t("nav_availability"), href: "/availability" },
-        { icon: Settings, label: t("nav_locations"), href: "/locations" },
-        { icon: ClipboardList, label: t("nav_catalogs"), href: "/catalogs" },
-        { icon: Settings, label: t("nav_settings"), href: "/settings" },
-        { icon: HelpCircle, label: t("nav_help"), href: "/help" },
-      ],
+        { icon: DollarSign, label: t("nav_billing"), href: "/billing", roles: ["Biller"] as NavRole[] },
+        { icon: Wallet, label: t("nav_payments"), href: "/payments", roles: ["Biller"] as NavRole[] },
+        { icon: FlaskConical, label: t("nav_labs"), href: "/labs", roles: ["Doctor", "Nurse", "Pharmacist", "Care Coordinator"] as NavRole[] },
+        { icon: Package, label: t("nav_inventory"), href: "/inventory", roles: ["Pharmacist", "Nurse", "Receptionist"] as NavRole[] },
+        { icon: Stethoscope, label: t("nav_tasks"), href: "/tasks", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist", "Care Coordinator"] as NavRole[] },
+      ].filter((item) => canAccess(item.roles as NavRole[] | undefined)),
     },
   ];
+
+  const systemItems = [
+    { icon: ClipboardList, label: t("nav_plan"), href: "/plan" },
+    { icon: Activity, label: t("nav_reports"), href: "/reports", roles: ["Doctor", "Biller"] as NavRole[] },
+    { icon: Calendar, label: t("nav_availability"), href: "/availability", roles: ["Doctor", "Nurse"] as NavRole[] },
+    { icon: Settings, label: t("nav_locations"), href: "/locations", roles: ["Receptionist", "Care Coordinator"] as NavRole[] },
+    { icon: ClipboardList, label: t("nav_catalogs"), href: "/catalogs" },
+    { icon: Settings, label: t("nav_settings"), href: "/settings" },
+    { icon: HelpCircle, label: t("nav_help"), href: "/help" },
+  ]
+    .filter((item) => canAccess(item.roles as NavRole[] | undefined));
+
+  if (isSuperAdmin) {
+    systemItems.push({ icon: ShieldCheck, label: t("nav_superAdmin"), href: "/super" });
+  }
+
+  navGroups.push({ label: t("nav_system"), items: systemItems });
 
   return (
     <aside
@@ -149,7 +182,7 @@ function CollapsibleSidebar({
       )}
     >
       <Link
-        href="/"
+        href="/dashboard"
         className={cn(
           "hero-glow flex items-center rounded-[28px] border border-white/50 px-3 py-3 transition-colors",
           "bg-white/70 dark:bg-white/5",
@@ -231,8 +264,8 @@ function NavLink({
 }) {
   const pathname = usePathname();
   const isSelected =
-    item.href === "/"
-      ? pathname === "/"
+    item.href === "/dashboard"
+      ? pathname === "/dashboard"
       : pathname === item.href || pathname.startsWith(`${item.href}/`);
   const Icon = item.icon;
   const { t } = useLocale();
@@ -266,7 +299,7 @@ function NavLink({
               isSelected ? "text-black/90" : "text-muted-foreground",
             )}
           >
-            {item.href === "/" ? t("appTagline") : t("appSubtitle")}
+            {item.href === "/dashboard" ? t("appTagline") : t("appSubtitle")}
           </p>
         </div>
       ) : null}
@@ -297,7 +330,7 @@ function DashboardHeader({
 
   const title = useMemo(() => {
     const match = routeTitleKeys.find(([href]) => {
-      if (href === "/") return pathname === "/";
+      if (href === "/dashboard") return pathname === "/dashboard";
       return pathname === href || pathname.startsWith(`${href}/`);
     });
     return t(match?.[1] ?? "appSubtitle");

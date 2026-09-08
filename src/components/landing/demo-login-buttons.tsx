@@ -22,7 +22,7 @@ export function DemoLoginButtons() {
       email,
       password,
       redirect: true,
-      callbackUrl: "/analytics",
+      callbackUrl: "/dashboard",
     });
   }
 

@@ -109,7 +109,7 @@ export async function proxy(request: NextRequest) {
     (pathname === "/login" || pathname === "/signup") &&
     token
   ) {
-    return NextResponse.redirect(new URL("/patients", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   if (isPublicPage(pathname) || isPublicApi(pathname)) {
@@ -125,7 +125,7 @@ export async function proxy(request: NextRequest) {
   }
 
   const loginUrl = new URL("/login", request.url);
-  loginUrl.searchParams.set("callbackUrl", pathname === "/" ? "/patients" : pathname);
+  loginUrl.searchParams.set("callbackUrl", pathname === "/" ? "/dashboard" : pathname);
   return NextResponse.redirect(loginUrl);
 }
 

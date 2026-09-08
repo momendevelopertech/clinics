@@ -123,6 +123,8 @@ export async function sendAuthEmail({
  * Builds an absolute URL for app routes (handles NEXTAUTH_URL / local dev).
  */
 export function getAppUrl() {
+  const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  if (vercelUrl) return `https://${vercelUrl.replace(/\/$/, "")}`;
   const configured = process.env.NEXTAUTH_URL?.trim();
   if (configured) return configured.replace(/\/$/, "");
   const port = process.env.PORT?.trim() || "3000";

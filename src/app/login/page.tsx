@@ -7,7 +7,7 @@ type LoginPageProps = {
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = await searchParams;
-  const callbackUrl = params.callbackUrl || "/analytics";
+  const callbackUrl = params.callbackUrl || "/dashboard";
   const error = typeof params.error === "string" ? params.error : null;
   const t = await getDictionary();
 
