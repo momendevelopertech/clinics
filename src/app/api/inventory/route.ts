@@ -10,6 +10,11 @@ export async function GET() {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
 
+    const authz = await requireAnyPermission(orgId, [
+      { action: "inventory:read", resource: "inventory" },
+    ]);
+    if (authz.response) return authz.response;
+
     const items = await prisma.inventoryItem.findMany({
       where: { organizationId: orgId },
       orderBy: { name: "asc" },

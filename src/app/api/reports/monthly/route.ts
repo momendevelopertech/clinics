@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
+import { requireAnyPermission } from "@/lib/authorization";
 
 function monthBounds(month?: string | null) {
   const now = new Date();
@@ -31,6 +32,12 @@ export async function GET(request: Request) {
   }
 
   const { organizationId } = context;
+
+  const authz = await requireAnyPermission(organizationId, [
+    { action: "billing:read", resource: "billing" },
+    { action: "encounters:read", resource: "encounters" },
+  ]);
+  if (authz.response) return authz.response;
 
   const { searchParams } = new URL(request.url);
   const { start, end } = monthBounds(searchParams.get("month"));

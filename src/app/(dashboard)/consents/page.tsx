@@ -19,6 +19,8 @@ import {
 import { toast } from "sonner";
 import { AddConsentDialog } from "@/components/consents/add-consent-dialog";
 import { logClientError } from "@/lib/client-logger";
+import { PermissionDenied } from "@/components/ui/permission-denied";
+import { usePermissionState } from "@/hooks/use-permission-state";
 
 interface Consent {
   id: string;
@@ -36,6 +38,7 @@ export default function ConsentsPage() {
   const [consents, setConsents] = React.useState<Consent[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [grantedFilter, setGrantedFilter] = React.useState<string | null>(null);
+  const { forbidden, setForbidden } = usePermissionState();
 
   React.useEffect(() => {
     fetchConsents();
@@ -45,6 +48,10 @@ export default function ConsentsPage() {
     try {
       setLoading(true);
       const response = await fetch("/api/consents");
+      if (response.status === 403) {
+        setForbidden(true);
+        return;
+      }
       if (!response.ok) throw new Error("Failed to fetch consents");
       const data = await response.json();
       setConsents(data);
@@ -92,6 +99,20 @@ export default function ConsentsPage() {
 
     return matchesSearch && matchesFilter;
   });
+
+  if (forbidden) {
+    return (
+      <div className="flex flex-col gap-6 w-full h-full">
+        <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
+          Consent Center
+        </h2>
+        <PermissionDenied
+          title="You don't have permission"
+          description="Only staff with patient access can view consent center."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6 w-full h-full">

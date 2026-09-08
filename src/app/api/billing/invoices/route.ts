@@ -2,6 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
+import { requireAnyPermission } from "@/lib/authorization";
 import { getCurrentUserId, hasPermission } from "@/lib/auth";
 import { logServerError } from "@/lib/safe-logger";
 import { invoiceCreateSchema } from "@/lib/validations";
@@ -10,6 +11,11 @@ export async function GET(request: Request) {
   try {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
+
+    const authz = await requireAnyPermission(orgId, [
+      { action: "billing:read", resource: "billing" },
+    ]);
+    if (authz.response) return authz.response;
 
     const { searchParams } = new URL(request.url);
     const patientId = searchParams.get("patientId");

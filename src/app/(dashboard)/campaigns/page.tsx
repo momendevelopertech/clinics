@@ -15,6 +15,8 @@ import { Zap, Radio } from "lucide-react";
 import { AddCampaignDialog } from "@/components/communications/add-campaign-dialog";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
+import { PermissionDenied } from "@/components/ui/permission-denied";
+import { usePermissionState } from "@/hooks/use-permission-state";
 
 interface Campaign {
   id: string;
@@ -28,6 +30,7 @@ interface Campaign {
 export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
+  const { forbidden, setForbidden } = usePermissionState();
 
   useEffect(() => {
     fetchCampaigns();
@@ -36,6 +39,10 @@ export default function CampaignsPage() {
   async function fetchCampaigns() {
     try {
       const response = await fetch("/api/communications/campaigns");
+      if (response.status === 403) {
+        setForbidden(true);
+        return;
+      }
       if (!response.ok) throw new Error("Failed to fetch");
       const data = await response.json();
       setCampaigns(data);
@@ -71,6 +78,22 @@ export default function CampaignsPage() {
       <Radio className="w-4 h-4 text-purple-500" />
     );
   };
+
+  if (forbidden) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Campaigns</h1>
+          </div>
+        </div>
+        <PermissionDenied
+          title="You don't have permission"
+          description="Only staff with patient or scheduling access can view campaigns."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

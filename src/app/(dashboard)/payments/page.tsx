@@ -20,6 +20,8 @@ import {
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { PermissionDenied } from "@/components/ui/permission-denied";
+import { usePermissionState } from "@/hooks/use-permission-state";
 
 interface Payment {
   id: string;
@@ -47,6 +49,7 @@ export default function PaymentsPage() {
   const [payments, setPayments] = React.useState<Payment[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [statusFilter, setStatusFilter] = React.useState<string | null>(null);
+  const { forbidden, setForbidden } = usePermissionState();
 
   React.useEffect(() => {
     fetchPayments();
@@ -56,6 +59,10 @@ export default function PaymentsPage() {
     try {
       setLoading(true);
       const response = await fetch("/api/payments");
+      if (response.status === 403) {
+        setForbidden(true);
+        return;
+      }
       if (!response.ok) throw new Error("Failed to fetch payments");
       const data = await response.json();
       setPayments(data);
@@ -141,6 +148,24 @@ export default function PaymentsPage() {
   const pendingAmount = payments
     .filter((p) => p.status === "pending")
     .reduce((sum, p) => sum + toAmount(p.amount), 0);
+
+  if (forbidden) {
+    return (
+      <div className="flex flex-col gap-6 w-full h-full">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
+            <CreditCard className="w-6 h-6 inline mr-2" />
+            {t("pay_title")}
+          </h2>
+          <p className="text-sm text-neutral-500">{t("pay_subtitle")}</p>
+        </div>
+        <PermissionDenied
+          title={t("pay_forbiddenTitle") ?? "You don't have permission"}
+          description={t("pay_forbidden") ?? "Only staff with billing access can view payments."}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6 w-full h-full">

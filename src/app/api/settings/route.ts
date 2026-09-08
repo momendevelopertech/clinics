@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
+import { requireAnyPermission } from "@/lib/authorization";
 import { requireOwner } from "@/lib/roles";
 import { createAuditLog } from "@/lib/audit";
 import { organizationSettingsSchema } from "@/lib/validations";
@@ -10,6 +11,14 @@ import { logServerError } from "@/lib/safe-logger";
 export async function GET() {
   try {
     const { organizationId } = await requireOrgContext();
+    const authz = await requireAnyPermission(organizationId, [
+      { action: "staff:read", resource: "staff" },
+      { action: "patients:write", resource: "patients" },
+      { action: "appointments:write", resource: "appointments" },
+      { action: "encounters:write", resource: "encounters" },
+      { action: "inventory:write", resource: "inventory" },
+    ]);
+    if (authz.response) return authz.response;
     const organization = await prisma.organization.findUnique({ where: { id: organizationId }, select: { settingsJson: true, currency: true } });
     return NextResponse.json({ ...parseOrgSettings(organization?.settingsJson), currency: organization?.currency ?? "USD" });
   } catch (error) {

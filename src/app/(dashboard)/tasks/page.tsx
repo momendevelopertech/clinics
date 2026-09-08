@@ -6,6 +6,8 @@ import { MessageSquare, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocale } from "@/components/locale/locale-provider";
+import { PermissionDenied } from "@/components/ui/permission-denied";
+import { usePermissionState } from "@/hooks/use-permission-state";
 
 export default function TasksPage() {
   const { t } = useLocale();
@@ -20,14 +22,35 @@ export default function TasksPage() {
     assignee?: { name: string | null } | null;
   }>>([]);
   const [loading, setLoading] = React.useState(true);
+  const { forbidden, guardedFetch } = usePermissionState();
 
   React.useEffect(() => {
-    fetch("/api/tasks")
-      .then((r) => r.json())
-      .then((data) => { setTasks(Array.isArray(data) ? data : []); })
+    guardedFetch<Array<{
+      id: string;
+      title: string;
+      description: string | null;
+      status: string;
+      priority: string | null;
+      dueDate: string | null;
+      patient?: { firstName: string; lastName: string } | null;
+      assignee?: { name: string | null } | null;
+    }>>("/api/tasks")
+      .then((data) => { if (data) setTasks(Array.isArray(data) ? data : []); })
       .catch(() => setTasks([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [guardedFetch]);
+
+  if (forbidden) {
+    return (
+      <div className="flex flex-col gap-8 w-full">
+        <h1 className="text-2xl font-bold tracking-tight">{t("tasks_title")}</h1>
+        <PermissionDenied
+          title={t("tasks_forbiddenTitle") ?? "You don't have permission"}
+          description={t("tasks_forbidden") ?? "Your role can't view tasks."}
+        />
+      </div>
+    );
+  }
 
   const statusColor: Record<string, string> = {
     open: "bg-blue-100 text-blue-700 dark:bg-blue-900/40",

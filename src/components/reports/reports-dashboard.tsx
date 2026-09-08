@@ -12,6 +12,7 @@ import {
   Wallet,
 } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n/locale";
+import { PermissionDenied } from "@/components/ui/permission-denied";
 
 type ReportData = {
   month: string;
@@ -34,11 +35,16 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
   const [month, setMonth] = useState(currentMonth);
   const [data, setData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [forbidden, setForbidden] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(`/api/reports/monthly?month=${month}`, { cache: "no-store" });
+      if (response.status === 403) {
+        setForbidden(true);
+        return;
+      }
       if (response.ok) {
         setData((await response.json()) as ReportData);
       }
@@ -91,6 +97,18 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
     () => Math.max(1, ...(data?.perDay.map((row) => row.total) ?? [1])),
     [data],
   );
+
+  if (forbidden) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-semibold tracking-[-0.03em]">{t["reports_title"]}</h1>
+        <PermissionDenied
+          title={t["reports_forbiddenTitle"] ?? "You don't have permission"}
+          description={t["reports_forbidden"] ?? "Only staff with billing or clinical access can view reports."}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

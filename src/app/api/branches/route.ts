@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
+import { requireAnyPermission } from "@/lib/authorization";
 import { requireOwner } from "@/lib/roles";
 import { createAuditLog } from "@/lib/audit";
 import { branchCreateSchema } from "@/lib/validations/location";
@@ -8,6 +9,12 @@ import { branchCreateSchema } from "@/lib/validations/location";
 export async function GET() {
   try {
     const { organizationId } = await requireOrgContext();
+    const authz = await requireAnyPermission(organizationId, [
+      { action: "patients:read", resource: "patients" },
+      { action: "appointments:read", resource: "appointments" },
+    ]);
+    if (authz.response) return authz.response;
+
     const branches = await prisma.branch.findMany({
       where: { organizationId },
       orderBy: { name: "asc" },

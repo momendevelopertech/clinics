@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocale } from "@/components/locale/locale-provider";
+import { PermissionDenied } from "@/components/ui/permission-denied";
 
 type Service = { id: string; code: string; name: string; price: string; active: boolean };
 type Clinical = { id: string; system: string; code: string; name: string; category: string; active: boolean };
@@ -11,11 +12,18 @@ export default function CatalogsPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [clinical, setClinical] = useState<Clinical[]>([]);
   const [error, setError] = useState("");
+  const [forbidden, setForbidden] = useState(false);
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/catalogs?kind=service").then((response) => response.json()),
-      fetch("/api/catalogs?kind=clinical").then((response) => response.json()),
+      fetch("/api/catalogs?kind=service").then((response) => {
+        if (response.status === 403) setForbidden(true);
+        return response.json();
+      }),
+      fetch("/api/catalogs?kind=clinical").then((response) => {
+        if (response.status === 403) setForbidden(true);
+        return response.json();
+      }),
     ])
       .then(([serviceData, clinicalData]) => {
         setServices(Array.isArray(serviceData) ? serviceData : []);
@@ -23,6 +31,18 @@ export default function CatalogsPage() {
       })
       .catch(() => setError(t("catalogs_loadError")));
   }, [t]);
+
+  if (forbidden) {
+    return (
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
+        <h1 className="text-2xl font-bold">{t("catalogs_title")}</h1>
+        <PermissionDenied
+          title={t("catalogs_forbiddenTitle") ?? "You don't have permission"}
+          description={t("catalogs_forbidden") ?? "Your role can't view service catalogs."}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">

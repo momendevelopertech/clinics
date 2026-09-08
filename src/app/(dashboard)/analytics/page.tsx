@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { BarChart3, Users, Calendar, Clock, Wallet, UserX } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocale } from "@/components/locale/locale-provider";
+import { PermissionDenied } from "@/components/ui/permission-denied";
+import { usePermissionState } from "@/hooks/use-permission-state";
 
 type DashboardKpis = {
   activePatients: number;
@@ -21,16 +23,29 @@ type DashboardKpis = {
 export default function AnalyticsPage() {
   const { t } = useLocale();
   const [stats, setStats] = React.useState<DashboardKpis | null>(null);
+  const { forbidden, guardedFetch } = usePermissionState();
 
   React.useEffect(() => {
-    fetch("/api/analytics/dashboard", { cache: "no-store" })
-      .then((response) => {
-        if (!response.ok) throw new Error("Failed to load analytics");
-        return response.json();
+    guardedFetch<{ kpis: DashboardKpis }>("/api/analytics/dashboard", {
+      cache: "no-store",
+    })
+      .then((payload) => {
+        if (payload) setStats(payload.kpis);
       })
-      .then((payload: { kpis: DashboardKpis }) => setStats(payload.kpis))
       .catch(() => setStats(null));
-  }, []);
+  }, [guardedFetch]);
+
+  if (forbidden) {
+    return (
+      <div className="flex flex-col gap-8 w-full">
+        <h1 className="text-2xl font-bold tracking-tight">{t("analytics_title")}</h1>
+        <PermissionDenied
+          title={t("analytics_forbiddenTitle") ?? "You don't have permission"}
+          description={t("analytics_forbidden") ?? "Your role can't view the analytics and revenue dashboard."}
+        />
+      </div>
+    );
+  }
 
   const cards = [
     { label: t("analytics_totalPatients"), value: stats?.activePatients ?? "—", icon: Users },

@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { useLocale } from "@/components/locale/locale-provider"
 import { StaffProfiles } from "@/components/settings/staff-profiles"
+import { PermissionDenied } from "@/components/ui/permission-denied"
+import { usePermissionState } from "@/hooks/use-permission-state"
 
 type Section = "general" | "billing" | "team" | "notifications"
 
@@ -17,15 +19,22 @@ export default function SettingsPage() {
   const { t } = useLocale()
   const [activeSection, setActiveSection] = React.useState<Section>("general")
   const [settings, setSettings] = React.useState({ appointmentDurationMins: 30, currency: "USD", defaultTaxRate: 0, invoicePrefix: "INV-", appointmentReminders: true, newPatientAlerts: true, billingNotifications: true })
+  const { forbidden, guardedFetch } = usePermissionState()
 
   React.useEffect(() => {
-    fetch("/api/settings").then((response) => response.ok ? response.json() : Promise.reject(new Error("Failed to load settings"))).then(setSettings).catch(() => toast.error(t("settings_loadError")))
-  }, [t])
+    guardedFetch<typeof settings>("/api/settings").then((data) => {
+      if (data) setSettings(data)
+    }).catch(() => toast.error(t("settings_loadError")))
+  }, [t, guardedFetch])
 
   const handleSave = async () => {
     const response = await fetch("/api/settings", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(settings) })
     if (!response.ok) {
-      toast.error(t("settings_saveError"))
+      if (response.status === 403) {
+        toast.error(t("settings_forbidden") ?? "You don't have permission to save settings.")
+      } else {
+        toast.error(t("settings_saveError"))
+      }
       return
     }
     toast.success(t("settings_saved"))
@@ -40,6 +49,10 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto h-full">
+      {forbidden ? (
+        <PermissionDenied title={t("settings_forbiddenTitle") ?? "You don't have permission"} description={t("settings_forbidden") ?? "Only the clinic owner can manage settings."} />
+      ) : (
+      <>
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">{t("settings_title")}</h2>
@@ -171,6 +184,8 @@ export default function SettingsPage() {
             )}
          </div>
       </div>
+      </>
+      )}
     </div>
   )
 }

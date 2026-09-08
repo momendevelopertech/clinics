@@ -20,6 +20,8 @@ import {
 import { toast } from "sonner";
 import { UploadDocumentDialog } from "@/components/documents/upload-document-dialog";
 import { logClientError } from "@/lib/client-logger";
+import { PermissionDenied } from "@/components/ui/permission-denied";
+import { usePermissionState } from "@/hooks/use-permission-state";
 
 interface Document {
   id: string;
@@ -38,6 +40,7 @@ export default function DocumentsPage() {
   const [documents, setDocuments] = React.useState<Document[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [typeFilter, setTypeFilter] = React.useState<string | null>(null);
+  const { forbidden, setForbidden } = usePermissionState();
 
   React.useEffect(() => {
     fetchDocuments();
@@ -47,6 +50,10 @@ export default function DocumentsPage() {
     try {
       setLoading(true);
       const response = await fetch("/api/documents");
+      if (response.status === 403) {
+        setForbidden(true);
+        return;
+      }
       if (!response.ok) throw new Error("Failed to fetch documents");
       const data = await response.json();
       setDocuments(data);
@@ -130,6 +137,21 @@ export default function DocumentsPage() {
     "prescription",
     "other",
   ];
+
+  if (forbidden) {
+    return (
+      <div className="flex flex-col gap-6 w-full h-full">
+        <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
+          <FileText className="w-6 h-6 inline mr-2" />
+          Documents &amp; Imaging
+        </h2>
+        <PermissionDenied
+          title="You don't have permission"
+          description="Only staff with patient access can view documents."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6 w-full h-full">

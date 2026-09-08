@@ -21,6 +21,8 @@ import { toast } from "sonner";
 import { AddToWaitlistDialog } from "@/components/waitlist/add-to-waitlist-dialog";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { PermissionDenied } from "@/components/ui/permission-denied";
+import { usePermissionState } from "@/hooks/use-permission-state";
 
 interface WaitlistEntry {
   id: string;
@@ -40,6 +42,7 @@ export default function WaitlistPage() {
   const [entries, setEntries] = React.useState<WaitlistEntry[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [statusFilter, setStatusFilter] = React.useState<string | null>(null);
+  const { forbidden, setForbidden } = usePermissionState();
 
   React.useEffect(() => {
     fetchWaitlist();
@@ -49,6 +52,10 @@ export default function WaitlistPage() {
     try {
       setLoading(true);
       const response = await fetch("/api/waitlist");
+      if (response.status === 403) {
+        setForbidden(true);
+        return;
+      }
       if (!response.ok) throw new Error("Failed to fetch waitlist");
       const data = await response.json();
       setEntries(data);
@@ -121,6 +128,20 @@ export default function WaitlistPage() {
         return "bg-gray-100 text-gray-800";
     }
   };
+
+  if (forbidden) {
+    return (
+      <div className="flex flex-col gap-6 w-full h-full">
+        <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
+          Waitlist
+        </h2>
+        <PermissionDenied
+          title={t("waitlist_forbiddenTitle") ?? "You don't have permission"}
+          description={t("waitlist_forbidden") ?? "Only scheduling roles can view the waitlist."}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6 w-full h-full">

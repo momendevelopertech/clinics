@@ -6,6 +6,8 @@ import { DollarSign, Plus, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocale } from "@/components/locale/locale-provider";
+import { PermissionDenied } from "@/components/ui/permission-denied";
+import { usePermissionState } from "@/hooks/use-permission-state";
 
 export default function BillingPage() {
   const { t } = useLocale();
@@ -18,14 +20,33 @@ export default function BillingPage() {
     patient?: { firstName: string; lastName: string };
   }>>([]);
   const [loading, setLoading] = React.useState(true);
+  const { forbidden, guardedFetch } = usePermissionState();
 
   React.useEffect(() => {
-    fetch("/api/billing/invoices")
-      .then((r) => r.json())
-      .then((data) => { setInvoices(Array.isArray(data) ? data : []); })
+    guardedFetch<Array<{
+      id: string;
+      invoiceNumber: string;
+      status: string;
+      totalAmount: { toString: () => string };
+      amountPaid: { toString: () => string };
+      patient?: { firstName: string; lastName: string };
+    }>>("/api/billing/invoices")
+      .then((data) => { if (data) setInvoices(Array.isArray(data) ? data : []); })
       .catch(() => setInvoices([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [guardedFetch]);
+
+  if (forbidden) {
+    return (
+      <div className="flex flex-col gap-8 w-full">
+        <h1 className="text-2xl font-bold tracking-tight">{t("billing_title")}</h1>
+        <PermissionDenied
+          title={t("billing_forbiddenTitle") ?? "You don't have permission"}
+          description={t("billing_forbidden") ?? "Only staff with billing access can view invoices."}
+        />
+      </div>
+    );
+  }
 
   const statusColor: Record<string, string> = {
     draft: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",

@@ -22,6 +22,8 @@ import { MessageCircle, Mail, MessageSquare, Phone } from "lucide-react";
 import { AddCommunicationDialog } from "@/components/communications/add-communication-dialog";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
+import { PermissionDenied } from "@/components/ui/permission-denied";
+import { usePermissionState } from "@/hooks/use-permission-state";
 
 interface Communication {
   id: string;
@@ -45,6 +47,7 @@ export default function CommunicationsPage() {
   const [channelFilter, setChannelFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
+  const { forbidden, setForbidden } = usePermissionState();
 
   // Map handlers to convert "all" sentinel to empty string for API queries
   const handleChannelChange = (value: string) => {
@@ -62,6 +65,10 @@ export default function CommunicationsPage() {
       if (statusFilter) params.append("status", statusFilter);
 
       const response = await fetch(`/api/communications?${params.toString()}`);
+      if (response.status === 403) {
+        setForbidden(true);
+        return;
+      }
       if (!response.ok) throw new Error("Failed to fetch");
       const data = await response.json();
       setCommunications(data);
@@ -113,6 +120,18 @@ export default function CommunicationsPage() {
     failed: communications.filter((c) => c.status === "failed").length,
     pending: communications.filter((c) => c.status === "pending").length,
   };
+
+  if (forbidden) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold">Communications</h1>
+        <PermissionDenied
+          title="You don't have permission"
+          description="Only staff with patient or scheduling access can view communications."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

@@ -2,7 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
-import { getCurrentUserId, hasPermission } from "@/lib/auth";
+import { requireAnyPermission } from "@/lib/authorization";
 import { createAuditLog } from "@/lib/audit";
 import stripe from "@/lib/stripe";
 import { logServerError } from "@/lib/safe-logger";
@@ -12,17 +12,11 @@ export async function POST(request: Request) {
   try {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
-    const userId = await getCurrentUserId(orgId);
-    const canWriteBilling = await hasPermission(
-      userId,
-      orgId,
-      "billing:write",
-      "billing",
-    );
-
-    if (!canWriteBilling) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    const authz = await requireAnyPermission(orgId, [
+      { action: "billing:write", resource: "billing" },
+    ]);
+    if (authz.response) return authz.response;
+    const { userId } = authz;
 
     const parsed = paymentSchema.safeParse(await request.json());
     if (!parsed.success) return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
@@ -100,6 +94,11 @@ export async function GET(request: Request) {
   try {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
+
+    const authz = await requireAnyPermission(orgId, [
+      { action: "billing:read", resource: "billing" },
+    ]);
+    if (authz.response) return authz.response;
 
     const { searchParams } = new URL(request.url);
     const invoiceId = searchParams.get("invoiceId");

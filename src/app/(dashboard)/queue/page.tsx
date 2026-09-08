@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocale } from "@/components/locale/locale-provider";
+import { PermissionDenied } from "@/components/ui/permission-denied";
 
 type QueueItem = {
   id: string;
@@ -16,11 +17,16 @@ export default function QueuePage() {
   const { t } = useLocale();
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [error, setError] = useState("");
+  const [forbidden, setForbidden] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
       const response = await fetch("/api/queue");
+      if (response.status === 403) {
+        if (!cancelled) setForbidden(true);
+        return;
+      }
       if (!response.ok) throw new Error(t("queue_loadError"));
       const data = (await response.json()) as QueueItem[];
       if (!cancelled) setQueue(data);
@@ -30,6 +36,18 @@ export default function QueuePage() {
     });
     return () => { cancelled = true; };
   }, [t]);
+
+  if (forbidden) {
+    return (
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
+        <h1 className="text-2xl font-bold">{t("queue_title")}</h1>
+        <PermissionDenied
+          title={t("queue_forbiddenTitle") ?? "You don't have permission"}
+          description={t("queue_forbidden") ?? "Only scheduling and clinical roles can view the queue."}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">

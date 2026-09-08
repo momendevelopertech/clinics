@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocale } from "@/components/locale/locale-provider";
+import { PermissionDenied } from "@/components/ui/permission-denied";
 
 type Patient = { id: string; firstName: string; lastName: string; mrn: string };
 type Encounter = {
@@ -25,9 +26,14 @@ export function EncountersWorkspace() {
   const [note, setNote] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [error, setError] = useState("");
+  const [forbidden, setForbidden] = useState(false);
 
   const refresh = useCallback(async () => {
     const [patientsResponse, encountersResponse] = await Promise.all([fetch("/api/patients"), fetch("/api/encounters")]);
+    if (patientsResponse.status === 403 || encountersResponse.status === 403) {
+      setForbidden(true);
+      return;
+    }
     if (!patientsResponse.ok || !encountersResponse.ok) throw new Error(t("enc_loadError"));
     setPatients((await patientsResponse.json()) as Patient[]);
     setEncounters((await encountersResponse.json()) as Encounter[]);
@@ -37,6 +43,10 @@ export function EncountersWorkspace() {
     let cancelled = false;
     async function loadInitialData() {
       const [patientsResponse, encountersResponse] = await Promise.all([fetch("/api/patients"), fetch("/api/encounters")]);
+      if (patientsResponse.status === 403 || encountersResponse.status === 403) {
+        if (!cancelled) setForbidden(true);
+        return;
+      }
       if (!patientsResponse.ok || !encountersResponse.ok) throw new Error(t("enc_loadError"));
       if (!cancelled) {
         setPatients((await patientsResponse.json()) as Patient[]);
@@ -82,6 +92,21 @@ export function EncountersWorkspace() {
     if (!response.ok) throw new Error(t("enc_completeError"));
     await refresh();
   };
+
+  if (forbidden) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("enc_title")}</h1>
+          <p className="text-sm text-muted-foreground">{t("enc_subtitle")}</p>
+        </div>
+        <PermissionDenied
+          title={t("enc_forbiddenTitle") ?? "You don't have permission"}
+          description={t("enc_forbidden") ?? "Only clinical roles can open encounters."}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

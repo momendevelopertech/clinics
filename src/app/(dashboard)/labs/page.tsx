@@ -22,6 +22,8 @@ import { AddLabResultDialog } from "@/components/labs/add-lab-result-dialog";
 import { AddLabOrderDialog } from "@/components/labs/add-lab-order-dialog";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { PermissionDenied } from "@/components/ui/permission-denied";
+import { usePermissionState } from "@/hooks/use-permission-state";
 
 interface LabResult {
   id: string;
@@ -43,6 +45,7 @@ export default function LabResultsPage() {
   const [results, setResults] = React.useState<LabResult[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [statusFilter, setStatusFilter] = React.useState<string | null>(null);
+  const { forbidden, setForbidden } = usePermissionState();
 
   React.useEffect(() => {
     fetchLabResults();
@@ -52,6 +55,10 @@ export default function LabResultsPage() {
     try {
       setLoading(true);
       const response = await fetch("/api/labs");
+      if (response.status === 403) {
+        setForbidden(true);
+        return;
+      }
       if (!response.ok) throw new Error("Failed to fetch lab results");
       const data = await response.json();
       setResults(data);
@@ -135,6 +142,21 @@ export default function LabResultsPage() {
 
   const isAbnormal = (status: string) => status === "abnormal";
   const isHighlightedRow = (status: string) => status === "abnormal";
+
+  if (forbidden) {
+    return (
+      <div className="flex flex-col gap-6 w-full h-full">
+        <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
+          <Beaker className="w-6 h-6 inline mr-2" />
+          {t("labs_title")}
+        </h2>
+        <PermissionDenied
+          title={t("labs_forbiddenTitle") ?? "You don't have permission"}
+          description={t("labs_forbidden") ?? "Only clinical and lab roles can view lab results."}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6 w-full h-full">

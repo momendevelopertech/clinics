@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server";
 import { getCurrentUserId, hasAnyPermission } from "@/lib/auth";
 
-type RequiredPermission = {
+export type RequiredPermission = {
   action: string;
   resource?: string;
 };
+
+export function permissionDeniedResponse() {
+  return NextResponse.json(
+    { error: "You don't have permission to perform this action." },
+    { status: 403 },
+  );
+}
 
 export async function requireAnyPermission(
   orgId: string,
@@ -16,7 +23,7 @@ export async function requireAnyPermission(
   if (!isAllowed) {
     return {
       userId,
-      response: NextResponse.json({ error: "Forbidden" }, { status: 403 }),
+      response: permissionDeniedResponse(),
     };
   }
 

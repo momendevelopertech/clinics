@@ -2,7 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
-import { getCurrentUserId, hasPermission } from "@/lib/auth";
+import { requireAnyPermission } from "@/lib/authorization";
 import { createAuditLog } from "@/lib/audit";
 import { logServerError } from "@/lib/safe-logger";
 
@@ -10,6 +10,11 @@ export async function GET(request: Request) {
   try {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
+
+    const authz = await requireAnyPermission(orgId, [
+      { action: "patients:read", resource: "patients" },
+    ]);
+    if (authz.response) return authz.response;
 
     const { searchParams } = new URL(request.url);
     const patientId = searchParams.get("patientId");
@@ -54,17 +59,11 @@ export async function POST(request: Request) {
   try {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
-    const userId = await getCurrentUserId(orgId);
-    const canWriteDocuments = await hasPermission(
-      userId,
-      orgId,
-      "patients:write",
-      "patients",
-    );
-
-    if (!canWriteDocuments) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    const authz = await requireAnyPermission(orgId, [
+      { action: "patients:write", resource: "patients" },
+    ]);
+    if (authz.response) return authz.response;
+    const { userId } = authz;
 
     const body = await request.json();
     const {

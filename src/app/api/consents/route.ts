@@ -11,6 +11,11 @@ export async function GET(request: Request) {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
 
+    const authz = await requireAnyPermission(orgId, [
+      { action: "patients:read", resource: "patients" },
+    ]);
+    if (authz.response) return authz.response;
+
     const { searchParams } = new URL(request.url);
     const patientId = searchParams.get("patientId");
 

@@ -6,6 +6,8 @@ import { Package, Plus, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocale } from "@/components/locale/locale-provider";
+import { PermissionDenied } from "@/components/ui/permission-denied";
+import { usePermissionState } from "@/hooks/use-permission-state";
 
 export default function InventoryPage() {
   const { t } = useLocale();
@@ -19,16 +21,36 @@ export default function InventoryPage() {
     unit: string | null;
   }>>([]);
   const [loading, setLoading] = React.useState(true);
+  const { forbidden, guardedFetch } = usePermissionState();
 
   React.useEffect(() => {
-    fetch("/api/inventory")
-      .then((r) => r.json())
-      .then((data) => { setItems(Array.isArray(data) ? data : []); })
+    guardedFetch<Array<{
+      id: string;
+      name: string;
+      sku: string | null;
+      category: string | null;
+      quantity: number;
+      reorderLevel: number | null;
+      unit: string | null;
+    }>>("/api/inventory")
+      .then((data) => { if (data) setItems(Array.isArray(data) ? data : []); })
       .catch(() => setItems([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [guardedFetch]);
 
   const lowStock = items.filter((i) => i.reorderLevel != null && i.quantity <= i.reorderLevel);
+
+  if (forbidden) {
+    return (
+      <div className="flex flex-col gap-8 w-full">
+        <h1 className="text-2xl font-bold tracking-tight">{t("inv_title")}</h1>
+        <PermissionDenied
+          title={t("inv_forbiddenTitle") ?? "You don't have permission"}
+          description={t("inv_forbidden") ?? "Your role can't view the inventory module."}
+        />
+      </div>
+    );
+  }
 
   return (
     <motion.div

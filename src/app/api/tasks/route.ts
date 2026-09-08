@@ -10,6 +10,12 @@ export async function GET(request: Request) {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
 
+    const authz = await requireAnyPermission(orgId, [
+      { action: "patients:read", resource: "patients" },
+      { action: "appointments:read", resource: "appointments" },
+    ]);
+    if (authz.response) return authz.response;
+
     const { searchParams } = new URL(request.url);
     const assigneeId = searchParams.get("assigneeId");
     const patientId = searchParams.get("patientId");
