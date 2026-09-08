@@ -15,8 +15,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getClientErrorMessage, logClientError } from "@/lib/client-logger";
+import { useLocale } from "@/components/locale/locale-provider";
 
 export default function PatientLoginPage() {
+  const { t } = useLocale();
   const [loading, setLoading] = React.useState(false);
   const [formData, setFormData] = React.useState({
     email: "",
@@ -29,7 +31,7 @@ export default function PatientLoginPage() {
     e.preventDefault();
 
     if (!formData.email || !formData.mrn || !formData.password) {
-      toast.error("Please fill in all fields");
+      toast.error(t("portal_fillAll"));
       return;
     }
 
@@ -43,15 +45,15 @@ export default function PatientLoginPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || "Login failed");
+        throw new Error(error.error || t("portal_loginFailed"));
       }
 
       await response.json();
 
-      toast.success("Login successful!");
+      toast.success(t("portal_loginSuccess"));
       router.push("/patient-portal");
     } catch (error) {
-      toast.error(getClientErrorMessage(error, "Login failed"));
+      toast.error(getClientErrorMessage(error, t("portal_loginFailed")));
       logClientError("Patient login failed", error);
     } finally {
       setLoading(false);
@@ -65,13 +67,13 @@ export default function PatientLoginPage() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-white/82">
               <Activity className="h-3.5 w-3.5" />
-              Patient Portal
+              {t("portal_badge")}
             </div>
             <h1 className="mt-6 max-w-md text-5xl font-semibold leading-[1.03] tracking-[-0.05em]">
-              Your care history, appointments, and updates in one place.
+              {t("portal_heroTitle")}
             </h1>
             <p className="mt-5 max-w-lg text-base leading-7 text-white/74">
-              Review upcoming visits, recent lab summaries, and your account details through a secure portal session.
+              {t("portal_heroBody")}
             </p>
           </div>
 
@@ -79,18 +81,18 @@ export default function PatientLoginPage() {
             {[
               {
                 icon: ShieldCheck,
-                title: "Secure session",
-                copy: "Portal access is verified server-side and stored in an HttpOnly session cookie.",
+                title: t("portal_feature1Title"),
+                copy: t("portal_feature1Body"),
               },
               {
                 icon: CalendarClock,
-                title: "Appointment visibility",
-                copy: "See upcoming bookings and recent care activity without calling the front desk.",
+                title: t("portal_feature2Title"),
+                copy: t("portal_feature2Body"),
               },
               {
                 icon: FileHeart,
-                title: "Clinical continuity",
-                copy: "Lab result summaries and core profile details stay accessible in one patient view.",
+                title: t("portal_feature3Title"),
+                copy: t("portal_feature3Body"),
               },
             ].map((item) => (
               <div
@@ -115,23 +117,23 @@ export default function PatientLoginPage() {
           <Card className="w-full border-white/60 bg-white/70 shadow-none dark:border-white/8 dark:bg-white/[0.03]">
             <CardHeader className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary">
-                Patient Sign In
+                {t("portal_signIn")}
               </p>
               <CardTitle className="text-4xl font-semibold tracking-[-0.05em]">
-                Access your portal
+                {t("portal_accessTitle")}
               </CardTitle>
               <CardDescription className="text-sm leading-6">
-                Sign in to review appointments, lab summaries, and account information tied to your record.
+                {t("portal_accessDesc")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                 <div className="gap-2 flex flex-col">
-                  <Label htmlFor="email">Email Address</Label>
+                  <Label htmlFor="email">{t("portal_email")}</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="your@email.com"
+                    placeholder={t("portal_emailPlaceholder")}
                     className="h-12 rounded-[18px] bg-white/80 dark:bg-white/[0.04]"
                     value={formData.email}
                     onChange={(e) =>
@@ -142,10 +144,10 @@ export default function PatientLoginPage() {
                 </div>
 
                 <div className="gap-2 flex flex-col">
-                  <Label htmlFor="mrn">Medical Record Number (MRN)</Label>
+                  <Label htmlFor="mrn">{t("portal_mrn")}</Label>
                   <Input
                     id="mrn"
-                    placeholder="Your MRN"
+                    placeholder={t("portal_mrnPlaceholder")}
                     className="h-12 rounded-[18px] bg-white/80 dark:bg-white/[0.04]"
                     value={formData.mrn}
                     onChange={(e) =>
@@ -156,11 +158,11 @@ export default function PatientLoginPage() {
                 </div>
 
                 <div className="gap-2 flex flex-col">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t("portal_password")}</Label>
                   <Input
                     id="password"
                     type="password"
-                    placeholder="••••••••"
+                    placeholder={t("portal_passwordPlaceholder")}
                     className="h-12 rounded-[18px] bg-white/80 dark:bg-white/[0.04]"
                     value={formData.password}
                     onChange={(e) =>
@@ -175,11 +177,11 @@ export default function PatientLoginPage() {
                   disabled={loading}
                   className="h-12 w-full rounded-[18px] bg-linear-to-r from-primary to-cyan-500 text-white shadow-lg shadow-cyan-500/20 hover:opacity-95"
                 >
-                  {loading ? "Signing in..." : "Open portal"}
+                  {loading ? t("portal_signingIn") : t("portal_openPortal")}
                 </Button>
 
                 <p className="text-center text-xs leading-5 text-muted-foreground">
-                  Don&apos;t have an account? Contact your healthcare provider to register.
+                  {t("portal_noAccount")}
                 </p>
               </form>
             </CardContent>

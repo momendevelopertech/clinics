@@ -21,6 +21,7 @@ import {
 import { toast } from "sonner";
 import { useVitalsStream } from "@/hooks/use-vitals-stream";
 import { logClientError } from "@/lib/client-logger";
+import { useLocale } from "@/components/locale/locale-provider";
 import type { VitalSnapshot } from "@/lib/vitals";
 
 interface PatientData {
@@ -32,6 +33,7 @@ interface PatientData {
 }
 
 export default function PatientPortalPage() {
+  const { t } = useLocale();
   const [patient, setPatient] = React.useState<PatientData | null>(null);
   const [appointments, setAppointments] = React.useState<Array<{ id: string; type: string; provider: string; status: string }>>([]);
   const [labResults, setLabResults] = React.useState<Array<{ id: string; testName: string; resultValue: string | null; unit: string | null; status: string }>>([]);
@@ -80,15 +82,15 @@ export default function PatientPortalPage() {
       });
 
       if (!response.ok) {
-        throw new Error("Logout failed");
+        throw new Error(t("portal_logoutError"));
       }
 
-      toast.success("Logged out successfully");
+      toast.success(t("portal_loggedOut"));
       router.push("/patient-login");
       router.refresh();
     } catch (error) {
       logClientError("Patient logout failed", error);
-      toast.error("Unable to log out. Please try again.");
+      toast.error(t("portal_logoutError"));
     } finally {
       setIsLoggingOut(false);
     }
@@ -99,7 +101,7 @@ export default function PatientPortalPage() {
   if (!patient) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-neutral-500">Loading...</p>
+        <p className="text-neutral-500">{t("portal_loading")}</p>
       </div>
     );
   }
@@ -111,10 +113,10 @@ export default function PatientPortalPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
-              Welcome, {patient.firstName}
+              {t("portal_welcome").replace("{name}", patient.firstName)}
             </h1>
             <p className="text-sm text-neutral-500">
-              MRN: {patient.mrn || "N/A"}
+              {t("portal_mrnLabel")}: {patient.mrn || t("portal_na")}
             </p>
           </div>
           <Button
@@ -123,7 +125,7 @@ export default function PatientPortalPage() {
             disabled={isLoggingOut}
             className="flex items-center gap-2"
           >
-            <LogOut className="w-4 h-4" /> {isLoggingOut ? "Logging out..." : "Logout"}
+            <LogOut className="w-4 h-4" /> {isLoggingOut ? t("portal_loggingOut") : t("portal_logout")}
           </Button>
         </div>
       </div>
@@ -134,21 +136,21 @@ export default function PatientPortalPage() {
           {/* Quick Actions */}
           <Card>
             <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-              <CardDescription>Common tasks</CardDescription>
+              <CardTitle>{t("portal_quickActions")}</CardTitle>
+              <CardDescription>{t("portal_quickActionsDesc")}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
               <Button variant="outline" className="justify-start">
-                <Calendar className="w-4 h-4 mr-2" /> Book Appointment
+                <Calendar className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t("portal_bookAppointment")}
               </Button>
               <Button variant="outline" className="justify-start">
-                <FileText className="w-4 h-4 mr-2" /> View Medical Records
+                <FileText className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t("portal_viewMedicalRecords")}
               </Button>
               <Button variant="outline" className="justify-start">
-                <MessageSquare className="w-4 h-4 mr-2" /> Message Provider
+                <MessageSquare className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t("portal_messageProvider")}
               </Button>
               <Button variant="outline" className="justify-start">
-                <Heart className="w-4 h-4 mr-2" /> View Health Summary
+                <Heart className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t("portal_viewHealthSummary")}
               </Button>
             </CardContent>
           </Card>
@@ -156,26 +158,26 @@ export default function PatientPortalPage() {
           {/* Account Info */}
           <Card>
             <CardHeader>
-              <CardTitle>Account Information</CardTitle>
-              <CardDescription>Your profile details</CardDescription>
+              <CardTitle>{t("portal_accountInfo")}</CardTitle>
+              <CardDescription>{t("portal_accountInfoDesc")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <div>
-                <p className="text-sm text-neutral-500">Name</p>
+                <p className="text-sm text-neutral-500">{t("portal_name")}</p>
                 <p className="font-medium">
                   {patient.firstName} {patient.lastName}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-neutral-500">Email</p>
-                <p className="font-medium">{patient.email || "N/A"}</p>
+                <p className="text-sm text-neutral-500">{t("portal_emailLabel")}</p>
+                <p className="font-medium">{patient.email || t("portal_na")}</p>
               </div>
               <div>
-                <p className="text-sm text-neutral-500">MRN</p>
-                <p className="font-medium">{patient.mrn || "N/A"}</p>
+                <p className="text-sm text-neutral-500">{t("portal_mrnLabel")}</p>
+                <p className="font-medium">{patient.mrn || t("portal_na")}</p>
               </div>
               <Button variant="outline" className="w-full">
-                Update Profile
+                {t("portal_updateProfile")}
               </Button>
             </CardContent>
           </Card>
@@ -185,9 +187,9 @@ export default function PatientPortalPage() {
           <CardHeader>
             <div className="flex items-center justify-between gap-4">
               <div>
-                <CardTitle>Live Vitals</CardTitle>
+                <CardTitle>{t("portal_liveVitals")}</CardTitle>
                 <CardDescription>
-                  Latest bedside readings streamed from your chart when available.
+                  {t("portal_liveVitalsDesc")}
                 </CardDescription>
               </div>
               <span
@@ -200,10 +202,10 @@ export default function PatientPortalPage() {
                 }`}
               >
                 {vitalsStatus === "live"
-                  ? "Live"
+                  ? t("vitals_live")
                   : vitalsStatus === "error"
-                    ? "Reconnect needed"
-                    : "Waiting for stream"}
+                    ? t("vitals_reconnect")
+                    : t("vitals_waiting")}
               </span>
             </div>
           </CardHeader>
@@ -212,7 +214,7 @@ export default function PatientPortalPage() {
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 <div className="rounded-xl border p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">
-                    Blood Pressure
+                    {t("portal_bloodPressure")}
                   </p>
                   <p className="mt-2 text-2xl font-semibold">
                     {displayedVital.bloodPressureSystolic ?? "--"}/
@@ -221,7 +223,7 @@ export default function PatientPortalPage() {
                 </div>
                 <div className="rounded-xl border p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">
-                    Heart Rate
+                    {t("portal_heartRate")}
                   </p>
                   <p className="mt-2 text-2xl font-semibold">
                     {displayedVital.heartRate ?? "--"} bpm
@@ -229,7 +231,7 @@ export default function PatientPortalPage() {
                 </div>
                 <div className="rounded-xl border p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">
-                    SpO2
+                    {t("portal_spo2")}
                   </p>
                   <p className="mt-2 text-2xl font-semibold">
                     {displayedVital.spO2 ?? "--"}%
@@ -237,7 +239,7 @@ export default function PatientPortalPage() {
                 </div>
                 <div className="rounded-xl border p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">
-                    Temperature
+                    {t("portal_temperature")}
                   </p>
                   <p className="mt-2 text-2xl font-semibold">
                     {displayedVital.temperature ?? "--"} C
@@ -246,14 +248,17 @@ export default function PatientPortalPage() {
               </div>
             ) : (
               <div className="rounded-xl border border-dashed p-6 text-sm text-neutral-500">
-                No vitals have been recorded for this account yet.
+                {t("portal_noVitals")}
               </div>
             )}
 
             {displayedVital ? (
               <div className="mt-4 flex items-center gap-2 text-sm text-neutral-500">
                 <Activity className="h-4 w-4" />
-                Last updated {new Date(displayedVital.recordedAt).toLocaleString()}
+                {t("portal_lastUpdated").replace(
+                  "{time}",
+                  new Date(displayedVital.recordedAt).toLocaleString(),
+                )}
               </div>
             ) : null}
           </CardContent>
@@ -262,12 +267,12 @@ export default function PatientPortalPage() {
         {/* Appointments */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Upcoming Appointments</CardTitle>
-            <CardDescription>Your scheduled visits</CardDescription>
+            <CardTitle>{t("portal_upcomingAppointments")}</CardTitle>
+            <CardDescription>{t("portal_upcomingAppointmentsDesc")}</CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <p className="text-neutral-500">Loading...</p>
+              <p className="text-neutral-500">{t("portal_loading")}</p>
             ) : appointments.length > 0 ? (
               <div className="space-y-3">
                 {appointments.map((apt) => (
@@ -278,10 +283,10 @@ export default function PatientPortalPage() {
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="font-medium">
-                          {apt.type || "General Checkup"}
+                          {apt.type || t("portal_generalCheckup")}
                         </p>
                         <p className="text-sm text-neutral-500">
-                          {apt.provider || "Dr. TBD"}
+                          {apt.provider || t("portal_drTbd")}
                         </p>
                       </div>
                       <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
@@ -293,11 +298,11 @@ export default function PatientPortalPage() {
               </div>
             ) : (
               <p className="text-neutral-500 text-center py-4">
-                No upcoming appointments
+                {t("portal_noUpcomingAppointments")}
               </p>
             )}
             <Button variant="outline" className="w-full mt-4">
-              View All Appointments
+              {t("portal_viewAllAppointments")}
             </Button>
           </CardContent>
         </Card>
@@ -305,12 +310,12 @@ export default function PatientPortalPage() {
         {/* Lab Results */}
         <Card>
           <CardHeader>
-            <CardTitle>Recent Lab Results</CardTitle>
-            <CardDescription>Your test results</CardDescription>
+            <CardTitle>{t("portal_recentLabResults")}</CardTitle>
+            <CardDescription>{t("portal_recentLabResultsDesc")}</CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <p className="text-neutral-500">Loading...</p>
+              <p className="text-neutral-500">{t("portal_loading")}</p>
             ) : labResults.length > 0 ? (
               <div className="space-y-3">
                 {labResults.map((lab) => (
@@ -340,11 +345,11 @@ export default function PatientPortalPage() {
               </div>
             ) : (
               <p className="text-neutral-500 text-center py-4">
-                No lab results available
+                {t("portal_noLabResults")}
               </p>
             )}
             <Button variant="outline" className="w-full mt-4">
-              View All Results
+              {t("portal_viewAllResults")}
             </Button>
           </CardContent>
         </Card>
