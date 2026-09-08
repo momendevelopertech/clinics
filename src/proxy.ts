@@ -87,9 +87,16 @@ function maybeRateLimitRequest(request: NextRequest, tokenUserId?: string) {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  const isHttps = request.nextUrl.protocol === "https:";
   const token = await getToken({
     req: request,
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
+    // NextAuth derives the cookie name from NEXTAUTH_URL (e.g. a dev
+    // "http://localhost:3000" baked into the Edge bundle) which flips the
+    // prefix to "next-auth.session-token" even though the app sets
+    // "__Secure-next-auth.session-token" on https. Pass the flag explicitly so
+    // the Edge middleware always reads the cookie the app actually writes.
+    secureCookie: isHttps,
   });
   const rateLimit = maybeRateLimitRequest(request, token?.id as string | undefined);
 

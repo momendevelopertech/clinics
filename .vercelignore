@@ -3,6 +3,7 @@
 README.md
 node_modules
 .next
+.env
 .env.local
 .env.*.local
 npm-debug.log
