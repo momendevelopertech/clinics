@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type * as React from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signOut } from "next-auth/react";
 import {
   Activity,
   Building2,
@@ -16,6 +17,7 @@ import {
   ShieldCheck,
   Wallet,
   X,
+  LogOut,
 } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n/locale";
 import { LanguageSwitcher } from "@/components/locale/language-switcher";
@@ -65,6 +67,7 @@ function formatUsage(value: number, limit: number) {
 }
 
 export function SuperConsole({ t }: { t: Dictionary }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const requestedSection = searchParams.get("section");
   const initialSection: Section =
@@ -88,6 +91,7 @@ export function SuperConsole({ t }: { t: Dictionary }) {
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [savingSettings, setSavingSettings] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -160,12 +164,26 @@ export function SuperConsole({ t }: { t: Dictionary }) {
         setError(t["common_error"]);
         return;
       }
+
       const data = await response.json();
       setSettings((current) => ({ ...current, ...(data.settings ?? {}) }));
     } catch {
       setError(t["common_error"]);
     } finally {
       setSavingSettings(false);
+    }
+  }
+
+  async function handleLogout() {
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+    try {
+      const result = await signOut({ redirect: false, callbackUrl: "/login" });
+      router.replace(result?.url || "/login");
+      router.refresh();
+    } finally {
+      setIsLoggingOut(false);
     }
   }
 
@@ -230,6 +248,15 @@ export function SuperConsole({ t }: { t: Dictionary }) {
               <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             </button>
             <LanguageSwitcher />
+            <button
+              type="button"
+              onClick={() => void handleLogout()}
+              disabled={isLoggingOut}
+              className="inline-flex items-center gap-2 rounded-[14px] border border-red-200 bg-white/70 px-3 py-2 text-sm font-semibold text-red-700 shadow-sm transition hover:bg-red-50 disabled:cursor-wait disabled:opacity-60 dark:border-red-400/20 dark:bg-white/[0.04] dark:text-red-300 dark:hover:bg-red-400/10"
+            >
+              <LogOut className="h-4 w-4" />
+              {isLoggingOut ? `${t["header_logout"]}...` : t["header_logout"]}
+            </button>
           </div>
         </header>
 
