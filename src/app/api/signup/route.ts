@@ -48,22 +48,23 @@ const OWNER_PERMISSIONS = [
   { action: "staff:write", resource: "staff" },
 ];
 
-const DOCTOR_PERMISSIONS = [
-  { action: "patients:read", resource: "patients" },
-  { action: "appointments:read", resource: "appointments" },
-  { action: "appointments:write", resource: "appointments" },
-  { action: "encounters:read", resource: "encounters" },
-  { action: "encounters:write", resource: "encounters" },
-  { action: "billing:read", resource: "billing" },
-  { action: "inventory:read", resource: "inventory" },
-];
-
-const RECEPTIONIST_PERMISSIONS = [
+// Shared 14-permission clinical stack, identical to the seeded "Doctor" and
+// "Care Coordinator" roles so signup defaults never drift from seed data.
+const CLINICAL_ROLE_PERMISSIONS = [
   { action: "patients:read", resource: "patients" },
   { action: "patients:write", resource: "patients" },
   { action: "appointments:read", resource: "appointments" },
   { action: "appointments:write", resource: "appointments" },
+  { action: "encounters:read", resource: "encounters" },
+  { action: "encounters:write", resource: "encounters" },
+  { action: "inventory:read", resource: "inventory" },
+  { action: "inventory:write", resource: "inventory" },
   { action: "billing:read", resource: "billing" },
+  { action: "billing:write", resource: "billing" },
+  { action: "lab:read", resource: "lab" },
+  { action: "lab:write", resource: "lab" },
+  { action: "pharmacy:read", resource: "pharmacy" },
+  { action: "pharmacy:write", resource: "pharmacy" },
 ];
 
 async function createDefaultRoles(
@@ -72,8 +73,8 @@ async function createDefaultRoles(
 ) {
   const roles: Array<{ name: string; permissions: Array<{ action: string; resource: string }> }> = [
     { name: "Owner", permissions: OWNER_PERMISSIONS },
-    { name: "Doctor", permissions: DOCTOR_PERMISSIONS },
-    { name: "Receptionist", permissions: RECEPTIONIST_PERMISSIONS },
+    { name: "Doctor", permissions: CLINICAL_ROLE_PERMISSIONS },
+    { name: "Care Coordinator", permissions: CLINICAL_ROLE_PERMISSIONS },
   ];
 
   const created: Array<{ id: string; name: string }> = [];

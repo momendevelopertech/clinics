@@ -14,7 +14,7 @@ export async function GET(request: Request) {
 
     const authz = await requireAnyPermission(orgId, [
       { action: "encounters:read", resource: "encounters" },
-      { action: "patients:read", resource: "patients" },
+      { action: "lab:read", resource: "lab" },
     ]);
     if (authz.response) return authz.response;
 

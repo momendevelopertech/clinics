@@ -10,8 +10,7 @@ export async function GET() {
   try {
     const { organizationId } = await requireOrgContext();
     const authz = await requireAnyPermission(organizationId, [
-      { action: "patients:read", resource: "patients" },
-      { action: "appointments:read", resource: "appointments" },
+      { action: "appointments:write", resource: "appointments" },
     ]);
     if (authz.response) return authz.response;
     return NextResponse.json(await prisma.room.findMany({

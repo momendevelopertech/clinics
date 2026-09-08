@@ -12,7 +12,8 @@ export async function GET(request: Request) {
     assertOrgScope(orgId);
 
     const authz = await requireAnyPermission(orgId, [
-      { action: "patients:read", resource: "patients" },
+      { action: "encounters:read", resource: "encounters" },
+      { action: "patients:write", resource: "patients" },
     ]);
     if (authz.response) return authz.response;
 

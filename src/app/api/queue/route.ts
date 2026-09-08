@@ -8,7 +8,7 @@ export async function GET() {
     const organizationId = await getOrgId();
     assertOrgScope(organizationId);
     const authz = await requireAnyPermission(organizationId, [
-      { action: "appointments:read", resource: "appointments" },
+      { action: "appointments:write", resource: "appointments" },
     ]);
     if (authz.response) return authz.response;
     const start = new Date();

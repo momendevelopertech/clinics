@@ -12,7 +12,7 @@ export async function GET() {
     assertOrgScope(orgId);
 
     const authz = await requireAnyPermission(orgId, [
-      { action: "appointments:read", resource: "appointments" },
+      { action: "appointments:write", resource: "appointments" },
     ]);
     if (authz.response) return authz.response;
 
