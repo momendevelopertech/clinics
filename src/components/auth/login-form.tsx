@@ -14,10 +14,25 @@ type LoginFormProps = {
 };
 
 const demoStaffLogins = [
-  { email: "admin@acmeclinic.com", password: "admin123" },
-  { email: "ops@acmeclinic.com", password: "admin123" },
-  { email: "billing@acmeclinic.com", password: "admin123" },
+  { email: "superadmin@acmeclinic.com", password: "admin123", roleKey: "auth_demoSuperAdmin" },
+  { email: "admin@acmeclinic.com", password: "admin123", roleKey: "auth_demoDoctor" },
+  { email: "dr.fatma@acmeclinic.com", password: "admin123", roleKey: "auth_demoDoctor2" },
+  { email: "owner@acmeclinic.com", password: "admin123", roleKey: "auth_demoOwner" },
+  { email: "ops@acmeclinic.com", password: "admin123", roleKey: "auth_demoCoordinator" },
+  { email: "receptionist@acmeclinic.com", password: "admin123", roleKey: "auth_demoReceptionist" },
+  { email: "billing@acmeclinic.com", password: "admin123", roleKey: "auth_demoBiller" },
+  { email: "nurse@acmeclinic.com", password: "admin123", roleKey: "auth_demoNurse" },
+  { email: "pharmacist@acmeclinic.com", password: "admin123", roleKey: "auth_demoPharmacist" },
 ];
+
+function handleFastLogin(email: string, password: string, callbackUrl: string) {
+  void signIn("credentials", {
+    email,
+    password,
+    redirect: true,
+    callbackUrl,
+  });
+}
 
 export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
   const [email, setEmail] = useState("");
@@ -199,8 +214,19 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
                     className="grid gap-1 rounded-[16px] bg-white/72 px-3 py-2.5 text-xs dark:bg-white/[0.04] sm:grid-cols-[1fr_auto] sm:items-center sm:gap-3"
                     key={login.email}
                   >
-                    <span className="font-medium text-foreground">{login.email}</span>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <span className="font-medium text-foreground">{login.email}</span>
+                      <span className="font-medium text-primary">{t[login.roleKey]}</span>
+                    </div>
                     <span className="font-mono text-muted-foreground">{login.password}</span>
+                    <button
+                      className="inline-flex h-9 items-center justify-center rounded-[14px] bg-linear-to-r from-primary to-cyan-500 px-3 text-xs font-semibold text-white shadow-md shadow-cyan-500/20 transition hover:translate-y-[-1px] disabled:cursor-not-allowed disabled:opacity-70"
+                      disabled={isSubmitting}
+                      onClick={() => handleFastLogin(login.email, login.password, callbackUrl)}
+                      type="button"
+                    >
+                      {isSubmitting ? t["auth_signingIn"] : t["auth_fastLogin"]}
+                    </button>
                   </div>
                 ))}
               </div>
