@@ -2,12 +2,12 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { MessageSquare, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MessageSquare } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
+import { CreateTaskDialog } from "@/components/tasks/create-task-dialog";
 
 export default function TasksPage() {
   const { t } = useLocale();
@@ -24,7 +24,7 @@ export default function TasksPage() {
   const [loading, setLoading] = React.useState(true);
   const { forbidden, guardedFetch } = usePermissionState();
 
-  React.useEffect(() => {
+  const loadTasks = React.useCallback(() => {
     guardedFetch<Array<{
       id: string;
       title: string;
@@ -39,6 +39,10 @@ export default function TasksPage() {
       .catch(() => setTasks([]))
       .finally(() => setLoading(false));
   }, [guardedFetch]);
+
+  React.useEffect(() => {
+    loadTasks();
+  }, [loadTasks]);
 
   if (forbidden) {
     return (
@@ -68,10 +72,7 @@ export default function TasksPage() {
     >
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">{t("tasks_title")}</h1>
-        <Button className="bg-indigo-600 hover:bg-indigo-700">
-          <Plus className="w-4 h-4 mr-2" />
-          {t("tasks_create")}
-        </Button>
+        <CreateTaskDialog onSuccess={loadTasks} />
       </div>
 
       <Card>

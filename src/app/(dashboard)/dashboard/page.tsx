@@ -7,7 +7,6 @@ import {
   ArrowRight,
   Bell,
   Calendar,
-  Clock,
   HeartPulse,
   Users,
 } from "lucide-react";
@@ -26,16 +25,54 @@ export default function DashboardPage() {
   const [today] = React.useState(() => new Date().toISOString().split("T")[0]);
   const [now] = React.useState(() => Date.now());
   const cancelledStatus = (status: string) => status?.toLowerCase() === "cancelled";
+  const noShowStatus = (status: string) =>
+    status?.toLowerCase() === "no_show" ||
+    status?.toLowerCase() === "no-show" ||
+    status?.toLowerCase() === "no show";
 
   const appointmentsToday = appointments.filter(
     (appointment) => appointment.date === today && !cancelledStatus(appointment.status),
   );
+
+  const cancelledToday = appointments.filter(
+    (appointment) => appointment.date === today && cancelledStatus(appointment.status),
+  ).length;
+
+  const noShowToday = appointments.filter(
+    (appointment) => appointment.date === today && noShowStatus(appointment.status),
+  ).length;
+
+  const confirmedCount = appointments.filter(
+    (appointment) => appointment.status?.toLowerCase() === "confirmed",
+  ).length;
 
   const activeEncounters = appointments.filter(
     (appointment) =>
       appointment.status?.toLowerCase() === "in waiting room" ||
       appointment.status?.toLowerCase() === "confirmed",
   ).length;
+
+  const activePatients = patients.filter(
+    (patient) => patient.status?.toLowerCase() === "active",
+  ).length;
+
+  const monthStart = new Date(now);
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+  const monthVisits = patients.filter(
+    (patient) => patient.lastVisit && new Date(patient.lastVisit) >= monthStart,
+  ).length;
+
+  const cancelledOrNoShow = appointments.filter(
+    (appointment) => cancelledStatus(appointment.status) || noShowStatus(appointment.status),
+  ).length;
+  const overallCount = appointments.length;
+
+  const activePatientsPct = patients.length
+    ? Math.round((activePatients / patients.length) * 100)
+    : 0;
+  const cancellationRate = overallCount ? Math.round((cancelledOrNoShow / overallCount) * 100) : 0;
+  const monthVisitsPct = patients.length ? Math.round((monthVisits / patients.length) * 100) : 0;
 
   const getAppointmentTime = (appointment: {
     startTime?: string;
@@ -58,44 +95,53 @@ export default function DashboardPage() {
     {
       name: t("dash_totalPatients"),
       value: patients.length.toLocaleString(),
-      change: "+12%",
+      detail: `${activePatients} ${t("dash_active")}`,
       icon: Users,
       color: "cyan",
     },
     {
       name: t("dash_appointmentsToday"),
       value: appointmentsToday.length.toString(),
-      change: "+4%",
+      detail: `${upcomingAppointments.length} ${t("dash_upcoming")}`,
       icon: Calendar,
       color: "emerald",
     },
     {
       name: t("dash_activeEncounters"),
       value: activeEncounters.toString(),
-      change: "+2%",
+      detail: `${confirmedCount} ${t("appts_statusConfirmed")}`,
       icon: Activity,
       color: "violet",
     },
     {
-      name: t("dash_avgWait"),
-      value: "14 min",
-      change: "-2%",
-      icon: Clock,
+      name: t("dash_cancelledToday"),
+      value: cancelledToday.toString(),
+      detail: `${noShowToday} ${t("dash_noShow")}`,
+      icon: Bell,
       color: "amber",
     },
   ];
 
   const quickStats = [
-    { label: t("dash_patientRetention"), value: "92%", pct: 92, color: "cyan" },
-    { label: t("dash_noShowRate"), value: "4.2%", pct: 4.2, color: "amber" },
-    { label: t("dash_visitFrequency"), value: "8.7/mo", pct: 87, color: "emerald" },
+    {
+      label: t("dash_activePatients"),
+      value: `${activePatientsPct}%`,
+      pct: activePatientsPct,
+      color: "cyan",
+    },
+    {
+      label: t("dash_cancellationRate"),
+      value: `${cancellationRate}%`,
+      pct: cancellationRate,
+      color: "amber",
+    },
+    {
+      label: t("dash_visitedThisMonth"),
+      value: `${monthVisitsPct}%`,
+      pct: monthVisitsPct,
+      color: "emerald",
+    },
   ];
-
-  const timeAgo = (minutes: number, hours: number) => {
-    if (minutes) return `${minutes} ${t("dash_minAgo")}`;
-    if (hours === 1) return `${hours} ${t("dash_hourAgo")}`;
-    return `${hours} ${t("dash_hoursAgo")}`;
-  };
 
   const activityItems = React.useMemo(() => {
     const items: Array<{
@@ -106,52 +152,37 @@ export default function DashboardPage() {
       color: "cyan" | "emerald" | "violet" | "amber" | "red";
     }> = [];
 
-    patients.slice(0, 3).forEach((patient, index) => {
+    const recentVisits = [...patients]
+      .filter((patient) => patient.lastVisit)
+      .sort(
+        (a, b) => new Date(b.lastVisit).getTime() - new Date(a.lastVisit).getTime(),
+      )
+      .slice(0, 3);
+
+    recentVisits.forEach((patient) => {
       items.push({
         icon: Users,
-        title: t("dash_actNewPatient"),
+        title: t("dash_actLastVisit"),
         desc: `${patient.firstName} ${patient.lastName}`,
-        time:
-          index === 0
-            ? timeAgo(2, 0)
-            : index === 1
-              ? timeAgo(15, 0)
-              : timeAgo(0, 1),
+        time: new Date(patient.lastVisit).toLocaleDateString(),
         color: "cyan",
       });
     });
 
-    appointments.slice(0, 2).forEach((appointment, index) => {
+    upcomingAppointments.slice(0, 2).forEach((appointment) => {
       const patient = patients.find((entry) => entry.id === appointment.patientId);
       const name = patient ? `${patient.firstName} ${patient.lastName}` : t("dash_patient");
       items.push({
         icon: Calendar,
         title: t("dash_actApptScheduled"),
         desc: `${name} · ${appointment.date} ${appointment.time}`,
-        time: index === 0 ? timeAgo(5, 0) : timeAgo(30, 0),
+        time: appointment.date,
         color: "emerald",
       });
     });
 
-    items.push(
-      {
-        icon: Activity,
-        title: t("dash_actSystemUpdate"),
-        desc: t("dash_actBackup"),
-        time: timeAgo(0, 1),
-        color: "amber",
-      },
-      {
-        icon: Bell,
-        title: t("dash_actCareCampaign"),
-        desc: t("dash_actFollowups"),
-        time: timeAgo(0, 2),
-        color: "violet",
-      },
-    );
-
-    return items.slice(0, 6);
-  }, [appointments, patients, t]);
+    return items.slice(0, 5);
+  }, [appointments, patients, t, upcomingAppointments]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -217,8 +248,14 @@ export default function DashboardPage() {
               },
               {
                 label: t("dash_momentum"),
-                value: t("dash_lowNoShow"),
-                copy: t("dash_scheduleConfidence"),
+                value:
+                  cancelledToday === 0 && noShowToday === 0
+                    ? t("dash_lowNoShow")
+                    : cancelledToday.toString(),
+                copy:
+                  cancelledToday === 0 && noShowToday === 0
+                    ? t("dash_scheduleConfidence")
+                    : t("dash_cancelledToday"),
               },
             ].map((item) => (
               <div
@@ -270,18 +307,8 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="relative mt-4 flex items-center text-sm">
-              <span
-                className={cn(
-                  "rounded-full px-2.5 py-1 font-medium",
-                  stat.change.startsWith("+")
-                    ? "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300"
-                    : "bg-red-500/12 text-red-700 dark:text-red-300",
-                )}
-              >
-                {stat.change}
-              </span>
-              <span className="ml-2 text-muted-foreground">{t("dash_fromLastMonth")}</span>
+            <div className="relative mt-4 flex items-center text-sm text-muted-foreground">
+              {stat.detail}
             </div>
           </motion.div>
         ))}
@@ -302,7 +329,7 @@ export default function DashboardPage() {
                 className="h-auto p-0 text-sm font-medium text-primary no-underline hover:no-underline"
                 asChild
               >
-                <a href="#" className="inline-flex items-center gap-1">
+                <a href="/patients" className="inline-flex items-center gap-1">
                   {t("common_view_all")}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </a>

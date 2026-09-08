@@ -2,12 +2,12 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { DollarSign, Plus, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { DollarSign, FileText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
+import { NewInvoiceDialog } from "@/components/billing/new-invoice-dialog";
 
 export default function BillingPage() {
   const { t } = useLocale();
@@ -22,7 +22,7 @@ export default function BillingPage() {
   const [loading, setLoading] = React.useState(true);
   const { forbidden, guardedFetch } = usePermissionState();
 
-  React.useEffect(() => {
+  const loadInvoices = React.useCallback(() => {
     guardedFetch<Array<{
       id: string;
       invoiceNumber: string;
@@ -35,6 +35,29 @@ export default function BillingPage() {
       .catch(() => setInvoices([]))
       .finally(() => setLoading(false));
   }, [guardedFetch]);
+
+  React.useEffect(() => {
+    loadInvoices();
+  }, [loadInvoices]);
+
+  const toAmount = (value: { toString: () => string }) => {
+    const parsed = parseFloat(String(value));
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+
+  const closedStatuses = new Set(["paid", "void"]);
+  const collected = invoices.reduce(
+    (sum, inv) => sum + toAmount(inv.amountPaid),
+    0,
+  );
+  const outstanding = invoices
+    .filter((inv) => !closedStatuses.has(inv.status))
+    .reduce(
+      (sum, inv) =>
+        sum + Math.max(0, toAmount(inv.totalAmount) - toAmount(inv.amountPaid)),
+      0,
+    );
+  const openInvoices = invoices.filter((inv) => !closedStatuses.has(inv.status)).length;
 
   if (forbidden) {
     return (
@@ -74,21 +97,18 @@ export default function BillingPage() {
     >
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">{t("billing_title")}</h1>
-        <Button className="bg-indigo-600 hover:bg-indigo-700">
-          <Plus className="w-4 h-4 mr-2" />
-          {t("billing_newInvoice")}
-        </Button>
+        <NewInvoiceDialog onSuccess={loadInvoices} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-neutral-500">{t("billing_totalRevenueMtd")}</CardTitle>
+            <CardTitle className="text-sm font-medium text-neutral-500">{t("billing_totalCollected")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-emerald-500" />
-              <span className="text-2xl font-bold">$0</span>
+              <span className="text-2xl font-bold">${collected.toLocaleString()}</span>
             </div>
           </CardContent>
         </Card>
@@ -99,16 +119,16 @@ export default function BillingPage() {
           <CardContent>
             <div className="flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-amber-500" />
-              <span className="text-2xl font-bold">$0</span>
+              <span className="text-2xl font-bold">${outstanding.toLocaleString()}</span>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-neutral-500">{t("billing_claimsPending")}</CardTitle>
+            <CardTitle className="text-sm font-medium text-neutral-500">{t("billing_openInvoices")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <span className="text-2xl font-bold">0</span>
+            <span className="text-2xl font-bold">{openInvoices}</span>
           </CardContent>
         </Card>
       </div>

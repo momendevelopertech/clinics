@@ -84,12 +84,14 @@ interface DashboardWithCollapsibleSidebarProps {
   children: React.ReactNode;
   roles?: string[];
   isSuperAdmin?: boolean;
+  orgName?: string;
 }
 
 export function DashboardWithCollapsibleSidebar({
   children,
   roles = [],
   isSuperAdmin = false,
+  orgName,
 }: DashboardWithCollapsibleSidebarProps) {
   const [open, setOpen] = useState(true);
 
@@ -97,7 +99,7 @@ export function DashboardWithCollapsibleSidebar({
     <div className="app-shell flex min-h-screen w-full text-foreground">
       <CollapsibleSidebar open={open} setOpen={setOpen} roles={roles} isSuperAdmin={isSuperAdmin} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <DashboardHeader open={open} setOpen={setOpen} />
+        <DashboardHeader open={open} setOpen={setOpen} orgName={orgName} />
         <main className="flex-1 overflow-auto px-4 pb-6 pt-4 sm:px-6 lg:px-8">
           <div className="mx-auto w-full max-w-[1440px]">{children}</div>
         </main>
@@ -118,6 +120,14 @@ function CollapsibleSidebar({
   isSuperAdmin: boolean;
 }) {
   const { t } = useLocale();
+  const { appointments } = useMedical();
+
+  const today = new Date().toISOString().split("T")[0];
+  const todayVisits = appointments.filter(
+    (appointment) =>
+      appointment.date === today &&
+      appointment.status?.toLowerCase() !== "cancelled",
+  ).length;
 
   // Roles that can access a nav item. "Owner" and "Super Admin" can always
   // access every item, so they are not listed per-item.
@@ -218,17 +228,17 @@ function CollapsibleSidebar({
         {open ? (
           <>
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-              {t("shell_clinicPulse")}
+              {t("shell_todayVisits")}
             </p>
-            <p className="mt-2 text-2xl font-semibold text-foreground">94%</p>
+            <p className="mt-2 text-2xl font-semibold text-foreground">{todayVisits}</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              {t("header_clinicPulse")}
+              {t("dash_apptsNotCancelled")}
             </p>
           </>
         ) : (
           <div className="flex justify-center py-2">
             <span className="rounded-full bg-primary/15 px-2 py-1 text-xs font-semibold text-primary">
-              94
+              {todayVisits}
             </span>
           </div>
         )}
@@ -321,9 +331,11 @@ function NavLink({
 function DashboardHeader({
   open,
   setOpen,
+  orgName,
 }: {
   open: boolean;
   setOpen: (value: boolean) => void;
+  orgName?: string;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -647,7 +659,7 @@ function DashboardHeader({
                 </div>
                 <div className="hidden text-left sm:block">
                   <p className="text-sm font-medium text-foreground">{t("shell_accountStaff")}</p>
-                  <p className="text-xs text-muted-foreground">Acme Clinic</p>
+                  <p className="text-xs text-muted-foreground">{orgName ?? t("shell_defaultOrgName")}</p>
                 </div>
               </Button>
             </DropdownMenuTrigger>

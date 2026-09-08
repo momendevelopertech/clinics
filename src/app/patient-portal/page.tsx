@@ -98,6 +98,10 @@ export default function PatientPortalPage() {
 
   const displayedVital = latestVital ?? overviewVital;
 
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
   if (!patient) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -140,16 +144,36 @@ export default function PatientPortalPage() {
               <CardDescription>{t("portal_quickActionsDesc")}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
-              <Button variant="outline" className="justify-start">
+              <Button
+                variant="outline"
+                className="justify-start"
+                disabled
+                title={t("portal_comingSoon")}
+              >
                 <Calendar className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t("portal_bookAppointment")}
               </Button>
-              <Button variant="outline" className="justify-start">
+              <Button
+                variant="outline"
+                className="justify-start"
+                disabled
+                title={t("portal_comingSoon")}
+              >
                 <FileText className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t("portal_viewMedicalRecords")}
               </Button>
-              <Button variant="outline" className="justify-start">
+              <Button
+                variant="outline"
+                className="justify-start"
+                disabled
+                title={t("portal_comingSoon")}
+              >
                 <MessageSquare className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t("portal_messageProvider")}
               </Button>
-              <Button variant="outline" className="justify-start">
+              <Button
+                variant="outline"
+                className="justify-start"
+                disabled
+                title={t("portal_comingSoon")}
+              >
                 <Heart className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t("portal_viewHealthSummary")}
               </Button>
             </CardContent>
@@ -176,7 +200,12 @@ export default function PatientPortalPage() {
                 <p className="text-sm text-neutral-500">{t("portal_mrnLabel")}</p>
                 <p className="font-medium">{patient.mrn || t("portal_na")}</p>
               </div>
-              <Button variant="outline" className="w-full">
+              <Button
+                variant="outline"
+                className="w-full"
+                disabled
+                title={t("portal_comingSoon")}
+              >
                 {t("portal_updateProfile")}
               </Button>
             </CardContent>
@@ -265,7 +294,7 @@ export default function PatientPortalPage() {
         </Card>
 
         {/* Appointments */}
-        <Card className="mb-6">
+        <Card className="mb-6" id="portal-appointments">
           <CardHeader>
             <CardTitle>{t("portal_upcomingAppointments")}</CardTitle>
             <CardDescription>{t("portal_upcomingAppointmentsDesc")}</CardDescription>
@@ -301,14 +330,18 @@ export default function PatientPortalPage() {
                 {t("portal_noUpcomingAppointments")}
               </p>
             )}
-            <Button variant="outline" className="w-full mt-4">
+            <Button
+              variant="outline"
+              className="w-full mt-4"
+              onClick={() => scrollToSection("portal-appointments")}
+            >
               {t("portal_viewAllAppointments")}
             </Button>
           </CardContent>
         </Card>
 
         {/* Lab Results */}
-        <Card>
+        <Card id="portal-lab-results">
           <CardHeader>
             <CardTitle>{t("portal_recentLabResults")}</CardTitle>
             <CardDescription>{t("portal_recentLabResultsDesc")}</CardDescription>
@@ -348,7 +381,11 @@ export default function PatientPortalPage() {
                 {t("portal_noLabResults")}
               </p>
             )}
-            <Button variant="outline" className="w-full mt-4">
+            <Button
+              variant="outline"
+              className="w-full mt-4"
+              onClick={() => scrollToSection("portal-lab-results")}
+            >
               {t("portal_viewAllResults")}
             </Button>
           </CardContent>

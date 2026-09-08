@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
-import { getCurrentUserId, hasPermission } from "@/lib/auth";
 import { logServerError } from "@/lib/safe-logger";
 import { invoiceCreateSchema } from "@/lib/validations";
 
@@ -48,17 +47,11 @@ export async function POST(request: Request) {
   try {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
-    const userId = await getCurrentUserId(orgId);
-    const canWriteBilling = await hasPermission(
-      userId,
-      orgId,
-      "billing:write",
-      "billing",
-    );
-
-    if (!canWriteBilling) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    const authz = await requireAnyPermission(orgId, [
+      { action: "billing:write", resource: "billing" },
+    ]);
+    if (authz.response) return authz.response;
+    const { userId } = authz;
 
     const parsed = invoiceCreateSchema.safeParse(await request.json());
     if (!parsed.success) return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });

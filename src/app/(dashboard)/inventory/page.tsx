@@ -2,12 +2,12 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { Package, Plus, AlertTriangle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Package, AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
+import { AddItemDialog } from "@/components/inventory/add-item-dialog";
 
 export default function InventoryPage() {
   const { t } = useLocale();
@@ -23,7 +23,7 @@ export default function InventoryPage() {
   const [loading, setLoading] = React.useState(true);
   const { forbidden, guardedFetch } = usePermissionState();
 
-  React.useEffect(() => {
+  const loadItems = React.useCallback(() => {
     guardedFetch<Array<{
       id: string;
       name: string;
@@ -37,6 +37,10 @@ export default function InventoryPage() {
       .catch(() => setItems([]))
       .finally(() => setLoading(false));
   }, [guardedFetch]);
+
+  React.useEffect(() => {
+    loadItems();
+  }, [loadItems]);
 
   const lowStock = items.filter((i) => i.reorderLevel != null && i.quantity <= i.reorderLevel);
 
@@ -61,10 +65,7 @@ export default function InventoryPage() {
     >
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">{t("inv_title")}</h1>
-        <Button className="bg-indigo-600 hover:bg-indigo-700">
-          <Plus className="w-4 h-4 mr-2" />
-          {t("inv_addItem")}
-        </Button>
+        <AddItemDialog onSuccess={loadItems} />
       </div>
 
       {lowStock.length > 0 && (

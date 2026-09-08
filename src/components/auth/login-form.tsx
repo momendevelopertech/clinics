@@ -172,7 +172,7 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
             <div className="mt-6 grid gap-3 rounded-[24px] border border-white/60 bg-white/60 p-4 text-sm dark:border-white/6 dark:bg-white/[0.03]">
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">{t["auth_defaultRoute"]}</span>
-                <span className="font-medium text-foreground">{t["nav_analytics"]}</span>
+                <span className="font-medium text-foreground">{t["nav_dashboard"]}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">{t["auth_sessionMode"]}</span>

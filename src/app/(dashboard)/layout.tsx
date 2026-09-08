@@ -10,20 +10,34 @@ import { DashboardWithCollapsibleSidebar } from "@/components/ui/dashboard-with-
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()
   const orgId = session?.user?.organizationId
+  const roles = session?.user?.roles ?? []
+  const superAdmin = await requireSuperAdmin()
 
   if (orgId) {
     const org = await prisma.organization.findUnique({
       where: { id: orgId },
-      select: { status: true },
+      select: { status: true, name: true },
     })
 
     if (org && org.status === "suspended") {
       redirect("/suspended")
     }
-  }
 
-  const roles = session?.user?.roles ?? []
-  const superAdmin = await requireSuperAdmin()
+    if (org) {
+      return (
+        <MedicalProvider>
+          <DashboardWithCollapsibleSidebar
+            roles={roles}
+            isSuperAdmin={superAdmin.ok}
+            orgName={org.name}
+          >
+            {children}
+          </DashboardWithCollapsibleSidebar>
+          <Toaster position="top-right" richColors />
+        </MedicalProvider>
+      )
+    }
+  }
 
   return (
     <MedicalProvider>
