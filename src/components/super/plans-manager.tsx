@@ -72,7 +72,7 @@ const EMPTY_FORM: FormState = {
   descriptionAr: "",
   price: "0",
   billingCycle: "monthly",
-  status: "active",
+  status: "archived",
   displayOrder: "0",
   popular: false,
   trialDays: "0",

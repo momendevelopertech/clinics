@@ -21,6 +21,7 @@ import { LanguageSwitcher } from "@/components/locale/language-switcher";
 import { DemoLoginButtons } from "@/components/landing/demo-login-buttons";
 import { AppPreview } from "@/components/landing/app-preview";
 import { ClinicShowcase } from "@/components/landing/clinic-showcase";
+import { PlanPricing } from "@/components/landing/plan-pricing";
 
 export default async function HomePage() {
   const session = await auth();
@@ -49,6 +50,9 @@ export default async function HomePage() {
             </a>
             <a href="#how-it-works" className="transition-colors hover:text-foreground">
               {t["landing_navHowItWorks"]}
+            </a>
+            <a href="#pricing" className="transition-colors hover:text-foreground">
+              {t["landing_navPricing"]}
             </a>
             <a href="#clinics" className="transition-colors hover:text-foreground">
               {t["landing_clinicsTitle"]}
@@ -184,6 +188,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Pricing */}
+      <PlanPricing t={t} />
 
       {/* Our clinics */}
       <section id="clinics" className="px-4 pb-20 sm:px-6">
