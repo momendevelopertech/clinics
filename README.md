@@ -75,6 +75,22 @@ The compose path starts:
 
 and runs `prisma migrate deploy` before launching the app.
 
+The compose stack is a **local development** runtime, not a hardened production deployment. It ships with no hardcoded secrets or default credentials, so you must provide them before the stack starts:
+
+- `NEXTAUTH_SECRET`: required (Auth.js signing secret). Generate with `openssl rand -hex 32`.
+- `ENCRYPTION_KEY`: required (the web container runs with `NODE_ENV=production`, and encryption fails closed when this is missing). Generate with `openssl rand -hex 32`.
+- `POSTGRES_PASSWORD`: required. Generate with `openssl rand -hex 24`.
+
+`docker compose` reads the project `.env` automatically. See [.env.example](./.env.example) for the full template and generation commands. If you change credentials after a first run, recreate the volumes with `docker compose down -v`.
+
+By default:
+
+- Demo seeding is **off** (`SEED_DEMO_DATA=false`). Set it to `true` only when you intentionally want demo users/data at startup.
+- `postgres` (`127.0.0.1:5432`) and `redis` (`127.0.0.1:6379`) are bound to the loopback interface only and are not exposed on the local network.
+- `DATABASE_URL` is derived from `POSTGRES_USER`/`POSTGRES_PASSWORD`/`POSTGRES_DB` (defaults `postgres`/–/`healthcare_crm`), so the web and postgres containers stay in sync.
+
+For a real production deployment you still own the hardening: TLS termination, managed/encrypted database and Redis, and secrets management. This file does not provide that configuration.
+
 ## Environment
 
 Required for normal local usage:
@@ -85,10 +101,10 @@ Required for normal local usage:
 Optional:
 
 - `NEXTAUTH_URL`: canonical application URL. In local dev this can be left unset and the app will infer `http://localhost:$PORT`. If you set it manually, keep it aligned with the port you run on.
-- `REDIS_URL`: Redis connection string for queue-oriented future work
+- `REDIS_URL`: Redis connection string for distributed rate limiting (uses atomic `INCR`/`PEXPIRE`; falls back to a per-instance in-memory store when unset, and fails open when Redis is unreachable)
 - `WS_URL`: external realtime endpoint for future websocket-style clients
-- `SEED_DEMO_DATA`: set to `true` only when you intentionally want the demo seed users/data provisioned at app startup
-- `ENCRYPTION_KEY`: application-layer encryption key for sensitive patient/contact fields
+- `SEED_DEMO_DATA`: set to `true` only when you intentionally want the demo seed users/data provisioned at app startup (defaults to `false`, including in the Docker stack)
+- `ENCRYPTION_KEY`: application-layer encryption key for sensitive patient/contact fields (required by the Docker web container, which runs in production mode)
 - `FHIR_BASE_URL`: base URL for an upstream FHIR R4 server
 - `FHIR_AUTH_TOKEN`: optional bearer token for the upstream FHIR server
 - `STRIPE_SECRET_KEY`: required for payment intent creation

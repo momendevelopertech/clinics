@@ -1,380 +1,219 @@
-# User Flow Guide — Healthcare CRM
+# User Flow Guide - OpenHealthCRM
 
-This document maps the end-to-end user journeys for each role in the platform and shows how each account type enters the system, what pages they can access, and what actions they are expected to perform.
+This guide describes the supported journeys for each user type. The role and module names follow `ROLE_CAPABILITY_GUIDE.md`, which is the source of truth for clinic access. The sidebar controls what is shown for usability; server-side page and API guards enforce the actual authorization.
 
-## 1. Entry points and authentication model
+## 1. Identity and entry points
 
-The system has two main identity domains:
+The platform has three identity surfaces:
 
-1. Staff users (clinic employees and platform admins)
-   - Login through `/login`
-   - Authenticated by NextAuth
-   - Role-based access enforced by the dashboard proxy and API guards
+1. **Clinic staff**
+   - Sign in at `/login`.
+   - Uses NextAuth and organization-scoped clinic access.
+   - Starts at `/dashboard` after authentication.
 
-2. Patients
-   - Login via `/patient-login`
-   - Use a separate patient session flow
-   - Access the patient portal only through the patient-specific area
+2. **Platform administration**
+   - Super Admin signs in at `/login` and is redirected to `/super`.
+   - Requires both the RBAC role `Super Admin` and `User.role = "superAdmin"`.
+   - Super Admin is a platform role, not a clinic role, and does not receive the clinic sidebar.
 
-### Core auth flows
+3. **Patients**
+   - Sign in at `/patient-login`.
+   - Uses the separate patient-session flow and enters `/patient-portal`.
+   - Cannot use staff routes or staff RBAC sessions.
 
-- Public landing page: `/`
+### Public and authentication routes
+
+- Landing: `/`
 - Staff login: `/login`
-- Sign-up: `/signup`
-- Forgot password: `/forgot-password`
-- Verify email: `/verify-email`
-- Reset password: `/reset-password`
+- Clinic signup: `/signup`
+- Password recovery: `/forgot-password`, `/reset-password`
+- Email verification: `/verify-email`
 - Patient login: `/patient-login`
 - Patient portal: `/patient-portal`
-- Admin console: `/super`
-- Clinic dashboard: `/dashboard`
+- Suspended organization page: `/suspended`
 
----
+## 2. Role vocabulary
 
-## 2. User roles in the system
-
-| Role | Type | Main purpose | Main entry area |
+| Display name | Internal RBAC role | Scope | Main entry |
 |---|---|---|---|
-| Super Admin | Platform | Global management, org approvals, platform oversight | `/super` |
-| Owner | Clinic | Full clinic administration | `/dashboard` |
-| Doctor | Clinic | Clinical patient and encounter work | `/dashboard` |
-| Receptionist / Care Coordinator | Clinic | Front desk, schedule, waitlist, coordination | `/dashboard` |
-| Nurse | Clinic | Patient care, vitals, encounters, inventory read | `/dashboard` |
-| Biller | Clinic | Billing and payment workflows | `/dashboard` |
-| Pharmacist | Clinic | Inventory and pharmacy operations | `/dashboard` |
-| Patient | Portal | Personal portal, appointment and record access | `/patient-portal` |
+| Super Admin | `Super Admin` | Platform | `/super` |
+| Owner | `Owner` | Clinic | `/dashboard` |
+| Doctor | `Doctor` | Clinic | `/dashboard` |
+| Receptionist | `Care Coordinator` | Clinic | `/dashboard` |
+| Nurse | `Nurse` | Clinic | `/dashboard` |
+| Biller | `Biller` | Clinic | `/dashboard` |
+| Pharmacist | `Pharmacist` | Clinic | `/dashboard` |
+| Patient | Patient session | Patient portal | `/patient-portal` |
 
----
+**Receptionist naming rule:** Receptionist is the user-facing label. `Care Coordinator` is the persisted RBAC role. They are one clinic role, not two separate roles.
 
-## 3. Shared staff flow
+## 3. Shared staff journey
 
-### Staff login flow
+1. The user opens `/` or `/login`.
+2. The user submits staff credentials.
+3. NextAuth creates a session containing the user, organization, and RBAC roles.
+4. The user is redirected to `/dashboard` unless the account is a Super Admin.
+5. The proxy checks authentication and page-level access.
+6. The sidebar shows the modules allowed for the user's displayed role.
+7. API routes independently check organization scope and module/resource permissions.
+8. A user may have read access without write access. A write request without permission returns `403`.
 
-1. User lands on `/`
-2. Chooses staff login or uses demo login buttons
-3. Enters email and password on `/login`
-4. NextAuth validates credentials
-5. Session is created and user is redirected to `/dashboard`
-6. Proxy guards check the user role and route permissions
-7. Sidebar displays only approved navigation items
+The dashboard provides organization-scoped operational data such as patients, appointments, queue information, and current metrics. It is a shared dashboard, not a separate role-specific dashboard.
 
-### Staff dashboard flow
+## 4. Approved clinic access by role
 
-1. User enters `/dashboard`
-2. System loads real data from context/API
-3. Dashboard displays:
-   - active patients
-   - appointments
-   - queue and waitlist
-   - quick operational metrics
-4. User clicks a navigation item such as Patients, Appointments, Encounters, Billing, Settings, or Reports
-5. Route-level and API-level permissions decide whether access is allowed
+The lists below describe the approved sidebar/module access. Access to a module does not automatically grant every write action inside it.
 
----
+### Owner
 
-## 4. Super Admin flow
+**Purpose:** Full clinic administration.
 
-### Goal
-The platform owner manages multi-tenant organizations and system-wide approvals.
+**Modules:** All clinic modules, including Patients, Appointments, Queue, Encounters, Analytics, Consents, Audit, Billing, Payments, Labs, Inventory, Tasks, Documents, Communications, Campaigns, Plan, Reports, Availability, Locations, Catalogs, Settings, Automation, and Help.
 
-### Flow
-1. Super Admin logs in through `/login`
-2. User is recognized as having both:
-   - RBAC role `Super Admin`
-   - denormalized `User.role = "superAdmin"`
-3. System redirects to `/super`
-4. Super Admin can access platform console screens such as:
-   - org list
-   - org status controls
-   - plan approval/upgrade actions
-   - audit and platform metrics
-5. Super Admin can approve or manage clinics without becoming a clinic owner
-6. Super Admin is not treated as a normal clinic role in app routes
+**Can perform:** Manage clinic settings, staff and roles, branches and rooms, catalogs, plan ownership actions, patients, appointments, clinical operations, billing, and operational reporting according to the owner guards.
 
-### Typical actions
-- review organizations
-- monitor plan requests
-- upgrade orgs
-- manage platform-level approval workflows
-- supervise platform audit logs
+### Doctor
 
----
+**Purpose:** Clinical care and patient records.
 
-## 5. Owner flow
+**Modules:** Dashboard, Patients, Appointments, Queue, Encounters, Analytics, Consents, Audit, Labs, Tasks, Documents, Reports, Availability, Catalogs, and Help.
 
-### Goal
-Owner is the clinic-level administrator who controls the full clinic setup.
+**Typical actions:** Read and update permitted clinical information, document encounters and notes, review patient history and lab data, review documents, manage availability, and coordinate the clinical schedule.
 
-### Flow
-1. Owner logs in through `/login`
-2. Redirected to `/dashboard`
-3. Owner sees full clinic sidebar
-4. Can access:
-   - Patients
-   - Appointments
-   - Encounters
-   - Billing
-   - Inventory
-   - Tasks
-   - Reports
-   - Settings
-   - Plan
-   - Branches / rooms / location management
-   - staff management and role assignment
-5. Owner can configure clinic-wide settings and manage staff permissions
-6. Owner can access restricted pages like `/settings` and `/plan`
+**Boundary:** Doctor does not receive owner-only settings, staff administration, plan management, billing, payments, inventory administration, communications campaigns, or waitlist management by default.
 
-### Typical actions
-- create/update staff profiles
-- assign roles
-- configure org settings
-- review billing and operational metrics
-- manage memberships and plan status
-- manage patient and appointment workflows end-to-end
+### Receptionist (Care Coordinator)
 
----
+**Purpose:** Front-desk operations and patient coordination.
 
-## 6. Doctor flow
+**Modules:** Dashboard, Patients, Appointments, Queue, Consents, Tasks, Documents, Communications, Locations, Waitlist, and Help.
 
-### Goal
-The doctor works mainly on clinical task execution and patient care.
+**Typical actions:** Create and update patients and appointments, manage queue and waitlist activity, coordinate intake, manage front-office documents and communications, and hand off information to clinical staff.
 
-### Flow
-1. Doctor logs in through `/login`
-2. Enters `/dashboard`
-3. Sees clinical tools and patient data access
-4. Can access pages such as:
-   - Patients
-   - Appointments
-   - Encounters
-   - Labs
-   - Documents
-   - Reports
-   - Analytics
-   - Tasks
-   - Availability
-5. Doctor can create and update patient encounter data and clinical records
-6. Doctor may review patient history and lab records as permitted
+**Boundary:** Receptionist does not receive Encounters, Labs, Inventory, Billing, Payments, Reports, Analytics, Settings, Plan, or Catalog administration by default.
 
-### Typical actions
-- check patient schedule
-- open patient chart
-- add encounter notes
-- review or upload documents
-- work with lab results
-- manage availability and clinical calendar
+### Nurse
 
----
+**Purpose:** Clinical support and care operations.
 
-## 7. Receptionist / Care Coordinator flow
+**Modules:** Dashboard, Patients, Appointments, Encounters, Analytics, Consents, Labs, Inventory, Tasks, Documents, Reports, Availability, Catalogs, and Help.
 
-### Goal
-Front desk and coordination work: scheduling, patient check-in, communication, waitlist, and operational support.
+**Typical actions:** Review patients and appointments, update permitted encounter and care information, review labs, inspect inventory availability, document observations, and support clinical handoffs.
 
-### Flow
-1. Receptionist logs in through `/login`
-2. Redirected to `/dashboard`
-3. Has access to patient and scheduling modules
-4. Can access pages such as:
-   - Dashboard
-   - Patients
-   - Appointments
-   - Queue
-   - Consents
-   - Tasks
-   - Documents
-   - Communications
-   - Locations
-   - Waitlist
-5. This user is usually the one handling front-office coordination and patient flow
+**Boundary:** Inventory and lab access includes the permissions granted to the role; clinic settings, staff administration, billing, payments, and plan ownership remain restricted.
 
-### Typical actions
-- schedule appointments
-- update patient contact info
-- manage queue and waitlist
-- coordinate patient intake
-- communicate with patients or staff
-- support operational handoff to clinicians
+### Biller
 
----
+**Purpose:** Revenue, invoices, and payments.
 
-## 8. Nurse flow
+**Modules:** Dashboard, Patients, Appointments, Analytics, Audit, Billing, Payments, Tasks, Reports, and Help.
 
-### Goal
-Support clinical operations and patient care execution.
+**Typical actions:** Read patient and appointment information needed for billing, create or update invoices and payments where permitted, review financial metrics, and follow billing audit history.
 
-### Flow
-1. Nurse logs in through `/login`
-2. Redirected to `/dashboard`
-3. Can access patient, appointment, encounter, and care-management pages
-4. Main pages include:
-   - Patients
-   - Appointments
-   - Encounters
-   - Labs
-   - Inventory
-   - Documents
-   - Reports
-   - Analytics
-   - Tasks
-5. Nurse usually works with patient care, intake, continuity, and inventory awareness
+**Boundary:** Patient and appointment access is primarily read-oriented. Biller does not receive clinical encounter, lab, inventory, settings, or plan administration access by default.
 
-### Typical actions
-- review patient cases and schedule
-- update encounter details
-- inspect lab and inventory availability
-- document patient observations
-- support patient treatment workflow
+### Pharmacist
 
----
+**Purpose:** Inventory and pharmacy operations.
 
-## 9. Biller flow
+**Modules:** Dashboard, Patients, Appointments, Labs, Inventory, Tasks, Catalogs, and Help.
 
-### Goal
-Billing and payments workflows for clinic operations.
+**Typical actions:** Read the patient, appointment, and lab information needed for medication workflows, manage inventory and pharmacy records, and review catalog information.
 
-### Flow
-1. Biller logs in through `/login`
-2. Redirected to `/dashboard`
-3. Access is focused on revenue and financial operations
-4. Main pages include:
-   - Dashboard
-   - Patients
-   - Appointments
-   - Analytics
-   - Billing
-   - Payments
-   - Audit
-   - Reports
-   - Tasks
-5. Biller focuses on invoices, charges, reconciliation, and payment follow-up
+**Boundary:** Patient and appointment access is read-oriented. Pharmacist does not receive encounter editing, billing, settings, or plan administration access by default.
 
-### Typical actions
-- open patient billing records
-- generate or review invoices
-- monitor payment status
-- work with financial reports
-- track billing audit history
+## 5. Super Admin journey
 
----
+1. Super Admin signs in through `/login`.
+2. The system validates the `Super Admin` RBAC role and `User.role = "superAdmin"`.
+3. The user is redirected to `/super`.
+4. The platform console provides Organizations, Approvals, Billing, Audit, and Settings sections.
+5. The Super Admin reviews organizations, statuses, plan requests, platform billing, and platform audit information.
+6. The Super Admin does not become a clinic Owner and is not given the clinic sidebar.
 
-## 10. Pharmacist flow
+All `/api/super/*` routes apply their own Super Admin guard.
 
-### Goal
-Inventory and pharmacy handling, with limited clinical support access.
+## 6. Patient journey
 
-### Flow
-1. Pharmacist logs in through `/login`
-2. Redirected to `/dashboard`
-3. Access is focused on medication and stock workflows
-4. Main pages include:
-   - Dashboard
-   - Patients
-   - Appointments
-   - Labs
-   - Inventory
-   - Tasks
-   - Catalogs
-5. Pharmacist may view patient and appointment data needed to fulfill medication or stock tasks
+1. The patient opens `/patient-login`.
+2. The patient authenticates with patient-specific credentials.
+3. The system creates a separate signed, HTTP-only patient session.
+4. The patient enters `/patient-portal`.
+5. The portal displays the patient's own overview, appointments, available lab results, and available vital information.
+6. The patient can sign out through the patient session flow.
 
-### Typical actions
-- view inventory stock
-- manage pharmacy records and catalogs
-- support medication-related workflow
-- review lab-related information when needed
+The portal is isolated from staff RBAC. Booking, messaging, profile editing, and some additional self-service functions remain explicitly unavailable or marked as coming soon where the current portal does not provide the corresponding workflow.
 
----
+## 7. Authorization model
 
-## 11. Patient flow
+Authorization is layered:
 
-### Goal
-Patients manage their own information and portal interactions without staff access.
+- Public pages handle landing and authentication.
+- The proxy protects authenticated pages and applies the approved page-level role map.
+- Organization-scoped APIs resolve the authenticated organization.
+- Module/resource permissions enforce read and write operations on the server.
+- The sidebar is a usability filter, not a security boundary.
 
-### Flow
-1. Patient opens `/patient-login`
-2. User authenticates with patient-specific credentials
-3. Patient is redirected to `/patient-portal`
-4. Portal shows:
-   - personal overview
-   - appointment information
-   - medical records or summaries
-   - vitals/portal data where available
-   - upcoming or current treatment views
-5. Patient can view own records and check appointment condition
-6. Patient session is isolated from clinic staff RBAC
+Opening a hidden route directly does not grant permission. The page may be redirected or its API calls may return `403`. A user may also see a page while specific write controls are unavailable because their role is read-only for that operation.
 
-### Typical actions
-- sign in to portal
-- view appointment history
-- review healthcare overview
-- access patient-specific record pages
-- view personalized portal data
+## 8. Practical journeys
 
----
+### Owner onboarding
 
-## 12. Route protection summary
+1. Sign in at `/login`.
+2. Review `/dashboard`.
+3. Configure `/settings`.
+4. Manage staff, roles, branches, rooms, and catalogs.
+5. Review `/plan` and operational reports.
 
-The app uses a layered access model:
+### Doctor clinical visit
 
-- public routes: landing pages and auth pages
-- staff protected routes: clinic dashboard and admin pages
-- patient protected routes: patient login and portal routes
-- API-level permissions remain the real security boundary
+1. Sign in and open `/patients`.
+2. Select a patient.
+3. Review the patient timeline and appointment.
+4. Open `/encounters` and document the visit.
+5. Review labs and documents.
+6. Update permitted clinical information.
 
-### Example permission rule
+### Receptionist scheduling
 
-- Owner can reach almost all clinic modules
-- Doctor can reach clinical-related pages
-- Receptionist has operational front-office access
-- Biller has billing-only access
-- Nurse has clinical support access
-- Pharmacist has inventory and medication access
-- Super Admin is platform-level only
+1. Sign in and open `/appointments`.
+2. Create or update a patient and appointment.
+3. Check the patient in or place the patient on `/queue` or `/waitlist`.
+4. Manage consent, documents, and communications as permitted.
+5. Coordinate the handoff to the clinical team.
 
----
+### Biller payment follow-up
 
-## 13. Practical user journey examples
+1. Sign in and open `/billing` or `/payments`.
+2. Find the relevant patient or appointment.
+3. Review or update invoice and payment information according to billing permissions.
+4. Use `/reports` and `/audit` for permitted financial follow-up.
 
-### Example A — Owner onboarding
-1. Login as owner
-2. Open `/dashboard`
-3. Go to `/settings`
-4. Configure clinic preferences
-5. Navigate to staff management
-6. Assign roles to other staff members
-7. Review plan and operational metrics
+### Patient self-service
 
-### Example B — Doctor patient workflow
-1. Login as doctor
-2. Open `/patients`
-3. Select a patient
-4. Open encounters and notes
-5. Review labs and documents
-6. Update chart and plan care
+1. Sign in at `/patient-login`.
+2. Review the portal overview and appointments.
+3. Review available lab and vital information.
+4. Sign out from the patient portal.
 
-### Example C — Receptionist scheduling workflow
-1. Login as receptionist
-2. Open `/appointments`
-3. Create or edit appointment
-4. Add patient to queue/waitlist if needed
-5. Coordinate with doctor or nurse
-6. Confirm patient intake and follow-up
+## 9. Known limitations for handoff
 
-### Example D — Patient self-service flow
-1. Login at `/patient-login`
-2. Open `/patient-portal`
-3. Review appointments and overview
-4. Check personal health information and portal updates
-5. Log out safely
+The following items are not described as completed user capabilities:
 
----
+- Prescriptions and lab orders do not have separate standalone list pages; related workflows are embedded in Encounters or Labs.
+- Insurance Claims and Feedback/Surveys do not currently have dedicated modules.
+- The patient portal has disabled or coming-soon actions for workflows not yet implemented.
+- Help remains a partial module, including its contact submission flow.
+- The dashboard is shared rather than fully role-specific.
+- Read-only and forbidden states can still be improved in some screens.
 
-## 14. Final note
+These limitations should remain visible in the client handoff notes until the corresponding product decisions and implementation work are complete.
 
-This project separates staff identity, patient identity, and platform-level administration. The principal rule is:
+## 10. Source of truth
 
-- staff users are governed by RBAC and route permissions
-- patients use a dedicated patient session model
-- Super Admin is platform-only and not a clinic role
-
-That separation keeps the platform safe while allowing each user type to operate within a clear workflow.
+- Role and module capability model: `ROLE_CAPABILITY_GUIDE.md`
+- System and sidebar audit: `SYSTEM_SIDEBAR_AUDIT.md`
+- Page-level access map: `src/proxy.ts`
+- Module access fallback and role matrix: `src/lib/permissions.ts`
+- Display label translation: `src/lib/role-labels.ts`

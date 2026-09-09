@@ -19,6 +19,9 @@ export class EncryptionPayloadInvalidError extends Error {
 function getEncryptionKeyBuffer() {
   const configuredKey = process.env.ENCRYPTION_KEY?.trim();
   if (!configuredKey) {
+    if (process.env.NODE_ENV === "production") {
+      throw new EncryptionKeyUnavailableError();
+    }
     return null;
   }
 

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyPasswordHash } from "@/lib/password";
-import { createPatientSession } from "@/lib/patient-auth";
+import { createPatientSession, isPatientOrganizationActive } from "@/lib/patient-auth";
 import { createAuditLog } from "@/lib/audit";
 import { logServerError } from "@/lib/safe-logger";
 
@@ -33,6 +33,13 @@ export async function POST(request: Request) {
     }
 
     if (!verifyPasswordHash(patient.passwordHash, password)) {
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 },
+      );
+    }
+
+    if (!isPatientOrganizationActive(patient.organization.status)) {
       return NextResponse.json(
         { error: "Invalid credentials" },
         { status: 401 },

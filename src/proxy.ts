@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { takeRateLimitToken } from "@/lib/rate-limit";
+import { resolveRateLimitRule, takeRateLimitToken } from "@/lib/rate-limit";
 
 const PUBLIC_PAGE_PREFIXES = [
   "/",
@@ -82,43 +82,17 @@ function getClientKey(request: NextRequest) {
   return forwardedFor?.split(",")[0]?.trim() || "unknown";
 }
 
-function maybeRateLimitRequest(request: NextRequest, tokenUserId?: string) {
-  const { pathname } = request.nextUrl;
-  const ip = getClientKey(request);
-
-  if (pathname === "/api/signup") {
-    return takeRateLimitToken(`signup:${ip}`, {
-      max: 3,
-      windowMs: 60 * 60 * 1000,
-    });
+async function maybeRateLimitRequest(request: NextRequest, tokenUserId?: string) {
+  const rule = resolveRateLimitRule(
+    request.nextUrl.pathname,
+    request.method,
+    getClientKey(request),
+    tokenUserId,
+  );
+  if (!rule) {
+    return null;
   }
-
-  const authRoute =
-    pathname.startsWith("/api/auth") || pathname === "/api/patient-auth/login";
-  if (authRoute) {
-    return takeRateLimitToken(`auth:${ip}:${pathname}`, {
-      max: 5,
-      windowMs: 60_000,
-    });
-  }
-
-  const highVolumeGetRoutes = new Set([
-    "/api/patients",
-    "/api/appointments",
-    "/api/tasks",
-    "/api/communications",
-    "/api/waitlist",
-    "/api/audit",
-  ]);
-
-  if (request.method === "GET" && highVolumeGetRoutes.has(pathname)) {
-    return takeRateLimitToken(`list:${tokenUserId ?? ip}:${pathname}`, {
-      max: 60,
-      windowMs: 60_000,
-    });
-  }
-
-  return null;
+  return takeRateLimitToken(rule.key, rule.config);
 }
 
 export async function proxy(request: NextRequest) {
@@ -135,7 +109,10 @@ export async function proxy(request: NextRequest) {
     // the Edge middleware always reads the cookie the app actually writes.
     secureCookie: isHttps,
   });
-  const rateLimit = maybeRateLimitRequest(request, token?.id as string | undefined);
+  const rateLimit = await maybeRateLimitRequest(
+    request,
+    token?.id as string | undefined,
+  );
 
   if (rateLimit && !rateLimit.allowed) {
     return NextResponse.json(

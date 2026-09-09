@@ -31,6 +31,47 @@ export async function createPatientSession(params: {
   return { sessionId: session.id, rawToken, expiresAt };
 }
 
+type PatientSessionDb = {
+  patientSession: Pick<typeof prisma.patientSession, "findFirst">;
+};
+
+/**
+ * Tenant lifecycle gate shared by patient login and session resolution:
+ * only patients of "active" organizations can use the portal.
+ */
+export function isPatientOrganizationActive(
+  status: string | null | undefined,
+): boolean {
+  return status === "active";
+}
+
+/**
+ * Resolves a live patient session record. Rejects revoked and expired
+ * sessions and any session whose organization is no longer "active".
+ * The injected db keeps this function unit-testable.
+ */
+export async function findActivePatientSession(
+  db: PatientSessionDb,
+  tokenHash: string,
+  now: Date = new Date(),
+) {
+  return db.patientSession.findFirst({
+    where: {
+      tokenHash,
+      revokedAt: null,
+      expiresAt: {
+        gt: now,
+      },
+      patient: {
+        organization: { status: "active" },
+      },
+    },
+    include: {
+      patient: true,
+    },
+  });
+}
+
 export async function getPatientSessionFromRequest(request: Request) {
   const authorization = request.headers.get("authorization");
   const cookieHeader = request.headers.get("cookie") ?? "";
@@ -50,18 +91,10 @@ export async function getPatientSessionFromRequest(request: Request) {
 
   const tokenHash = hashSessionToken(token);
 
-  return prisma.patientSession.findFirst({
-    where: {
-      tokenHash,
-      revokedAt: null,
-      expiresAt: {
-        gt: new Date(),
-      },
-    },
-    include: {
-      patient: true,
-    },
-  });
+  return findActivePatientSession(
+    { patientSession: prisma.patientSession },
+    tokenHash,
+  );
 }
 
 export async function revokePatientSessionFromRequest(request: Request) {

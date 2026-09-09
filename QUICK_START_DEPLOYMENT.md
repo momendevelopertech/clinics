@@ -100,16 +100,21 @@ vercel deploy --prod
 # - DATABASE_URL
 ```
 
-### Option B: Docker
-```bash
-# Build image
-docker build -t healthcare-crm .
+### Option B: Docker (local development only)
 
-# Run container
+The provided `docker-compose.yml` is a **local development** stack, not a hardened production config. It has no hardcoded secrets: you must supply `NEXTAUTH_SECRET`, `ENCRYPTION_KEY`, and `POSTGRES_PASSWORD` (docker compose reads the project `.env`; see README "Docker" and `.env.example`). Demo seeding defaults to off — set `SEED_DEMO_DATA=true` only if you want demo users/data.
+
+```bash
+# Local container stack: see README "Docker" for required variables.
+docker compose up --build
+
+# Or run the image directly; secrets come from your environment.
+docker build -t healthcare-crm .
 docker run -p 3000:3000 \
-  -e DATABASE_URL="..." \
-  -e SEED_DEMO_DATA="true" \
-  -e TWILIO_ACCOUNT_SID="..." \
+  -e DATABASE_URL="postgresql://..." \
+  -e NEXTAUTH_SECRET="$(openssl rand -hex 32)" \
+  -e NEXTAUTH_URL="https://yourdomain.com" \
+  -e ENCRYPTION_KEY="$(openssl rand -hex 32)" \
   healthcare-crm
 ```
 
