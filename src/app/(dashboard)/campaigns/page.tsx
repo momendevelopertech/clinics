@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -13,6 +12,8 @@ import {
 } from "@/components/ui/table";
 import { Zap, Radio } from "lucide-react";
 import { AddCampaignDialog } from "@/components/communications/add-campaign-dialog";
+import { DataPagination } from "@/components/ui/data-pagination";
+import { paginate } from "@/lib/pagination";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { PermissionDenied } from "@/components/ui/permission-denied";
@@ -30,6 +31,7 @@ interface Campaign {
 export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
   const { forbidden, setForbidden } = usePermissionState();
 
   useEffect(() => {
@@ -60,6 +62,11 @@ export default function CampaignsPage() {
     draft: campaigns.filter((c) => c.status === "draft").length,
     archived: campaigns.filter((c) => c.status === "archived").length,
   };
+
+  const PAGE_SIZE = 10;
+  const pageCount = Math.max(1, Math.ceil(campaigns.length / PAGE_SIZE));
+  const visiblePage = Math.min(page, pageCount);
+  const pagedCampaigns = paginate(campaigns, visiblePage, PAGE_SIZE);
 
   const statusBadge = (status: string) => {
     const colors: Record<string, string> = {
@@ -145,24 +152,23 @@ export default function CampaignsPage() {
               <TableHead>Trigger</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
-              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8">
+                <TableCell colSpan={5} className="text-center py-8">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : campaigns.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8">
+                <TableCell colSpan={5} className="text-center py-8">
                   No campaigns yet. Create your first campaign to get started!
                 </TableCell>
               </TableRow>
             ) : (
-              campaigns.map((campaign) => (
+              pagedCampaigns.map((campaign) => (
                 <TableRow key={campaign.id}>
                   <TableCell className="font-medium">{campaign.name}</TableCell>
                   <TableCell className="flex items-center gap-2">
@@ -192,16 +198,21 @@ export default function CampaignsPage() {
                   <TableCell className="text-sm text-gray-600">
                     {new Date(campaign.createdAt).toLocaleDateString()}
                   </TableCell>
-                  <TableCell>
-                    <Button variant="outline" size="sm">
-                      Edit
-                    </Button>
-                  </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
+        {!loading && campaigns.length > PAGE_SIZE ? (
+          <div className="border-t">
+            <DataPagination
+              page={visiblePage}
+              pageSize={PAGE_SIZE}
+              total={campaigns.length}
+              onPageChange={setPage}
+            />
+          </div>
+        ) : null}
       </Card>
     </div>
   );

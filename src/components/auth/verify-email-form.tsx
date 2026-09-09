@@ -17,6 +17,7 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
   const [state, setState] = useState<State>(initialToken ? "verifying" : "pending");
   const [resending, setResending] = useState(false);
   const [resent, setResent] = useState(false);
+  const [resendError, setResendError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -51,12 +52,17 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
 
   async function handleResend() {
     setResending(true);
+    setResendError(false);
     try {
-      await fetch("/api/auth/resend-verification", {
+      const response = await fetch("/api/auth/resend-verification", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: initialEmail }),
       });
+      if (!response.ok) {
+        setResendError(true);
+        return;
+      }
       setResent(true);
     } finally {
       setResending(false);
@@ -90,6 +96,11 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
                 {resent ? (
                   <p className="mt-4 text-sm font-medium text-emerald-600">
                     {t["verify_resent"]}
+                  </p>
+                ) : null}
+                {resendError ? (
+                  <p className="mt-4 text-sm font-medium text-red-600">
+                    {t["verify_resendError"]}
                   </p>
                 ) : null}
               </div>

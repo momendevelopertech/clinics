@@ -4,6 +4,10 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { MessageSquare } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DataPagination } from "@/components/ui/data-pagination";
+import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
@@ -22,6 +26,9 @@ export default function TasksPage() {
     assignee?: { name: string | null } | null;
   }>>([]);
   const [loading, setLoading] = React.useState(true);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [page, setPage] = React.useState(1);
   const { forbidden, guardedFetch } = usePermissionState();
 
   const loadTasks = React.useCallback(() => {
@@ -63,6 +70,21 @@ export default function TasksPage() {
     cancelled: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400",
   };
 
+  const filteredTasks = tasks.filter((task) => {
+    const matchesStatus = statusFilter === "all" || task.status === statusFilter;
+    const query = searchQuery.toLowerCase();
+    const matchesSearch =
+      task.title.toLowerCase().includes(query) ||
+      (task.description ?? "").toLowerCase().includes(query) ||
+      (task.patient ? `${task.patient.firstName} ${task.patient.lastName}`.toLowerCase().includes(query) : false);
+    return matchesStatus && matchesSearch;
+  });
+
+  const PAGE_SIZE = 10;
+  const pageCount = Math.max(1, Math.ceil(filteredTasks.length / PAGE_SIZE));
+  const visiblePage = Math.min(page, pageCount);
+  const pagedTasks = paginate(filteredTasks, visiblePage, PAGE_SIZE);
+
   return (
     <motion.div
       className="flex flex-col gap-8 w-full"
@@ -81,6 +103,37 @@ export default function TasksPage() {
             <MessageSquare className="w-5 h-5" />
             {t("tasks_my")}
           </CardTitle>
+          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <Input
+              type="search"
+              placeholder={t("tasks_search")}
+              className="w-full sm:max-w-sm"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
+            />
+            <Select
+              value={statusFilter}
+              onValueChange={(value) => {
+                setStatusFilter(value);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="w-full sm:w-48">
+                <SelectValue placeholder={t("tasks_filterStatus")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t("common_all")}</SelectItem>
+                {Object.keys(statusColor).map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {status}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -91,7 +144,7 @@ export default function TasksPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {tasks.map((task) => (
+              {pagedTasks.map((task) => (
                 <div
                   key={task.id}
                   className="flex items-center justify-between p-4 border rounded-[5px] hover:bg-neutral-50 dark:hover:bg-neutral-800/30"
@@ -117,6 +170,14 @@ export default function TasksPage() {
               ))}
             </div>
           )}
+        {filteredTasks.length > PAGE_SIZE ? (
+            <DataPagination
+              page={visiblePage}
+              pageSize={PAGE_SIZE}
+              total={filteredTasks.length}
+              onPageChange={setPage}
+            />
+          ) : null}
         </CardContent>
       </Card>
     </motion.div>

@@ -22,12 +22,15 @@ import { toast } from "sonner"
 import { useMedical, Patient } from "@/context/MedicalContext"
 import { PatientProfileSheet } from "@/components/patients/patient-profile-sheet"
 import { AddPatientDialog } from "@/components/patients/add-patient-dialog"
+import { DataPagination } from "@/components/ui/data-pagination"
+import { paginate } from "@/lib/pagination"
 import { useLocale } from "@/components/locale/locale-provider"
 
 function PatientsPageContent() {
   const searchParams = useSearchParams()
   const [searchQuery, setSearchQuery] = React.useState("")
   const [statusFilter, setStatusFilter] = React.useState<"all" | "Active" | "Inactive" | "Archived">("all")
+  const [page, setPage] = React.useState(1)
   const { patients, refetchPatients } = useMedical()
   const { t } = useLocale()
 
@@ -47,6 +50,21 @@ function PatientsPageContent() {
     toast.success(t("patients_exporting"))
   }
 
+  const filteredPatients = patients.filter(patient => {
+    const searchStr = searchQuery.toLowerCase();
+    return (statusFilter === "all" || patient.status === statusFilter) && (
+      patient.firstName.toLowerCase().includes(searchStr) ||
+      patient.lastName.toLowerCase().includes(searchStr) ||
+      patient.mrn.toLowerCase().includes(searchStr) ||
+      patient.phone.includes(searchStr)
+    );
+  })
+
+  const PAGE_SIZE = 10
+  const pageCount = Math.max(1, Math.ceil(filteredPatients.length / PAGE_SIZE))
+  const visiblePage = Math.min(page, pageCount)
+  const pagedPatients = paginate(filteredPatients, visiblePage, PAGE_SIZE)
+
   return (
     <div className="flex flex-col gap-6 w-full h-full">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
@@ -65,7 +83,10 @@ function PatientsPageContent() {
                 placeholder={t("patients_searchPlaceholder")}
                 className="w-full sm:max-w-sm"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  setPage(1)
+                }}
              />
              <div className="flex gap-2">
                  <DropdownMenu>
@@ -102,16 +123,7 @@ function PatientsPageContent() {
                      </tr>
                  </thead>
                  <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
-                     {patients
-                       .filter(patient => {
-                         const searchStr = searchQuery.toLowerCase();
-                         return (statusFilter === "all" || patient.status === statusFilter) && (
-                           patient.firstName.toLowerCase().includes(searchStr) ||
-                           patient.lastName.toLowerCase().includes(searchStr) ||
-                           patient.mrn.toLowerCase().includes(searchStr) ||
-                           patient.phone.includes(searchStr)
-                         );
-                       })
+                     {pagedPatients
                        .map((patient: Patient) => (
                          <tr key={patient.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition">
                              <td className="px-6 py-4">
@@ -159,6 +171,14 @@ function PatientsPageContent() {
                  </tbody>
              </table>
          </div>
+         {filteredPatients.length > PAGE_SIZE ? (
+           <DataPagination
+             page={visiblePage}
+             pageSize={PAGE_SIZE}
+             total={filteredPatients.length}
+             onPageChange={setPage}
+           />
+         ) : null}
       </div>
     </div>
   )

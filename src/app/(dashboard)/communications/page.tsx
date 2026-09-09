@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/select";
 import { MessageCircle, Mail, MessageSquare, Phone } from "lucide-react";
 import { AddCommunicationDialog } from "@/components/communications/add-communication-dialog";
+import { DataPagination } from "@/components/ui/data-pagination";
+import { paginate } from "@/lib/pagination";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { PermissionDenied } from "@/components/ui/permission-denied";
@@ -47,15 +49,18 @@ export default function CommunicationsPage() {
   const [channelFilter, setChannelFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
   const { forbidden, setForbidden } = usePermissionState();
 
   // Map handlers to convert "all" sentinel to empty string for API queries
   const handleChannelChange = (value: string) => {
     setChannelFilter(value === "all" ? "" : value);
+    setPage(1);
   };
 
   const handleStatusChange = (value: string) => {
     setStatusFilter(value === "all" ? "" : value);
+    setPage(1);
   };
 
   const fetchCommunications = useCallback(async () => {
@@ -89,6 +94,11 @@ export default function CommunicationsPage() {
       `${comm.patient.firstName} ${comm.patient.lastName}`.toLowerCase();
     return patientName.includes(searchTerm.toLowerCase());
   });
+
+  const PAGE_SIZE = 10;
+  const pageCount = Math.max(1, Math.ceil(filteredComms.length / PAGE_SIZE));
+  const visiblePage = Math.min(page, pageCount);
+  const pagedComms = paginate(filteredComms, visiblePage, PAGE_SIZE);
 
   const channelIcon = (channel: string) => {
     switch (channel) {
@@ -177,7 +187,10 @@ export default function CommunicationsPage() {
           <Input
             placeholder="Search by patient name..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setPage(1);
+            }}
             className="flex-1"
           />
           <Select
@@ -240,7 +253,7 @@ export default function CommunicationsPage() {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredComms.map((comm) => (
+              pagedComms.map((comm) => (
                 <TableRow key={comm.id}>
                   <TableCell className="font-medium">
                     {comm.patient.firstName} {comm.patient.lastName}
@@ -270,6 +283,14 @@ export default function CommunicationsPage() {
             )}
           </TableBody>
         </Table>
+        {filteredComms.length > PAGE_SIZE ? (
+          <DataPagination
+            page={visiblePage}
+            pageSize={PAGE_SIZE}
+            total={filteredComms.length}
+            onPageChange={setPage}
+          />
+        ) : null}
       </Card>
     </div>
   );

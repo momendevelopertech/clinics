@@ -4,6 +4,10 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { DollarSign, FileText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DataPagination } from "@/components/ui/data-pagination";
+import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
@@ -20,6 +24,9 @@ export default function BillingPage() {
     patient?: { firstName: string; lastName: string };
   }>>([]);
   const [loading, setLoading] = React.useState(true);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [page, setPage] = React.useState(1);
   const { forbidden, guardedFetch } = usePermissionState();
 
   const loadInvoices = React.useCallback(() => {
@@ -88,6 +95,20 @@ export default function BillingPage() {
     void: t("billing_statusVoid"),
   };
 
+  const filteredInvoices = invoices.filter((inv) => {
+    const matchesStatus = statusFilter === "all" || inv.status === statusFilter;
+    const query = searchQuery.toLowerCase();
+    const matchesSearch =
+      inv.invoiceNumber.toLowerCase().includes(query) ||
+      (inv.patient ? `${inv.patient.firstName} ${inv.patient.lastName}`.toLowerCase().includes(query) : false);
+    return matchesStatus && matchesSearch;
+  });
+
+  const PAGE_SIZE = 10;
+  const pageCount = Math.max(1, Math.ceil(filteredInvoices.length / PAGE_SIZE));
+  const visiblePage = Math.min(page, pageCount);
+  const pagedInvoices = paginate(filteredInvoices, visiblePage, PAGE_SIZE);
+
   return (
     <motion.div
       className="flex flex-col gap-8 w-full"
@@ -139,6 +160,37 @@ export default function BillingPage() {
             <FileText className="w-5 h-5" />
             {t("billing_invoices")}
           </CardTitle>
+          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <Input
+              type="search"
+              placeholder={t("billing_search")}
+              className="w-full sm:max-w-sm"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
+            />
+            <Select
+              value={statusFilter}
+              onValueChange={(value) => {
+                setStatusFilter(value);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="w-full sm:w-48">
+                <SelectValue placeholder={t("billing_filterStatus")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t("common_all")}</SelectItem>
+                {Object.keys(statusLabel).map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {statusLabel[status] ?? status}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -159,7 +211,7 @@ export default function BillingPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  {invoices.map((inv) => (
+                  {pagedInvoices.map((inv) => (
                     <tr key={inv.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
                       <td className="px-4 py-3 font-mono">{inv.invoiceNumber}</td>
                       <td className="px-4 py-3">
@@ -177,6 +229,14 @@ export default function BillingPage() {
               </table>
             </div>
           )}
+          {filteredInvoices.length > PAGE_SIZE ? (
+            <DataPagination
+              page={visiblePage}
+              pageSize={PAGE_SIZE}
+              total={filteredInvoices.length}
+              onPageChange={setPage}
+            />
+          ) : null}
         </CardContent>
       </Card>
     </motion.div>

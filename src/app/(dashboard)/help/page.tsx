@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import {
   Mail,
   MessageSquare,
@@ -10,11 +11,13 @@ import {
   Calendar,
   Users,
   CreditCard,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const faqs = [
   {
@@ -45,15 +48,26 @@ const faqs = [
 ];
 
 const quickLinks = [
-  { label: "Patient Management Guide", icon: Users, href: "#" },
-  { label: "Appointment Scheduling", icon: Calendar, href: "#" },
-  { label: "Billing & Invoicing", icon: CreditCard, href: "#" },
-  { label: "Documentation", icon: FileText, href: "#" },
+  { label: "Patient Management Guide", icon: Users, href: "/patients" },
+  { label: "Appointment Scheduling", icon: Calendar, href: "/appointments" },
+  { label: "Billing & Invoicing", icon: CreditCard, href: "/billing" },
+  { label: "Documentation", icon: FileText, href: "/documents" },
 ];
 
 export default function HelpPage() {
   const [email, setEmail] = React.useState("");
   const [message, setMessage] = React.useState("");
+  const [sent, setSent] = React.useState(false);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!email || !message) {
+      toast.error("Please provide both an email and a message.");
+      return;
+    }
+    window.location.href = `mailto:?subject=${encodeURIComponent("HealthCRM Support Request")}&body=${encodeURIComponent(`From: ${email}\n\n${message}`)}`;
+    setSent(true);
+  };
 
   return (
     <div className="flex flex-col gap-8 w-full max-w-4xl mx-auto">
@@ -69,7 +83,7 @@ export default function HelpPage() {
       {/* Quick Links */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {quickLinks.map((link) => (
-          <a
+          <Link
             key={link.label}
             href={link.href}
             className={cn(
@@ -87,7 +101,7 @@ export default function HelpPage() {
               {link.label}
             </span>
             <ChevronRight className="h-4 w-4 text-neutral-400" aria-hidden />
-          </a>
+          </Link>
         ))}
       </div>
 
@@ -128,7 +142,13 @@ export default function HelpPage() {
         <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">
           Can&apos;t find what you need? Send us a message and our team will respond within 24 business hours.
         </p>
-        <form className="space-y-4 max-w-xl">
+        <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
+          {sent ? (
+            <div className="flex items-center gap-2 rounded-[5px] border border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800/50 dark:bg-emerald-950/40 dark:text-emerald-200 px-4 py-3 text-sm">
+              <CheckCircle2 className="h-4 w-4" aria-hidden />
+              Your email client has been opened with your message. We&apos;ll get back to you within 24 business hours.
+            </div>
+          ) : null}
           <div className="grid gap-2">
             <Label htmlFor="help-email">Email</Label>
             <Input
@@ -158,10 +178,6 @@ export default function HelpPage() {
           <Button
             type="submit"
             className="rounded-[5px] bg-indigo-600 hover:bg-indigo-700"
-            onClick={(e) => {
-              e.preventDefault();
-              // Placeholder - would integrate with support API
-            }}
           >
             <Mail className="h-4 w-4 mr-2" aria-hidden />
             Send Message

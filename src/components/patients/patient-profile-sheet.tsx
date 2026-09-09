@@ -1,5 +1,6 @@
 "use client"
 import * as React from "react"
+import Link from "next/link"
 import { Phone, Mail, MapPin, Activity, Calendar, AlertCircle, Droplet, User, FileText, ArchiveRestore } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet"
@@ -152,24 +153,27 @@ export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileS
                 <p className="font-semibold text-neutral-900 dark:text-neutral-100 truncate">{patient.primaryCare}</p>
                 <p className="text-neutral-500 text-xs truncate">{t("profile_primaryCare")}</p>
               </div>
-              <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">{t("profile_contact")}</Button>
             </div>
           </div>
 
         </div>
 
         <div className="mt-8 flex gap-3 flex-wrap sm:flex-nowrap">
-          <Button className="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white shadow-lg shadow-indigo-200 dark:shadow-none border-0 group relative overflow-hidden">
-            <div className="absolute inset-0 w-full h-full bg-white/20 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
-            <span className="relative flex items-center justify-center gap-2">
-              <FileText className="w-4 h-4" />
-              {t("profile_completeRecord")}
-            </span>
-          </Button>
-          <Button variant="outline" className="w-full border-indigo-200 dark:border-indigo-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-neutral-950">
-            <Calendar className="w-4 h-4 mr-2" />
-            {t("profile_schedule")}
-          </Button>
+          <Link href={`/patients/${patient.id}`} className="w-full">
+            <Button className="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white shadow-lg shadow-indigo-200 dark:shadow-none border-0 group relative overflow-hidden">
+              <div className="absolute inset-0 w-full h-full bg-white/20 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+              <span className="relative flex items-center justify-center gap-2">
+                <FileText className="w-4 h-4" />
+                {t("profile_completeRecord")}
+              </span>
+            </Button>
+          </Link>
+          <Link href="/appointments" className="w-full">
+            <Button variant="outline" className="w-full border-indigo-200 dark:border-indigo-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-neutral-950">
+              <Calendar className="w-4 h-4 mr-2" />
+              {t("profile_schedule")}
+            </Button>
+          </Link>
           <Button variant="outline" onClick={toggleArchive} disabled={updatingStatus} className="w-full">
             <ArchiveRestore className="mr-2 h-4 w-4" />
             {patient.status === "Archived" ? t("profile_restore") : t("profile_archive")}

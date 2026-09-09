@@ -4,6 +4,10 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { Package, AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DataPagination } from "@/components/ui/data-pagination";
+import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
@@ -21,6 +25,9 @@ export default function InventoryPage() {
     unit: string | null;
   }>>([]);
   const [loading, setLoading] = React.useState(true);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [categoryFilter, setCategoryFilter] = React.useState("all");
+  const [page, setPage] = React.useState(1);
   const { forbidden, guardedFetch } = usePermissionState();
 
   const loadItems = React.useCallback(() => {
@@ -43,6 +50,22 @@ export default function InventoryPage() {
   }, [loadItems]);
 
   const lowStock = items.filter((i) => i.reorderLevel != null && i.quantity <= i.reorderLevel);
+
+  const categories = Array.from(new Set(items.map((i) => i.category).filter((c): c is string => Boolean(c))));
+
+  const filteredItems = items.filter((item) => {
+    const matchesCategory = categoryFilter === "all" || item.category === categoryFilter;
+    const query = searchQuery.toLowerCase();
+    const matchesSearch =
+      item.name.toLowerCase().includes(query) ||
+      (item.sku ?? "").toLowerCase().includes(query);
+    return matchesCategory && matchesSearch;
+  });
+
+  const PAGE_SIZE = 10;
+  const pageCount = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
+  const visiblePage = Math.min(page, pageCount);
+  const pagedItems = paginate(filteredItems, visiblePage, PAGE_SIZE);
 
   if (forbidden) {
     return (
@@ -85,6 +108,37 @@ export default function InventoryPage() {
             <Package className="w-5 h-5" />
             {t("inv_items")}
           </CardTitle>
+          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <Input
+              type="search"
+              placeholder={t("inv_search")}
+              className="w-full sm:max-w-sm"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
+            />
+            <Select
+              value={categoryFilter}
+              onValueChange={(value) => {
+                setCategoryFilter(value);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="w-full sm:w-48">
+                <SelectValue placeholder={t("inv_filterCategory")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t("common_all")}</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -106,7 +160,7 @@ export default function InventoryPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  {items.map((item) => (
+                  {pagedItems.map((item) => (
                     <tr key={item.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
                       <td className="px-4 py-3 font-medium">{item.name}</td>
                       <td className="px-4 py-3 text-neutral-500">{item.sku ?? "—"}</td>
@@ -123,6 +177,14 @@ export default function InventoryPage() {
               </table>
             </div>
           )}
+          {filteredItems.length > PAGE_SIZE ? (
+            <DataPagination
+              page={visiblePage}
+              pageSize={PAGE_SIZE}
+              total={filteredItems.length}
+              onPageChange={setPage}
+            />
+          ) : null}
         </CardContent>
       </Card>
     </motion.div>

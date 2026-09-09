@@ -104,7 +104,6 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
           storageKey:
             formData.fileUrl ||
             `https://example.com/documents/${formData.file?.name}`,
-          fileSize: formData.file?.size || 0,
         }),
       });
 

@@ -29,6 +29,8 @@ import {
   FullScreenCalendar,
   type CalendarEvent,
 } from "@/components/ui/fullscreen-calendar"
+import { DataPagination } from "@/components/ui/data-pagination"
+import { paginate } from "@/lib/pagination"
 import { useLocale } from "@/components/locale/locale-provider"
 import { cn } from "@/lib/utils"
 
@@ -165,6 +167,8 @@ function AppointmentsPageContent() {
   const [searchQuery, setSearchQuery] = React.useState("")
   const [view, setView] = React.useState<"list" | "calendar">("list")
   const [editAptId, setEditAptId] = React.useState<string | null>(null)
+  const [providerFilter, setProviderFilter] = React.useState<string>("all")
+  const [page, setPage] = React.useState(1)
 
   const statusLabel = (s: string) => {
     const map: Record<string, string> = {
@@ -261,6 +265,9 @@ function AppointmentsPageContent() {
 
   const filteredAppointments = appointments.filter((appointment) => {
     const normalized = searchQuery.trim().toLowerCase()
+    if (providerFilter !== "all" && appointment.provider !== providerFilter) {
+      return false
+    }
     if (!normalized) {
       return true
     }
@@ -279,6 +286,11 @@ function AppointmentsPageContent() {
       .toLowerCase()
       .includes(normalized)
   })
+
+  const PAGE_SIZE = 10
+  const pageCount = Math.max(1, Math.ceil(filteredAppointments.length / PAGE_SIZE))
+  const visiblePage = Math.min(page, pageCount)
+  const pagedAppointments = paginate(filteredAppointments, visiblePage, PAGE_SIZE)
 
   return (
     <div className="flex flex-col gap-6 w-full h-full">
@@ -315,19 +327,38 @@ function AppointmentsPageContent() {
                    ? t("appts_todayList")
                    : t("appts_monthView")}
                </div>
-               <Input
-                 type="search"
-                 placeholder={t("appts_searchPlaceholder")}
-                 className="w-full sm:max-w-sm"
-                 value={searchQuery}
-                 onChange={(e) => setSearchQuery(e.target.value)}
-               />
-             </div>
-             <div className="flex gap-2">
-                 <Button variant="outline" size="sm" className="flex items-center">
-                     <Filter className="w-4 h-4 mr-2" />
-                     {t("appts_allProviders")}
-                 </Button>
+<Input
+                  type="search"
+                  placeholder={t("appts_searchPlaceholder")}
+                  className="w-full sm:max-w-sm"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value)
+                    setPage(1)
+                  }}
+                />
+              </div>
+              <div className="flex gap-2">
+                  <Select
+                    value={providerFilter}
+                    onValueChange={(value) => {
+                      setProviderFilter(value)
+                      setPage(1)
+                    }}
+                  >
+                    <SelectTrigger className="w-[190px] h-10" aria-label={t("appts_allProviders")}>
+                      <Filter className="w-4 h-4 mr-2" />
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t("appts_allProviders")}</SelectItem>
+                      {providers.map((provider) => (
+                        <SelectItem key={provider.id} value={provider.name}>
+                          {provider.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                  <div className="bg-neutral-100 dark:bg-neutral-800 rounded-[5px] p-1 flex" role="tablist" aria-label={t("appts_viewMode")}>
                      <button
                        role="tab"
@@ -382,9 +413,10 @@ function AppointmentsPageContent() {
                       </tr>
                  </thead>
                  <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
-                     {filteredAppointments.map((apt: Appointment) => {
+                     {pagedAppointments.map((apt: Appointment) => {
                          const patient = patients.find(p => p.id === apt.patientId);
                          const patientName = patient ? `${patient.firstName} ${patient.lastName}` : t("appts_unknownPatient");
+                         const statusKey = (apt.status ?? "").toLowerCase();
                          return (
                          <tr key={apt.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition">
 <td className="px-6 py-4">
@@ -402,12 +434,14 @@ function AppointmentsPageContent() {
                               <td className="px-6 py-4">{apptTypeLabel(apt.type)}</td>
                               <td className="px-6 py-4 hidden md:table-cell text-neutral-500">{apt.provider}</td>
                               <td className="px-6 py-4">
-                                <span className={`px-2 py-1 rounded-[5px] text-xs font-medium ${
-                                     apt.status === "Confirmed" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
-                                     apt.status === "In Waiting Room" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" :
-                                     apt.status === "Scheduled" ? "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300" :
-                                     "bg-neutral-100 text-neutral-500"
-                                }`}>
+<span className={`px-2 py-1 rounded-[5px] text-xs font-medium ${
+                                        statusKey === "confirmed" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
+                                        statusKey === "arrived" || statusKey === "in waiting room" || statusKey === "in_progress" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" :
+                                        statusKey === "scheduled" || statusKey === "pending" ? "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300" :
+                                        statusKey === "cancelled" ? "bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400" :
+                                        statusKey === "completed" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
+                                        "bg-neutral-100 text-neutral-500"
+                                    }`}>
                                      {statusLabel(apt.status)}
                                 </span>
                               </td>
@@ -420,7 +454,7 @@ function AppointmentsPageContent() {
                                    {t("appts_edit")}
                                  </Button>
                                  <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}>{t("appts_cancel")}</Button>
-                                 {!apt.isWalkIn && apt.status !== "Cancelled" ? (
+                                 {!apt.isWalkIn && (apt.status ?? "").toLowerCase() !== "cancelled" ? (
                                    <Button variant="link" className="text-violet-600 hover:text-violet-700 p-0 h-auto" onClick={() => {
                                      updateAppointment(apt.id, {
                                        status: "In Waiting Room",
@@ -436,6 +470,14 @@ function AppointmentsPageContent() {
              </table>
          </div>
          )}
+         {view === "list" && filteredAppointments.length > PAGE_SIZE ? (
+           <DataPagination
+             page={visiblePage}
+             pageSize={PAGE_SIZE}
+             total={filteredAppointments.length}
+             onPageChange={setPage}
+           />
+         ) : null}
       </div>
 
       {editAptId && (() => {

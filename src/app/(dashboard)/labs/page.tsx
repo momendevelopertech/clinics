@@ -20,6 +20,8 @@ import {
 import { toast } from "sonner";
 import { AddLabResultDialog } from "@/components/labs/add-lab-result-dialog";
 import { AddLabOrderDialog } from "@/components/labs/add-lab-order-dialog";
+import { DataPagination } from "@/components/ui/data-pagination";
+import { paginate } from "@/lib/pagination";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
@@ -45,6 +47,7 @@ export default function LabResultsPage() {
   const [results, setResults] = React.useState<LabResult[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [statusFilter, setStatusFilter] = React.useState<string | null>(null);
+  const [page, setPage] = React.useState(1);
   const { forbidden, setForbidden } = usePermissionState();
 
   React.useEffect(() => {
@@ -113,6 +116,11 @@ export default function LabResultsPage() {
 
     return matchesSearch && matchesStatus;
   });
+
+  const PAGE_SIZE = 10;
+  const pageCount = Math.max(1, Math.ceil(filteredResults.length / PAGE_SIZE));
+  const visiblePage = Math.min(page, pageCount);
+  const pagedResults = paginate(filteredResults, visiblePage, PAGE_SIZE);
 
   const statusLabel = (status: string) => {
     const map: Record<string, string> = {
@@ -184,7 +192,10 @@ export default function LabResultsPage() {
             placeholder={t("labs_search")}
             className="w-full sm:max-w-sm"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
           />
           <div className="flex gap-2">
             <DropdownMenu>
@@ -285,7 +296,7 @@ export default function LabResultsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
-                {filteredResults.map((result) => (
+                {pagedResults.map((result) => (
                   <tr
                     key={result.id}
                     className={`transition ${
@@ -369,17 +380,15 @@ export default function LabResultsPage() {
                           </Button>
                         </a>
                       ) : (
-                        <Button
-                          variant="ghost"
-                          size="sm"
+                        <span
                           className={
                             isHighlightedRow(result.status)
-                              ? "text-red-900 hover:bg-red-200/60 dark:text-red-100 dark:hover:bg-red-900/30"
-                              : undefined
+                              ? "text-xs text-red-700 dark:text-red-200/80"
+                              : "text-xs text-neutral-400"
                           }
                         >
-                          {t("labs_view")}
-                        </Button>
+                          {t("labs_noReport")}
+                        </span>
                       )}
                     </td>
                   </tr>
@@ -388,6 +397,15 @@ export default function LabResultsPage() {
             </table>
           )}
         </div>
+
+        {!loading && filteredResults.length > PAGE_SIZE ? (
+          <DataPagination
+            page={visiblePage}
+            pageSize={PAGE_SIZE}
+            total={filteredResults.length}
+            onPageChange={setPage}
+          />
+        ) : null}
       </div>
     </div>
   );

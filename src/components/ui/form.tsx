@@ -52,6 +52,9 @@ const useFormField = () => {
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>")
   }
+  if (!fieldContext.name) {
+    throw new Error("FormField is missing a name prop")
+  }
 
   const { id } = itemContext
 

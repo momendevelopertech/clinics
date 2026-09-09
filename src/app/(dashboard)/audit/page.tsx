@@ -4,6 +4,10 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DataPagination } from "@/components/ui/data-pagination";
+import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
 
 export default function AuditPage() {
@@ -17,6 +21,9 @@ export default function AuditPage() {
     user?: { name: string | null; email: string };
   }>>([]);
   const [loading, setLoading] = React.useState(true);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [actionFilter, setActionFilter] = React.useState("all");
+  const [page, setPage] = React.useState(1);
 
   React.useEffect(() => {
     fetch("/api/audit")
@@ -31,6 +38,22 @@ export default function AuditPage() {
     UPDATE: "bg-blue-100 text-blue-700 dark:bg-blue-900/40",
     DELETE: "bg-red-100 text-red-700 dark:bg-red-900/40",
   };
+
+  const filteredLogs = logs.filter((log) => {
+    const matchesAction = actionFilter === "all" || log.action === actionFilter;
+    const query = searchQuery.toLowerCase();
+    const matchesSearch =
+      (log.user?.name ?? "").toLowerCase().includes(query) ||
+      (log.user?.email ?? "").toLowerCase().includes(query) ||
+      log.entityType.toLowerCase().includes(query) ||
+      log.entityId.toLowerCase().includes(query);
+    return matchesAction && matchesSearch;
+  });
+
+  const PAGE_SIZE = 10;
+  const pageCount = Math.max(1, Math.ceil(filteredLogs.length / PAGE_SIZE));
+  const visiblePage = Math.min(page, pageCount);
+  const pagedLogs = paginate(filteredLogs, visiblePage, PAGE_SIZE);
 
   return (
     <motion.div
@@ -47,6 +70,37 @@ export default function AuditPage() {
             <Shield className="w-5 h-5" />
             {t("audit_trail")}
           </CardTitle>
+          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <Input
+              type="search"
+              placeholder={t("audit_search")}
+              className="w-full sm:max-w-sm"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
+            />
+            <Select
+              value={actionFilter}
+              onValueChange={(value) => {
+                setActionFilter(value);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="w-full sm:w-48">
+                <SelectValue placeholder={t("audit_filterAction")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t("common_all")}</SelectItem>
+                {Object.keys(actionColor).map((action) => (
+                  <SelectItem key={action} value={action}>
+                    {action}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -68,7 +122,7 @@ export default function AuditPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  {logs.map((log) => (
+                  {pagedLogs.map((log) => (
                     <tr key={log.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
                       <td className="px-4 py-3 text-neutral-500">
                         {new Date(log.createdAt).toLocaleString()}
@@ -87,6 +141,14 @@ export default function AuditPage() {
               </table>
             </div>
           )}
+          {filteredLogs.length > PAGE_SIZE ? (
+            <DataPagination
+              page={visiblePage}
+              pageSize={PAGE_SIZE}
+              total={filteredLogs.length}
+              onPageChange={setPage}
+            />
+          ) : null}
         </CardContent>
       </Card>
     </motion.div>

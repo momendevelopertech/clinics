@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { AddConsentDialog } from "@/components/consents/add-consent-dialog";
+import { DataPagination } from "@/components/ui/data-pagination";
+import { paginate } from "@/lib/pagination";
 import { logClientError } from "@/lib/client-logger";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
@@ -38,6 +40,7 @@ export default function ConsentsPage() {
   const [consents, setConsents] = React.useState<Consent[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [grantedFilter, setGrantedFilter] = React.useState<string | null>(null);
+  const [page, setPage] = React.useState(1);
   const { forbidden, setForbidden } = usePermissionState();
 
   React.useEffect(() => {
@@ -100,6 +103,11 @@ export default function ConsentsPage() {
     return matchesSearch && matchesFilter;
   });
 
+  const PAGE_SIZE = 10;
+  const pageCount = Math.max(1, Math.ceil(filteredConsents.length / PAGE_SIZE));
+  const visiblePage = Math.min(page, pageCount);
+  const pagedConsents = paginate(filteredConsents, visiblePage, PAGE_SIZE);
+
   if (forbidden) {
     return (
       <div className="flex flex-col gap-6 w-full h-full">
@@ -137,7 +145,10 @@ export default function ConsentsPage() {
             placeholder="Search patient name or consent type..."
             className="w-full sm:max-w-sm"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
           />
           <div className="flex gap-2">
             <DropdownMenu>
@@ -216,11 +227,10 @@ export default function ConsentsPage() {
                   <th className="px-6 py-4 border-b hidden md:table-cell">
                     Document
                   </th>
-                  <th className="px-6 py-4 border-b">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
-                {filteredConsents.map((consent) => (
+                {pagedConsents.map((consent) => (
                   <tr
                     key={consent.id}
                     className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition"
@@ -270,17 +280,21 @@ export default function ConsentsPage() {
                         <span className="text-neutral-500">-</span>
                       )}
                     </td>
-                    <td className="px-6 py-4">
-                      <Button variant="ghost" size="sm">
-                        View
-                      </Button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           )}
         </div>
+
+        {!loading && filteredConsents.length > PAGE_SIZE ? (
+          <DataPagination
+            page={visiblePage}
+            pageSize={PAGE_SIZE}
+            total={filteredConsents.length}
+            onPageChange={setPage}
+          />
+        ) : null}
       </div>
     </div>
   );

@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { AddToWaitlistDialog } from "@/components/waitlist/add-to-waitlist-dialog";
+import { DataPagination } from "@/components/ui/data-pagination";
+import { paginate } from "@/lib/pagination";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
@@ -42,6 +44,7 @@ export default function WaitlistPage() {
   const [entries, setEntries] = React.useState<WaitlistEntry[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [statusFilter, setStatusFilter] = React.useState<string | null>(null);
+  const [page, setPage] = React.useState(1);
   const { forbidden, setForbidden } = usePermissionState();
 
   React.useEffect(() => {
@@ -102,6 +105,11 @@ export default function WaitlistPage() {
 
     return matchesSearch && matchesStatus;
   });
+
+  const PAGE_SIZE = 10;
+  const pageCount = Math.max(1, Math.ceil(filteredEntries.length / PAGE_SIZE));
+  const visiblePage = Math.min(page, pageCount);
+  const pagedEntries = paginate(filteredEntries, visiblePage, PAGE_SIZE);
 
   const statusLabel = (status: string) => {
     const map: Record<string, string> = {
@@ -166,7 +174,10 @@ export default function WaitlistPage() {
             placeholder={t("wl_search")}
             className="w-full sm:max-w-sm"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
           />
           <div className="flex gap-2">
             <DropdownMenu>
@@ -263,11 +274,10 @@ export default function WaitlistPage() {
                   <th className="px-6 py-4 border-b hidden md:table-cell">
                     {t("wl_colAdded")}
                   </th>
-                  <th className="px-6 py-4 border-b">{t("common_actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
-                {filteredEntries.map((entry) => (
+                {pagedEntries.map((entry) => (
                   <tr
                     key={entry.id}
                     className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition"
@@ -312,17 +322,21 @@ export default function WaitlistPage() {
                     <td className="px-6 py-4 hidden md:table-cell">
                       {new Date(entry.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4">
-                      <Button variant="ghost" size="sm">
-                        {t("wl_view")}
-                      </Button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           )}
         </div>
+
+        {!loading && filteredEntries.length > PAGE_SIZE ? (
+          <DataPagination
+            page={visiblePage}
+            pageSize={PAGE_SIZE}
+            total={filteredEntries.length}
+            onPageChange={setPage}
+          />
+        ) : null}
       </div>
     </div>
   );

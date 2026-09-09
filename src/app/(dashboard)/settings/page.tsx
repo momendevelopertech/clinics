@@ -150,7 +150,6 @@ export default function SettingsPage() {
               <div>
                 <h3 className="text-lg font-medium border-b dark:border-neutral-800 pb-2 mb-4">{t("settings_teamMembers")}</h3>
                 <StaffProfiles t={t} />
-                <Button variant="outline" size="sm" className="mt-4 rounded-[5px]">{t("settings_addTeamMember")}</Button>
               </div>
             )}
 

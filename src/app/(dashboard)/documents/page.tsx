@@ -1,12 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  FileText,
-  Filter as FilterIcon,
-  Download,
-  Upload,
-} from "lucide-react";
+import { FileText, Filter as FilterIcon, Download, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,8 +12,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { DataPagination } from "@/components/ui/data-pagination";
 import { toast } from "sonner";
 import { UploadDocumentDialog } from "@/components/documents/upload-document-dialog";
+import { paginate } from "@/lib/pagination";
+import { filterDocuments, formatTypeLabel, getDocumentTypeColor, isExternalUrl } from "@/lib/documents";
 import { logClientError } from "@/lib/client-logger";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
@@ -27,12 +25,24 @@ interface Document {
   id: string;
   patientId: string;
   patientName: string;
-  documentType: string;
-  fileName: string;
-  fileUrl: string;
-  fileSize: number;
-  uploadedBy: string;
+  name: string;
+  type: string;
+  storageKey: string;
+  mimeType: string | null;
   createdAt: string;
+}
+
+const PAGE_SIZE = 10;
+
+function isDocument(value: unknown): value is Document {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as Document).id === "string" &&
+    typeof (value as Document).patientName === "string" &&
+    typeof (value as Document).name === "string" &&
+    typeof (value as Document).type === "string"
+  );
 }
 
 export default function DocumentsPage() {
@@ -40,10 +50,12 @@ export default function DocumentsPage() {
   const [documents, setDocuments] = React.useState<Document[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [typeFilter, setTypeFilter] = React.useState<string | null>(null);
+  const [page, setPage] = React.useState(1);
   const { forbidden, setForbidden } = usePermissionState();
 
   React.useEffect(() => {
     fetchDocuments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDocuments = async () => {
@@ -56,7 +68,7 @@ export default function DocumentsPage() {
       }
       if (!response.ok) throw new Error("Failed to fetch documents");
       const data = await response.json();
-      setDocuments(data);
+      setDocuments(Array.isArray(data) ? data.filter(isDocument) : []);
     } catch (error) {
       toast.error("Failed to load documents");
       logClientError("Document list fetch failed", error);
@@ -67,20 +79,11 @@ export default function DocumentsPage() {
 
   const handleExport = () => {
     const csv = [
-      [
-        "Patient Name",
-        "Document Type",
-        "File Name",
-        "File Size (MB)",
-        "Uploaded By",
-        "Date",
-      ],
+      ["Patient Name", "Document Type", "File Name", "Date"],
       ...documents.map((d) => [
         d.patientName,
-        d.documentType,
-        d.fileName,
-        (d.fileSize / 1024 / 1024).toFixed(2),
-        d.uploadedBy,
+        d.type,
+        d.name,
         new Date(d.createdAt).toLocaleDateString(),
       ]),
     ]
@@ -97,46 +100,21 @@ export default function DocumentsPage() {
     toast.success("Documents exported successfully");
   };
 
-  const filteredDocuments = documents.filter((document) => {
-    const matchesSearch =
-      document.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      document.fileName.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredDocuments = filterDocuments(documents, searchQuery, typeFilter);
 
-    const matchesType = !typeFilter || document.documentType === typeFilter;
+  const availableTypes = React.useMemo(
+    () => Array.from(new Set(documents.map((document) => document.type))).sort(),
+    [documents],
+  );
 
-    return matchesSearch && matchesType;
-  });
+  const pageCount = Math.max(1, Math.ceil(filteredDocuments.length / PAGE_SIZE));
+  const visiblePage = Math.min(page, pageCount);
+  const pagedDocuments = paginate(filteredDocuments, visiblePage, PAGE_SIZE);
 
-  const getDocumentTypeColor = (type: string) => {
-    const colors: Record<string, string> = {
-      imaging: "bg-purple-100 text-purple-800",
-      lab: "bg-blue-100 text-blue-800",
-      pathology: "bg-pink-100 text-pink-800",
-      consent: "bg-green-100 text-green-800",
-      medical_record: "bg-orange-100 text-orange-800",
-      prescription: "bg-cyan-100 text-cyan-800",
-      other: "bg-gray-100 text-gray-800",
-    };
-    return colors[type] || colors["other"];
+  const handleTypeFilterChange = (type: string | null) => {
+    setTypeFilter(type);
+    setPage(1);
   };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
-  };
-
-  const documentTypes = [
-    "imaging",
-    "lab",
-    "pathology",
-    "consent",
-    "medical_record",
-    "prescription",
-    "other",
-  ];
 
   if (forbidden) {
     return (
@@ -159,7 +137,7 @@ export default function DocumentsPage() {
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
             <FileText className="w-6 h-6 inline mr-2" />
-            Documents & Imaging
+            Documents &amp; Imaging
           </h2>
           <p className="text-sm text-neutral-500">
             Manage patient medical documents and imaging files.
@@ -176,7 +154,10 @@ export default function DocumentsPage() {
             placeholder="Search patient name or file name..."
             className="w-full sm:max-w-sm"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
           />
           <div className="flex gap-2">
             <DropdownMenu>
@@ -194,20 +175,22 @@ export default function DocumentsPage() {
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
                   checked={!typeFilter}
-                  onCheckedChange={() => setTypeFilter(null)}
+                  onCheckedChange={() => {
+                    setTypeFilter(null);
+                    setPage(1);
+                  }}
                 >
                   All
                 </DropdownMenuCheckboxItem>
-                {documentTypes.map((type) => (
+                {availableTypes.map((type) => (
                   <DropdownMenuCheckboxItem
                     key={type}
                     checked={typeFilter === type}
                     onCheckedChange={() =>
-                      setTypeFilter(typeFilter === type ? null : type)
+                      handleTypeFilterChange(typeFilter === type ? null : type)
                     }
                   >
-                    {type.replace("_", " ").charAt(0).toUpperCase() +
-                      type.slice(1).replace("_", " ")}
+                    {formatTypeLabel(type)}
                   </DropdownMenuCheckboxItem>
                 ))}
               </DropdownMenuContent>
@@ -242,16 +225,13 @@ export default function DocumentsPage() {
                   <th className="px-6 py-4 border-b">File Name</th>
                   <th className="px-6 py-4 border-b">Type</th>
                   <th className="px-6 py-4 border-b hidden md:table-cell">
-                    Size
-                  </th>
-                  <th className="px-6 py-4 border-b hidden md:table-cell">
                     Uploaded
                   </th>
                   <th className="px-6 py-4 border-b">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
-                {filteredDocuments.map((document) => (
+                {pagedDocuments.map((document) => (
                   <tr
                     key={document.id}
                     className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition"
@@ -270,32 +250,33 @@ export default function DocumentsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-medium truncate max-w-xs">
-                        {document.fileName}
+                        {document.name}
                       </p>
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${getDocumentTypeColor(document.documentType)}`}
+                        className={`px-2 py-1 rounded text-xs font-medium ${getDocumentTypeColor(document.type)}`}
                       >
-                        {document.documentType.replace("_", " ")}
+                        {formatTypeLabel(document.type)}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 hidden md:table-cell">
-                      {formatFileSize(document.fileSize)}
                     </td>
                     <td className="px-6 py-4 hidden md:table-cell">
                       {new Date(document.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4">
-                      <a
-                        href={document.fileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button variant="ghost" size="sm">
-                          View
-                        </Button>
-                      </a>
+                      {isExternalUrl(document.storageKey) ? (
+                        <a
+                          href={document.storageKey}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button variant="ghost" size="sm">
+                            View
+                          </Button>
+                        </a>
+                      ) : (
+                        <span className="text-xs text-neutral-400">No file</span>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -303,6 +284,15 @@ export default function DocumentsPage() {
             </table>
           )}
         </div>
+
+        {!loading && filteredDocuments.length > PAGE_SIZE ? (
+          <DataPagination
+            page={visiblePage}
+            pageSize={PAGE_SIZE}
+            total={filteredDocuments.length}
+            onPageChange={setPage}
+          />
+        ) : null}
       </div>
     </div>
   );
