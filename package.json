@@ -9,7 +9,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "prepare": "node scripts/prepare-husky.mjs",
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",

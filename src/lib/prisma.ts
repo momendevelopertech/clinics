@@ -8,11 +8,12 @@ import { logServerError } from "@/lib/safe-logger";
 const skipDbInit = process.env.SKIP_DB_INIT === "true";
 
 const connectionString = process.env.DATABASE_URL || "";
+const dbUnavailable = skipDbInit || !connectionString;
 
 let adapter: PrismaPg | undefined;
 
 // Neon cold starts can take 5–15s; increase timeout so first request doesn't fail
-if (!skipDbInit && connectionString) {
+if (!dbUnavailable) {
   try {
     const pool = new Pool({
       connectionString,
@@ -28,7 +29,7 @@ if (!skipDbInit && connectionString) {
 const globalForPrisma = globalThis as { prisma?: PrismaClient };
 
 let client: PrismaClient;
-if (skipDbInit) {
+if (dbUnavailable) {
   // during build or when skipping, provide a dummy proxy client that throws if used
   client =
     globalForPrisma.prisma ||
