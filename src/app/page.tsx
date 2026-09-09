@@ -19,6 +19,8 @@ import { auth } from "@/auth";
 import { getDictionary } from "@/lib/i18n/server";
 import { LanguageSwitcher } from "@/components/locale/language-switcher";
 import { DemoLoginButtons } from "@/components/landing/demo-login-buttons";
+import { AppPreview } from "@/components/landing/app-preview";
+import { ClinicShowcase } from "@/components/landing/clinic-showcase";
 
 export default async function HomePage() {
   const session = await auth();
@@ -47,6 +49,9 @@ export default async function HomePage() {
             </a>
             <a href="#how-it-works" className="transition-colors hover:text-foreground">
               {t["landing_navHowItWorks"]}
+            </a>
+            <a href="#clinics" className="transition-colors hover:text-foreground">
+              {t["landing_clinicsTitle"]}
             </a>
             <a href="#demo" className="transition-colors hover:text-foreground">
               {t["landing_demoTitle"]}
@@ -119,6 +124,9 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
+
+          {/* Product preview (CSS screenshot) */}
+          <AppPreview t={t} />
         </div>
       </section>
 
@@ -177,12 +185,37 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Our clinics */}
+      <section id="clinics" className="px-4 pb-20 sm:px-6">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">
+              {t["landing_clinicsEyebrow"]}
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+              {t["landing_clinicsTitle"]}
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+              {t["landing_clinicsSubtitle"]}
+            </p>
+          </div>
+          <ClinicShowcase t={t} />
+        </div>
+      </section>
+
       {/* Demo accounts */}
       <section id="demo" className="px-4 pb-24 sm:px-6">
         <div className="surface-panel mx-auto max-w-4xl rounded-[36px] border border-white/55 p-10 text-center">
           <h2 className="text-3xl font-semibold tracking-[-0.04em]">{t["landing_demoTitle"]}</h2>
           <p className="mt-3 text-sm text-muted-foreground">{t["landing_demoNote"]}</p>
           <DemoLoginButtons />
+          <Link
+            href="/demo-accounts"
+            className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+          >
+            {t["landing_viewDemo"]}
+            <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+          </Link>
           <div className="mt-6 flex items-center justify-center gap-2 text-sm text-muted-foreground">
             <IndianRupee className="h-4 w-4" />
             <FlaskConical className="h-4 w-4" />

@@ -1334,4 +1334,19 @@ export const ar: Dictionary = {
   clinic_expires: "ينتهي",
   clinic_noBranches: "لا توجد فروع مُسجلة.",
   clinic_tenantNote: "معزول على مستوى الجهة: يعرض هذا فقط هذه المساحة.",
+  /* ── واجهة العرض: المعاينة والعيادات ─────────────── */
+  landing_previewSearch: "ابحث في المرضى والفواتير والموظفين…",
+  landing_previewWeekly: "مواعيد الأسبوع",
+  landing_previewAppointments: "المواعيد",
+  landing_previewToday: "اليوم",
+  landing_previewStatus_confirmed: "مؤكد",
+  landing_previewStatus_waiting: "بانتظار",
+  landing_previewStatus_done: "منجز",
+  landing_clinicsEyebrow: "تعمل الآن على المنصة",
+  landing_clinicsTitle: "عياداتنا",
+  landing_clinicsSubtitle:
+    "نظرة سريعة على العيادات التي تعمل بالفعل على {appName} — جرّب تسجيل دخول تجريبي وافتح أيًا منها في ثوانٍ.",
+  landing_viewDemo: "استعرض كل الحسابات التجريبية",
+  auth_tryDemo: "جرّب حسابًا تجريبيًا",
+  auth_fullDemoList: "استعرض كل الحسابات",
 };

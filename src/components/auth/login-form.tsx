@@ -3,9 +3,10 @@
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
-import { Activity, ArrowRight, ShieldPlus, Stethoscope, TimerReset } from "lucide-react";
+import { Activity, ArrowRight, KeyRound, ShieldPlus, Stethoscope, TimerReset } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n/locale";
 import { LanguageSwitcher } from "@/components/locale/language-switcher";
+import { DemoLoginButtons } from "@/components/landing/demo-login-buttons";
 
 type LoginFormProps = {
   callbackUrl: string;
@@ -161,6 +162,22 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
               <Link href="/signup" className="font-semibold text-primary hover:underline">
                 {t["auth_signup"]}
               </Link>
+            </div>
+
+            <div className="mt-6 rounded-[24px] border border-white/60 bg-white/60 p-4 dark:border-white/6 dark:bg-white/[0.03]">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                  <KeyRound className="h-4 w-4 text-primary" />
+                  {t["auth_tryDemo"]}
+                </span>
+                <Link
+                  href="/demo-accounts"
+                  className="text-xs font-semibold text-primary hover:underline"
+                >
+                  {t["auth_fullDemoList"]}
+                </Link>
+              </div>
+              <DemoLoginButtons />
             </div>
 
 <div className="mt-6 grid gap-3 rounded-[24px] border border-white/60 bg-white/60 p-4 text-sm dark:border-white/6 dark:bg-white/[0.03]">

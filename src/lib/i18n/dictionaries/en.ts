@@ -1345,4 +1345,19 @@ export const en: Dictionary = {
   clinic_expires: "expires",
   clinic_noBranches: "No branches registered.",
   clinic_tenantNote: "Tenant-isolated: this view only affects this workspace.",
+  /* Landing showcase (product preview + clinics) */
+  landing_previewSearch: "Search patients, invoices, staff…",
+  landing_previewWeekly: "Weekly appointments",
+  landing_previewAppointments: "Appointments",
+  landing_previewToday: "Today",
+  landing_previewStatus_confirmed: "Confirmed",
+  landing_previewStatus_waiting: "Waiting",
+  landing_previewStatus_done: "Done",
+  landing_clinicsEyebrow: "Live on the platform",
+  landing_clinicsTitle: "Our clinics",
+  landing_clinicsSubtitle:
+    "A quick look at the practices already running on the platform — book a demo login and open any of them in seconds.",
+  landing_viewDemo: "See all demo accounts",
+  auth_tryDemo: "Try a demo account",
+  auth_fullDemoList: "See all accounts",
 };
