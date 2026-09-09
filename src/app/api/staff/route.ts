@@ -18,7 +18,7 @@ export async function GET() {
         availableDays: true, availableFrom: true, availableTo: true,
         branch: { select: { id: true, name: true } },
         room: { select: { id: true, name: true, number: true } },
-        userRoles: { select: { role: { select: { id: true, name: true, permissions: true } } } },
+        userRoles: { select: { role: { select: { id: true, name: true } } } },
       },
     });
     return NextResponse.json(staff);

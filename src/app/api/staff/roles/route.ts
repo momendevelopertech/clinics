@@ -11,7 +11,7 @@ export async function GET() {
     const { organizationId } = await requireOrgContext();
     const roles = await prisma.role.findMany({
       where: { organizationId, name: { not: "Super Admin" } },
-      select: { id: true, name: true, permissions: { select: { action: true, resource: true } } },
+      select: { id: true, name: true },
       orderBy: { name: "asc" },
     });
     return NextResponse.json(roles);

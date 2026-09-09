@@ -10,6 +10,7 @@ import {
   HeartPulse,
   Users,
 } from "lucide-react";
+import Link from "next/link";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useMedical, Patient } from "@/context/MedicalContext";
@@ -329,10 +330,10 @@ export default function DashboardPage() {
                 className="h-auto p-0 text-sm font-medium text-primary no-underline hover:no-underline"
                 asChild
               >
-                <a href="/patients" className="inline-flex items-center gap-1">
+                <Link href="/patients" className="inline-flex items-center gap-1">
                   {t("common_view_all")}
                   <ArrowRight className="h-3.5 w-3.5" />
-                </a>
+                </Link>
               </Button>
             </div>
 
