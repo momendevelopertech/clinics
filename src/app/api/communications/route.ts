@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
+import { requireModuleEntitlement } from "@/lib/entitlements/access";
 import { createAuditLog } from "@/lib/audit";
 import { sendSMS, sendEmail, sendWhatsApp } from "@/lib/communications";
 import { logServerError } from "@/lib/safe-logger";
@@ -13,6 +14,8 @@ export async function GET(request: NextRequest) {
     assertOrgScope(orgId);
     const moduleAuthz = await requireModulePermission(orgId, "communications");
     if (moduleAuthz.response) return moduleAuthz.response;
+    const planAuthz = await requireModuleEntitlement(orgId, "communications");
+    if (!planAuthz.ok) return planAuthz.response;
 
     const authz = await requireAnyPermission(orgId, [
       { action: "patients:write", resource: "patients" },
@@ -64,6 +67,8 @@ export async function POST(request: NextRequest) {
     assertOrgScope(orgId);
     const moduleAuthz = await requireModulePermission(orgId, "communications");
     if (moduleAuthz.response) return moduleAuthz.response;
+    const planAuthz = await requireModuleEntitlement(orgId, "communications");
+    if (!planAuthz.ok) return planAuthz.response;
     const authz = await requireAnyPermission(orgId, [
       { action: "patients:write", resource: "patients" },
       { action: "appointments:write", resource: "appointments" },

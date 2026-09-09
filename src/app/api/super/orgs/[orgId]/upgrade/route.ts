@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireSuperAdmin } from "@/lib/roles";
 import { createAuditLog } from "@/lib/audit";
-import { PLAN_IDS } from "@/lib/plans";
 
 type Body = { approve?: boolean };
 
@@ -39,24 +38,50 @@ export async function POST(
   }
 
   const requested = existing.upgradeRequestedPlan;
-  if (!(PLAN_IDS as readonly string[]).includes(requested)) {
+  const requestedPlan = await prisma.plan.findUnique({ where: { code: requested } });
+  if (!requestedPlan) {
     return NextResponse.json({ error: "Invalid requested plan" }, { status: 400 });
   }
 
-  const updated = await prisma.organization.update({
-    where: { id: orgId },
-    data: {
-      plan: body.approve ? requested : existing.plan,
-      upgradeRequestedPlan: null,
-      upgradeRequestedAt: null,
-      upgradeNote: null,
-    },
-    select: {
-      id: true,
-      plan: true,
-      upgradeRequestedPlan: true,
-      upgradeRequestedAt: true,
-    },
+  const updated = await prisma.$transaction(async (tx) => {
+    const org = await tx.organization.update({
+      where: { id: orgId },
+      data: {
+        plan: body.approve ? requested : existing.plan,
+        upgradeRequestedPlan: null,
+        upgradeRequestedAt: null,
+        upgradeNote: null,
+      },
+      select: {
+        id: true,
+        plan: true,
+        upgradeRequestedPlan: true,
+        upgradeRequestedAt: true,
+      },
+    });
+
+    if (body.approve) {
+      await tx.subscription.upsert({
+        where: { organizationId: orgId },
+        create: {
+          organizationId: orgId,
+          planId: requestedPlan.id,
+          status: "active",
+          currentPeriodStart: new Date(),
+          currentPeriodEnd: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
+          billingCycle: requestedPlan.billingCycle,
+        },
+        update: {
+          planId: requestedPlan.id,
+          status: "active",
+          cancelAtPeriodEnd: false,
+          canceledAt: null,
+          billingCycle: requestedPlan.billingCycle,
+        },
+      });
+    }
+
+    return org;
   });
 
   await createAuditLog({

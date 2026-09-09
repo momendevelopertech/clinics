@@ -27,6 +27,7 @@ import { logClientError } from "@/lib/client-logger";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
+import { UpgradePrompt } from "@/components/plan/upgrade-prompt";
 
 interface Communication {
   id: string;
@@ -146,6 +147,7 @@ export default function CommunicationsPage() {
 
   return (
     <div className="space-y-6">
+      <UpgradePrompt moduleKey="communications" />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Communications</h1>

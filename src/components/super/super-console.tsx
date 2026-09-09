@@ -18,6 +18,7 @@ import {
   Wallet,
   X,
   LogOut,
+  Lock,
 } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n/locale";
 import { LanguageSwitcher } from "@/components/locale/language-switcher";
@@ -247,6 +248,13 @@ export function SuperConsole({ t }: { t: Dictionary }) {
             >
               <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             </button>
+            <Link
+              href="/super/plans"
+              className="inline-flex items-center gap-2 rounded-[14px] border border-white/60 bg-white/70 px-3 py-2 text-sm font-semibold text-muted-foreground shadow-sm transition hover:text-foreground dark:border-white/6 dark:bg-white/[0.04]"
+            >
+              <Lock className="h-4 w-4" />
+              {t["super_navPlans"]}
+            </Link>
             <LanguageSwitcher />
             <button
               type="button"
@@ -369,7 +377,9 @@ function OrganizationsSection({
                 {orgs.map((org) => (
                   <tr key={org.id} className="align-top hover:bg-white/40 dark:hover:bg-white/[0.03]">
                     <td className="px-5 py-4">
-                      <div className="font-semibold">{org.name}</div>
+                      <Link href={`/super/clinics/${org.id}`} className="font-semibold hover:text-primary">
+                        {org.name}
+                      </Link>
                       <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
                         <Building2 className="h-3 w-3" /> {org.slug ?? "—"}
                       </div>

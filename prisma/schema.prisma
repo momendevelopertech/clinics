@@ -54,6 +54,73 @@ model Organization {
   labResults           LabResult[]
   notifications        Notification[]
   procedureOrders      ProcedureOrder[]
+  subscription         Subscription?
+  entitlementOverrides EntitlementOverride[]
+}
+
+// ============== SAAS: PLANS / SUBSCRIPTIONS / ENTITLEMENTS ==============
+model Plan {
+  id                     String   @id @default(cuid())
+  code                   String   @unique // free, clinic, plus, custom...
+  internalCode           String?  @unique // short SKU e.g. CLN-001
+  nameEn                 String
+  nameAr                 String
+  descriptionEn          String
+  descriptionAr          String
+  price                  Decimal  @default(0) @db.Decimal(12, 2)
+  billingCycle           String   @default("monthly") // monthly, yearly
+  status                 String   @default("active") // active, archived
+  displayOrder           Int      @default(0)
+  popular                Boolean  @default(false)
+  trialDays              Int      @default(0)
+  modulesJson            String? // JSON ModuleConfig{ enabled; notes }
+  featuresJson           String? // JSON FeatureConfig{ enabled; limit; upgradeMessageKey }
+  upgradeTargetId        String?
+  upgradeTarget          Plan?    @relation("PlanUpgradePath", fields: [upgradeTargetId], references: [id])
+  downgradeTargetIdsJson String?  @default("[]") // JSON array of plan codes
+  downgradesAllowed      Boolean  @default(true)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  upgradedFrom           Plan[]   @relation("PlanUpgradePath")
+  subscriptions          Subscription[]
+}
+
+model Subscription {
+  id                 String       @id @default(cuid())
+  organizationId     String       @unique
+  organization       Organization @relation(fields: [organizationId], references: [id])
+  planId             String
+  plan               Plan         @relation(fields: [planId], references: [id])
+  status             String       @default("active") // trialing, active, past_due, canceled, expired
+  currentPeriodStart DateTime     @default(now())
+  currentPeriodEnd   DateTime
+  trialEndsAt        DateTime?
+  cancelAtPeriodEnd  Boolean      @default(false)
+  canceledAt         DateTime?
+  billingCycle       String       @default("monthly")
+  notes              String?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  @@index([planId])
+}
+
+model EntitlementOverride {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  moduleKey      String? // override a module's enabled state
+  featureKey     String? // override a feature/limit
+  kind           String // module_override | feature_override | limit_override
+  valueJson      String? // { enabled } or { limit }
+  reason         String?
+  createdById    String?
+  expiresAt      DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId, moduleKey])
+  @@index([organizationId, featureKey])
 }
 
 model WaitlistEntry {

@@ -25,6 +25,7 @@ import { useLocale } from "@/components/locale/locale-provider";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
+import { UpgradePrompt } from "@/components/plan/upgrade-prompt";
 
 interface Payment {
   id: string;
@@ -178,6 +179,7 @@ export default function PaymentsPage() {
 
   return (
     <div className="flex flex-col gap-6 w-full h-full">
+      <UpgradePrompt moduleKey="payments" />
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">

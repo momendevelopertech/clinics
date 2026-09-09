@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AlertTriangle, ArrowRight, Clock3, FlaskConical, Sparkles, UserRound } from "lucide-react";
 import { useLocale } from "@/components/locale/locale-provider";
 import type { AutomationSignal } from "@/lib/automation";
+import { UpgradePrompt } from "@/components/plan/upgrade-prompt";
 
 export default function AutomationPage() {
   const { t } = useLocale();
@@ -23,6 +24,7 @@ export default function AutomationPage() {
 
   return (
     <div className="space-y-6">
+      <UpgradePrompt moduleKey="automation" />
       <div className="surface-panel rounded-[28px] border border-white/55 p-6 dark:border-white/6">
         <div className="flex items-start gap-4">
           <div className="grid size-12 place-content-center rounded-2xl bg-primary/10 text-primary">

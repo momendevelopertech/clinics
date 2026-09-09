@@ -53,6 +53,7 @@ import { toast } from "sonner";
 import { useLocale } from "@/components/locale/locale-provider";
 import { LanguageSwitcher } from "@/components/locale/language-switcher";
 import { displayRoleName } from "@/lib/role-labels";
+import { Lock } from "lucide-react";
 
 const routeTitleKeys: Array<[string, string]> = [
   ["/dashboard", "nav_dashboard"],
@@ -86,6 +87,7 @@ interface DashboardWithCollapsibleSidebarProps {
   roles?: string[];
   isSuperAdmin?: boolean;
   orgName?: string;
+  planModules?: Record<string, boolean> | null;
 }
 
 export function DashboardWithCollapsibleSidebar({
@@ -93,12 +95,13 @@ export function DashboardWithCollapsibleSidebar({
   roles = [],
   isSuperAdmin = false,
   orgName,
+  planModules = null,
 }: DashboardWithCollapsibleSidebarProps) {
   const [open, setOpen] = useState(true);
 
   return (
     <div className="app-shell flex min-h-screen w-full text-foreground">
-      <CollapsibleSidebar open={open} setOpen={setOpen} roles={roles} isSuperAdmin={isSuperAdmin} />
+      <CollapsibleSidebar open={open} setOpen={setOpen} roles={roles} isSuperAdmin={isSuperAdmin} planModules={planModules} />
       <div className="flex min-w-0 flex-1 flex-col">
         <DashboardHeader open={open} setOpen={setOpen} orgName={orgName} />
         <main className="flex-1 overflow-auto px-4 pb-6 pt-4 sm:px-6 lg:px-8">
@@ -114,14 +117,19 @@ function CollapsibleSidebar({
   setOpen,
   roles,
   isSuperAdmin,
+  planModules,
 }: {
   open: boolean;
   setOpen: (value: boolean) => void;
   roles: string[];
   isSuperAdmin: boolean;
+  planModules?: Record<string, boolean> | null;
 }) {
   const { t } = useLocale();
   const { appointments } = useMedical();
+
+  const isLocked = (moduleKey?: string) =>
+    !!moduleKey && !!planModules && planModules[moduleKey] !== true;
 
   const today = new Date().toISOString().split("T")[0];
   const todayVisits = appointments.filter(
@@ -141,6 +149,15 @@ function CollapsibleSidebar({
     | "Pharmacist"
     | "Care Coordinator";
 
+  type NavItem = {
+    icon: React.ElementType;
+    label: string;
+    href: string;
+    roles?: NavRole[];
+    moduleKey?: string;
+    locked?: boolean;
+  };
+
   const canAccess = (allowed?: NavRole[]) => {
     if (roles.some((role) => role === "Owner" || role === "Super Admin")) {
       return true;
@@ -151,31 +168,36 @@ function CollapsibleSidebar({
       .some((role) => (allowed as string[]).includes(role));
   };
 
+  const wrap = (item: NavItem): NavItem => ({
+    ...item,
+    locked: item.moduleKey ? isLocked(item.moduleKey) : false,
+  });
+
   const navGroups = [
     {
       label: t("nav_overview"),
       items: [
-        { icon: Home, label: t("nav_dashboard"), href: "/dashboard" },
-        { icon: Users, label: t("nav_patients"), href: "/patients", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"] as NavRole[] },
-        { icon: Calendar, label: t("nav_appointments"), href: "/appointments", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"] as NavRole[] },
-        { icon: CalendarClock, label: t("nav_queue"), href: "/queue", roles: ["Doctor", "Nurse", "Receptionist"] as NavRole[] },
-        { icon: ClipboardList, label: t("nav_encounters"), href: "/encounters", roles: ["Doctor", "Nurse"] as NavRole[] },
-        { icon: Activity, label: t("nav_analytics"), href: "/analytics", roles: ["Doctor", "Nurse", "Biller"] as NavRole[] },
-        { icon: FileCheck2, label: t("nav_consents"), href: "/consents", roles: ["Doctor", "Nurse", "Receptionist"] as NavRole[] },
-        { icon: ScrollText, label: t("nav_audit"), href: "/audit", roles: ["Doctor", "Biller"] as NavRole[] },
-      ].filter((item) => canAccess(item.roles as NavRole[] | undefined)),
+        { icon: Home, label: t("nav_dashboard"), href: "/dashboard" } as NavItem,
+        { icon: Users, label: t("nav_patients"), href: "/patients", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"] as NavRole[], moduleKey: "patients", locked: false },
+        { icon: Calendar, label: t("nav_appointments"), href: "/appointments", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"] as NavRole[], moduleKey: "appointments", locked: false },
+        { icon: CalendarClock, label: t("nav_queue"), href: "/queue", roles: ["Doctor", "Nurse", "Receptionist"] as NavRole[], moduleKey: "queue", locked: false },
+        { icon: ClipboardList, label: t("nav_encounters"), href: "/encounters", roles: ["Doctor", "Nurse"] as NavRole[], moduleKey: "encounters", locked: false },
+        { icon: Activity, label: t("nav_analytics"), href: "/analytics", roles: ["Doctor", "Nurse", "Biller"] as NavRole[], moduleKey: "analytics", locked: false },
+        { icon: FileCheck2, label: t("nav_consents"), href: "/consents", roles: ["Doctor", "Nurse", "Receptionist"] as NavRole[], moduleKey: "consents", locked: false },
+        { icon: ScrollText, label: t("nav_audit"), href: "/audit", roles: ["Doctor", "Biller"] as NavRole[], moduleKey: "audit", locked: false },
+      ].filter((item) => canAccess(item.roles as NavRole[] | undefined)).map(wrap),
     },
     {
       label: t("nav_operations"),
       items: [
-        { icon: DollarSign, label: t("nav_billing"), href: "/billing", roles: ["Biller"] as NavRole[] },
-        { icon: Wallet, label: t("nav_payments"), href: "/payments", roles: ["Biller"] as NavRole[] },
-        { icon: FlaskConical, label: t("nav_labs"), href: "/labs", roles: ["Doctor", "Nurse", "Pharmacist"] as NavRole[] },
-        { icon: Package, label: t("nav_inventory"), href: "/inventory", roles: ["Nurse", "Pharmacist"] as NavRole[] },
-        { icon: Stethoscope, label: t("nav_tasks"), href: "/tasks", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"] as NavRole[] },
-        { icon: FileText, label: t("nav_documents"), href: "/documents", roles: ["Doctor", "Nurse", "Receptionist"] as NavRole[] },
-        { icon: MessageSquare, label: t("nav_communications"), href: "/communications", roles: ["Receptionist"] as NavRole[] },
-      ].filter((item) => canAccess(item.roles as NavRole[] | undefined)),
+        { icon: DollarSign, label: t("nav_billing"), href: "/billing", roles: ["Biller"] as NavRole[], moduleKey: "billing", locked: false },
+        { icon: Wallet, label: t("nav_payments"), href: "/payments", roles: ["Biller"] as NavRole[], moduleKey: "payments", locked: false },
+        { icon: FlaskConical, label: t("nav_labs"), href: "/labs", roles: ["Doctor", "Nurse", "Pharmacist"] as NavRole[], moduleKey: "labs", locked: false },
+        { icon: Package, label: t("nav_inventory"), href: "/inventory", roles: ["Nurse", "Pharmacist"] as NavRole[], moduleKey: "inventory", locked: false },
+        { icon: Stethoscope, label: t("nav_tasks"), href: "/tasks", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"] as NavRole[], moduleKey: "tasks", locked: false },
+        { icon: FileText, label: t("nav_documents"), href: "/documents", roles: ["Doctor", "Nurse", "Receptionist"] as NavRole[], moduleKey: "documents", locked: false },
+        { icon: MessageSquare, label: t("nav_communications"), href: "/communications", roles: ["Receptionist"] as NavRole[], moduleKey: "communications", locked: false },
+      ].filter((item) => canAccess(item.roles as NavRole[] | undefined)).map(wrap),
     },
   ];
   if (isSuperAdmin) {
@@ -194,12 +216,14 @@ function CollapsibleSidebar({
     { icon: CalendarClock, label: t("nav_waitlist"), href: "/waitlist", roles: ["Receptionist"] as NavRole[] },
     { icon: HelpCircle, label: t("nav_help"), href: "/help" },
   ]
-    .filter((item) => canAccess(item.roles as NavRole[] | undefined));
+    .filter((item) => canAccess(item.roles as NavRole[] | undefined))
+    .map(wrap);
 
   if (isSuperAdmin) {
     systemItems.length = 0;
     systemItems.push(
       { icon: Building2, label: t("super_navOrganizations"), href: "/super?section=organizations" },
+      { icon: Lock, label: t("super_navPlans"), href: "/super/plans" },
       { icon: Check, label: t("super_navApprovals"), href: "/super?section=approvals" },
       { icon: Wallet, label: t("super_navBilling"), href: "/super?section=billing" },
       { icon: ScrollText, label: t("super_navAudit"), href: "/super?section=audit" },
@@ -294,7 +318,7 @@ function NavLink({
   item,
   open,
 }: {
-  item: { icon: React.ElementType; label: string; href: string };
+  item: { icon: React.ElementType; label: string; href: string; locked?: boolean };
   open: boolean;
 }) {
   const pathname = usePathname();
@@ -304,39 +328,61 @@ function NavLink({
       : pathname === item.href || pathname.startsWith(`${item.href}/`);
   const Icon = item.icon;
   const { t } = useLocale();
+  const locked = Boolean(item.locked);
 
   return (
     <Link
-      href={item.href}
+      href={locked ? `/plan?lock=${encodeURIComponent(item.href.replace("/", ""))}` : item.href}
       className={cn(
         "group flex items-center rounded-[18px] px-2 py-2.5 transition-all",
-        isSelected
-          ? "bg-linear-to-r from-primary to-cyan-500 text-primary-foreground shadow-lg shadow-cyan-500/20"
-          : "text-muted-foreground hover:bg-white/75 hover:text-foreground dark:hover:bg-white/[0.05]",
+        locked
+          ? "text-amber-700/80 hover:bg-amber-50 dark:text-amber-300/80 dark:hover:bg-amber-400/10"
+          : isSelected
+            ? "bg-linear-to-r from-primary to-cyan-500 text-primary-foreground shadow-lg shadow-cyan-500/20"
+            : "text-muted-foreground hover:bg-white/75 hover:text-foreground dark:hover:bg-white/[0.05]",
       )}
     >
       <div
         className={cn(
           "grid size-10 shrink-0 place-content-center rounded-[14px] transition-colors",
-          isSelected
-            ? "bg-white/18 text-primary-foreground"
-            : "bg-white/70 text-foreground/80 group-hover:bg-white dark:bg-white/[0.04] dark:group-hover:bg-white/[0.08]",
+          locked
+            ? "bg-amber-100/80 text-amber-600 dark:bg-amber-400/15 dark:text-amber-300"
+            : isSelected
+              ? "bg-white/18 text-primary-foreground"
+              : "bg-white/70 text-foreground/80 group-hover:bg-white dark:bg-white/[0.04] dark:group-hover:bg-white/[0.08]",
         )}
       >
-        <Icon className="h-4 w-4" />
+        <Icon className={cn("h-4 w-4", locked && "opacity-80")} />
       </div>
       {open ? (
-        <div className="ml-3 min-w-0">
-          <p className="truncate text-sm font-medium">{item.label}</p>
-          <p
-            className={cn(
-              "truncate text-xs",
-              isSelected ? "text-black/90" : "text-muted-foreground",
-            )}
-          >
-            {item.href === "/dashboard" ? t("appTagline") : t("appSubtitle")}
-          </p>
+        <div className="ml-3 flex min-w-0 flex-1 items-center justify-between gap-2">
+          <div className="min-w-0">
+            <p className={cn("truncate text-sm font-medium", locked && "text-amber-700 dark:text-amber-300")}>
+              {item.label}
+            </p>
+            <p
+              className={cn(
+                "truncate text-xs",
+                locked
+                  ? "text-amber-600/80 dark:text-amber-300/70"
+                  : isSelected
+                    ? "text-black/90"
+                    : "text-muted-foreground",
+              )}
+            >
+              {locked ? t("nav_locked") : item.href === "/dashboard" ? t("appTagline") : t("appSubtitle")}
+            </p>
+          </div>
+          {locked ? (
+            <span className="shrink-0 rounded-full bg-amber-100 px-1.5 py-0.5 text-amber-700 dark:bg-amber-400/15 dark:text-amber-300">
+              <Lock className="h-3 w-3" />
+            </span>
+          ) : null}
         </div>
+      ) : locked ? (
+        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-amber-500">
+          <Lock className="h-3 w-3" />
+        </span>
       ) : null}
     </Link>
   );

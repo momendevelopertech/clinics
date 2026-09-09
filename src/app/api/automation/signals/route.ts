@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
 import { buildAutomationSignals } from "@/lib/automation";
 import { requireModulePermission } from "@/lib/permissions";
+import { requireModuleEntitlement } from "@/lib/entitlements/access";
 
 export async function GET() {
   const context = await requireOrgContext().catch(() => null);
@@ -13,6 +14,8 @@ export async function GET() {
   const { organizationId } = context;
   const moduleAuthz = await requireModulePermission(organizationId, "automation");
   if (moduleAuthz.response) return moduleAuthz.response;
+  const planAuthz = await requireModuleEntitlement(organizationId, "automation");
+  if (!planAuthz.ok) return planAuthz.response;
   const now = new Date();
   const recentStart = new Date(now);
   recentStart.setDate(recentStart.getDate() - 30);

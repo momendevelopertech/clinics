@@ -2,9 +2,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireSuperAdmin } from "@/lib/roles";
 import { createAuditLog } from "@/lib/audit";
-import { PLAN_IDS } from "@/lib/plans";
-
-const VALID_PLANS = PLAN_IDS as readonly string[];
 
 type Body = { plan?: string };
 
@@ -20,7 +17,10 @@ export async function POST(
   const orgId = (await params).orgId;
   const body = (await request.json().catch(() => ({}))) as Body;
 
-  if (!body.plan || !VALID_PLANS.includes(body.plan)) {
+  const plan = body.plan
+    ? await prisma.plan.findUnique({ where: { code: body.plan } })
+    : null;
+  if (!plan) {
     return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
   }
 
@@ -36,15 +36,38 @@ export async function POST(
     return NextResponse.json({ error: "Platform organization is not a clinic" }, { status: 400 });
   }
 
-  const updated = await prisma.organization.update({
-    where: { id: orgId },
-    data: {
-      plan: body.plan,
-      upgradeRequestedPlan: null,
-      upgradeRequestedAt: null,
-      upgradeNote: null,
-    },
-    select: { id: true, plan: true },
+  const updated = await prisma.$transaction(async (tx) => {
+    const org = await tx.organization.update({
+      where: { id: orgId },
+      data: {
+        plan: plan.code,
+        upgradeRequestedPlan: null,
+        upgradeRequestedAt: null,
+        upgradeNote: null,
+      },
+      select: { id: true, plan: true },
+    });
+
+    await tx.subscription.upsert({
+      where: { organizationId: orgId },
+      create: {
+        organizationId: orgId,
+        planId: plan.id,
+        status: "active",
+        currentPeriodStart: new Date(),
+        currentPeriodEnd: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
+        billingCycle: plan.billingCycle,
+      },
+      update: {
+        planId: plan.id,
+        status: "active",
+        cancelAtPeriodEnd: false,
+        canceledAt: null,
+        billingCycle: plan.billingCycle,
+      },
+    });
+
+    return org;
   });
 
   await createAuditLog({

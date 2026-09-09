@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
+import { requireModuleEntitlement } from "@/lib/entitlements/access";
 import { createAuditLog } from "@/lib/audit";
 import stripe from "@/lib/stripe";
 import { logServerError } from "@/lib/safe-logger";
@@ -14,6 +15,8 @@ export async function POST(request: Request) {
     const orgId = await getOrgId();
     const moduleAuthz = await requireModulePermission(orgId, "payments");
     if (moduleAuthz.response) return moduleAuthz.response;
+    const planAuthz = await requireModuleEntitlement(orgId, "payments");
+    if (!planAuthz.ok) return planAuthz.response;
     assertOrgScope(orgId);
     const authz = await requireAnyPermission(orgId, [
       { action: "billing:write", resource: "billing" },
@@ -98,6 +101,8 @@ export async function GET(request: Request) {
     const orgId = await getOrgId();
     const moduleAuthz = await requireModulePermission(orgId, "payments");
     if (moduleAuthz.response) return moduleAuthz.response;
+    const planAuthz = await requireModuleEntitlement(orgId, "payments");
+    if (!planAuthz.ok) return planAuthz.response;
     assertOrgScope(orgId);
 
     const authz = await requireAnyPermission(orgId, [

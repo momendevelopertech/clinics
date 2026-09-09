@@ -1,4 +1,5 @@
 import { prisma } from "./prisma";
+import { checkPlanLimit as checkEntitledPlanLimit } from "@/lib/entitlements/access";
 
 export type PlanName = "free" | "clinic" | "plus";
 
@@ -57,19 +58,25 @@ export type UsageCheckResult = { allowed: true } | { allowed: false; reason: str
 
 /**
  * Enforce plan limits before creating a patient / staff user / appointment.
- * Returns allowed=true when the org is on the plus plan or below its caps.
+ * Delegates to the DB-backed entitlements engine (Plan.featuresJson limits),
+ * falling back to a static snapshot if no subscription row exists yet.
  */
 export async function checkPlanLimit(
   organizationId: string,
   resource: "patients" | "staff" | "appointments",
 ): Promise<UsageCheckResult> {
+  try {
+    const result = await checkEntitledPlanLimit(organizationId, resource);
+    if (result.allowed) return { allowed: true };
+    return { allowed: false, reason: result.reason };
+  } catch {
+    // Fall back to the static snapshot (e.g. migrations not yet applied).
+  }
   const organization = await prisma.organization.findUnique({
     where: { id: organizationId },
     select: { plan: true },
   });
-
   const limits = getPlanLimits(organization?.plan);
-
   if (resource === "patients") {
     const count = await prisma.patient.count({ where: { organizationId } });
     if (count >= limits.maxPatients) {
@@ -80,7 +87,6 @@ export async function checkPlanLimit(
     }
     return { allowed: true };
   }
-
   if (resource === "staff") {
     const count = await prisma.user.count({ where: { organizationId } });
     if (count >= limits.maxStaff) {
@@ -91,7 +97,6 @@ export async function checkPlanLimit(
     }
     return { allowed: true };
   }
-
   const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   const count = await prisma.appointment.count({
     where: { organizationId, startTime: { gte: monthStart } },

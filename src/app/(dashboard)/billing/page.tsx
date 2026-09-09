@@ -13,6 +13,7 @@ import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { NewInvoiceDialog } from "@/components/billing/new-invoice-dialog";
+import { UpgradePrompt } from "@/components/plan/upgrade-prompt";
 
 export default function BillingPage() {
   const { t } = useLocale();
@@ -117,6 +118,7 @@ export default function BillingPage() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
+      <UpgradePrompt moduleKey="billing" />
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">{t("billing_title")}</h1>
         <NewInvoiceDialog onSuccess={loadInvoices} />

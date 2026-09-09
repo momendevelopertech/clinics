@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { requireSuperAdmin } from "@/lib/roles"
+import { resolveOrgEntitlements } from "@/lib/entitlements/resolve"
 import { Toaster } from "@/components/ui/sonner"
 import { MedicalProvider } from "@/context/MedicalContext"
 import { FeatureTipsProvider } from "@/components/feature-tips/feature-tips-provider"
@@ -13,6 +14,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const orgId = session?.user?.organizationId
   const roles = session?.user?.roles ?? []
   const superAdmin = await requireSuperAdmin()
+
+  let planModules: Record<string, boolean> | null = null
+  if (orgId) {
+    try {
+      planModules = (await resolveOrgEntitlements(orgId)).modules
+    } catch {
+      planModules = null
+    }
+  }
 
   if (orgId) {
     const org = await prisma.organization.findUnique({
@@ -32,6 +42,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               roles={roles}
               isSuperAdmin={superAdmin.ok}
               orgName={org.name}
+              planModules={planModules}
             >
               {children}
             </DashboardWithCollapsibleSidebar>
