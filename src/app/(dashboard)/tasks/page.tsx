@@ -12,6 +12,7 @@ import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { CreateTaskDialog } from "@/components/tasks/create-task-dialog";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 
 export default function TasksPage() {
   const { t } = useLocale();
@@ -94,7 +95,11 @@ export default function TasksPage() {
     >
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">{t("tasks_title")}</h1>
-        <CreateTaskDialog onSuccess={loadTasks} />
+        <FeatureTip tipId="tasks-followup">
+          <span className="inline-flex">
+            <CreateTaskDialog onSuccess={loadTasks} />
+          </span>
+        </FeatureTip>
       </div>
 
       <Card>

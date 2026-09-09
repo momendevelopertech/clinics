@@ -19,6 +19,7 @@ import { paginate } from "@/lib/pagination";
 import { filterDocuments, formatTypeLabel, getDocumentTypeColor, isExternalUrl } from "@/lib/documents";
 import { logClientError } from "@/lib/client-logger";
 import { PermissionDenied } from "@/components/ui/permission-denied";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { usePermissionState } from "@/hooks/use-permission-state";
 
 interface Document {
@@ -160,41 +161,43 @@ export default function DocumentsPage() {
             }}
           />
           <div className="flex gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
-                >
-                  <FilterIcon className="w-4 h-4" /> Type
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel>Filter by Type</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem
-                  checked={!typeFilter}
-                  onCheckedChange={() => {
-                    setTypeFilter(null);
-                    setPage(1);
-                  }}
-                >
-                  All
-                </DropdownMenuCheckboxItem>
-                {availableTypes.map((type) => (
-                  <DropdownMenuCheckboxItem
-                    key={type}
-                    checked={typeFilter === type}
-                    onCheckedChange={() =>
-                      handleTypeFilterChange(typeFilter === type ? null : type)
-                    }
+            <FeatureTip tipId="documents-types">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
                   >
-                    {formatTypeLabel(type)}
+                    <FilterIcon className="w-4 h-4" /> Type
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuLabel>Filter by Type</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuCheckboxItem
+                    checked={!typeFilter}
+                    onCheckedChange={() => {
+                      setTypeFilter(null);
+                      setPage(1);
+                    }}
+                  >
+                    All
                   </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  {availableTypes.map((type) => (
+                    <DropdownMenuCheckboxItem
+                      key={type}
+                      checked={typeFilter === type}
+                      onCheckedChange={() =>
+                        handleTypeFilterChange(typeFilter === type ? null : type)
+                      }
+                    >
+                      {formatTypeLabel(type)}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </FeatureTip>
 
             <Button
               variant="outline"
