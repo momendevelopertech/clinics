@@ -13,27 +13,6 @@ type LoginFormProps = {
   t: Dictionary;
 };
 
-const demoStaffLogins = [
-  { email: "superadmin@acmeclinic.com", password: "admin123", roleKey: "auth_demoSuperAdmin" },
-  { email: "admin@acmeclinic.com", password: "admin123", roleKey: "auth_demoDoctor" },
-  { email: "dr.fatma@acmeclinic.com", password: "admin123", roleKey: "auth_demoDoctor2" },
-  { email: "owner@acmeclinic.com", password: "admin123", roleKey: "auth_demoOwner" },
-  { email: "ops@acmeclinic.com", password: "admin123", roleKey: "auth_demoCoordinator" },
-  { email: "receptionist@acmeclinic.com", password: "admin123", roleKey: "auth_demoReceptionist" },
-  { email: "billing@acmeclinic.com", password: "admin123", roleKey: "auth_demoBiller" },
-  { email: "nurse@acmeclinic.com", password: "admin123", roleKey: "auth_demoNurse" },
-  { email: "pharmacist@acmeclinic.com", password: "admin123", roleKey: "auth_demoPharmacist" },
-];
-
-function handleFastLogin(email: string, password: string, callbackUrl: string) {
-  void signIn("credentials", {
-    email,
-    password,
-    redirect: true,
-    callbackUrl,
-  });
-}
-
 export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -184,63 +163,17 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
               </Link>
             </div>
 
-            <div className="mt-6 grid gap-3 rounded-[24px] border border-white/60 bg-white/60 p-4 text-sm dark:border-white/6 dark:bg-white/[0.03]">
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">{t["auth_defaultRoute"]}</span>
-                <span className="font-medium text-foreground">{t["nav_dashboard"]}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">{t["auth_sessionMode"]}</span>
-                <span className="font-medium text-foreground">{t["auth_credentialBased"]}</span>
-              </div>
-            </div>
-
-            <div className="mt-4 rounded-[24px] border border-cyan-100 bg-cyan-50/70 p-4 text-sm shadow-sm shadow-cyan-950/5 dark:border-cyan-400/15 dark:bg-cyan-400/8">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="font-semibold text-foreground">{t["auth_demoLogins"]}</p>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                    Local testing accounts from the demo seed.
-                  </p>
+<div className="mt-6 grid gap-3 rounded-[24px] border border-white/60 bg-white/60 p-4 text-sm dark:border-white/6 dark:bg-white/[0.03]">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{t["auth_defaultRoute"]}</span>
+                  <span className="font-medium text-foreground">{t["nav_dashboard"]}</span>
                 </div>
-                <span className="rounded-full bg-white/80 px-2.5 py-1 text-xs font-semibold text-cyan-800 shadow-sm dark:bg-white/10 dark:text-cyan-200">
-                  {t["auth_devOnly"]}
-                </span>
-              </div>
-
-              <Link
-                href="/demo-accounts"
-                target="_blank"
-                rel="noreferrer"
-                className="mt-4 inline-flex w-full items-center justify-center rounded-[14px] border border-cyan-200 bg-white/80 px-3 py-2.5 text-xs font-semibold text-cyan-800 transition hover:bg-white dark:border-cyan-400/20 dark:bg-white/[0.04] dark:text-cyan-200"
-              >
-                {t["auth_viewDemoAccounts"]}
-              </Link>
-
-              <div className="mt-4 grid gap-2">
-                {demoStaffLogins.map((login) => (
-                  <div
-                    className="grid gap-1 rounded-[16px] bg-white/72 px-3 py-2.5 text-xs dark:bg-white/[0.04] sm:grid-cols-[1fr_auto] sm:items-center sm:gap-3"
-                    key={login.email}
-                  >
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                      <span className="font-medium text-foreground">{login.email}</span>
-                      <span className="font-medium text-primary">{t[login.roleKey]}</span>
-                    </div>
-                    <span className="font-mono text-muted-foreground">{login.password}</span>
-                    <button
-                      className="inline-flex h-9 items-center justify-center rounded-[14px] bg-linear-to-r from-primary to-cyan-500 px-3 text-xs font-semibold text-white shadow-md shadow-cyan-500/20 transition hover:translate-y-[-1px] disabled:cursor-not-allowed disabled:opacity-70"
-                      disabled={isSubmitting}
-                      onClick={() => handleFastLogin(login.email, login.password, callbackUrl)}
-                      type="button"
-                    >
-                      {isSubmitting ? t["auth_signingIn"] : t["auth_fastLogin"]}
-                    </button>
-                  </div>
-                ))}
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{t["auth_sessionMode"]}</span>
+                  <span className="font-medium text-foreground">{t["auth_credentialBased"]}</span>
+                </div>
               </div>
             </div>
-          </div>
         </section>
       </div>
     </main>
