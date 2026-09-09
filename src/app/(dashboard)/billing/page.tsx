@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { NewInvoiceDialog } from "@/components/billing/new-invoice-dialog";
@@ -121,6 +122,7 @@ export default function BillingPage() {
         <NewInvoiceDialog onSuccess={loadInvoices} />
       </div>
 
+      <FeatureTip tipId="billing-summary">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
@@ -153,6 +155,7 @@ export default function BillingPage() {
           </CardContent>
         </Card>
       </div>
+      </FeatureTip>
 
       <Card>
         <CardHeader>

@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 
 interface Communication {
   id: string;
@@ -207,13 +208,15 @@ export default function CommunicationsPage() {
               <SelectItem value="whatsapp">WhatsApp</SelectItem>
             </SelectContent>
           </Select>
-          <Select
-            value={statusFilter || "all"}
-            onValueChange={handleStatusChange}
-          >
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="All Status" />
-            </SelectTrigger>
+          <FeatureTip tipId="communications-async">
+          <span className="inline-flex">
+            <Select
+              value={statusFilter || "all"}
+              onValueChange={handleStatusChange}
+            >
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="All Status" />
+              </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
@@ -223,6 +226,8 @@ export default function CommunicationsPage() {
               <SelectItem value="scheduled">Scheduled</SelectItem>
             </SelectContent>
           </Select>
+          </span>
+        </FeatureTip>
         </div>
       </Card>
 

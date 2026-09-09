@@ -24,6 +24,7 @@ import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 
@@ -179,10 +180,12 @@ export default function LabResultsPage() {
           </p>
         </div>
 
+        <FeatureTip tipId="labs-ordervsresult">
         <div className="flex gap-2">
           <AddLabOrderDialog onSuccess={fetchLabResults} />
           <AddLabResultDialog onSuccess={fetchLabResults} />
         </div>
+        </FeatureTip>
       </div>
 
       <div className="bg-white dark:bg-neutral-900 border rounded-[5px] flex-1 shadow-sm flex flex-col pt-2">

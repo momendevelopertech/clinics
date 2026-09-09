@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { AddItemDialog } from "@/components/inventory/add-item-dialog";
@@ -92,14 +93,16 @@ export default function InventoryPage() {
       </div>
 
       {lowStock.length > 0 && (
-        <Card className="border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20">
-          <CardContent className="flex items-center gap-3 pt-6">
-            <AlertTriangle className="w-5 h-5 text-amber-600" />
-            <span className="font-medium">
-              {t("inv_lowStock").replace("{n}", String(lowStock.length))} {lowStock.map((i) => i.name).join(", ")}
-            </span>
-          </CardContent>
-        </Card>
+        <FeatureTip tipId="inventory-reorder">
+          <Card className="border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20">
+            <CardContent className="flex items-center gap-3 pt-6">
+              <AlertTriangle className="w-5 h-5 text-amber-600" />
+              <span className="font-medium">
+                {t("inv_lowStock").replace("{n}", String(lowStock.length))} {lowStock.map((i) => i.name).join(", ")}
+              </span>
+            </CardContent>
+          </Card>
+        </FeatureTip>
       )}
 
       <Card>

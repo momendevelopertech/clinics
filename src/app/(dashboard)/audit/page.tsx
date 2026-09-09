@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 
 export default function AuditPage() {
   const { t } = useLocale();
@@ -64,6 +65,7 @@ export default function AuditPage() {
     >
       <h1 className="text-2xl font-bold tracking-tight">{t("audit_title")}</h1>
 
+      <FeatureTip tipId="audit-append">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -151,6 +153,7 @@ export default function AuditPage() {
           ) : null}
         </CardContent>
       </Card>
+      </FeatureTip>
     </motion.div>
   );
 }

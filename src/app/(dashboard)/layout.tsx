@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma"
 import { requireSuperAdmin } from "@/lib/roles"
 import { Toaster } from "@/components/ui/sonner"
 import { MedicalProvider } from "@/context/MedicalContext"
+import { FeatureTipsProvider } from "@/components/feature-tips/feature-tips-provider"
 import { DashboardWithCollapsibleSidebar } from "@/components/ui/dashboard-with-collapsible-sidebar"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -26,14 +27,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
     if (org) {
       return (
         <MedicalProvider>
-          <DashboardWithCollapsibleSidebar
-            roles={roles}
-            isSuperAdmin={superAdmin.ok}
-            orgName={org.name}
-          >
-            {children}
-          </DashboardWithCollapsibleSidebar>
-          <Toaster position="top-right" richColors />
+          <FeatureTipsProvider>
+            <DashboardWithCollapsibleSidebar
+              roles={roles}
+              isSuperAdmin={superAdmin.ok}
+              orgName={org.name}
+            >
+              {children}
+            </DashboardWithCollapsibleSidebar>
+            <Toaster position="top-right" richColors />
+          </FeatureTipsProvider>
         </MedicalProvider>
       )
     }
@@ -41,13 +44,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <MedicalProvider>
-      <DashboardWithCollapsibleSidebar
-        roles={roles}
-        isSuperAdmin={superAdmin.ok}
-      >
-        {children}
-      </DashboardWithCollapsibleSidebar>
-      <Toaster position="top-right" richColors />
+      <FeatureTipsProvider>
+        <DashboardWithCollapsibleSidebar
+          roles={roles}
+          isSuperAdmin={superAdmin.ok}
+        >
+          {children}
+        </DashboardWithCollapsibleSidebar>
+        <Toaster position="top-right" richColors />
+      </FeatureTipsProvider>
     </MedicalProvider>
   )
 }

@@ -12,12 +12,16 @@ import {
   Users,
   CreditCard,
   CheckCircle2,
+  Lightbulb,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useLocale } from "@/components/locale/locale-provider";
+import { useFeatureTips } from "@/components/feature-tips/feature-tips-provider";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 
 const faqs = [
   {
@@ -55,9 +59,16 @@ const quickLinks = [
 ];
 
 export default function HelpPage() {
+  const { t } = useLocale();
+  const { resetAll } = useFeatureTips();
   const [email, setEmail] = React.useState("");
   const [message, setMessage] = React.useState("");
   const [sent, setSent] = React.useState(false);
+
+  const handleResetTips = () => {
+    resetAll();
+    toast.success(t("help_tipsReset"));
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -131,6 +142,28 @@ export default function HelpPage() {
             </details>
           ))}
         </div>
+      </div>
+
+      {/* Feature Tips */}
+      <div className="rounded-[5px] border border-neutral-200/50 dark:border-neutral-800/50 bg-white/70 dark:bg-neutral-900/70 backdrop-blur-xl p-6 shadow-sm">
+        <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-50 tracking-tight mb-1 flex items-center gap-2">
+          <Lightbulb className="h-5 w-5 text-indigo-600" aria-hidden />
+          {t("help_featureTips")}
+        </h2>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-5">
+          {t("help_featureTipsDesc")}
+        </p>
+        <FeatureTip tipId="help-reset-tips">
+          <Button
+            type="button"
+            variant="outline"
+            className="rounded-[5px] border-neutral-200 dark:border-neutral-800"
+            onClick={handleResetTips}
+          >
+            <Lightbulb className="h-4 w-4 mr-2" aria-hidden />
+            {t("tip_help_reset_title")}
+          </Button>
+        </FeatureTip>
       </div>
 
       {/* Contact Support */}

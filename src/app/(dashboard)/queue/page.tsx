@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 
 type QueueItem = {
   id: string;
@@ -64,8 +65,12 @@ export default function QueuePage() {
               <p className="text-xs text-muted-foreground">{item.patient.mrn ?? ""} · {item.provider.name ?? ""}</p>
             </div>
             <div className="text-right">
-              <p className="font-mono font-bold">{item.tokenNumber ?? "—"}</p>
-              <p className="text-xs text-muted-foreground">{item.room?.name ?? t("queue_unassigned")}</p>
+              <FeatureTip tipId="queue-token">
+                <span>
+                  <p className="font-mono font-bold">{item.tokenNumber ?? "—"}</p>
+                  <p className="text-xs text-muted-foreground">{item.room?.name ?? t("queue_unassigned")}</p>
+                </span>
+              </FeatureTip>
             </div>
           </div>
         ))}

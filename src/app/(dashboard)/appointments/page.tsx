@@ -33,6 +33,7 @@ import { DataPagination } from "@/components/ui/data-pagination"
 import { paginate } from "@/lib/pagination"
 import { useLocale } from "@/components/locale/locale-provider"
 import { cn } from "@/lib/utils"
+import { FeatureTip } from "@/components/feature-tips/feature-tip"
 
 function toStatusValue(s: Appointment["status"]): string {
   if (s === "Confirmed") return "confirmed"
@@ -359,6 +360,7 @@ function AppointmentsPageContent() {
                       ))}
                     </SelectContent>
                   </Select>
+                 <FeatureTip tipId="appointments-views">
                  <div className="bg-neutral-100 dark:bg-neutral-800 rounded-[5px] p-1 flex" role="tablist" aria-label={t("appts_viewMode")}>
                      <button
                        role="tab"
@@ -385,14 +387,15 @@ function AppointmentsPageContent() {
                            : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
                        )}
                      >
-                       <CalendarDays className="w-3.5 h-3.5" />
-                       {t("appts_calendar")}
-                     </button>
-                 </div>
-             </div>
-         </div>
-         
-         {view === "calendar" ? (
+<CalendarDays className="w-3.5 h-3.5" />
+                        {t("appts_calendar")}
+                      </button>
+ </div>
+               </FeatureTip>
+           </div>
+          </div>
+          
+          {view === "calendar" ? (
            <div className="flex-1 overflow-auto min-h-0">
              <FullScreenCalendar
                events={calendarEvents}
@@ -454,15 +457,17 @@ function AppointmentsPageContent() {
                                    {t("appts_edit")}
                                  </Button>
                                  <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}>{t("appts_cancel")}</Button>
-                                 {!apt.isWalkIn && (apt.status ?? "").toLowerCase() !== "cancelled" ? (
-                                   <Button variant="link" className="text-violet-600 hover:text-violet-700 p-0 h-auto" onClick={() => {
-                                     updateAppointment(apt.id, {
-                                       status: "In Waiting Room",
-                                       isWalkIn: true,
-                                     });
-                                     toast.success(t("appts_markedWalkIn"));
-                                   }}>{t("appts_walkIn")}</Button>
-                                 ) : null}
+{!apt.isWalkIn && (apt.status ?? "").toLowerCase() !== "cancelled" ? (
+                                    <FeatureTip tipId="appointments-walkin">
+                                    <Button variant="link" className="text-violet-600 hover:text-violet-700 p-0 h-auto" onClick={() => {
+                                      updateAppointment(apt.id, {
+                                        status: "In Waiting Room",
+                                        isWalkIn: true,
+                                      });
+                                      toast.success(t("appts_markedWalkIn"));
+                                    }}>{t("appts_walkIn")}</Button>
+                                    </FeatureTip>
+                                  ) : null}
                               </td>
                          </tr>
                      )})}

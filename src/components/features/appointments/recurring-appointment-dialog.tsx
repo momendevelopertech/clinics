@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Repeat2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import {
   Dialog,
   DialogContent,
@@ -111,12 +112,14 @@ export function RecurringAppointmentDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="flex items-center gap-2">
-          <Repeat2 className="w-4 h-4" /> Recurring
-        </Button>
-      </DialogTrigger>
+    <FeatureTip tipId="appointments-recurring">
+      <span className="inline-flex">
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm" className="flex items-center gap-2">
+              <Repeat2 className="w-4 h-4" /> Recurring
+            </Button>
+          </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Set Recurring Pattern</DialogTitle>
@@ -203,6 +206,8 @@ export function RecurringAppointmentDialog({
           </div>
         </form>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+      </span>
+    </FeatureTip>
   );
 }

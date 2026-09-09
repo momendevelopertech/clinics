@@ -36,6 +36,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -554,22 +555,24 @@ function DashboardHeader({
 
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="relative hidden md:block">
-            <form onSubmit={handleSearchSubmit}>
-              <label className="flex w-[30rem] items-center gap-3 rounded-[18px] border border-white/55 bg-white/60 px-4 py-2.5 text-sm text-muted-foreground shadow-sm dark:border-white/6 dark:bg-white/[0.03]">
-                <Search className="h-4 w-4" />
-                <input
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  onFocus={() => setIsSearchFocused(true)}
-                  onBlur={() => {
-                    window.setTimeout(() => setIsSearchFocused(false), 120);
-                  }}
-                  placeholder={t("header_searchPlaceholder")}
-                  className="w-full bg-transparent text-foreground outline-none placeholder:text-muted-foreground"
-                  aria-label={t("header_searchPlaceholder")}
-                />
-              </label>
-            </form>
+            <FeatureTip tipId="shell-search">
+              <form onSubmit={handleSearchSubmit}>
+                <label className="flex w-[30rem] items-center gap-3 rounded-[18px] border border-white/55 bg-white/60 px-4 py-2.5 text-sm text-muted-foreground shadow-sm dark:border-white/6 dark:bg-white/[0.03]">
+                  <Search className="h-4 w-4" />
+                  <input
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => {
+                      window.setTimeout(() => setIsSearchFocused(false), 120);
+                    }}
+                    placeholder={t("header_searchPlaceholder")}
+                    className="w-full bg-transparent text-foreground outline-none placeholder:text-muted-foreground"
+                    aria-label={t("header_searchPlaceholder")}
+                  />
+                </label>
+              </form>
+            </FeatureTip>
 
             {isSearchFocused && searchResults.length > 0 ? (
               <div className="surface-panel absolute left-0 top-[calc(100%+0.75rem)] z-30 w-full rounded-[24px] border border-white/60 p-2 dark:border-white/6">

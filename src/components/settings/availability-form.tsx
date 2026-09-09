@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { CalendarClock, CheckCircle2, Loader2 } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n/locale";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 
 const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 
@@ -85,26 +86,28 @@ export function AvailabilityForm({ t, current }: AvailabilityFormProps) {
       <form onSubmit={handleSubmit} className="surface-panel space-y-6 rounded-[24px] border border-white/55 p-6 dark:border-white/6">
         <div>
           <p className="text-sm font-medium text-foreground">{t["availability_type"]}</p>
-          <div className="mt-3 grid gap-2 sm:grid-cols-3">
-            {[
-              { value: "regular", label: t["availability_regular"] },
-              { value: "oncall", label: t["availability_oncall"] },
-              { value: "by_appointment", label: t["availability_byAppointment"] },
-            ].map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setAvailabilityType(option.value)}
-                className={`rounded-[16px] border px-4 py-3 text-sm font-medium transition ${
-                  availabilityType === option.value
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-white/60 bg-white/60 text-muted-foreground dark:border-white/6 dark:bg-white/[0.03]"
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+          <FeatureTip tipId="availability-template">
+            <div className="mt-3 grid gap-2 sm:grid-cols-3">
+              {[
+                { value: "regular", label: t["availability_regular"] },
+                { value: "oncall", label: t["availability_oncall"] },
+                { value: "by_appointment", label: t["availability_byAppointment"] },
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setAvailabilityType(option.value)}
+                  className={`rounded-[16px] border px-4 py-3 text-sm font-medium transition ${
+                    availabilityType === option.value
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-white/60 bg-white/60 text-muted-foreground dark:border-white/6 dark:bg-white/[0.03]"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </FeatureTip>
         </div>
 
         {regularMode ? (

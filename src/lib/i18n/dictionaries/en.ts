@@ -1157,4 +1157,75 @@ export const en: Dictionary = {
   lang_label: "Language",
   lang_en: "English",
   lang_ar: "العربية",
+
+  // Feature tips (coach marks)
+  featureTip_label: "Feature tip",
+  featureTip_close: "Close tip",
+  featureTip_gotIt: "Got it",
+
+  tip_shell_search_title: "Search across everything",
+  tip_shell_search_desc:
+    "Use the global search to find patients, appointments, and pages without leaving the screen.",
+  tip_patients_manage_title: "Manage patient quickly",
+  tip_patients_manage_desc:
+    'The Manage button opens a compact summary sheet — archive, restore, or edit key contact details. Timeline opens the full record.',
+  tip_appts_views_title: "Switch appointment views",
+  tip_appts_views_desc:
+    "Move between the List, Calendar, and Board views to plan your day the way you prefer.",
+  tip_appts_walkin_title: "Walk-in patients",
+  tip_appts_walkin_desc:
+    "Register an unbooked patient on the spot — they're marked arrived and handed a token for the queue.",
+  tip_appts_recurring_title: "Repeat appointments",
+  tip_appts_recurring_desc:
+    "Create a repetition pattern so the same patient books weekly or monthly without retyping details.",
+  tip_waitlist_status_title: "Move patients through stages",
+  tip_waitlist_status_desc:
+    "Drag or toggle cards between Waiting, In-room, and Done, then call patients when it's their turn.",
+  tip_queue_token_title: "How the queue works",
+  tip_queue_token_desc:
+    "Cards are served in order of arrival — the token number is exactly the patient's place in line.",
+  tip_encounters_charting_title: "Chart each visit",
+  tip_encounters_charting_desc:
+    "Encounters keep free-text notes for one visit; every saved section feeds the patient's timeline.",
+  tip_billing_summary_title: "Billing at a glance",
+  tip_billing_summary_desc:
+    "The summary cards show collected, outstanding, and open invoices — status chips like overdue drive these totals.",
+  tip_payments_status_title: "Payment statuses",
+  tip_payments_status_desc:
+    "Status chips tell you where a payment stands — pending, processed, failed — so nothing slips through.",
+  tip_labs_ordervsresult_title: "Order vs. Result",
+  tip_labs_ordervsresult_desc:
+    '"Add Order" requests a test to be performed; "Add Result" records the outcome. They are separate steps.',
+  tip_inventory_reorder_title: "Low-stock alert",
+  tip_inventory_reorder_desc:
+    "The amber banner flags items at or below their reorder level so you can restock before you run out.",
+  tip_tasks_followup_title: "Tasks are reminders",
+  tip_tasks_followup_desc:
+    "Use tasks for follow-ups and callbacks linked to a patient; statuses track open → in progress → done.",
+  tip_documents_types_title: "Documents tie to one patient",
+  tip_documents_types_desc:
+    "Every upload belongs to one patient and carries a type (scan, lab result, referral…). The filter groups them for quick finding.",
+  tip_communications_async_title: "Messages are queued",
+  tip_communications_async_desc:
+    "SMS, WhatsApp, and email are delivered asynchronously — watch the badge: pending → sent → delivered or failed.",
+  tip_campaigns_audience_title: "Reach the right audience",
+  tip_campaigns_audience_desc:
+    "Campaigns broadcast to a filtered audience; segment by diagnosis, age, or last visit to keep it relevant.",
+  tip_consents_log_title: "Keep consents documented",
+  tip_consents_log_desc:
+    "Record who consented, to what, and when — every entry stays attached to the patient record.",
+  tip_audit_append_title: "The trail is append-only",
+  tip_audit_append_desc:
+    "Audit records can't be edited or deleted, so every staff action stays traceable.",
+  tip_availability_template_title: "Availability modes",
+  tip_availability_template_desc:
+    "Pick a schedule mode — regular hours, on-call, or by-appointment — so your availability stays consistent across the week.",
+  tip_help_reset_title: "Show feature tips",
+  tip_help_reset_desc:
+    "Press this anytime to bring the onboarding tips back — even after you've dismissed them.",
+  help_featureTips: "Feature tips",
+  help_featureTipsDesc:
+    "Learn the interface with non-intrusive tips. Re-enable them anytime.",
+  help_tipsReset:
+    "Feature tips re-enabled. Visit a page to see them.",
 };

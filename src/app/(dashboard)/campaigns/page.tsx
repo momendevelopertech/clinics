@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 
 interface Campaign {
   id: string;
@@ -111,7 +112,11 @@ export default function CampaignsPage() {
             Create and manage drip campaigns and broadcasts
           </p>
         </div>
-        <AddCampaignDialog onSuccess={() => fetchCampaigns()} />
+        <FeatureTip tipId="campaigns-audience">
+          <span className="inline-flex">
+            <AddCampaignDialog onSuccess={() => fetchCampaigns()} />
+          </span>
+        </FeatureTip>
       </div>
 
       {/* Stats Cards */}

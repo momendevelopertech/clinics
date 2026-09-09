@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 
 type Patient = { id: string; firstName: string; lastName: string; mrn: string };
 type Encounter = {
@@ -118,6 +119,7 @@ export function EncountersWorkspace() {
       <Card>
         <CardHeader><CardTitle>{t("enc_start")}</CardTitle></CardHeader>
         <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-end">
+        <FeatureTip tipId="encounters-charting">
           <div className="grid flex-1 gap-2">
             <Label htmlFor="encounter-patient">{t("enc_patient")}</Label>
             <select id="encounter-patient" className="h-10 rounded-md border bg-background px-3 text-sm" value={patientId} onChange={(event) => setPatientId(event.target.value)}>
@@ -125,6 +127,7 @@ export function EncountersWorkspace() {
               {patients.map((patient) => <option key={patient.id} value={patient.id}>{patient.firstName} {patient.lastName} · {patient.mrn}</option>)}
             </select>
           </div>
+          </FeatureTip>
           <Button onClick={() => void startEncounter().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_startError")))}>{t("enc_start")}</Button>
         </CardContent>
       </Card>

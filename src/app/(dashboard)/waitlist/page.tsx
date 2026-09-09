@@ -25,6 +25,7 @@ import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 
 interface WaitlistEntry {
   id: string;
@@ -180,16 +181,18 @@ export default function WaitlistPage() {
             }}
           />
           <div className="flex gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
-                >
-                  <FilterIcon className="w-4 h-4" /> {t("common_status")}
-                </Button>
-              </DropdownMenuTrigger>
+            <FeatureTip tipId="waitlist-status">
+              <span className="inline-flex">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2"
+                    >
+                      <FilterIcon className="w-4 h-4" /> {t("common_status")}
+                    </Button>
+                  </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuLabel>{t("wl_filterByStatus")}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -240,7 +243,9 @@ export default function WaitlistPage() {
                   {t("wl_cancelled")}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
-            </DropdownMenu>
+                </DropdownMenu>
+              </span>
+            </FeatureTip>
 
             <Button
               variant="outline"

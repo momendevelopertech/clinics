@@ -25,6 +25,7 @@ import { AddPatientDialog } from "@/components/patients/add-patient-dialog"
 import { DataPagination } from "@/components/ui/data-pagination"
 import { paginate } from "@/lib/pagination"
 import { useLocale } from "@/components/locale/locale-provider"
+import { FeatureTip } from "@/components/feature-tips/feature-tip"
 
 function PatientsPageContent() {
   const searchParams = useSearchParams()
@@ -151,21 +152,23 @@ function PatientsPageContent() {
                              </td>
                              <td className="px-6 py-4 text-neutral-500 hidden md:table-cell">{new Date(patient.regDate).toLocaleDateString()}</td>
 <td className="px-6 py-4">
-                                <div className="flex items-center gap-3">
-                                  <Sheet>
-                                    <SheetTrigger asChild>
-                                      <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0 h-auto">{t("patients_manage")}</Button>
-                                    </SheetTrigger>
-                                    <PatientProfileSheet patient={patient} onStatusChange={refetchPatients} />
-                                  </Sheet>
-                                  <Link
-                                    href={`/patients/${patient.id}`}
-                                    className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
-                                  >
-                                    {t("patients_timeline")}
-                                  </Link>
-                                </div>
-                              </td>
+                                 <FeatureTip tipId="patients-manage">
+                                 <div className="flex items-center gap-3">
+                                   <Sheet>
+                                     <SheetTrigger asChild>
+                                       <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0 h-auto">{t("patients_manage")}</Button>
+                                     </SheetTrigger>
+                                     <PatientProfileSheet patient={patient} onStatusChange={refetchPatients} />
+                                   </Sheet>
+                                   <Link
+                                     href={`/patients/${patient.id}`}
+                                     className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+                                   >
+                                     {t("patients_timeline")}
+                                   </Link>
+                                 </div>
+                                 </FeatureTip>
+                               </td>
                          </tr>
                      ))}
                  </tbody>

@@ -1151,4 +1151,73 @@ export const ar: Dictionary = {
   lang_label: "اللغة",
   lang_en: "English",
   lang_ar: "العربية",
+
+  // Feature tips (coach marks)
+  featureTip_label: "تلميح ميزة",
+  featureTip_close: "إغلاق التلميح",
+  featureTip_gotIt: "فهمت",
+
+  tip_shell_search_title: "ابحث في كل شيء",
+  tip_shell_search_desc:
+    "استخدم البحث الشامل للعثور على المرضى أو المواعيد أو الصفحات دون مغادرة الشاشة.",
+  tip_patients_manage_title: "إدارة المريض بسرعة",
+  tip_patients_manage_desc:
+    "يفتح زر «إدارة» لوحة ملخصة — أرشفة أو استعادة أو تعديل بيانات التواصل الأساسية. و«الخط الزمني» يفتح السجل الكامل.",
+  tip_appts_views_title: "بدّل عروض المواعيد",
+  tip_appts_views_desc:
+    "تنقّل بين عروض القائمة والتقويم ولوحة المهام لتنظيم يومك بالطريقة التي تناسبك.",
+  tip_appts_walkin_title: "الدخول المباشر",
+  tip_appts_walkin_desc:
+    "سجّل مريضًا غير محجوز فورًا — يُحتسب كحاضر ويحصل على رقم في الطابور.",
+  tip_appts_recurring_title: "المواعيد المتكررة",
+  tip_appts_recurring_desc:
+    "أنشئ نمط تكرار ليحجز نفس المريض أسبوعيًا أو شهريًا دون إعادة إدخال التفاصيل.",
+  tip_waitlist_status_title: "تقدم المرضى عبر المراحل",
+  tip_waitlist_status_desc:
+    "اسحب البطاقات أو بدّلها بين «بانتظار» و«بالغرفة» و«منجز»، ثم نادِ المرضى عند دورهم.",
+  tip_queue_token_title: "كيف يعمل الطابور",
+  tip_queue_token_desc:
+    "تُخدم البطاقات حسب الوصول — رقم الدور يحدد مكان المريض في الطابور.",
+  tip_encounters_charting_title: "توثيق كل زيارة",
+  tip_encounters_charting_desc:
+    "تحتفظ الجلسات بملاحظات نصية للزيارة؛ وكل قسم محفوظ يُضاف إلى الخط الزمني للمريض.",
+  tip_billing_summary_title: "الفوترة بنظرة",
+  tip_billing_summary_desc:
+    "تُظهر بطاقات الملخص المحصَّل وغير المسدَّد والمفتوح — وترميزات الحالة مثل «متأخر» تغذي هذه الإجماليات.",
+  tip_payments_status_title: "حالات الدفعات",
+  tip_payments_status_desc:
+    "ترميزات الحالة توضح موقف الدفعة — قيد الانتظار أو معالجة أو فشلت — حتى لا يفلت شيء.",
+  tip_labs_ordervsresult_title: "الطلب مقابل النتيجة",
+  tip_labs_ordervsresult_desc:
+    "«إضافة طلب» تطلب فحصًا سيُجرى؛ و«إضافة نتيجة» تسجّل الناتج. خطوتان منفصلتان.",
+  tip_inventory_reorder_title: "تنبيه نفاد المخزون",
+  tip_inventory_reorder_desc:
+    "يعرض الشريط الكهرماني الأصناف التي بلغت حد إعادة الطلب لتعيد توريدها قبل النفاد.",
+  tip_tasks_followup_title: "المهام هي تذكيرات",
+  tip_tasks_followup_desc:
+    "استخدم المهام للمتابعات والمعاودات المرتبطة بمريض؛ وترمز الحالات: مفتوح ← قيد التنفيذ ← منجز.",
+  tip_documents_types_title: "المستندات مرتبطة بمريض واحد",
+  tip_documents_types_desc:
+    "كل مستند يخص مريضًا واحدًا ويحمل نوعًا (صورة، نتيجة مختبر، إحالة…). والفلتر يجمّعها للعثور السريع.",
+  tip_communications_async_title: "الرسائل في قائمة انتظار",
+  tip_communications_async_desc:
+    "تُرسل SMS وواتساب والبريد بشكل غير متزامن — تابع الترميز: معلقة ← مرسلة ← تم التسليم أو فشلت.",
+  tip_campaigns_audience_title: "اصنع جمهورًا هادفًا",
+  tip_campaigns_audience_desc:
+    "تصل الحملات إلى جمهور مُصفّى؛ قسّم حسب التشخيص أو العمر أو آخر زيارة لتظل هادفة.",
+  tip_consents_log_title: "توثيق الموافقات",
+  tip_consents_log_desc:
+    "سجّل من وافق وعلى ماذا ومتى — وتبقى كل موافقة مرفقة بملف المريض.",
+  tip_audit_append_title: "السجل مضاف فقط",
+  tip_audit_append_desc:
+    "لا يمكن تعديل سجلات التدقيق أو حذفها، لتبقى كل إجراءات الموظفين قابلة للتتبع.",
+  tip_availability_template_title: "أنماط التوفر",
+  tip_availability_template_desc:
+    "اختر نمط الجدول — ساعات منتظمة أو مناوبة أو بالحجز — ليظل توفُّرك متسقًا طوال الأسبوع.",
+  tip_help_reset_title: "إظهار تلميحات الميزات",
+  tip_help_reset_desc:
+    "اضغط في أي وقت لإعادة عرض التلميحات — حتى بعد أن أغلقها المستخدم.",
+  help_featureTips: "تلميحات الميزات",
+  help_featureTipsDesc: "تعلّم الواجهة عبر تلميحات غير مزعجة. يمكنك إعادة تفعيلها في أي وقت.",
+  help_tipsReset: "أُعيد تفعيل تلميحات الميزات. زُر أي صفحة لمشاهدتها.",
 };

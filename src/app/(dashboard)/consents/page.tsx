@@ -7,6 +7,7 @@ import {
   Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -135,7 +136,11 @@ export default function ConsentsPage() {
           </p>
         </div>
 
-        <AddConsentDialog onSuccess={fetchConsents} />
+        <FeatureTip tipId="consents-log">
+          <span className="inline-flex">
+            <AddConsentDialog onSuccess={fetchConsents} />
+          </span>
+        </FeatureTip>
       </div>
 
       <div className="bg-white dark:bg-neutral-900 border rounded-[5px] flex-1 shadow-sm flex flex-col pt-2">
