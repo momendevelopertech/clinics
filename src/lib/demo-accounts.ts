@@ -8,9 +8,14 @@ export type DemoTenant = {
   name: string;
   city: string;
   accounts: DemoAccount[];
+  patient: {
+    email: string;
+    mrn: string;
+  };
 };
 
 export const DEMO_PASSWORD = "DemoClinic!2026";
+export const DEMO_PATIENT_PASSWORD = "PatientDemo!2026";
 
 export const LOCAL_SEED_ORG = "acmeclinic";
 export const LOCAL_SEED_PASSWORD = "admin123";
@@ -27,6 +32,7 @@ export const DEMO_TENANTS: DemoTenant[] = [
       { role: "Biller", roleKey: "auth_demoBiller", email: "biller@alexandria.demo.openhealthcrm.test" },
       { role: "Pharmacist", roleKey: "auth_demoPharmacist", email: "pharmacist@alexandria.demo.openhealthcrm.test" },
     ],
+    patient: { email: "patient@alexandria.demo.openhealthcrm.test", mrn: "DM-demo-alexandria-family-clinic-001" },
   },
   {
     name: "مركز سموحة لطب الأطفال — Smouha Pediatrics Center",
@@ -39,6 +45,7 @@ export const DEMO_TENANTS: DemoTenant[] = [
       { role: "Biller", roleKey: "auth_demoBiller", email: "biller@smouha.demo.openhealthcrm.test" },
       { role: "Pharmacist", roleKey: "auth_demoPharmacist", email: "pharmacist@smouha.demo.openhealthcrm.test" },
     ],
+    patient: { email: "patient@smouha.demo.openhealthcrm.test", mrn: "DM-demo-smouha-pediatrics-center-001" },
   },
 ];
 

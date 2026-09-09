@@ -3,8 +3,9 @@ import Link from "next/link";
 import { ArrowLeft, Building2, ExternalLink, KeyRound } from "lucide-react";
 import { getDictionary } from "@/lib/i18n/server";
 import type { Dictionary } from "@/lib/i18n/locale";
-import { DEMO_PASSWORD, DEMO_TENANTS, LOCAL_SEED_ACCOUNTS, LOCAL_SEED_ORG, LOCAL_SEED_PASSWORD } from "@/lib/demo-accounts";
+import { DEMO_PASSWORD, DEMO_PATIENT_PASSWORD, DEMO_TENANTS, LOCAL_SEED_ACCOUNTS, LOCAL_SEED_ORG, LOCAL_SEED_PASSWORD } from "@/lib/demo-accounts";
 import { DemoQuickLogin } from "@/components/demo/demo-quick-login";
+import { PatientQuickLogin } from "@/components/demo/patient-quick-login";
 
 type CardProps = {
   t: Dictionary;
@@ -118,6 +119,31 @@ export default async function DemoAccountsPage() {
                   email: account.email,
                 }))}
               />
+              <div className="mt-4 rounded-[18px] border border-cyan-200/70 bg-cyan-50/70 p-4 dark:border-cyan-400/20 dark:bg-cyan-400/10">
+                <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+                  <div>
+                    <p className="font-semibold text-foreground">{t["auth_demoPatient"]}</p>
+                    <p className="mt-1 font-mono text-xs text-muted-foreground">
+                      {tenant.patient.email} / {tenant.patient.mrn} / {DEMO_PATIENT_PASSWORD}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <PatientQuickLogin
+                      email={tenant.patient.email}
+                      mrn={tenant.patient.mrn}
+                      password={DEMO_PATIENT_PASSWORD}
+                      label={t["auth_patientFastLogin"]}
+                    />
+                    <Link
+                      href="/patient-login"
+                      className="inline-flex items-center gap-1.5 rounded-[14px] border border-cyan-600/40 px-3 py-2 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-100 dark:text-cyan-200 dark:hover:bg-cyan-400/10"
+                    >
+                      {t["auth_patientPortal"]}
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
             </AccountCard>
           ))}
 

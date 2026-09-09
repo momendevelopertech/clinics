@@ -15,6 +15,7 @@ const { randomBytes, scryptSync } = require("crypto");
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 const DEMO_PASSWORD = "DemoClinic!2026";
+const DEMO_PATIENT_PASSWORD = "PatientDemo!2026";
 
 function hashPassword(password) {
   const salt = randomBytes(16).toString("hex");
@@ -94,6 +95,10 @@ async function ensureUser(orgId, branchId, role, account, passwordHash) {
 }
 
 async function ensurePatient(orgId, clinic, index, data) {
+  const isPortalDemoPatient = index === 1;
+  const patientEmail = isPortalDemoPatient
+    ? `patient@${clinic.emailDomain}`
+    : `${clinic.slug}.patient${index}@example.test`;
   return prisma.patient.upsert({
     where: { mrn: `DM-${clinic.slug}-${String(index).padStart(3, "0")}` },
     update: {
@@ -102,7 +107,7 @@ async function ensurePatient(orgId, clinic, index, data) {
       lastName: data.lastName,
       dateOfBirth: new Date(data.dateOfBirth),
       gender: data.gender,
-      email: `${clinic.slug}.patient${index}@example.test`,
+      email: patientEmail,
       phone: data.phone,
       city: clinic.city,
       country: clinic.country,
@@ -110,6 +115,7 @@ async function ensurePatient(orgId, clinic, index, data) {
       allergies: data.allergies,
       primaryCareProvider: data.primaryCareProvider,
       familyHistory: data.familyHistory,
+      ...(isPortalDemoPatient ? { passwordHash: data.passwordHash } : {}),
       status: "Active",
     },
     create: {
@@ -119,7 +125,7 @@ async function ensurePatient(orgId, clinic, index, data) {
       lastName: data.lastName,
       dateOfBirth: new Date(data.dateOfBirth),
       gender: data.gender,
-      email: `${clinic.slug}.patient${index}@example.test`,
+      email: patientEmail,
       phone: data.phone,
       city: clinic.city,
       country: clinic.country,
@@ -127,6 +133,7 @@ async function ensurePatient(orgId, clinic, index, data) {
       allergies: data.allergies,
       primaryCareProvider: data.primaryCareProvider,
       familyHistory: data.familyHistory,
+      passwordHash: data.passwordHash ?? null,
       status: "Active",
     },
   });
@@ -218,7 +225,10 @@ async function seedClinic(clinic) {
 
   const patients = [];
   for (let index = 1; index <= 4; index += 1) {
-    patients.push(await ensurePatient(org.id, clinic, index, clinic.patients[index - 1]));
+    patients.push(await ensurePatient(org.id, clinic, index, {
+      ...clinic.patients[index - 1],
+      passwordHash: hashPassword(DEMO_PATIENT_PASSWORD),
+    }));
   }
 
   const services = {};
@@ -335,7 +345,12 @@ async function seedClinic(clinic) {
     organizationId: org.id, name: `حملة رعاية مزمنة تجريبية:${clinic.slug}`, type: "broadcast", status: "draft", triggerType: "chronic_care",
   });
 
-  return { name: clinic.name, orgId: org.id, accounts: accountDefinitions.map(([key, roleName]) => ({ role: roleName, email: `${key}@${clinic.emailDomain}` })) };
+  return {
+    name: clinic.name,
+    orgId: org.id,
+    accounts: accountDefinitions.map(([key, roleName]) => ({ role: roleName, email: `${key}@${clinic.emailDomain}` })),
+    patientAccount: { email: `patient@${clinic.emailDomain}`, mrn: `DM-${clinic.slug}-001` },
+  };
 }
 
 const clinics = [
@@ -408,9 +423,10 @@ async function main() {
   await suspendStaleDemoOrgs();
   for (const clinic of clinics) {
     const result = await seedClinic(clinic);
-    console.log(`${result.name}: ${result.accounts.length} staff accounts ready (${result.orgId})`);
+    console.log(`${result.name}: ${result.accounts.length} staff accounts + 1 patient account ready (${result.orgId})`);
   }
   console.log(`Demo password for all staff: ${DEMO_PASSWORD}`);
+  console.log(`Demo password for one patient in each clinic: ${DEMO_PATIENT_PASSWORD}`);
 }
 
 main()

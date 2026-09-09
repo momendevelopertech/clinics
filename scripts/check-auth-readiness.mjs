@@ -19,6 +19,10 @@ const DEMO_PATIENTS = [
   { email: "marcus.lee@example.com", mrn: "MRN-1004" },
   { email: "priya.patel@example.com", mrn: "MRN-1005" },
 ];
+const DEMO_TENANT_PATIENTS = [
+  { email: "patient@alexandria.demo.openhealthcrm.test", mrn: "DM-demo-alexandria-family-clinic-001" },
+  { email: "patient@smouha.demo.openhealthcrm.test", mrn: "DM-demo-smouha-pediatrics-center-001" },
+];
 
 function getCanonicalAuthUrl() {
   const nextAuthUrl = process.env.NEXTAUTH_URL?.trim() ?? "";
@@ -117,6 +121,16 @@ async function main() {
       },
       orderBy: [{ mrn: "asc" }],
     });
+    const demoTenantPatients = await prisma.patient.findMany({
+      where: {
+        OR: DEMO_TENANT_PATIENTS.map((patient) => ({
+          email: patient.email,
+          mrn: patient.mrn,
+        })),
+      },
+      select: { email: true, mrn: true, organizationId: true, passwordHash: true },
+      orderBy: [{ mrn: "asc" }],
+    });
     await prisma.patientSession.count();
     await prisma.auditLog.count();
 
@@ -144,13 +158,28 @@ async function main() {
     }
 
     console.log("");
+    console.log(
+      `${getStatusLabel(demoTenantPatients.length === DEMO_TENANT_PATIENTS.length && demoTenantPatients.every((patient) => Boolean(patient.passwordHash)))} Demo tenant patient accounts: ${demoTenantPatients.length}/${DEMO_TENANT_PATIENTS.length}`,
+    );
+    for (const demoPatient of DEMO_TENANT_PATIENTS) {
+      const patient = demoTenantPatients.find(
+        (entry) => entry.email === demoPatient.email && entry.mrn === demoPatient.mrn,
+      );
+      console.log(
+        `${getStatusLabel(Boolean(patient?.passwordHash))} ${demoPatient.email} / ${demoPatient.mrn}`,
+      );
+    }
+
+    console.log("");
     console.log("[ok] PatientSession table available");
     console.log("[ok] AuditLog table available");
 
     console.log("");
     if (
       staffUsers.length !== DEMO_STAFF_EMAILS.length ||
-      patients.length !== DEMO_PATIENTS.length
+      patients.length !== DEMO_PATIENTS.length ||
+      demoTenantPatients.length !== DEMO_TENANT_PATIENTS.length ||
+      demoTenantPatients.some((patient) => !patient.passwordHash)
     ) {
       console.log("Result: demo accounts are not fully provisioned in this database.");
       console.log("Action: run `npm run db:seed` against this environment if demo logins should exist.");

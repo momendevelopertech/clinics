@@ -138,6 +138,11 @@ Patient portal logins:
 - `marcus.lee@example.com` / `patient123` / `MRN-1004`
 - `priya.patel@example.com` / `patient123` / `MRN-1005`
 
+Public demo clinic patient accounts (one per demo clinic):
+
+- `patient@alexandria.demo.openhealthcrm.test` / `PatientDemo!2026` / `DM-demo-alexandria-family-clinic-001`
+- `patient@smouha.demo.openhealthcrm.test` / `PatientDemo!2026` / `DM-demo-smouha-pediatrics-center-001`
+
 These credentials are for local testing only.
 
 Production note:
