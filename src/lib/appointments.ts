@@ -134,6 +134,34 @@ export type DaySlot = {
 };
 
 /**
+ * Patient self-service guards (portal cancel/reschedule). Pure and tested:
+ * only the patient's own upcoming scheduled/confirmed visits can change,
+ * and only while the visit is still in the future.
+ */
+export function canPatientCancelAppointment(
+  appointment: { patientId: string; status: string; startTime: Date },
+  patientId: string,
+  now: Date = new Date(),
+): boolean {
+  if (appointment.patientId !== patientId) return false;
+  if (appointment.startTime <= now) return false;
+  if (!["scheduled", "confirmed", "arrived", "in_progress"].includes(appointment.status)) {
+    return false;
+  }
+  return isAppointmentTransitionAllowed(appointment.status, "cancelled");
+}
+
+export function canPatientRescheduleAppointment(
+  appointment: { patientId: string; status: string; startTime: Date },
+  patientId: string,
+  now: Date = new Date(),
+): boolean {
+  if (appointment.patientId !== patientId) return false;
+  if (appointment.startTime <= now) return false;
+  return appointment.status === "scheduled" || appointment.status === "confirmed";
+}
+
+/**
  * Availability grid for one provider + day. Slots tile the provider's
  * working window (or openTime–closeTime fallback) in `durationMins` steps;
  * past slots and ones overlapping existing active appointments are removed.

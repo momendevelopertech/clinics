@@ -12,6 +12,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -34,10 +35,17 @@ interface PatientData {
 }
 
 export default function PatientPortalPage() {
-  const { t } = useLocale();
+  const { t, lang } = useLocale();
   const [patient, setPatient] = React.useState<PatientData | null>(null);
   const [orgSlug, setOrgSlug] = React.useState<string | null>(null);
-  const [appointments, setAppointments] = React.useState<Array<{ id: string; type: string; provider: string; status: string }>>([]);
+  const [appointments, setAppointments] = React.useState<Array<{ id: string; type: string; provider: string; providerId: string; status: string; startTime: string }>>([]);
+  const [documents, setDocuments] = React.useState<Array<{ id: string; name: string; type: string; url: string }>>([]);
+  const [invoices, setInvoices] = React.useState<Array<{ id: string; invoiceNumber: string; status: string; totalAmount: number; amountPaid: number; balance: number }>>([]);
+  const [reschedulingId, setReschedulingId] = React.useState<string | null>(null);
+  const [rescheduleDate, setRescheduleDate] = React.useState("");
+  const [rescheduleSlots, setRescheduleSlots] = React.useState<Array<{ start: string; end: string }>>([]);
+  const [rescheduleSlot, setRescheduleSlot] = React.useState("");
+  const [workingId, setWorkingId] = React.useState<string | null>(null);
   const [labResults, setLabResults] = React.useState<Array<{ id: string; testName: string; resultValue: string | null; unit: string | null; status: string }>>([]);
   const [overviewVital, setOverviewVital] = React.useState<VitalSnapshot | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -58,6 +66,20 @@ export default function PatientPortalPage() {
       setPatient(overview.patient);
       setOrgSlug(overview.organizationSlug ?? null);
       setAppointments(overview.appointments);
+
+      // Documents/invoices are best-effort: their failure must not log out.
+      const [docsRes, invRes] = await Promise.all([
+        fetch("/api/patient-portal/documents").catch(() => null),
+        fetch("/api/patient-portal/invoices").catch(() => null),
+      ]);
+      if (docsRes?.ok) {
+        const docs = await docsRes.json().catch(() => null);
+        if (docs) setDocuments(docs.documents ?? []);
+      }
+      if (invRes?.ok) {
+        const invs = await invRes.json().catch(() => null);
+        if (invs) setInvoices(invs.invoices ?? []);
+      }
       setLabResults(overview.labResults);
       setOverviewVital(overview.latestVital);
     } catch (error) {
@@ -100,6 +122,67 @@ export default function PatientPortalPage() {
   };
 
   const displayedVital = latestVital ?? overviewVital;
+
+  const cancelAppointment = async (id: string) => {
+    setWorkingId(id);
+    try {
+      const response = await fetch(`/api/patient-portal/appointments/${id}/cancel`, {
+        method: "POST",
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || t("portal_cancelError"));
+      toast.success(t("portal_cancelSuccess"));
+      setAppointments((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, status: "cancelled" } : a)),
+      );
+    } catch (error) {
+      logClientError("Patient cancel appointment failed", error);
+      toast.error(error instanceof Error ? error.message : t("portal_cancelError"));
+    } finally {
+      setWorkingId(null);
+    }
+  };
+
+  const loadRescheduleSlots = async (appointmentId: string, providerId: string, day: string) => {
+    if (!orgSlug || !day) {
+      setRescheduleSlots([]);
+      return;
+    }
+    try {
+      const query = new URLSearchParams({ date: day, providerId });
+      const response = await fetch(`/api/book/${orgSlug}/availability?${query}`);
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || t("portal_rescheduleError"));
+      const match = (payload.providers ?? []).find((p: { id: string }) => p.id === providerId);
+      setRescheduleSlots(match?.slots ?? []);
+    } catch (error) {
+      logClientError("Load reschedule slots failed", error);
+      setRescheduleSlots([]);
+    }
+  };
+
+  const confirmReschedule = async (id: string) => {
+    if (!rescheduleSlot) return;
+    setWorkingId(id);
+    try {
+      const response = await fetch(`/api/patient-portal/appointments/${id}/reschedule`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ startTime: rescheduleSlot }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || t("portal_rescheduleError"));
+      toast.success(t("portal_rescheduleSuccess"));
+      setReschedulingId(null);
+      setRescheduleSlot("");
+      fetchPatientData();
+    } catch (error) {
+      logClientError("Patient reschedule failed", error);
+      toast.error(error instanceof Error ? error.message : t("portal_rescheduleError"));
+    } finally {
+      setWorkingId(null);
+    }
+  };
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -315,26 +398,96 @@ export default function PatientPortalPage() {
               <p className="text-neutral-500">{t("portal_loading")}</p>
             ) : appointments.length > 0 ? (
               <div className="space-y-3">
-                {appointments.map((apt) => (
-                  <div
-                    key={apt.id}
-                    className="border rounded p-3 hover:bg-neutral-50"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium">
-                          {apt.type || t("portal_generalCheckup")}
-                        </p>
-                        <p className="text-sm text-neutral-500">
-                          {apt.provider || t("portal_drTbd")}
-                        </p>
+                {appointments.map((apt) => {
+                  const cancellable =
+                    (apt.status === "scheduled" || apt.status === "confirmed") &&
+                    new Date(apt.startTime).getTime() > Date.now();
+                  return (
+                    <div
+                      key={apt.id}
+                      className="border rounded p-3 hover:bg-neutral-50"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium">
+                            {apt.type || t("portal_generalCheckup")}
+                          </p>
+                          <p className="text-sm text-neutral-500">
+                            {apt.provider || t("portal_drTbd")}
+                          </p>
+                        </div>
+                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                          {apt.status}
+                        </span>
                       </div>
-                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                        {apt.status}
-                      </span>
+                      {cancellable && (
+                        <div className="flex gap-2 mt-3">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={workingId === apt.id}
+                            onClick={() => cancelAppointment(apt.id)}
+                          >
+                            {t("portal_cancelAppointment")}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={workingId === apt.id}
+                            onClick={() => {
+                              setReschedulingId(reschedulingId === apt.id ? null : apt.id);
+                              setRescheduleSlot("");
+                              setRescheduleSlots([]);
+                              setRescheduleDate("");
+                            }}
+                          >
+                            {t("portal_reschedule")}
+                          </Button>
+                        </div>
+                      )}
+                      {reschedulingId === apt.id && (
+                        <div className="mt-3 space-y-2 border-t pt-3">
+                          <Input
+                            type="date"
+                            value={rescheduleDate}
+                            min={new Date().toISOString().split("T")[0]}
+                            onChange={(e) => {
+                              setRescheduleDate(e.target.value);
+                              setRescheduleSlot("");
+                              loadRescheduleSlots(apt.id, apt.providerId, e.target.value);
+                            }}
+                          />
+                          {rescheduleSlots.length > 0 && (
+                            <div className="grid grid-cols-3 gap-2">
+                              {rescheduleSlots.map((s) => (
+                                <Button
+                                  key={s.start}
+                                  type="button"
+                                  size="sm"
+                                  variant={rescheduleSlot === s.start ? "default" : "outline"}
+                                  onClick={() => setRescheduleSlot(s.start)}
+                                >
+                                  {new Date(s.start).toLocaleTimeString(
+                                    lang === "ar" ? "ar-EG" : "en-US",
+                                    { hour: "2-digit", minute: "2-digit" },
+                                  )}
+                                </Button>
+                              ))}
+                            </div>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            disabled={!rescheduleSlot || workingId === apt.id}
+                            onClick={() => confirmReschedule(apt.id)}
+                          >
+                            {t("portal_confirmBooking")}
+                          </Button>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <p className="text-neutral-500 text-center py-4">
@@ -399,6 +552,78 @@ export default function PatientPortalPage() {
             >
               {t("portal_viewAllResults")}
             </Button>
+          </CardContent>
+        </Card>
+
+        {/* Documents */}
+        <Card className="mb-6" id="portal-documents">
+          <CardHeader>
+            <CardTitle>{t("portal_documents")}</CardTitle>
+            <CardDescription>{t("portal_documentsDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p className="text-neutral-500">{t("portal_loading")}</p>
+            ) : documents.length > 0 ? (
+              <div className="space-y-3">
+                {documents.map((doc) => (
+                  <div key={doc.id} className="border rounded p-3 hover:bg-neutral-50">
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="min-w-0">
+                        <p className="font-medium truncate">{doc.name}</p>
+                        <p className="text-sm text-neutral-500">{doc.type}</p>
+                      </div>
+                      <a
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-primary underline shrink-0"
+                      >
+                        {doc.type}
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-neutral-500 text-center py-4">{t("portal_noDocuments")}</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Invoices */}
+        <Card id="portal-invoices">
+          <CardHeader>
+            <CardTitle>{t("portal_invoices")}</CardTitle>
+            <CardDescription>{t("portal_invoicesDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p className="text-neutral-500">{t("portal_loading")}</p>
+            ) : invoices.length > 0 ? (
+              <div className="space-y-3">
+                {invoices.map((inv) => (
+                  <div key={inv.id} className="border rounded p-3 hover:bg-neutral-50">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-medium">{inv.invoiceNumber}</p>
+                        <p className="text-sm text-neutral-500">{inv.status}</p>
+                      </div>
+                      <div className="text-left rtl:text-right">
+                        <p className="font-medium">
+                          {t("portal_balance")}: {inv.balance}
+                        </p>
+                        <p className="text-sm text-neutral-500">
+                          {inv.amountPaid}/{inv.totalAmount}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-neutral-500 text-center py-4">{t("portal_noInvoices")}</p>
+            )}
           </CardContent>
         </Card>
       </div>

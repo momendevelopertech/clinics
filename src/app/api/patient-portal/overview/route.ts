@@ -18,7 +18,7 @@ export async function GET(request: Request) {
       prisma.appointment.findMany({
         where: { patientId },
         include: {
-          provider: { select: { name: true } },
+          provider: { select: { id: true, name: true } },
         },
         orderBy: { startTime: "asc" },
         take: 3,
@@ -50,11 +50,13 @@ export async function GET(request: Request) {
         notes: string | null;
         status: string;
         startTime: Date;
-        provider: { name: string | null } | null;
+        providerId: string;
+        provider: { id: string; name: string | null } | null;
       }) => ({
         id: appointment.id,
         type: appointment.appointmentType ?? appointment.notes ?? "General Checkup",
         provider: appointment.provider?.name ?? "Unknown Provider",
+        providerId: appointment.providerId,
         status: appointment.status,
         startTime: appointment.startTime.toISOString(),
       })),

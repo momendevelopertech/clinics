@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  canPatientCancelAppointment,
+  canPatientRescheduleAppointment,
   getAvailableSlots,
   hasAppointmentConflict,
   isDoctorAvailable,
@@ -135,5 +137,31 @@ describe("getAvailableSlots", () => {
     expect(
       getAvailableSlots({ provider, date: monday, durationMins: 0, existingAppointments: [], now: past }),
     ).toEqual([]);
+  });
+});
+
+describe("patient self-service guards", () => {
+  const upcoming = { patientId: "pat-1", status: "scheduled", startTime: new Date(2026, 8, 8, 10, 0) };
+  const now = new Date(2026, 8, 7, 10, 0);
+
+  it("allows cancelling own future scheduled visits only", () => {
+    expect(canPatientCancelAppointment(upcoming, "pat-1", now)).toBe(true);
+    expect(canPatientCancelAppointment(upcoming, "pat-2", now)).toBe(false);
+    expect(canPatientCancelAppointment({ ...upcoming, status: "completed" }, "pat-1", now)).toBe(false);
+    expect(canPatientCancelAppointment({ ...upcoming, status: "cancelled" }, "pat-1", now)).toBe(false);
+    expect(
+      canPatientCancelAppointment(upcoming, "pat-1", new Date(2026, 8, 9, 10, 0)),
+    ).toBe(false);
+  });
+
+  it("allows rescheduling own future scheduled/confirmed visits only", () => {
+    expect(canPatientRescheduleAppointment(upcoming, "pat-1", now)).toBe(true);
+    expect(
+      canPatientRescheduleAppointment({ ...upcoming, status: "confirmed" }, "pat-1", now),
+    ).toBe(true);
+    expect(canPatientRescheduleAppointment(upcoming, "pat-2", now)).toBe(false);
+    expect(
+      canPatientRescheduleAppointment({ ...upcoming, status: "in_progress" }, "pat-1", now),
+    ).toBe(false);
   });
 });
