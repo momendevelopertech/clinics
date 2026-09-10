@@ -5,6 +5,7 @@ import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { logServerError } from "@/lib/safe-logger";
+import { taskCreateSchema } from "@/lib/validations/ops";
 
 export async function GET(request: Request) {
   try {
@@ -62,7 +63,13 @@ export async function POST(request: Request) {
     if (authz.response) return authz.response;
     const { userId } = authz;
 
-    const body = await request.json();
+    const parsed = taskCreateSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid task payload", details: parsed.error.flatten() },
+        { status: 400 },
+      );
+    }
     const {
       title,
       description,
@@ -72,11 +79,7 @@ export async function POST(request: Request) {
       patientId,
       assigneeId,
       taskType,
-    } = body;
-
-    if (!title || typeof title !== "string") {
-      return NextResponse.json({ error: "Title is required" }, { status: 400 });
-    }
+    } = parsed.data;
 
     const task = await prisma.$transaction(
       async (tx: Prisma.TransactionClient) => {

@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireSuperAdmin } from "@/lib/roles";
 import { createAuditLog } from "@/lib/audit";
+import { z } from "zod";
 
-const VALID_STATUSES = ["pending", "active", "suspended"] as const;
-
-type Body = { status?: string };
+const statusBodySchema = z.object({
+  status: z.enum(["pending", "active", "suspended"]),
+});
 
 export async function POST(
   request: Request,
@@ -17,9 +18,8 @@ export async function POST(
   }
 
   const orgId = (await params).orgId;
-  const body = (await request.json().catch(() => ({}))) as Body;
-
-  if (!body.status || !(VALID_STATUSES as readonly string[]).includes(body.status)) {
+  const parsed = statusBodySchema.safeParse(await request.json().catch(() => ({})));
+  if (!parsed.success) {
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   }
 
@@ -37,7 +37,7 @@ export async function POST(
 
   const updated = await prisma.organization.update({
     where: { id: orgId },
-    data: { status: body.status },
+    data: { status: parsed.data.status },
     select: { id: true, status: true },
   });
 

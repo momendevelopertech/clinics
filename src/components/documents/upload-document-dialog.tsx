@@ -11,7 +11,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
@@ -54,6 +53,14 @@ const DOC_TYPE_KEYS: Record<string, string> = {
   other: "docType_other",
 };
 
+function uploadPurposeForDocType(
+  type: (typeof DOC_TYPE_OPTIONS)[number],
+): "imaging" | "lab_report" | "document" {
+  if (type === "imaging") return "imaging";
+  if (type === "lab" || type === "pathology") return "lab_report";
+  return "document";
+}
+
 export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
   const { t } = useLocale();
   const [open, setOpen] = React.useState(false);
@@ -61,9 +68,8 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
   const [patients, setPatients] = React.useState<PatientOption[]>([]);
   const [formData, setFormData] = React.useState({
     patientId: "",
-    documentType: "medical_record",
+    documentType: "medical_record" as (typeof DOC_TYPE_OPTIONS)[number],
     file: null as File | null,
-    fileUrl: "", // For demo/testing purposes
   });
 
   React.useEffect(() => {
@@ -87,7 +93,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 50 * 1024 * 1024) {
+      if (file.size > 10 * 1024 * 1024) {
         toast.error(t("doc_sizeError"));
         return;
       }
@@ -103,7 +109,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
       return;
     }
 
-    if (!formData.file && !formData.fileUrl) {
+    if (!formData.file) {
       toast.error(t("doc_requireFile"));
       return;
     }
@@ -111,35 +117,52 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
     try {
       setLoading(true);
 
+      const uploadBody = new FormData();
+      uploadBody.append("file", formData.file);
+      uploadBody.append(
+        "purpose",
+        uploadPurposeForDocType(formData.documentType),
+      );
+
+      const uploadResponse = await fetch("/api/uploads", {
+        method: "POST",
+        body: uploadBody,
+      });
+      const uploadPayload = await uploadResponse.json().catch(() => ({}));
+      if (!uploadResponse.ok) {
+        throw new Error(uploadPayload.error || "Failed to upload file");
+      }
+
       const response = await fetch("/api/documents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           patientId: formData.patientId,
           type: formData.documentType,
-          name:
-            formData.file?.name ||
-            formData.fileUrl.split("/").pop() ||
-            "document",
-          storageKey:
-            formData.fileUrl ||
-            `https://example.com/documents/${formData.file?.name}`,
+          name: formData.file.name,
+          storageKey: uploadPayload.url,
+          mimeType: uploadPayload.mimeType ?? formData.file.type,
+          publicId: uploadPayload.publicId,
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to upload document");
+      if (!response.ok) {
+        const docPayload = await response.json().catch(() => ({}));
+        throw new Error(docPayload.error || "Failed to save document");
+      }
 
       toast.success(t("doc_uploadedSuccess"));
       setFormData({
         patientId: "",
         documentType: "medical_record",
         file: null,
-        fileUrl: "",
       });
       setOpen(false);
       onSuccess();
     } catch (error) {
-      toast.error(t("doc_uploadError"));
+      toast.error(
+        error instanceof Error ? error.message : t("doc_uploadError"),
+      );
       logClientError("Upload document submission failed", error);
     } finally {
       setLoading(false);
@@ -186,7 +209,10 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
             <Select
               value={formData.documentType}
               onValueChange={(value) =>
-                setFormData({ ...formData, documentType: value })
+                setFormData({
+                  ...formData,
+                  documentType: value as (typeof DOC_TYPE_OPTIONS)[number],
+                })
               }
             >
               <SelectTrigger id="doc-type">
@@ -210,7 +236,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
                 type="file"
                 onChange={handleFileChange}
                 className="hidden"
-                accept="image/*,.pdf,.doc,.docx"
+                accept="image/jpeg,image/png,image/webp,application/pdf,.doc,.docx"
               />
               <label htmlFor="file" className="cursor-pointer">
                 <Upload className="w-8 h-8 text-neutral-400 mx-auto mb-2" />
@@ -222,18 +248,6 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
                 <p className="text-xs text-neutral-500">{t("doc_sizeLimit")}</p>
               </label>
             </div>
-          </div>
-
-          <div className="gap-2 flex flex-col">
-            <Label htmlFor="file-url">{t("doc_orUrl")}</Label>
-            <Input
-              id="file-url"
-              placeholder="https://..."
-              value={formData.fileUrl}
-              onChange={(e) =>
-                setFormData({ ...formData, fileUrl: e.target.value })
-              }
-            />
           </div>
 
           <div className="flex gap-2 justify-end">

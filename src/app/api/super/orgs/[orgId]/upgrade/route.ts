@@ -2,8 +2,11 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireSuperAdmin } from "@/lib/roles";
 import { createAuditLog } from "@/lib/audit";
+import { z } from "zod";
 
-type Body = { approve?: boolean };
+const upgradeBodySchema = z.object({
+  approve: z.boolean(),
+});
 
 export async function POST(
   request: Request,
@@ -15,11 +18,11 @@ export async function POST(
   }
 
   const orgId = (await params).orgId;
-  const body = (await request.json().catch(() => ({}))) as Body;
-
-  if (typeof body.approve !== "boolean") {
+  const parsed = upgradeBodySchema.safeParse(await request.json().catch(() => ({})));
+  if (!parsed.success) {
     return NextResponse.json({ error: "approve is required" }, { status: 400 });
   }
+  const body = parsed.data;
 
   const existing = await prisma.organization.findUnique({
     where: { id: orgId },

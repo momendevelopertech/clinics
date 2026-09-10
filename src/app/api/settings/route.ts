@@ -7,6 +7,7 @@ import { createAuditLog } from "@/lib/audit";
 import { organizationSettingsSchema } from "@/lib/validations";
 import { parseOrgSettings } from "@/lib/org-settings";
 import { logServerError } from "@/lib/safe-logger";
+import { destroyCloudinaryAssetSafe } from "@/lib/cloudinary";
 
 export async function GET() {
   try {
@@ -35,7 +36,16 @@ export async function PATCH(request: Request) {
     const parsed = organizationSettingsSchema.safeParse(await request.json());
     if (!parsed.success) return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
     const existing = await prisma.organization.findUnique({ where: { id: context.organizationId }, select: { settingsJson: true, currency: true } });
+    const previousLogoPublicId = parseOrgSettings(existing?.settingsJson).clinicLogoPublicId ?? null;
     const updated = await prisma.organization.update({ where: { id: context.organizationId }, data: { settingsJson: JSON.stringify(parsed.data), currency: parsed.data.currency } });
+
+    // Best-effort cleanup of the replaced clinic logo (never fails the request).
+    if (
+      previousLogoPublicId &&
+      previousLogoPublicId !== (parsed.data.clinicLogoPublicId ?? null)
+    ) {
+      await destroyCloudinaryAssetSafe(previousLogoPublicId, "image");
+    }
     await createAuditLog({ organizationId: context.organizationId, userId: context.userId, action: "UPDATE", entityType: "OrganizationSettings", entityId: context.organizationId, beforeState: JSON.stringify(existing), afterState: JSON.stringify(parsed.data), request });
     return NextResponse.json({ ...parsed.data, updatedAt: updated.updatedAt });
   } catch (error) {

@@ -27,6 +27,8 @@ const PUBLIC_API_PREFIXES = [
   "/api/auth/verify-email",
   "/api/auth/forgot-password",
   "/api/auth/reset-password",
+  "/api/health",
+  "/api/ready",
 ];
 
 const CLINIC_PAGE_ACCESS: Record<string, string[]> = {

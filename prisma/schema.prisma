@@ -135,6 +135,8 @@ model WaitlistEntry {
   status         String       @default("waiting") // waiting, offered, cancelled
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId, status])
 }
 
 model User {
@@ -145,6 +147,7 @@ model User {
   name                   String?
   passwordHash           String?
   avatarUrl              String?
+  avatarPublicId         String? // Cloudinary public_id for cleanup on replace
   active                 Boolean          @default(true)
   emailVerified          Boolean          @default(false)
   verifyTokenHash        String?
@@ -178,6 +181,8 @@ model User {
   procedureOrders        ProcedureOrder[] @relation("ProcedureOrderAuthor")
   notifications          Notification[]
   pushSubscriptions      PushSubscription[]
+
+  @@index([organizationId, active])
 }
 
 model Role {
@@ -216,7 +221,7 @@ model Patient {
   id                     String            @id @default(cuid())
   organizationId         String
   organization           Organization      @relation(fields: [organizationId], references: [id])
-  mrn                    String?           @unique // Medical Record Number
+  mrn                    String? // Medical Record Number (unique per organization)
   firstName              String
   lastName               String
   dateOfBirth            DateTime?
@@ -257,6 +262,12 @@ model Patient {
   histories              PatientHistory[]
   diagnoses              Diagnosis[]
   followUps              FollowUp[]
+  insuranceClaims        InsuranceClaim[]
+
+  @@unique([organizationId, mrn])
+  @@index([organizationId, status])
+  @@index([organizationId, lastName])
+  @@index([organizationId, phone])
 }
 
 model PatientSession {
@@ -305,7 +316,7 @@ model Consent {
   id             String    @id @default(cuid())
   patientId      String
   patient        Patient   @relation(fields: [patientId], references: [id])
-  organizationId String? // Denormalized for query scoping; patient has orgId
+  organizationId String // Required: tenant scope for all consent queries
   consentType    String // HIPAA, treatment, data_usage
   isGranted      Boolean   @default(true)
   documentUrl    String?
@@ -334,6 +345,8 @@ model Branch {
   rooms          Room[]
   appointments   Appointment[]
   staff          User[]
+
+  @@index([organizationId, status])
 }
 
 model Appointment {
@@ -366,6 +379,10 @@ model Appointment {
   updatedAt          DateTime               @updatedAt
   encounter          Encounter?
   equipmentSlots     AppointmentEquipment[]
+
+  @@index([organizationId, startTime])
+  @@index([providerId, startTime, status])
+  @@index([patientId, startTime])
 }
 
 model AppointmentEquipment {
@@ -392,6 +409,8 @@ model Room {
   updatedAt      DateTime      @updatedAt
   appointments   Appointment[]
   staff          User[]
+
+  @@index([organizationId, status])
 }
 
 model Equipment {
@@ -428,6 +447,8 @@ model Encounter {
   labOrders        LabOrder[]
   procedureOrders  ProcedureOrder[]
   invoiceLineItems InvoiceLineItem[]
+
+  @@index([organizationId, patientId, startTime])
 }
 
 model EncounterNote {
@@ -600,6 +621,10 @@ model Invoice {
   updatedAt      DateTime          @updatedAt
   lineItems      InvoiceLineItem[]
   payments       Payment[]
+  insuranceClaims InsuranceClaim[]
+
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
 }
 
 model InvoiceLineItem {
@@ -649,6 +674,10 @@ model InsuranceClaim {
   id             String       @id @default(cuid())
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
+  patientId      String?
+  patient        Patient?     @relation(fields: [patientId], references: [id])
+  invoiceId      String?
+  invoice        Invoice?     @relation(fields: [invoiceId], references: [id])
   claimNumber    String?
   status         String // submitted, pending, paid, denied, appeal
   amountClaimed  Decimal?     @db.Decimal(12, 2)
@@ -658,6 +687,10 @@ model InsuranceClaim {
   paidAt         DateTime?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId, status])
+  @@index([patientId])
+  @@index([invoiceId])
 }
 
 model PricingTier {
@@ -747,6 +780,8 @@ model Communication {
   sentAt         DateTime?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId, status, scheduledFor])
 }
 
 model Campaign {
@@ -791,6 +826,9 @@ model Task {
   taskType       String? // follow_up, lab_review, claim_followup
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId, status, dueDate])
+  @@index([assigneeId, status])
 }
 
 // ============== DOCUMENTS & COMPLIANCE ==============
@@ -804,9 +842,13 @@ model Document {
   procedureOrder   ProcedureOrder? @relation(fields: [procedureOrderId], references: [id])
   name             String
   type             String // imaging, lab_report, consent, id
-  storageKey       String // S3/GCS key
+  storageKey       String // Server-issued Cloudinary URL (never client-supplied)
+  publicId         String? // Cloudinary public_id for cleanup
   mimeType         String?
   createdAt        DateTime        @default(now())
+
+  @@index([organizationId, patientId])
+  @@index([organizationId, createdAt])
 }
 
 model ProcedureOrder {
@@ -850,6 +892,9 @@ model AuditLog {
   ipAddress       String?
   userAgent       String?
   createdAt       DateTime     @default(now())
+
+  @@index([organizationId, createdAt])
+  @@index([entityType, entityId])
 }
 
 model Notification {

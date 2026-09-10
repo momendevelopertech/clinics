@@ -5,6 +5,7 @@ import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { createAuditLog } from "@/lib/audit";
 import { logServerError } from "@/lib/safe-logger";
+import { consentUpdateSchema } from "@/lib/validations/ops";
 
 export async function PATCH(
     request: Request,
@@ -22,8 +23,14 @@ export async function PATCH(
         const { userId } = authz;
 
         const { id } = await params;
-        const body = await request.json();
-        const { consentType, isGranted, signedAt, documentUrl } = body;
+        const parsed = consentUpdateSchema.safeParse(await request.json().catch(() => ({})));
+        if (!parsed.success) {
+            return NextResponse.json(
+                { error: "Invalid consent update", details: parsed.error.flatten() },
+                { status: 400 },
+            );
+        }
+        const { consentType, isGranted, signedAt, documentUrl } = parsed.data;
 
         const existing = await prisma.consent.findFirst({
             where: { id, organizationId: orgId },

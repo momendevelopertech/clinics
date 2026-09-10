@@ -66,7 +66,7 @@ async function ensureUserRole(userId, roleId) {
 
 async function ensurePatient(organizationId, data) {
   const patient = await prisma.patient.upsert({
-    where: { mrn: data.mrn },
+    where: { organizationId_mrn: { organizationId, mrn: data.mrn } },
     update: {
       organizationId,
       firstName: data.firstName,

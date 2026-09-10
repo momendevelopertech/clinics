@@ -8,6 +8,8 @@ export type OrgSettings = {
   appointmentReminders?: boolean;
   newPatientAlerts?: boolean;
   billingNotifications?: boolean;
+  clinicLogoUrl?: string;
+  clinicLogoPublicId?: string | null;
 };
 
 export function parseOrgSettings(settingsJson: string | null | undefined): OrgSettings {
@@ -27,6 +29,8 @@ export function parseOrgSettings(settingsJson: string | null | undefined): OrgSe
       appointmentReminders: parsed.appointmentReminders ?? true,
       newPatientAlerts: parsed.newPatientAlerts ?? true,
       billingNotifications: parsed.billingNotifications ?? true,
+      clinicLogoUrl: parsed.clinicLogoUrl ?? "",
+      clinicLogoPublicId: parsed.clinicLogoPublicId ?? null,
     };
   } catch {
     return { appointmentDurationMins: 30 };

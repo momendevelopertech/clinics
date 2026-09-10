@@ -6,6 +6,7 @@ import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { createAuditLog } from "@/lib/audit";
 import { logServerError } from "@/lib/safe-logger";
+import { consentCreateSchema } from "@/lib/validations/ops";
 
 export async function GET(request: Request) {
   try {
@@ -71,15 +72,14 @@ export async function POST(request: Request) {
     if (authz.response) return authz.response;
     const { userId } = authz;
 
-    const body = await request.json();
-    const { patientId, consentType, isGranted, signedAt, documentUrl } = body;
-
-    if (!patientId || !consentType) {
+    const parsed = consentCreateSchema.safeParse(await request.json());
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "patientId and consentType are required" },
+        { error: "Invalid consent payload", details: parsed.error.flatten() },
         { status: 400 },
       );
     }
+    const { patientId, consentType, isGranted, signedAt, documentUrl } = parsed.data;
 
     const patient = await prisma.patient.findFirst({
       where: { id: patientId, organizationId: orgId },

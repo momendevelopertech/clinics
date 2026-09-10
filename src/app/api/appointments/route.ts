@@ -11,7 +11,7 @@ import {
   nextWalkInToken,
 } from "@/lib/appointments";
 import { checkPlanLimit } from "@/lib/plans";
-import { appointmentUpdateSchema } from "@/lib/validations/appointment";
+import { appointmentUpdateSchema, appointmentCreateSchema } from "@/lib/validations/appointment";
 import { isAppointmentTransitionAllowed } from "@/lib/appointments";
 
 const ACTIVE_STATUSES = ["scheduled", "confirmed", "arrived", "in_progress"];
@@ -95,6 +95,14 @@ export async function POST(request: Request) {
     const { userId } = authz;
 
     const body = await request.json();
+    const parsed = appointmentCreateSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid appointment payload", details: parsed.error.flatten() },
+        { status: 400 },
+      );
+    }
+
     const {
       patientId,
       providerId,
@@ -105,16 +113,10 @@ export async function POST(request: Request) {
       endTime,
       status,
       type,
+      appointmentType,
       idempotencyKey,
       isWalkIn,
-    } = body;
-
-    if (!patientId) {
-      return NextResponse.json(
-        { error: "Patient ID is required" },
-        { status: 400 },
-      );
-    }
+    } = parsed.data;
 
     if (idempotencyKey) {
       const existing = await prisma.appointment.findUnique({
@@ -240,7 +242,7 @@ export async function POST(request: Request) {
           startTime: startDateTime,
           endTime: endDateTime,
           status: appointmentStatus,
-          appointmentType: type ?? null,
+          appointmentType: appointmentType ?? type ?? null,
           notes: type ?? null,
           idempotencyKey: idempotencyKey ?? null,
           isWalkIn: isWalkInFlag,

@@ -224,10 +224,10 @@ export async function takeRateLimitToken(
     const target = storeOverride ?? resolveStore();
     return await target.take(key, config);
   } catch (error) {
-    logServerError("Rate limiter unavailable, failing open", error);
+    logServerError("Rate limiter unavailable, failing closed", error);
     return {
-      allowed: true,
-      remaining: config.max,
+      allowed: false,
+      remaining: 0,
       retryAfterSeconds: Math.ceil(config.windowMs / 1000),
     };
   }

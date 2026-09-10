@@ -100,7 +100,7 @@ async function ensurePatient(orgId, clinic, index, data) {
     ? `patient@${clinic.emailDomain}`
     : `${clinic.slug}.patient${index}@example.test`;
   return prisma.patient.upsert({
-    where: { mrn: `DM-${clinic.slug}-${String(index).padStart(3, "0")}` },
+    where: { organizationId_mrn: { organizationId: orgId, mrn: `DM-${clinic.slug}-${String(index).padStart(3, "0")}` } },
     update: {
       organizationId: orgId,
       firstName: data.firstName,

@@ -4,6 +4,7 @@ import { createAuditLog } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import stripe from "@/lib/stripe";
 import { logServerError } from "@/lib/safe-logger";
+import { shouldApplyPaymentEvent } from "@/lib/webhooks";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
 
@@ -72,6 +73,12 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     logServerError("Stripe payment not found for success intent", undefined, { stripePaymentId });
     return;
   }
+
+  // Idempotency: Stripe retries deliveries — a duplicate success event must
+  // not credit the invoice a second time.
+  if (!shouldApplyPaymentEvent(payment.status, "payment_intent.succeeded")) {
+    return;
+  }
   const allocation = await prisma.$transaction(async (tx) => {
     const updatedPayment = await tx.payment.update({
       where: { id: payment.id },
@@ -121,6 +128,11 @@ async function handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) {
 
   if (!payment) {
     logServerError("Stripe payment not found for failed intent", undefined, { stripePaymentId });
+    return;
+  }
+
+  // Idempotency: duplicate failure deliveries must not rewrite audit history.
+  if (!shouldApplyPaymentEvent(payment.status, "payment_intent.payment_failed")) {
     return;
   }
 

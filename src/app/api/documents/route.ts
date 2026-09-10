@@ -6,6 +6,7 @@ import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { createAuditLog } from "@/lib/audit";
 import { logServerError } from "@/lib/safe-logger";
+import { documentCreateSchema } from "@/lib/validations/uploads";
 
 export async function GET(request: Request) {
   try {
@@ -71,21 +72,25 @@ export async function POST(request: Request) {
     const { userId } = authz;
 
     const body = await request.json();
-    const {
-      patientId,
-      type = body.documentType,
-      name = body.fileName,
-      storageKey = body.fileUrl,
-      mimeType,
-      procedureOrderId,
-    } = body;
+    const parsed = documentCreateSchema.safeParse({
+      patientId: body.patientId,
+      type: body.type ?? body.documentType,
+      name: body.name ?? body.fileName,
+      storageKey: body.storageKey ?? body.fileUrl,
+      mimeType: body.mimeType ?? null,
+      procedureOrderId: body.procedureOrderId ?? null,
+      publicId: body.publicId ?? null,
+    });
 
-    if (!patientId || !type || !name) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Patient ID, document type, and name are required" },
+        { error: "Invalid document payload", details: parsed.error.flatten() },
         { status: 400 },
       );
     }
+
+    const { patientId, type, name, storageKey, mimeType, procedureOrderId, publicId } =
+      parsed.data;
 
     // Verify patient belongs to org
     const patient = await prisma.patient.findFirst({
@@ -111,8 +116,9 @@ export async function POST(request: Request) {
         patientId,
         name,
         type,
-        storageKey: storageKey || `documents/${patientId}/${Date.now()}`,
-        mimeType,
+        storageKey,
+        publicId: publicId ?? null,
+        mimeType: mimeType ?? null,
         procedureOrderId: procedureOrderId ?? null,
       },
       include: {
@@ -130,6 +136,8 @@ export async function POST(request: Request) {
         patientId,
         type,
         name,
+        publicId,
+        storageKey,
       }),
     });
 

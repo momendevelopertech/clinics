@@ -10,15 +10,17 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { useLocale } from "@/components/locale/locale-provider"
 import { StaffProfiles } from "@/components/settings/staff-profiles"
+import { ProfileAvatarCard } from "@/components/settings/profile-avatar-card"
 import { PermissionDenied } from "@/components/ui/permission-denied"
 import { usePermissionState } from "@/hooks/use-permission-state"
+import { CloudinaryImageUpload } from "@/components/uploads/cloudinary-image-upload"
 
 type Section = "general" | "billing" | "team" | "notifications"
 
 export default function SettingsPage() {
   const { t } = useLocale()
   const [activeSection, setActiveSection] = React.useState<Section>("general")
-  const [settings, setSettings] = React.useState({ appointmentDurationMins: 30, currency: "USD", defaultTaxRate: 0, invoicePrefix: "INV-", appointmentReminders: true, newPatientAlerts: true, billingNotifications: true })
+  const [settings, setSettings] = React.useState({ appointmentDurationMins: 30, currency: "USD", defaultTaxRate: 0, invoicePrefix: "INV-", appointmentReminders: true, newPatientAlerts: true, billingNotifications: true, clinicLogoUrl: "" as string, clinicLogoPublicId: null as string | null })
   const { forbidden, guardedFetch } = usePermissionState()
 
   React.useEffect(() => {
@@ -102,8 +104,26 @@ export default function SettingsPage() {
                         <Label htmlFor="address">{t("settings_address")}</Label>
                         <Input id="address" defaultValue="123 Medical Parkway, Suite 100, Cityville, ST 12345" />
                     </div>
+                    <div className="sm:col-span-2">
+                      <CloudinaryImageUpload
+                        purpose="clinic_logo"
+                        label={t("settings_uploadClinicLogo")}
+                        currentUrl={settings.clinicLogoUrl || null}
+                        onUploaded={async (result) => {
+                          setSettings((prev) => ({ ...prev, clinicLogoUrl: result.url, clinicLogoPublicId: result.publicId }))
+                          toast.success(t("settings_logoUploaded"))
+                        }}
+                      />
+                      <p className="text-xs text-neutral-500 mt-2">{t("settings_logoHelp")}</p>
+                    </div>
                 </div>
              </div>
+
+             <ProfileAvatarCard
+               title={t("settings_yourAvatar")}
+               description={t("settings_yourAvatarHelp")}
+               uploadLabel={t("settings_uploadAvatar")}
+             />
 
              <div>
                 <h3 className="text-lg font-medium border-b dark:border-neutral-800 pb-2 mb-4">{t("settings_appointmentPreferences")}</h3>

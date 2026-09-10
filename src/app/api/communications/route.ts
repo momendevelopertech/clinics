@@ -7,6 +7,7 @@ import { requireModuleEntitlement } from "@/lib/entitlements/access";
 import { createAuditLog } from "@/lib/audit";
 import { sendSMS, sendEmail, sendWhatsApp } from "@/lib/communications";
 import { logServerError } from "@/lib/safe-logger";
+import { communicationCreateSchema } from "@/lib/validations/ops";
 
 export async function GET(request: NextRequest) {
   try {
@@ -76,23 +77,14 @@ export async function POST(request: NextRequest) {
     if (authz.response) return authz.response;
     const { userId } = authz;
 
-    const body = await request.json();
-    const { patientId, channel, type, content, scheduledFor } = body;
-
-    // Validate input
-    if (!patientId || !channel || !type || !content) {
+    const parsed = communicationCreateSchema.safeParse(await request.json());
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Invalid communication payload", details: parsed.error.flatten() },
         { status: 400 },
       );
     }
-
-    if (!["sms", "email", "whatsapp"].includes(channel)) {
-      return NextResponse.json(
-        { error: "Channel must be sms, email, or whatsapp" },
-        { status: 400 },
-      );
-    }
+    const { patientId, channel, type, content, scheduledFor } = parsed.data;
 
     // Verify patient exists in org
     const patient = await prisma.patient.findUnique({
@@ -127,9 +119,10 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Send immediately if not scheduled
+    // Send immediately if not scheduled (all channels here are external;
+    // the schema only accepts sms/email/whatsapp).
     let finalCommunication = communication;
-    if (!scheduledFor && channel !== "in_app") {
+    if (!scheduledFor) {
       try {
         let sendResult = null;
         let sendSuccess = false;

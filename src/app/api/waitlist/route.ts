@@ -6,6 +6,7 @@ import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { createAuditLog } from "@/lib/audit";
 import { logServerError } from "@/lib/safe-logger";
+import { waitlistCreateSchema } from "@/lib/validations/ops";
 
 export async function GET() {
   try {
@@ -70,15 +71,14 @@ export async function POST(request: Request) {
     if (authz.response) return authz.response;
     const { userId } = authz;
 
-    const body = await request.json();
-    const { patientId, preferredDate, notes } = body;
-
-    if (!patientId) {
+    const parsed = waitlistCreateSchema.safeParse(await request.json());
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "patientId is required" },
+        { error: "Invalid waitlist payload", details: parsed.error.flatten() },
         { status: 400 },
       );
     }
+    const { patientId, preferredDate, notes } = parsed.data;
 
     // Verify patient belongs to org
     const patient = await prisma.patient.findFirst({

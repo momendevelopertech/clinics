@@ -157,8 +157,8 @@ describe("RedisStore", () => {
   });
 });
 
-describe("fail-open behavior", () => {
-  it("fails open and logs when the store throws", async () => {
+describe("fail-closed behavior", () => {
+  it("fails closed and logs when the store throws", async () => {
     const errorSpy = vi
       .spyOn(console, "error")
       .mockImplementation(() => undefined);
@@ -172,16 +172,16 @@ describe("fail-open behavior", () => {
       failingStore,
     );
 
-    expect(result.allowed).toBe(true);
-    expect(result.remaining).toBe(5);
+    expect(result.allowed).toBe(false);
+    expect(result.remaining).toBe(0);
     expect(errorSpy).toHaveBeenCalled();
 
     const [payload] = errorSpy.mock.calls[0] as [string];
-    expect(payload).toContain("Rate limiter unavailable, failing open");
+    expect(payload).toContain("Rate limiter unavailable, failing closed");
     errorSpy.mockRestore();
   });
 
-  it("fails open through a connection failure in the Redis store path", async () => {
+  it("fails closed through a connection failure in the Redis store path", async () => {
     const fake = makeFakeRedis({
       connect: vi.fn().mockRejectedValue(new Error("connect ECONNREFUSED 127.0.0.1:6379")),
     });
@@ -192,8 +192,8 @@ describe("fail-open behavior", () => {
       new RedisStore("redis://127.0.0.1:6379", () => fake as unknown as RedisClient),
     );
 
-    expect(result.allowed).toBe(true);
-    expect(result.remaining).toBe(5);
+    expect(result.allowed).toBe(false);
+    expect(result.remaining).toBe(0);
   });
 });
 

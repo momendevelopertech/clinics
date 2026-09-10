@@ -4,6 +4,8 @@ import {
   appointmentUpdateSchema,
 } from "../../src/lib/validations/appointment";
 import { patientCreateSchema } from "../../src/lib/validations/patient";
+import { consentCreateSchema, consentUpdateSchema } from "../../src/lib/validations/ops";
+import { organizationSettingsSchema } from "../../src/lib/validations/settings";
 import { ar } from "../../src/lib/i18n/dictionaries/ar";
 import { en } from "../../src/lib/i18n/dictionaries/en";
 
@@ -53,8 +55,49 @@ describe("request validation", () => {
     ).toBe(false);
   });
 
-  it("keeps English and Arabic dictionaries in sync", () => {
-    expect(Object.keys(en).sort()).toEqual(Object.keys(ar).sort());
+  it("validates consent create and partial update payloads", () => {
+    expect(
+      consentCreateSchema.safeParse({
+        patientId: "patient-1",
+        consentType: "treatment",
+        isGranted: true,
+      }).success,
+    ).toBe(true);
+    expect(
+      consentCreateSchema.safeParse({ patientId: "", consentType: "x" }).success,
+    ).toBe(false);
+
+    expect(
+      consentUpdateSchema.safeParse({ isGranted: false }).success,
+    ).toBe(true);
+    expect(consentUpdateSchema.safeParse({}).success).toBe(true);
+    expect(
+      consentUpdateSchema.safeParse({ signedAt: "not-a-date" }).success,
+    ).toBe(false);
+    expect(
+      consentUpdateSchema.safeParse({ documentUrl: "notaurl" }).success,
+    ).toBe(false);
+  });
+
+  it("carries the clinic logo public id for asset cleanup", () => {
+    const parsed = organizationSettingsSchema.safeParse({
+      clinicLogoUrl: "https://res.cloudinary.com/demo/image/upload/logo.png",
+      clinicLogoPublicId: "clinics/org-1/clinic_logo/logo",
+    });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.clinicLogoPublicId).toBe(
+        "clinics/org-1/clinic_logo/logo",
+      );
+    }
+    const empty = organizationSettingsSchema.safeParse({});
+    expect(empty.success).toBe(true);
+    if (empty.success) {
+      expect(empty.data.clinicLogoPublicId).toBeNull();
+    }
+  });
+
+  it("keeps English and Arabic dictionaries in sync", () => {    expect(Object.keys(en).sort()).toEqual(Object.keys(ar).sort());
     for (const [key, value] of Object.entries(ar)) {
       expect(value).not.toBe(key);
     }

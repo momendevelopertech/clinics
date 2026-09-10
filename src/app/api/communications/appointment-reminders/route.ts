@@ -8,6 +8,7 @@ import {
   renderAppointmentReminder,
 } from "@/lib/communications";
 import { logServerError } from "@/lib/safe-logger";
+import { authorizeCronRequest } from "@/lib/cron-auth";
 
 type ReminderAppointment = Prisma.AppointmentGetPayload<{
   include: {
@@ -20,18 +21,14 @@ type ReminderAppointment = Prisma.AppointmentGetPayload<{
  * CRON endpoint: Sends appointment reminders
  * Sends reminders 24 hours, 2 hours, and 30 minutes before appointments
  */
+export async function GET(request: NextRequest) {
+  return POST(request);
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const cronSecret = process.env.CRON_SECRET;
-    if (!cronSecret) {
-      return NextResponse.json(
-        { error: "CRON_SECRET is not configured" },
-        { status: 503 },
-      );
-    }
-    if (request.headers.get("x-cron-secret") !== cronSecret) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const cronAuth = authorizeCronRequest(request);
+    if (!cronAuth.ok) return cronAuth.response;
 
     const now = new Date();
     const reminders = [];

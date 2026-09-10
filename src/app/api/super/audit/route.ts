@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireSuperAdmin } from "@/lib/roles";
+import { z } from "zod";
+
+const superAuditQuerySchema = z.object({
+  entityType: z.string().trim().max(80).optional().nullable(),
+  limit: z.coerce.number().int().min(1).max(100).optional().nullable(),
+});
 
 export async function GET(request: Request) {
   const guard = await requireSuperAdmin();
@@ -9,8 +15,16 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const limit = Math.min(Math.max(Number(searchParams.get("limit") ?? 50) || 50, 1), 100);
-  const entityType = searchParams.get("entityType");
+  const parsed = superAuditQuerySchema.safeParse({
+    entityType: searchParams.get("entityType"),
+    limit: searchParams.get("limit") ?? undefined,
+  });
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid query" }, { status: 400 });
+  }
+
+  const limit = parsed.data.limit ?? 50;
+  const entityType = parsed.data.entityType;
 
   const logs = await prisma.auditLog.findMany({
     where: {

@@ -2,6 +2,15 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createAuditLog } from "@/lib/audit";
 import { requireSuperAdmin } from "@/lib/roles";
+import { z } from "zod";
+
+const platformSettingsSchema = z.object({
+  maintenanceMode: z.boolean().optional(),
+  allowClinicSignups: z.boolean().optional(),
+  defaultPlan: z.enum(["free", "clinic", "plus"]).optional(),
+  supportEmail: z.string().max(200).optional(),
+  announcement: z.string().max(500).optional(),
+});
 
 type PlatformSettings = {
   maintenanceMode?: boolean;
@@ -56,21 +65,16 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Platform organization not found" }, { status: 404 });
   }
 
-  const body = (await request.json().catch(() => ({}))) as {
-    settings?: PlatformSettings;
-    maintenanceMode?: boolean;
-    allowClinicSignups?: boolean;
-    defaultPlan?: string;
-    supportEmail?: string;
-    announcement?: string;
-  };
-  const incoming =
-    body.settings && typeof body.settings === "object"
-      ? body.settings
-      : body;
-  if (!incoming || typeof incoming !== "object") {
+  const raw = await request.json().catch(() => ({}));
+  const incomingCandidate =
+    raw && typeof raw === "object" && "settings" in raw && raw.settings && typeof raw.settings === "object"
+      ? raw.settings
+      : raw;
+  const parsed = platformSettingsSchema.safeParse(incomingCandidate);
+  if (!parsed.success) {
     return NextResponse.json({ error: "settings is required" }, { status: 400 });
   }
+  const incoming = parsed.data;
 
   const currentJson = organization.settingsJson
     ? (() => {

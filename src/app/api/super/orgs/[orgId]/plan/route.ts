@@ -2,8 +2,11 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireSuperAdmin } from "@/lib/roles";
 import { createAuditLog } from "@/lib/audit";
+import { z } from "zod";
 
-type Body = { plan?: string };
+const planBodySchema = z.object({
+  plan: z.string().trim().min(1).max(80),
+});
 
 export async function POST(
   request: Request,
@@ -15,11 +18,12 @@ export async function POST(
   }
 
   const orgId = (await params).orgId;
-  const body = (await request.json().catch(() => ({}))) as Body;
+  const parsed = planBodySchema.safeParse(await request.json().catch(() => ({})));
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
+  }
 
-  const plan = body.plan
-    ? await prisma.plan.findUnique({ where: { code: body.plan } })
-    : null;
+  const plan = await prisma.plan.findUnique({ where: { code: parsed.data.plan } });
   if (!plan) {
     return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
   }

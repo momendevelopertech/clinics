@@ -4,6 +4,7 @@ import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { logServerError } from "@/lib/safe-logger";
+import { auditListQuerySchema } from "@/lib/validations/ops";
 
 export async function GET(request: Request) {
   try {
@@ -19,9 +20,20 @@ export async function GET(request: Request) {
     if (authz.response) return authz.response;
 
     const { searchParams } = new URL(request.url);
-    const entityType = searchParams.get("entityType");
-    const entityId = searchParams.get("entityId");
-    const limit = Math.min(parseInt(searchParams.get("limit") ?? "50", 10) || 50, 100);
+    const parsed = auditListQuerySchema.safeParse({
+      entityType: searchParams.get("entityType"),
+      entityId: searchParams.get("entityId"),
+      limit: searchParams.get("limit") ?? undefined,
+    });
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid audit query", details: parsed.error.flatten() },
+        { status: 400 },
+      );
+    }
+    const entityType = parsed.data.entityType || undefined;
+    const entityId = parsed.data.entityId || undefined;
+    const limit = parsed.data.limit ?? 50;
 
     const logs = await prisma.auditLog.findMany({
       where: {

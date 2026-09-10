@@ -5,6 +5,7 @@ import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { logServerError } from "@/lib/safe-logger";
+import { inventoryCreateSchema } from "@/lib/validations/ops";
 
 export async function GET() {
   try {
@@ -45,12 +46,14 @@ export async function POST(request: Request) {
     if (authz.response) return authz.response;
     const { userId } = authz;
 
-    const body = await request.json();
-    const { name, sku, category, quantity, reorderLevel, unit } = body;
-
-    if (!name || typeof name !== "string") {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 });
+    const parsed = inventoryCreateSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid inventory payload", details: parsed.error.flatten() },
+        { status: 400 },
+      );
     }
+    const { name, sku, category, quantity, reorderLevel, unit } = parsed.data;
 
     const item = await prisma.$transaction(
       async (tx: Prisma.TransactionClient) => {

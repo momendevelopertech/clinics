@@ -10,4 +10,12 @@ export const organizationSettingsSchema = z.object({
   appointmentReminders: z.boolean().default(true),
   newPatientAlerts: z.boolean().default(true),
   billingNotifications: z.boolean().default(true),
+  clinicLogoUrl: z
+    .string()
+    .url()
+    .refine((url) => /^https:\/\//i.test(url), "Logo URL must be HTTPS")
+    .or(z.literal(""))
+    .optional()
+    .default(""),
+  clinicLogoPublicId: z.string().trim().max(500).optional().nullable().default(null),
 });
