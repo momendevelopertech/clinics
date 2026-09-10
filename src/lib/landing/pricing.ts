@@ -112,12 +112,12 @@ export function parseFeatures(json: string | null | undefined): Record<string, P
 }
 
 export function formatPrice(price: number) {
-  return price === 0 ? "$0" : `$${price.toLocaleString()}`;
+  return price === 0 ? "$0" : `$${price.toLocaleString("en-US")}`;
 }
 
 export function formatLimit(value: number | null) {
   if (value == null || value >= 999_999) return null;
-  return value.toLocaleString();
+  return value.toLocaleString("en-US");
 }
 
 export type PlanHighlight = {
