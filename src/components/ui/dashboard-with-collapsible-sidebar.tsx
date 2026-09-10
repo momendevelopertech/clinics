@@ -54,6 +54,9 @@ import { useLocale } from "@/components/locale/locale-provider";
 import { LanguageSwitcher } from "@/components/locale/language-switcher";
 import { displayRoleName } from "@/lib/role-labels";
 import { Lock } from "lucide-react";
+import { PendingChangesButton } from "@/components/pwa/pending-changes";
+import { clearAllPwaData } from "@/lib/pwa/cache-clear";
+import { PushNotificationToggle } from "@/components/pwa/push-notification-toggle";
 
 const routeTitleKeys: Array<[string, string]> = [
   ["/dashboard", "nav_dashboard"],
@@ -561,6 +564,8 @@ function DashboardHeader({
     try {
       setIsLoggingOut(true);
 
+      await clearAllPwaData();
+
       const result = await signOut({
         callbackUrl: "/login",
         redirect: false,
@@ -600,6 +605,7 @@ function DashboardHeader({
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
+          <PendingChangesButton />
           <div className="relative hidden md:block">
             <FeatureTip tipId="shell-search">
               <form onSubmit={handleSearchSubmit}>
@@ -697,6 +703,8 @@ function DashboardHeader({
           </DropdownMenu>
 
           <LanguageSwitcher compact />
+
+          <PushNotificationToggle />
 
           {mounted ? (
             <Button

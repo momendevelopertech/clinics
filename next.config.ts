@@ -1,7 +1,7 @@
+import { withSerwist } from "@serwist/turbopack";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Turbopack for dev (default in Next 16)
   experimental: {
     optimizePackageImports: [
       "lucide-react",
@@ -14,4 +14,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSerwist(nextConfig);
