@@ -1,56 +1,17 @@
-# Clinic Management Delivery Plan
+# Progress Log — عيادات CRM Production Readiness
 
-This file is the execution tracker for the product blueprint. Work proceeds in
-order: finish and verify one task before starting the next dependent task.
+## Current status
+- Last updated: 2026-09-10 19:51 UTC+3
+- Current phase: 0 — Unified TASKS.md
+- Current task: Build TASKS.md from ARCHITECTURE / TESTING_PLAN / FEATURE_RESEARCH
+- Status: DONE
 
-## Phase 0 — Audit and delivery controls
+## How to resume
+لو الـ session اتقطع، اقرأ الملف ده الأول، شوف "Current task"، تحقق من حالته الفعلية في الكود (هل اتنفذ فعلاً ولا لأ)، وكمل من هناك. لا تعيد تنفيذ تاسكات مكتوب جنبها [x].
 
-- [x] P0-T1 — Baseline audit and delivery backlog
+Previous clinic-blueprint tracker (P0–P7 product modules) lived in this file and is largely complete except P4-T3 charge-generation policy (blocked on product decision). Do not confuse that list with the production-readiness tasks in `TASKS.md`.
 
-## Phase 1 — Foundation
-
-- [x] P1-T1 — Tenant branches and room foundations
-- [x] P1-T2 — Staff/doctor operational profiles and assignments
-- [x] P1-T3 — Service and clinical catalogs
-- [x] P1-T4 — Patient MRN, structured history, and archive workflow
-
-## Phase 2 — Clinic operations
-
-- [x] P2-T1 — Appointment lifecycle and scheduling validation
-- [x] P2-T2 — Tenant-backed scheduling UI
-- [x] P2-T3 — Check-in, walk-in, and queue projection
-- [x] P2-T4 — Encounter lifecycle and clinical capture
-
-## Phase 3 — Clinical
-
-- [x] P3-T1 — Diagnoses, follow-ups, and itemized prescriptions
-- [x] P3-T2 — Lab and imaging orders through reviewed results
-- [x] P3-T3 — Procedure orders and clinical documents
-- [x] P3-T4 — Read-only patient medical timeline
-
-## Phase 4 — Financial
-
-- [x] P4-T1 — Catalog-backed invoice items and server totals
-- [x] P4-T2 — Payment allocation, refunds, and balances
-- [ ] P4-T3 — Charge-generation policy *(blocked: product decision required)*
-
-## Phase 5 — Platform and security
-
-- [x] P5-T1 — Complete role/permission matrix and staff management
-- [x] P5-T2 — Centralized audit event capture
-- [x] P5-T3 — Event-driven notification records and adapters
-- [x] P5-T4 — Persisted clinic settings
-
-## Phase 6 — Analytics
-
-- [x] P6-T1 — Dashboard KPI and report projections
-
-## Phase 7 — AI and automation
-
-- [x] P7-T1 — Read-only care signals and safe automation review flow
-
-## Delivery rule
-
-Each task must include schema/API/UI changes where applicable, tenant and
-authorization checks, audit coverage for writes, automated tests, and passing
-typecheck/lint/build before it is marked complete.
+## Task log
+| # | Task | Phase | Status | Notes |
+|---|------|-------|--------|-------|
+| 1 | Build unified TASKS.md | 0 | DONE | Merged ARCHITECTURE §4–§8, TESTING_PLAN, FEATURE_RESEARCH §3 into P0–P5. |
