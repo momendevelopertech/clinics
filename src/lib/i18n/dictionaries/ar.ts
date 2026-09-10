@@ -38,6 +38,24 @@ export const ar: Dictionary = {
   common_type: "النوع",
   common_notes: "ملاحظات",
   common_loadPatientsError: "فشل تحميل المرضى",
+  common_export: "تصدير",
+  common_view: "عرض",
+  common_patient: "المريض",
+  common_selectPatient: "اختر مريضًا",
+  common_patientRequired: "المريض *",
+  common_noFile: "لا يوجد ملف",
+  common_retry: "إعادة المحاولة",
+  common_resetFilters: "إعادة تعيين الفلاتر",
+  perm_deniedTitle: "ليس لديك صلاحية",
+  perm_deniedDesc:
+    "دورك لا يسمح لك بعرض أو استخدام هذه الصفحة. تواصل مع مالك العيادة إذا كنت تعتقد أن هذا خطأ.",
+
+  // Table / pagination
+  pagination_item: "عنصر",
+  pagination_items: "عناصر",
+  pagination_prev: "السابق",
+  pagination_next: "التالي",
+  pagination_pageOf: "صفحة {page} من {pageCount}",
 
   // Navigation
   nav_overview: "نظرة عامة",
@@ -959,6 +977,17 @@ export const ar: Dictionary = {
   comm_sendError: "فشل إرسال التواصل",
   comm_sending: "جارٍ الإرسال...",
   comm_send: "إرسال",
+  comm_channel_sms: "رسالة نصية",
+  comm_channel_email: "بريد إلكتروني",
+  comm_channel_whatsapp: "واتساب",
+  comm_type_reminder: "تذكير",
+  comm_type_campaign: "حملة",
+  comm_type_notification: "إشعار",
+  comm_type_survey: "استبيان",
+  comm_status_pending: "قيد الانتظار",
+  comm_status_sent: "مرسل",
+  comm_status_delivered: "تم التسليم",
+  comm_status_scheduled: "مجدول",
 
   // Campaigns
   camp_title: "حملات التسويق",
@@ -987,6 +1016,12 @@ export const ar: Dictionary = {
   camp_createdSuccess: "تم إنشاء الحملة بنجاح",
   camp_createError: "فشل إنشاء الحملة",
   camp_creating: "جارٍ الإنشاء...",
+  camp_create: "إنشاء حملة",
+  camp_drip: "متتابعة",
+  camp_broadcast: "بث",
+  camp_afterVisit: "بعد الزيارة",
+  camp_chronicCare: "رعاية مزمنة",
+  camp_manual: "يدوي",
 
   // Consents
   consent_title: "إدارة الموافقات",
@@ -1012,6 +1047,15 @@ export const ar: Dictionary = {
   consent_recordedSuccess: "تم تسجيل الموافقة بنجاح",
   consent_recordError: "فشل تسجيل الموافقة",
   consent_recording: "جارٍ التسجيل...",
+  consentType_treatment: "علاج",
+  consentType_surgery: "جراحة",
+  consentType_medication: "دواء",
+  consentType_research: "بحث",
+  consentType_photography: "تصوير فوتوغرافي",
+  consentType_telehealth: "رعاية عن بُعد",
+  consentType_dataSharing: "مشاركة البيانات",
+  consentType_insurance: "تأمين",
+  consentType_other: "أخرى",
 
   // Documents
   doc_title: "المستندات والتصوير",
@@ -1040,6 +1084,13 @@ export const ar: Dictionary = {
   doc_requireFile: "يرجى رفع ملف أو إدخال رابط للملف",
   doc_uploadedSuccess: "تم رفع المستند بنجاح",
   doc_uploadError: "فشل رفع المستند",
+  docType_imaging: "تصوير",
+  docType_lab: "المختبر",
+  docType_pathology: "علم الأمراض",
+  docType_consent: "موافقة",
+  docType_medicalRecord: "ملف طبي",
+  docType_prescription: "وصفة طبية",
+  docType_other: "أخرى",
 
   // Help & Support
   help_title: "المساعدة والدعم",

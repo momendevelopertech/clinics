@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { logClientError } from "@/lib/client-logger";
+import { useLocale } from "@/components/locale/locale-provider";
 
 type PatientOption = {
   id: string;
@@ -33,7 +34,28 @@ interface UploadDocumentDialogProps {
   onSuccess: () => void;
 }
 
+const DOC_TYPE_OPTIONS = [
+  "imaging",
+  "lab",
+  "pathology",
+  "consent",
+  "medical_record",
+  "prescription",
+  "other",
+] as const;
+
+const DOC_TYPE_KEYS: Record<string, string> = {
+  imaging: "docType_imaging",
+  lab: "docType_lab",
+  pathology: "docType_pathology",
+  consent: "docType_consent",
+  medical_record: "docType_medicalRecord",
+  prescription: "docType_prescription",
+  other: "docType_other",
+};
+
 export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
+  const { t } = useLocale();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [patients, setPatients] = React.useState<PatientOption[]>([]);
@@ -57,7 +79,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
       const data = await response.json();
       setPatients(data);
     } catch (error) {
-      toast.error("Failed to load patients");
+      toast.error(t("common_loadPatientsError"));
       logClientError("Upload document patient lookup failed", error);
     }
   };
@@ -65,9 +87,8 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Check file size (limit to 50MB)
       if (file.size > 50 * 1024 * 1024) {
-        toast.error("File size must be less than 50MB");
+        toast.error(t("doc_sizeError"));
         return;
       }
       setFormData({ ...formData, file });
@@ -78,19 +99,18 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
     e.preventDefault();
 
     if (!formData.patientId || !formData.documentType) {
-      toast.error("Please fill in required fields");
+      toast.error(t("common_required"));
       return;
     }
 
     if (!formData.file && !formData.fileUrl) {
-      toast.error("Please upload a file or provide a file URL");
+      toast.error(t("doc_requireFile"));
       return;
     }
 
     try {
       setLoading(true);
 
-      // For demo/testing, use fileUrl. In production, upload to S3/GCS
       const response = await fetch("/api/documents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -109,7 +129,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
 
       if (!response.ok) throw new Error("Failed to upload document");
 
-      toast.success("Document uploaded successfully");
+      toast.success(t("doc_uploadedSuccess"));
       setFormData({
         patientId: "",
         documentType: "medical_record",
@@ -119,41 +139,29 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
       setOpen(false);
       onSuccess();
     } catch (error) {
-      toast.error("Failed to upload document");
+      toast.error(t("doc_uploadError"));
       logClientError("Upload document submission failed", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const documentTypes = [
-    "imaging",
-    "lab",
-    "pathology",
-    "consent",
-    "medical_record",
-    "prescription",
-    "other",
-  ];
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2">
-          <Plus className="w-4 h-4" /> Upload Document
+          <Plus className="w-4 h-4" /> {t("doc_uploadTrigger")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Upload Medical Document</DialogTitle>
-          <DialogDescription>
-            Upload imaging, lab results, or other patient documents.
-          </DialogDescription>
+          <DialogTitle>{t("doc_uploadTitle")}</DialogTitle>
+          <DialogDescription>{t("doc_uploadDesc")}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="gap-2 flex flex-col">
-            <Label htmlFor="patient">Patient *</Label>
+            <Label htmlFor="patient">{t("common_patientRequired")}</Label>
             <Select
               value={formData.patientId}
               onValueChange={(value) =>
@@ -161,7 +169,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
               }
             >
               <SelectTrigger id="patient">
-                <SelectValue placeholder="Select a patient" />
+                <SelectValue placeholder={t("common_selectPatient")} />
               </SelectTrigger>
               <SelectContent>
                 {patients.map((patient) => (
@@ -174,7 +182,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
           </div>
 
           <div className="gap-2 flex flex-col">
-            <Label htmlFor="doc-type">Document Type *</Label>
+            <Label htmlFor="doc-type">{t("doc_docType")}</Label>
             <Select
               value={formData.documentType}
               onValueChange={(value) =>
@@ -185,10 +193,9 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {documentTypes.map((type) => (
+                {DOC_TYPE_OPTIONS.map((type) => (
                   <SelectItem key={type} value={type}>
-                    {type.replace("_", " ").charAt(0).toUpperCase() +
-                      type.slice(1).replace("_", " ")}
+                    {t(DOC_TYPE_KEYS[type])}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -196,7 +203,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
           </div>
 
           <div className="gap-2 flex flex-col">
-            <Label htmlFor="file">File Upload *</Label>
+            <Label htmlFor="file">{t("doc_fileUpload")}</Label>
             <div className="border-2 border-dashed rounded-lg p-6 text-center">
               <input
                 id="file"
@@ -210,17 +217,15 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
                 <p className="text-sm font-medium">
                   {formData.file
                     ? formData.file.name
-                    : "Click to upload or drag and drop"}
+                    : t("doc_dropHint")}
                 </p>
-                <p className="text-xs text-neutral-500">
-                  PDF, images, or documents up to 50MB
-                </p>
+                <p className="text-xs text-neutral-500">{t("doc_sizeLimit")}</p>
               </label>
             </div>
           </div>
 
           <div className="gap-2 flex flex-col">
-            <Label htmlFor="file-url">Or URL (for demo)</Label>
+            <Label htmlFor="file-url">{t("doc_orUrl")}</Label>
             <Input
               id="file-url"
               placeholder="https://..."
@@ -238,10 +243,10 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              Cancel
+              {t("common_cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Uploading..." : "Upload Document"}
+              {loading ? t("doc_uploading") : t("doc_uploadTrigger")}
             </Button>
           </div>
         </form>

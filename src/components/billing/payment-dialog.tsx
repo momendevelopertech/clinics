@@ -110,7 +110,6 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
       const data = await response.json();
 
       toast.success(t("pay_intentCreated").replace("{id}", data.id));
-      console.log("Payment details:", data);
 
       setFormData({
         invoiceId: "",

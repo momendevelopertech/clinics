@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
+import { useLocale } from "@/components/locale/locale-provider";
 
 interface AddCommunicationDialogProps {
   onSuccess?: () => void;
@@ -29,6 +30,7 @@ interface AddCommunicationDialogProps {
 export function AddCommunicationDialog({
   onSuccess,
 }: AddCommunicationDialogProps) {
+  const { t } = useLocale();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [patients, setPatients] = useState<
@@ -52,7 +54,7 @@ export function AddCommunicationDialog({
       const data = await response.json();
       setPatients(data);
     } catch (error) {
-      toast.error("Failed to load patients");
+      toast.error(t("common_loadPatientsError"));
       logClientError("Communication patient lookup failed", error);
     } finally {
       setPatientLoading(false);
@@ -66,7 +68,7 @@ export function AddCommunicationDialog({
       !formData.type ||
       !formData.content
     ) {
-      toast.error("Please fill in all required fields");
+      toast.error(t("comm_fillRequired"));
       return;
     }
 
@@ -83,7 +85,7 @@ export function AddCommunicationDialog({
 
       if (!response.ok) throw new Error("Failed to create communication");
 
-      toast.success("Communication sent successfully");
+      toast.success(t("comm_sentSuccess"));
       setOpen(false);
       setFormData({
         patientId: "",
@@ -94,7 +96,7 @@ export function AddCommunicationDialog({
       });
       onSuccess?.();
     } catch (error) {
-      toast.error("Failed to send communication");
+      toast.error(t("comm_sendError"));
       logClientError("Create communication failed", error);
     } finally {
       setLoading(false);
@@ -106,21 +108,19 @@ export function AddCommunicationDialog({
       <DialogTrigger asChild>
         <Button className="gap-2" onClick={() => loadPatients()}>
           <Plus className="w-4 h-4" />
-          Send Message
+          {t("comm_sendMessage")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Send Communication</DialogTitle>
-          <DialogDescription>
-            Send SMS, email, or WhatsApp messages to patients
-          </DialogDescription>
+          <DialogTitle>{t("comm_sendTitle")}</DialogTitle>
+          <DialogDescription>{t("comm_sendDesc")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           {/* Patient Selection */}
           <div>
-            <Label htmlFor="patient">Patient</Label>
+            <Label htmlFor="patient">{t("common_patient")}</Label>
             <Select
               value={formData.patientId}
               onValueChange={(value) =>
@@ -128,11 +128,13 @@ export function AddCommunicationDialog({
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select patient" />
+                <SelectValue placeholder={t("common_selectPatient")} />
               </SelectTrigger>
               <SelectContent>
                 {patientLoading ? (
-                  <SelectItem value="">Loading...</SelectItem>
+                  <SelectItem value="loading" disabled>
+                    {t("common_loading")}
+                  </SelectItem>
                 ) : (
                   patients.map((patient) => (
                     <SelectItem key={patient.id} value={patient.id}>
@@ -146,7 +148,7 @@ export function AddCommunicationDialog({
 
           {/* Channel Selection */}
           <div>
-            <Label htmlFor="channel">Channel</Label>
+            <Label htmlFor="channel">{t("comm_channel")}</Label>
             <Select
               value={formData.channel}
               onValueChange={(value) =>
@@ -157,16 +159,18 @@ export function AddCommunicationDialog({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="sms">SMS</SelectItem>
-                <SelectItem value="email">Email</SelectItem>
-                <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                <SelectItem value="sms">{t("comm_channel_sms")}</SelectItem>
+                <SelectItem value="email">{t("comm_channel_email")}</SelectItem>
+                <SelectItem value="whatsapp">
+                  {t("comm_channel_whatsapp")}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Type Selection */}
           <div>
-            <Label htmlFor="type">Message Type</Label>
+            <Label htmlFor="type">{t("comm_messageType")}</Label>
             <Select
               value={formData.type}
               onValueChange={(value) =>
@@ -177,20 +181,26 @@ export function AddCommunicationDialog({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="reminder">Reminder</SelectItem>
-                <SelectItem value="campaign">Campaign</SelectItem>
-                <SelectItem value="notification">Notification</SelectItem>
-                <SelectItem value="survey">Survey</SelectItem>
+                <SelectItem value="reminder">
+                  {t("comm_type_reminder")}
+                </SelectItem>
+                <SelectItem value="campaign">
+                  {t("comm_type_campaign")}
+                </SelectItem>
+                <SelectItem value="notification">
+                  {t("comm_type_notification")}
+                </SelectItem>
+                <SelectItem value="survey">{t("comm_type_survey")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Message Content */}
           <div>
-            <Label htmlFor="content">Message Content</Label>
+            <Label htmlFor="content">{t("comm_content")}</Label>
             <Textarea
               id="content"
-              placeholder="Enter your message..."
+              placeholder={t("comm_contentPlaceholder")}
               value={formData.content}
               onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
@@ -198,13 +208,16 @@ export function AddCommunicationDialog({
               rows={4}
             />
             <p className="text-xs text-gray-500 mt-1">
-              {formData.content.length}/160 characters
+              {t("comm_characters").replace(
+                "{count}",
+                String(formData.content.length),
+              )}
             </p>
           </div>
 
           {/* Schedule Option */}
           <div>
-            <Label htmlFor="scheduledFor">Schedule For (Optional)</Label>
+            <Label htmlFor="scheduledFor">{t("comm_scheduleFor")}</Label>
             <Input
               id="scheduledFor"
               type="datetime-local"
@@ -214,17 +227,17 @@ export function AddCommunicationDialog({
               }
             />
             <p className="text-xs text-gray-500 mt-1">
-              Leave empty to send immediately
+              {t("comm_sendImmediately")}
             </p>
           </div>
         </div>
 
         <div className="flex gap-2 justify-end mt-6">
           <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
+            {t("common_cancel")}
           </Button>
           <Button onClick={handleSubmit} disabled={loading}>
-            {loading ? "Sending..." : "Send"}
+            {loading ? t("comm_sending") : t("comm_send")}
           </Button>
         </div>
       </DialogContent>

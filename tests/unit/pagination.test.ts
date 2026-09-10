@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { paginate, clampPage } from "@/lib/pagination";
+import { paginate, clampPage, itemCountLabel } from "@/lib/pagination";
 
 describe("paginate", () => {
   const items = Array.from({ length: 25 }, (_, index) => index + 1);
@@ -47,5 +47,37 @@ describe("clampPage", () => {
 
   it("never returns below page one for empty collections", () => {
     expect(clampPage(1, 0, 10)).toBe(1);
+  });
+});
+
+describe("itemCountLabel", () => {
+  it("uses singular form for exactly one item", () => {
+    expect(itemCountLabel(1, "item", "items")).toBe("1 item");
+  });
+
+  it("uses plural form for zero items", () => {
+    expect(itemCountLabel(0, "item", "items")).toBe("0 items");
+  });
+
+  it("uses plural form for multiple items", () => {
+    expect(itemCountLabel(5, "item", "items")).toBe("5 items");
+    expect(itemCountLabel(100, "item", "items")).toBe("100 items");
+  });
+
+  it("handles Arabic forms correctly", () => {
+    expect(itemCountLabel(1, "عنصر", "عناصر")).toBe("1 عنصر");
+    expect(itemCountLabel(2, "عنصر", "عناصر")).toBe("2 عناصر");
+  });
+
+  it("clamps negative counts to zero", () => {
+    expect(itemCountLabel(-3, "item", "items")).toBe("0 items");
+  });
+
+  it("clamps fractional counts to integer", () => {
+    expect(itemCountLabel(2.7, "item", "items")).toBe("2 items");
+  });
+
+  it("handles NaN input as zero", () => {
+    expect(itemCountLabel(NaN, "item", "items")).toBe("0 items");
   });
 });

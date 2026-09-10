@@ -3,16 +3,19 @@
 import * as React from "react";
 import { ShieldX } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/components/locale/locale-provider";
 
 export function PermissionDenied({
   className,
-  title = "You don't have permission",
-  description = "Your role doesn't allow you to view or use this page. Contact your clinic owner if you think this is a mistake.",
+  title,
+  description,
 }: {
   className?: string;
   title?: string;
   description?: string;
 }) {
+  const { t } = useLocale();
+
   return (
     <div
       className={cn(
@@ -24,9 +27,11 @@ export function PermissionDenied({
         <ShieldX className="h-8 w-8" />
       </div>
       <div className="space-y-1">
-        <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+        <h2 className="text-lg font-semibold text-foreground">
+          {title ?? t("perm_deniedTitle")}
+        </h2>
         <p className="mx-auto max-w-md text-sm text-muted-foreground">
-          {description}
+          {description ?? t("perm_deniedDesc")}
         </p>
       </div>
     </div>

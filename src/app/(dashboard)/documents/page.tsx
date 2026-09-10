@@ -13,6 +13,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DataPagination } from "@/components/ui/data-pagination";
+import { FilterBar } from "@/components/ui/filter-bar";
+import {
+  EmptyState,
+  ErrorState,
+  TableSkeleton,
+  useDelayedLoading,
+} from "@/components/ui/loading";
 import { toast } from "sonner";
 import { UploadDocumentDialog } from "@/components/documents/upload-document-dialog";
 import { paginate } from "@/lib/pagination";
@@ -21,6 +28,7 @@ import { logClientError } from "@/lib/client-logger";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { usePermissionState } from "@/hooks/use-permission-state";
+import { useLocale } from "@/components/locale/locale-provider";
 
 interface Document {
   id: string;
@@ -46,22 +54,31 @@ function isDocument(value: unknown): value is Document {
   );
 }
 
+const DOC_TYPE_KEYS: Record<string, string> = {
+  imaging: "docType_imaging",
+  lab: "docType_lab",
+  lab_report: "docType_lab",
+  pathology: "docType_pathology",
+  consent: "docType_consent",
+  medical_record: "docType_medicalRecord",
+  prescription: "docType_prescription",
+  other: "docType_other",
+};
+
 export default function DocumentsPage() {
+  const { t } = useLocale();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [documents, setDocuments] = React.useState<Document[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
   const [typeFilter, setTypeFilter] = React.useState<string | null>(null);
   const [page, setPage] = React.useState(1);
   const { forbidden, setForbidden } = usePermissionState();
 
-  React.useEffect(() => {
-    fetchDocuments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const fetchDocuments = async () => {
+  const fetchDocuments = React.useCallback(async () => {
     try {
       setLoading(true);
+      setError(false);
       const response = await fetch("/api/documents");
       if (response.status === 403) {
         setForbidden(true);
@@ -71,16 +88,21 @@ export default function DocumentsPage() {
       const data = await response.json();
       setDocuments(Array.isArray(data) ? data.filter(isDocument) : []);
     } catch (error) {
-      toast.error("Failed to load documents");
+      setError(true);
+      toast.error(t("doc_loadError"));
       logClientError("Document list fetch failed", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [setForbidden, t]);
+
+  React.useEffect(() => {
+    fetchDocuments();
+  }, [fetchDocuments]);
 
   const handleExport = () => {
     const csv = [
-      ["Patient Name", "Document Type", "File Name", "Date"],
+      [t("common_patient"), t("common_type"), t("doc_colFile"), t("common_date")],
       ...documents.map((d) => [
         d.patientName,
         d.type,
@@ -98,7 +120,7 @@ export default function DocumentsPage() {
     a.download = `documents-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
-    toast.success("Documents exported successfully");
+    toast.success(t("doc_exportSuccess"));
   };
 
   const filteredDocuments = filterDocuments(documents, searchQuery, typeFilter);
@@ -108,12 +130,22 @@ export default function DocumentsPage() {
     [documents],
   );
 
+  const docTypeLabel = (type: string) =>
+    DOC_TYPE_KEYS[type] ? t(DOC_TYPE_KEYS[type]) : formatTypeLabel(type);
+
   const pageCount = Math.max(1, Math.ceil(filteredDocuments.length / PAGE_SIZE));
   const visiblePage = Math.min(page, pageCount);
   const pagedDocuments = paginate(filteredDocuments, visiblePage, PAGE_SIZE);
+  const showSkeleton = useDelayedLoading(loading);
 
   const handleTypeFilterChange = (type: string | null) => {
     setTypeFilter(type);
+    setPage(1);
+  };
+
+  const resetFilters = () => {
+    setSearchQuery("");
+    setTypeFilter(null);
     setPage(1);
   };
 
@@ -121,13 +153,10 @@ export default function DocumentsPage() {
     return (
       <div className="flex flex-col gap-6 w-full h-full">
         <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
-          <FileText className="w-6 h-6 inline mr-2" />
-          Documents &amp; Imaging
+          <FileText className="w-6 h-6 inline me-2" />
+          {t("doc_title")}
         </h2>
-        <PermissionDenied
-          title="You don't have permission"
-          description="Only staff with patient access can view documents."
-        />
+        <PermissionDenied />
       </div>
     );
   }
@@ -137,30 +166,31 @@ export default function DocumentsPage() {
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
-            <FileText className="w-6 h-6 inline mr-2" />
-            Documents &amp; Imaging
+            <FileText className="w-6 h-6 inline me-2" />
+            {t("doc_title")}
           </h2>
-          <p className="text-sm text-neutral-500">
-            Manage patient medical documents and imaging files.
-          </p>
+          <p className="text-sm text-neutral-500">{t("doc_subtitle")}</p>
         </div>
 
         <UploadDocumentDialog onSuccess={fetchDocuments} />
       </div>
 
       <div className="bg-white dark:bg-neutral-900 border rounded-[5px] flex-1 shadow-sm flex flex-col pt-2">
-        <div className="px-6 py-4 border-b flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <Input
-            type="search"
-            placeholder="Search patient name or file name..."
-            className="w-full sm:max-w-sm"
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setPage(1);
-            }}
-          />
-          <div className="flex gap-2">
+        <div className="px-6 py-4 border-b">
+          <FilterBar
+            hasActiveFilters={searchQuery !== "" || typeFilter !== null}
+            onReset={resetFilters}
+          >
+            <Input
+              type="search"
+              placeholder={t("doc_searchPlaceholder")}
+              className="w-full sm:max-w-sm"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
+            />
             <FeatureTip tipId="documents-types">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -169,11 +199,11 @@ export default function DocumentsPage() {
                     size="sm"
                     className="flex items-center gap-2"
                   >
-                    <FilterIcon className="w-4 h-4" /> Type
+                    <FilterIcon className="w-4 h-4" /> {t("common_type")}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuLabel>Filter by Type</DropdownMenuLabel>
+                  <DropdownMenuLabel>{t("doc_filterByType")}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuCheckboxItem
                     checked={!typeFilter}
@@ -182,7 +212,7 @@ export default function DocumentsPage() {
                       setPage(1);
                     }}
                   >
-                    All
+                    {t("common_all")}
                   </DropdownMenuCheckboxItem>
                   {availableTypes.map((type) => (
                     <DropdownMenuCheckboxItem
@@ -192,7 +222,7 @@ export default function DocumentsPage() {
                         handleTypeFilterChange(typeFilter === type ? null : type)
                       }
                     >
-                      {formatTypeLabel(type)}
+                      {docTypeLabel(type)}
                     </DropdownMenuCheckboxItem>
                   ))}
                 </DropdownMenuContent>
@@ -205,36 +235,51 @@ export default function DocumentsPage() {
               onClick={handleExport}
               className="flex items-center gap-2"
             >
-              <Download className="w-4 h-4" /> Export
+              <Download className="w-4 h-4" /> {t("common_export")}
             </Button>
-          </div>
+          </FilterBar>
         </div>
 
         <div className="p-0 overflow-x-auto flex-1">
-          {loading ? (
-            <div className="flex items-center justify-center h-64">
-              <p className="text-neutral-500">Loading documents...</p>
-            </div>
-          ) : filteredDocuments.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-64 text-center">
-              <Upload className="w-12 h-12 text-neutral-300 mb-4" />
-              <p className="text-neutral-600">No documents found</p>
-            </div>
-          ) : (
-            <table className="w-full text-sm text-left">
-              <thead className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 font-medium">
+          <table className="w-full text-sm text-start">
+            <thead className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 font-medium">
+              <tr>
+                <th className="px-6 py-4 border-b">{t("common_patient")}</th>
+                <th className="px-6 py-4 border-b">{t("doc_colFile")}</th>
+                <th className="px-6 py-4 border-b">{t("common_type")}</th>
+                <th className="px-6 py-4 border-b hidden md:table-cell">
+                  {t("doc_colUploaded")}
+                </th>
+                <th className="px-6 py-4 border-b">{t("common_actions")}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
+              {showSkeleton ? (
                 <tr>
-                  <th className="px-6 py-4 border-b">Patient</th>
-                  <th className="px-6 py-4 border-b">File Name</th>
-                  <th className="px-6 py-4 border-b">Type</th>
-                  <th className="px-6 py-4 border-b hidden md:table-cell">
-                    Uploaded
-                  </th>
-                  <th className="px-6 py-4 border-b">Actions</th>
+                  <td colSpan={5} className="px-0">
+                    <TableSkeleton rows={5} columns={5} />
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
-                {pagedDocuments.map((document) => (
+              ) : error ? (
+                <tr>
+                  <td colSpan={5} className="px-0 py-4">
+                    <ErrorState
+                      title={t("doc_loadError")}
+                      onRetry={fetchDocuments}
+                    />
+                  </td>
+                </tr>
+              ) : filteredDocuments.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-0 py-4">
+                    <EmptyState
+                      icon={<Upload className="w-10 h-10 text-neutral-300" />}
+                      title={t("doc_empty")}
+                    />
+                  </td>
+                </tr>
+              ) : (
+                pagedDocuments.map((document) => (
                   <tr
                     key={document.id}
                     className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition"
@@ -260,7 +305,7 @@ export default function DocumentsPage() {
                       <span
                         className={`px-2 py-1 rounded text-xs font-medium ${getDocumentTypeColor(document.type)}`}
                       >
-                        {formatTypeLabel(document.type)}
+                        {docTypeLabel(document.type)}
                       </span>
                     </td>
                     <td className="px-6 py-4 hidden md:table-cell">
@@ -274,18 +319,20 @@ export default function DocumentsPage() {
                           rel="noopener noreferrer"
                         >
                           <Button variant="ghost" size="sm">
-                            View
+                            {t("common_view")}
                           </Button>
                         </a>
                       ) : (
-                        <span className="text-xs text-neutral-400">No file</span>
+                        <span className="text-xs text-neutral-400">
+                          {t("common_noFile")}
+                        </span>
                       )}
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
 
         {!loading && filteredDocuments.length > PAGE_SIZE ? (

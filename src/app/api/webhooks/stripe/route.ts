@@ -47,7 +47,7 @@ export async function POST(request: Request) {
         break;
 
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        logServerError("Unhandled stripe event", undefined, { type: event.type });
     }
 
     return NextResponse.json({ received: true });
@@ -69,11 +69,9 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
   });
 
   if (!payment) {
-    console.warn(`Payment not found for intent: ${stripePaymentId}`);
+    logServerError("Stripe payment not found for success intent", undefined, { stripePaymentId });
     return;
   }
-
-  if (payment.status === "completed") return;
   const allocation = await prisma.$transaction(async (tx) => {
     const updatedPayment = await tx.payment.update({
       where: { id: payment.id },
@@ -110,9 +108,7 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     afterState: JSON.stringify({ status: allocation.updatedInvoice.status, amountPaid: allocation.updatedInvoice.amountPaid }),
   });
 
-  console.log(
-    `Payment ${payment.id} completed for invoice ${payment.invoiceId}`,
-  );
+  logServerError("Stripe payment completed", undefined, { paymentId: payment.id, invoiceId: payment.invoiceId });
 }
 
 async function handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) {
@@ -124,7 +120,7 @@ async function handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) {
   });
 
   if (!payment) {
-    console.warn(`Payment not found for intent: ${stripePaymentId}`);
+    logServerError("Stripe payment not found for failed intent", undefined, { stripePaymentId });
     return;
   }
 
@@ -145,12 +141,12 @@ async function handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) {
     afterState: JSON.stringify({ status: "failed", stripePaymentId }),
   });
 
-  console.log(`Payment ${payment.id} failed`);
+  logServerError("Stripe payment failed", undefined, { paymentId: payment.id });
 }
 
 async function handleRefund(charge: Stripe.Charge) {
   if (!charge.payment_intent) {
-    console.warn("Refund charge has no payment intent");
+    logServerError("Refund charge missing payment intent");
     return;
   }
 
@@ -160,9 +156,7 @@ async function handleRefund(charge: Stripe.Charge) {
   });
 
   if (!payment) {
-    console.warn(
-      `Payment not found for refunded intent: ${charge.payment_intent}`,
-    );
+    logServerError("Stripe payment not found for refund", undefined, { paymentIntentId: charge.payment_intent as string });
     return;
   }
 
@@ -186,5 +180,5 @@ async function handleRefund(charge: Stripe.Charge) {
     afterState: JSON.stringify({ status: allocation.updatedPayment.status, refundedAmount }),
   });
 
-  console.log(`Payment ${payment.id} refunded`);
+  logServerError("Stripe payment refunded", undefined, { paymentId: payment.id });
 }

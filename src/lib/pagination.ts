@@ -11,3 +11,12 @@ export function clampPage(page: number, total: number, pageSize: number): number
   const pageCount = Math.max(1, Math.ceil(total / safeSize));
   return Math.min(safePage, pageCount);
 }
+
+export function itemCountLabel(
+  count: number,
+  singular: string,
+  plural: string,
+): string {
+  const safeCount = Math.max(0, Math.floor(Number(count) || 0));
+  return `${safeCount} ${safeCount === 1 ? singular : plural}`;
+}

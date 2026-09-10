@@ -20,12 +20,14 @@ import {
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
+import { useLocale } from "@/components/locale/locale-provider";
 
 interface AddCampaignDialogProps {
   onSuccess?: () => void;
 }
 
 export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
+  const { t } = useLocale();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -36,7 +38,7 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
 
   async function handleSubmit() {
     if (!formData.name || !formData.type) {
-      toast.error("Please fill in all required fields");
+      toast.error(t("camp_fillRequired"));
       return;
     }
 
@@ -53,12 +55,12 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
 
       if (!response.ok) throw new Error("Failed to create campaign");
 
-      toast.success("Campaign created successfully");
+      toast.success(t("camp_createdSuccess"));
       setOpen(false);
       setFormData({ name: "", type: "drip", triggerType: "" });
       onSuccess?.();
     } catch (error) {
-      toast.error("Failed to create campaign");
+      toast.error(t("camp_createError"));
       logClientError("Create campaign failed", error);
     } finally {
       setLoading(false);
@@ -70,24 +72,22 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
       <DialogTrigger asChild>
         <Button className="gap-2">
           <Plus className="w-4 h-4" />
-          New Campaign
+          {t("camp_newTrigger")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Campaign</DialogTitle>
-          <DialogDescription>
-            Set up a new marketing campaign for patient engagement
-          </DialogDescription>
+          <DialogTitle>{t("camp_createTitle")}</DialogTitle>
+          <DialogDescription>{t("camp_createDesc")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           {/* Campaign Name */}
           <div>
-            <Label htmlFor="name">Campaign Name</Label>
+            <Label htmlFor="name">{t("camp_colName")}</Label>
             <Input
               id="name"
-              placeholder="e.g., Post-Visit Follow-up"
+              placeholder={t("camp_namePlaceholder")}
               value={formData.name}
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
@@ -97,7 +97,7 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
 
           {/* Campaign Type */}
           <div>
-            <Label htmlFor="type">Campaign Type</Label>
+            <Label htmlFor="type">{t("camp_type")}</Label>
             <Select
               value={formData.type}
               onValueChange={(value) =>
@@ -108,21 +108,16 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="drip">Drip (Automated sequence)</SelectItem>
-                <SelectItem value="broadcast">
-                  Broadcast (Single message)
-                </SelectItem>
+                <SelectItem value="drip">{t("camp_drip")}</SelectItem>
+                <SelectItem value="broadcast">{t("camp_broadcast")}</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-xs text-gray-500 mt-1">
-              Drip campaigns send messages over time. Broadcasts send to
-              everyone at once.
-            </p>
+            <p className="text-xs text-gray-500 mt-1">{t("camp_typeHelp")}</p>
           </div>
 
           {/* Trigger Type (optional) */}
           <div>
-            <Label htmlFor="triggerType">Trigger Type (Optional)</Label>
+            <Label htmlFor="triggerType">{t("camp_triggerType")}</Label>
             <Select
               value={formData.triggerType}
               onValueChange={(value) =>
@@ -130,26 +125,26 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select trigger (optional)" />
+                <SelectValue placeholder={t("camp_triggerPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No Trigger</SelectItem>
-                <SelectItem value="post_visit">After Visit</SelectItem>
-                <SelectItem value="chronic_care">Chronic Care</SelectItem>
+                <SelectItem value="">{t("camp_noTrigger")}</SelectItem>
+                <SelectItem value="post_visit">{t("camp_afterVisit")}</SelectItem>
+                <SelectItem value="chronic_care">
+                  {t("camp_chronicCare")}
+                </SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-xs text-gray-500 mt-1">
-              Triggers automatically start campaigns based on events
-            </p>
+            <p className="text-xs text-gray-500 mt-1">{t("camp_triggerHelp")}</p>
           </div>
         </div>
 
         <div className="flex gap-2 justify-end mt-6">
           <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
+            {t("common_cancel")}
           </Button>
           <Button onClick={handleSubmit} disabled={loading}>
-            {loading ? "Creating..." : "Create Campaign"}
+            {loading ? t("camp_creating") : t("camp_create")}
           </Button>
         </div>
       </DialogContent>

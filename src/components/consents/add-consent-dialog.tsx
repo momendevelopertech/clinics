@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { logClientError } from "@/lib/client-logger";
+import { useLocale } from "@/components/locale/locale-provider";
 
 type PatientOption = {
   id: string;
@@ -34,7 +35,32 @@ interface AddConsentDialogProps {
   onSuccess: () => void;
 }
 
+const CONSENT_TYPE_OPTIONS = [
+  "Treatment",
+  "Surgery",
+  "Medication",
+  "Research",
+  "Photography",
+  "Telehealth",
+  "Data Sharing",
+  "Insurance",
+  "Other",
+] as const;
+
+const CONSENT_TYPE_KEYS: Record<string, string> = {
+  Treatment: "consentType_treatment",
+  Surgery: "consentType_surgery",
+  Medication: "consentType_medication",
+  Research: "consentType_research",
+  Photography: "consentType_photography",
+  Telehealth: "consentType_telehealth",
+  "Data Sharing": "consentType_dataSharing",
+  Insurance: "consentType_insurance",
+  Other: "consentType_other",
+};
+
 export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
+  const { t } = useLocale();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [patients, setPatients] = React.useState<PatientOption[]>([]);
@@ -59,28 +85,16 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
       const data = await response.json();
       setPatients(data);
     } catch (error) {
-      toast.error("Failed to load patients");
+      toast.error(t("common_loadPatientsError"));
       logClientError("Consent patient lookup failed", error);
     }
   };
-
-  const consentTypes = [
-    "Treatment",
-    "Surgery",
-    "Medication",
-    "Research",
-    "Photography",
-    "Telehealth",
-    "Data Sharing",
-    "Insurance",
-    "Other",
-  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.patientId || !formData.consentType) {
-      toast.error("Please fill in required fields");
+      toast.error(t("common_required"));
       return;
     }
 
@@ -100,7 +114,7 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
 
       if (!response.ok) throw new Error("Failed to create consent");
 
-      toast.success("Consent recorded successfully");
+      toast.success(t("consent_recordedSuccess"));
       setFormData({
         patientId: "",
         consentType: "",
@@ -111,7 +125,7 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
       setOpen(false);
       onSuccess();
     } catch (error) {
-      toast.error("Failed to record consent");
+      toast.error(t("consent_recordError"));
       logClientError("Create consent failed", error);
     } finally {
       setLoading(false);
@@ -122,20 +136,18 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2">
-          <Plus className="w-4 h-4" /> New Consent
+          <Plus className="w-4 h-4" /> {t("consent_newTrigger")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Record Patient Consent</DialogTitle>
-          <DialogDescription>
-            Record consent for treatment, procedures, or data sharing.
-          </DialogDescription>
+          <DialogTitle>{t("consent_recordTitle")}</DialogTitle>
+          <DialogDescription>{t("consent_recordDesc")}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="gap-2 flex flex-col">
-            <Label htmlFor="patient">Patient *</Label>
+            <Label htmlFor="patient">{t("common_patientRequired")}</Label>
             <Select
               value={formData.patientId}
               onValueChange={(value) =>
@@ -143,7 +155,7 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
               }
             >
               <SelectTrigger id="patient">
-                <SelectValue placeholder="Select a patient" />
+                <SelectValue placeholder={t("common_selectPatient")} />
               </SelectTrigger>
               <SelectContent>
                 {patients.map((patient) => (
@@ -156,7 +168,7 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
           </div>
 
           <div className="gap-2 flex flex-col">
-            <Label htmlFor="consent-type">Consent Type *</Label>
+            <Label htmlFor="consent-type">{t("consent_colType")} *</Label>
             <Select
               value={formData.consentType}
               onValueChange={(value) =>
@@ -164,12 +176,12 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
               }
             >
               <SelectTrigger id="consent-type">
-                <SelectValue placeholder="Select consent type" />
+                <SelectValue placeholder={t("consent_selectType")} />
               </SelectTrigger>
               <SelectContent>
-                {consentTypes.map((type) => (
+                {CONSENT_TYPE_OPTIONS.map((type) => (
                   <SelectItem key={type} value={type}>
-                    {type}
+                    {t(CONSENT_TYPE_KEYS[type])}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -177,7 +189,7 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
           </div>
 
           <div className="gap-2 flex flex-col">
-            <Label htmlFor="signed-date">Signed Date</Label>
+            <Label htmlFor="signed-date">{t("consent_colSigned")}</Label>
             <Input
               id="signed-date"
               type="date"
@@ -189,7 +201,7 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
           </div>
 
           <div className="gap-2 flex flex-col">
-            <Label htmlFor="document-url">Document URL</Label>
+            <Label htmlFor="document-url">{t("consent_documentUrl")}</Label>
             <Input
               id="document-url"
               placeholder="https://..."
@@ -209,7 +221,7 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
               }
             />
             <Label htmlFor="is-granted" className="cursor-pointer">
-              Consent Granted
+              {t("consent_grantedLabel")}
             </Label>
           </div>
 
@@ -220,10 +232,10 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              Cancel
+              {t("common_cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Recording..." : "Record Consent"}
+              {loading ? t("consent_recording") : t("consent_newTrigger")}
             </Button>
           </div>
         </form>

@@ -2075,17 +2075,6 @@ async function main() {
     receptionist: receptionistUser,
   };
 
-  const appointmentTypePool = [
-    "متابعة ضغط الدم",
-    "استشارة عامة",
-    "كشف أطفال",
-    "متابعة سكر",
-    "فحص شامل سنوي",
-    "إجراء",
-    "متابعة دورية",
-    "استشارة حساسية",
-    "تطعيم",
-  ];
   const appointmentNotePool = [
     "تقييم دوري وتحليل نتائج التحاليل.",
     "متابعة الحالة وضبط الجرعات.",

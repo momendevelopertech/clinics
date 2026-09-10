@@ -38,6 +38,24 @@ export const en: Dictionary = {
   common_type: "Type",
   common_notes: "Notes",
   common_loadPatientsError: "Failed to load patients",
+  common_export: "Export",
+  common_view: "View",
+  common_patient: "Patient",
+  common_selectPatient: "Select a patient",
+  common_patientRequired: "Patient *",
+  common_noFile: "No file",
+  common_retry: "Retry",
+  common_resetFilters: "Reset filters",
+  perm_deniedTitle: "You don't have permission",
+  perm_deniedDesc:
+    "Your role doesn't allow you to view or use this page. Contact your clinic owner if you think this is a mistake.",
+
+  // Table / pagination
+  pagination_item: "item",
+  pagination_items: "items",
+  pagination_prev: "Prev",
+  pagination_next: "Next",
+  pagination_pageOf: "Page {page} of {pageCount}",
 
   // Navigation
   nav_overview: "Overview",
@@ -959,6 +977,17 @@ export const en: Dictionary = {
   comm_sendError: "Failed to send communication",
   comm_sending: "Sending...",
   comm_send: "Send",
+  comm_channel_sms: "SMS",
+  comm_channel_email: "Email",
+  comm_channel_whatsapp: "WhatsApp",
+  comm_type_reminder: "Reminder",
+  comm_type_campaign: "Campaign",
+  comm_type_notification: "Notification",
+  comm_type_survey: "Survey",
+  comm_status_pending: "Pending",
+  comm_status_sent: "Sent",
+  comm_status_delivered: "Delivered",
+  comm_status_scheduled: "Scheduled",
 
   // Campaigns
   camp_title: "Marketing Campaigns",
@@ -987,6 +1016,12 @@ export const en: Dictionary = {
   camp_createdSuccess: "Campaign created successfully",
   camp_createError: "Failed to create campaign",
   camp_creating: "Creating...",
+  camp_create: "Create Campaign",
+  camp_drip: "Drip",
+  camp_broadcast: "Broadcast",
+  camp_afterVisit: "After Visit",
+  camp_chronicCare: "Chronic Care",
+  camp_manual: "Manual",
 
   // Consents
   consent_title: "Consent Management",
@@ -1014,6 +1049,15 @@ export const en: Dictionary = {
   consent_recordedSuccess: "Consent recorded successfully",
   consent_recordError: "Failed to record consent",
   consent_recording: "Recording...",
+  consentType_treatment: "Treatment",
+  consentType_surgery: "Surgery",
+  consentType_medication: "Medication",
+  consentType_research: "Research",
+  consentType_photography: "Photography",
+  consentType_telehealth: "Telehealth",
+  consentType_dataSharing: "Data Sharing",
+  consentType_insurance: "Insurance",
+  consentType_other: "Other",
 
   // Documents
   doc_title: "Documents & Imaging",
@@ -1042,6 +1086,13 @@ export const en: Dictionary = {
   doc_requireFile: "Please upload a file or provide a file URL",
   doc_uploadedSuccess: "Document uploaded successfully",
   doc_uploadError: "Failed to upload document",
+  docType_imaging: "Imaging",
+  docType_lab: "Lab",
+  docType_pathology: "Pathology",
+  docType_consent: "Consent",
+  docType_medicalRecord: "Medical Record",
+  docType_prescription: "Prescription",
+  docType_other: "Other",
 
   // Help & Support
   help_title: "Help & Support",
