@@ -130,6 +130,7 @@ export function renderAppointmentReminder(
 
   return {
     sms: `Hi ${patientName}, reminder: you have an appointment with ${providerName} on ${time}. Reply CONFIRM to confirm or CANCEL to cancel.`,
+    whatsapp: `Hi ${patientName}, reminder: you have an appointment with ${providerName} on ${time}. Reply CONFIRM to confirm or CANCEL to cancel.`,
     email: `
       <h2>Appointment Reminder</h2>
       <p>Hi ${patientName},</p>
