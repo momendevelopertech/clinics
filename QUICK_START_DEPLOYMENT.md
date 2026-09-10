@@ -100,6 +100,27 @@ vercel deploy --prod
 # - DATABASE_URL
 ```
 
+### Cron jobs on the free plan (Hobby allows daily crons only)
+
+`vercel.json` intentionally defines **no** cron jobs: our two schedules
+(hourly reminders, every-minute dispatch) exceed the Hobby daily limit and
+would fail deployment. They run instead on the free tier of an external
+cron service (e.g. https://cron-job.org — free, 1-minute intervals allowed).
+Exactly ONE trigger source must exist: the dispatch endpoint has no atomic
+claim, so overlapping triggers would double-send messages.
+
+Setup (5 minutes, free):
+
+1. Vercel dashboard → project Settings → Environment Variables → set
+   `CRON_SECRET` (generate: `openssl rand -hex 32`). Redeploy after adding.
+2. In cron-job.org create two jobs pointing at your production domain:
+   - `POST https://yourdomain.com/api/communications/scheduled` — every minute
+   - `POST https://yourdomain.com/api/communications/appointment-reminders` — every hour
+   - Both with header `Authorization: Bearer <CRON_SECRET>`
+     (the API also accepts `x-cron-secret: <CRON_SECRET>`).
+3. Verify: each endpoint returns `{ "success": true, ... }`; a wrong secret
+   returns 401, a missing `CRON_SECRET` env returns 503.
+
 ### Option B: Docker (local development only)
 
 The provided `docker-compose.yml` is a **local development** stack, not a hardened production config. It has no hardcoded secrets: you must supply `NEXTAUTH_SECRET`, `ENCRYPTION_KEY`, and `POSTGRES_PASSWORD` (docker compose reads the project `.env`; see README "Docker" and `.env.example`). Demo seeding defaults to off — set `SEED_DEMO_DATA=true` only if you want demo users/data.
