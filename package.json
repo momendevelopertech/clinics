@@ -16,6 +16,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "auth:check": "node scripts/check-auth-readiness.mjs",
     "db:seed": "node prisma/seed.js",
     "db:seed:demo": "node scripts/seed-demo-tenants.js",
@@ -58,6 +60,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4.2.1",
     "@types/node": "^20.19.35",
     "@types/pg": "^8.18.0",
