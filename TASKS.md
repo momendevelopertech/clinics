@@ -38,7 +38,7 @@ Execute **one task at a time**, top to bottom. Mark `[x]` only after tests for t
 
 ## P4 — Must-have Features
 
-- [ ] Patient self-booking: availability engine + public booking page — Phase P4
+- [x] Patient self-booking: availability engine + public booking page — Phase P4 (done: pure `getAvailableSlots` engine 8/8 tests; public `GET /api/book/[orgSlug]/availability` + patient-session `POST .../appointments` with conflict tx + idempotency; 30/min IP rate limit; public `/book/[orgSlug]` page + portal quick-action link; proxy allowlists `/book` page+API; i18n en+ar)
 - [ ] Reliable reminders (SMS + WhatsApp + Email) with hardened cron — Phase P4
 - [ ] Deeper patient portal (documents, invoices, cancel/reschedule) — Phase P4
 - [ ] No-show / cancellation policy tracking — Phase P4

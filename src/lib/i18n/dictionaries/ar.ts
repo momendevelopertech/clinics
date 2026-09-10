@@ -1217,6 +1217,17 @@ export const ar: Dictionary = {
   portal_recentLabResultsDesc: "نتائج فحوصاتك",
   portal_noLabResults: "لا توجد نتائج مختبر متاحة",
   portal_viewAllResults: "عرض كل النتائج",
+  portal_bookTitle: "حجز موعد",
+  portal_bookDesc: "اختر الطبيب واليوم والموعد المتاح.",
+  portal_pickProvider: "الطبيب",
+  portal_pickDate: "التاريخ",
+  portal_pickSlot: "المواعيد المتاحة",
+  portal_confirmBooking: "تأكيد الحجز",
+  portal_bookSuccess: "تم حجز الموعد بنجاح",
+  portal_bookError: "فشل الحجز. جرب موعداً آخر.",
+  portal_loginToBook: "سجل الدخول كمريض للحجز",
+  portal_noSlots: "لا توجد مواعيد متاحة في هذا اليوم",
+  portal_clinicNotFound: "العيادة غير موجودة",
 
   // Language
   lang_label: "اللغة",

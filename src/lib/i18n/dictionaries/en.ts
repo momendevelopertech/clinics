@@ -1223,6 +1223,17 @@ export const en: Dictionary = {
   portal_recentLabResultsDesc: "Your test results",
   portal_noLabResults: "No lab results available",
   portal_viewAllResults: "View All Results",
+  portal_bookTitle: "Book an appointment",
+  portal_bookDesc: "Pick a provider, a day, and a free slot.",
+  portal_pickProvider: "Provider",
+  portal_pickDate: "Date",
+  portal_pickSlot: "Available slots",
+  portal_confirmBooking: "Confirm booking",
+  portal_bookSuccess: "Appointment booked successfully",
+  portal_bookError: "Booking failed. Please try another slot.",
+  portal_loginToBook: "Log in as a patient to book",
+  portal_noSlots: "No free slots on this day",
+  portal_clinicNotFound: "Clinic not found",
 
   // Language
   lang_label: "Language",

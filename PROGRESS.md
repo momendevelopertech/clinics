@@ -1,15 +1,15 @@
 # Progress Log — عيادات CRM Production Readiness
 
 ## Current status
-- Last updated: 2026-09-10 23:05 UTC+3
-- Current phase: P3 — Testing (review fixes applied: uploads/avatar auth codes, Cloudinary-only avatars, avatar GET+hydration, image-purpose typing, integration hardening, tsc fully clean, CI gates typecheck — 191/191 tests green)
-- Current task: Push reviewed batch to GitHub
-- Status: READY
+- Last updated: 2026-09-10 22:36 UTC+3
+- Current phase: P4 — Must-have Features (**self-booking DONE + verified: tsc clean, 195/195 tests green**)
+- Current task: Reliable reminders (SMS + WhatsApp + Email) with hardened cron
+- Status: NEXT
 
 ## How to resume
 لو الـ session اتقطع، اقرأ الملف ده الأول، شوف "Current task"، تحقق من حالته الفعلية في الكود (هل اتنفذ فعلاً ولا لأ)، وكمل من هناك. لا تعيد تنفيذ تاسكات مكتوب جنبها [x].
 
-التالي: P3 المتبقي يحتاج CI test DB (ثم P4).
+التالي: P4 تذكيرات موثوقة (SMS/WhatsApp/Email) مع cron محصّن.
 
 Previous clinic-blueprint tracker (P0–P7 product modules) lived in this file and is largely complete except P4-T3 charge-generation policy (blocked on product decision). Do not confuse that list with the production-readiness tasks in `TASKS.md`.
 

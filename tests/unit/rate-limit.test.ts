@@ -270,4 +270,12 @@ describe("existing route rules and keying", () => {
     expect(resolveRateLimitRule("/api/vitals/stream", "GET", "1.2.3.4")).toBeNull();
     expect(resolveRateLimitRule("/dashboard", "GET", "1.2.3.4")).toBeNull();
   });
+
+  it("rate-limits public self-booking endpoints per IP", () => {
+    const availability = resolveRateLimitRule("/api/book/acme/availability", "GET", "1.2.3.4");
+    expect(availability?.config.max).toBe(30);
+    expect(availability?.key).toContain("1.2.3.4");
+    const booking = resolveRateLimitRule("/api/book/acme/appointments", "POST", "1.2.3.4");
+    expect(booking?.config.max).toBe(30);
+  });
 });

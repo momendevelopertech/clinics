@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  getAvailableSlots,
   hasAppointmentConflict,
   isDoctorAvailable,
   nextWalkInToken,
@@ -80,5 +81,59 @@ describe("appointment scheduling helpers", () => {
         isWalkIn: true,
       }),
     }));
+  });
+});
+
+describe("getAvailableSlots", () => {
+  const provider = {
+    availabilityType: "regular",
+    availableDays: JSON.stringify(["mon", "tue", "wed", "thu", "fri"]),
+    availableFrom: "09:00",
+    availableTo: "12:00",
+  };
+  // Monday 2026-09-07, "now" far in the past so no slot is filtered as past.
+  const monday = new Date(2026, 8, 7, 0, 0, 0);
+  const past = new Date(2020, 0, 1);
+
+  it("tiles the working window in duration steps", () => {
+    const slots = getAvailableSlots({
+      provider,
+      date: monday,
+      durationMins: 30,
+      existingAppointments: [],
+      now: past,
+    });
+    expect(slots).toHaveLength(6);
+    expect(slots[0].start).toEqual(new Date(2026, 8, 7, 9, 0));
+    expect(slots[5].end).toEqual(new Date(2026, 8, 7, 12, 0));
+  });
+
+  it("removes overlapping appointments and past slots", () => {
+    const slots = getAvailableSlots({
+      provider,
+      date: monday,
+      durationMins: 30,
+      existingAppointments: [
+        { startTime: new Date(2026, 8, 7, 9, 45), endTime: new Date(2026, 8, 7, 10, 15) },
+      ],
+      now: new Date(2026, 8, 7, 9, 40),
+    });
+    // 09:00 past, 09:30 + 10:00 overlap the booking, 10:30/11:00/11:30 free.
+    expect(slots.map((s) => toHM(s.start))).toEqual(["10:30", "11:00", "11:30"]);
+  });
+
+  it("returns nothing outside working days or for bad input", () => {
+    expect(
+      getAvailableSlots({
+        provider,
+        date: new Date(2026, 8, 13), // Sunday
+        durationMins: 30,
+        existingAppointments: [],
+        now: past,
+      }),
+    ).toEqual([]);
+    expect(
+      getAvailableSlots({ provider, date: monday, durationMins: 0, existingAppointments: [], now: past }),
+    ).toEqual([]);
   });
 });

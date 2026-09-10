@@ -127,3 +127,75 @@ export function appointmentDurationForOrg(organizationId: string) {
     return parseOrgSettings(org?.settingsJson).appointmentDurationMins ?? 30;
   };
 }
+
+export type DaySlot = {
+  start: Date;
+  end: Date;
+};
+
+/**
+ * Availability grid for one provider + day. Slots tile the provider's
+ * working window (or openTime–closeTime fallback) in `durationMins` steps;
+ * past slots and ones overlapping existing active appointments are removed.
+ * Pure and unit-tested — the engine behind public self-booking.
+ */
+export function getAvailableSlots(params: {
+  provider: Pick<
+    User,
+    "availabilityType" | "availableDays" | "availableFrom" | "availableTo"
+  >;
+  date: Date;
+  durationMins: number;
+  existingAppointments: Array<{ startTime: Date; endTime: Date }>;
+  now?: Date;
+  openTime?: string;
+  closeTime?: string;
+}): DaySlot[] {
+  const { provider, date, durationMins, existingAppointments } = params;
+  const now = params.now ?? new Date();
+  if (!Number.isFinite(durationMins) || durationMins <= 0) return [];
+
+  const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const from =
+    provider.availabilityType === "regular"
+      ? (provider.availableFrom ?? params.openTime ?? "09:00")
+      : (params.openTime ?? "09:00");
+  const to =
+    provider.availabilityType === "regular"
+      ? (provider.availableTo ?? params.closeTime ?? "17:00")
+      : (params.closeTime ?? "17:00");
+
+  const [fromH, fromM] = from.split(":").map(Number);
+  const [toH, toM] = to.split(":").map(Number);
+  if (
+    ![fromH, fromM, toH, toM].every((n) => Number.isInteger(n)) ||
+    fromH > 23 ||
+    toH > 23
+  ) {
+    return [];
+  }
+
+  const windowStart = new Date(dayStart);
+  windowStart.setHours(fromH, fromM, 0, 0);
+  const windowEnd = new Date(dayStart);
+  windowEnd.setHours(toH, toM, 0, 0);
+  if (windowEnd <= windowStart) return [];
+
+  const slots: DaySlot[] = [];
+  for (
+    let cursor = new Date(windowStart);
+    new Date(cursor.getTime() + durationMins * 60000) <= windowEnd;
+    cursor = new Date(cursor.getTime() + durationMins * 60000)
+  ) {
+    const start = new Date(cursor);
+    const end = new Date(cursor.getTime() + durationMins * 60000);
+    if (end <= now) continue;
+    if (!isDoctorAvailable(provider, start).available) continue;
+    const overlaps = existingAppointments.some(
+      (a) => a.startTime < end && a.endTime > start,
+    );
+    if (overlaps) continue;
+    slots.push({ start, end });
+  }
+  return slots;
+}

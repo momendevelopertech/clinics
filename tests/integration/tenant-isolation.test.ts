@@ -111,5 +111,5 @@ describeDb("tenant isolation (integration)", () => {
       hasPermission(staff!.id, orgB!, "patients:read", "patients"),
     ).resolves.toBe(false);
     // Neon cold starts + next-auth import chain can exceed the 5s default.
-  }, 30000);
+  }, 60000);
 });

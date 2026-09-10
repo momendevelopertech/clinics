@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Activity,
@@ -35,6 +36,7 @@ interface PatientData {
 export default function PatientPortalPage() {
   const { t } = useLocale();
   const [patient, setPatient] = React.useState<PatientData | null>(null);
+  const [orgSlug, setOrgSlug] = React.useState<string | null>(null);
   const [appointments, setAppointments] = React.useState<Array<{ id: string; type: string; provider: string; status: string }>>([]);
   const [labResults, setLabResults] = React.useState<Array<{ id: string; testName: string; resultValue: string | null; unit: string | null; status: string }>>([]);
   const [overviewVital, setOverviewVital] = React.useState<VitalSnapshot | null>(null);
@@ -54,6 +56,7 @@ export default function PatientPortalPage() {
 
       const overview = await overviewResponse.json();
       setPatient(overview.patient);
+      setOrgSlug(overview.organizationSlug ?? null);
       setAppointments(overview.appointments);
       setLabResults(overview.labResults);
       setOverviewVital(overview.latestVital);
@@ -144,14 +147,22 @@ export default function PatientPortalPage() {
               <CardDescription>{t("portal_quickActionsDesc")}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
-              <Button
-                variant="outline"
-                className="justify-start"
-                disabled
-                title={t("portal_comingSoon")}
-              >
-                <Calendar className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t("portal_bookAppointment")}
-              </Button>
+              {orgSlug ? (
+                <Button variant="outline" className="justify-start" asChild>
+                  <Link href={`/book/${orgSlug}`}>
+                    <Calendar className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t("portal_bookAppointment")}
+                  </Link>
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  className="justify-start"
+                  disabled
+                  title={t("portal_comingSoon")}
+                >
+                  <Calendar className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t("portal_bookAppointment")}
+                </Button>
+              )}
               <Button
                 variant="outline"
                 className="justify-start"

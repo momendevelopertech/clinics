@@ -14,7 +14,7 @@ export async function GET(request: Request) {
 
     const patientId = session.patient.id;
 
-    const [appointments, labResults, latestVital] = await Promise.all([
+    const [appointments, labResults, latestVital, organization] = await Promise.all([
       prisma.appointment.findMany({
         where: { patientId },
         include: {
@@ -29,6 +29,10 @@ export async function GET(request: Request) {
         take: 3,
       }),
       getLatestVitalSnapshot(patientId),
+      prisma.organization.findUnique({
+        where: { id: session.patient.organizationId },
+        select: { slug: true },
+      }),
     ]);
 
     return NextResponse.json({
@@ -39,6 +43,7 @@ export async function GET(request: Request) {
         email: session.patient.email,
         mrn: session.patient.mrn,
       },
+      organizationSlug: organization?.slug ?? null,
       appointments: appointments.map((appointment: {
         id: string;
         appointmentType: string | null;

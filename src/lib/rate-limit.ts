@@ -52,6 +52,11 @@ export const LIST_RATE_LIMIT_CONFIG: RateLimitConfig = {
   windowMs: 60_000,
 };
 
+export const BOOK_RATE_LIMIT_CONFIG: RateLimitConfig = {
+  max: 30,
+  windowMs: 60_000,
+};
+
 export function resolveRateLimitRule(
   pathname: string,
   method: string,
@@ -78,6 +83,13 @@ export function resolveRateLimitRule(
     return {
       key: `list:${tokenUserId ?? clientIp}:${pathname}`,
       config: LIST_RATE_LIMIT_CONFIG,
+    };
+  }
+
+  if (pathname.startsWith("/api/book/")) {
+    return {
+      key: `book:${clientIp}:${pathname}`,
+      config: BOOK_RATE_LIMIT_CONFIG,
     };
   }
 
