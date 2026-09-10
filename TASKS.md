@@ -7,7 +7,7 @@ Execute **one task at a time**, top to bottom. Mark `[x]` only after tests for t
 
 ## P0 — Security & Data Integrity
 
-- [ ] Force `ENCRYPTION_KEY` + `NEXTAUTH_SECRET` on production boot (fail loudly if empty/placeholder) — Phase P0
+- [x] Force `ENCRYPTION_KEY` + `NEXTAUTH_SECRET` on production boot (fail loudly if empty/placeholder) — Phase P0
 - [ ] Reject patient sessions when the organization is suspended — Phase P0
 - [ ] Change `Patient.mrn` from global `@unique` to `@@unique([organizationId, mrn])` with a safe data migration — Phase P0
 - [ ] Rate limiter fail-closed when Redis is unavailable (no fail-open) — Phase P0
