@@ -10,6 +10,11 @@ export type OrgSettings = {
   billingNotifications?: boolean;
   clinicLogoUrl?: string;
   clinicLogoPublicId?: string | null;
+  cancellationPolicy?: {
+    lateCancelHoursBefore?: number;
+    maxNoShows?: number;
+    noShowFee?: number;
+  };
 };
 
 export function parseOrgSettings(settingsJson: string | null | undefined): OrgSettings {
@@ -31,6 +36,11 @@ export function parseOrgSettings(settingsJson: string | null | undefined): OrgSe
       billingNotifications: parsed.billingNotifications ?? true,
       clinicLogoUrl: parsed.clinicLogoUrl ?? "",
       clinicLogoPublicId: parsed.clinicLogoPublicId ?? null,
+      cancellationPolicy: {
+        lateCancelHoursBefore: parsed.cancellationPolicy?.lateCancelHoursBefore ?? 24,
+        maxNoShows: parsed.cancellationPolicy?.maxNoShows ?? 3,
+        noShowFee: parsed.cancellationPolicy?.noShowFee ?? 0,
+      },
     };
   } catch {
     return { appointmentDurationMins: 30 };

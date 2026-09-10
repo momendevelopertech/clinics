@@ -134,6 +134,71 @@ export type DaySlot = {
 };
 
 /**
+ * No-show / late-cancellation policy tracking (P4).
+ * A cancellation is "late" when it happens inside the org's
+ * lateCancelHoursBefore window; a patient is flagged when no-shows
+ * reach maxNoShows. Pure and unit-tested.
+ */
+export type CancellationPolicy = {
+  lateCancelHoursBefore: number;
+  maxNoShows: number;
+  noShowFee: number;
+};
+
+export const DEFAULT_CANCELLATION_POLICY: CancellationPolicy = {
+  lateCancelHoursBefore: 24,
+  maxNoShows: 3,
+  noShowFee: 0,
+};
+
+export function isLateCancellation(
+  cancelledAt: Date,
+  startTime: Date,
+  lateCancelHoursBefore: number,
+): boolean {
+  const hoursBefore = (startTime.getTime() - cancelledAt.getTime()) / 3_600_000;
+  return hoursBefore >= 0 && hoursBefore < lateCancelHoursBefore;
+}
+
+export type AttendanceSummary = {
+  total: number;
+  completed: number;
+  cancelled: number;
+  lateCancels: number;
+  noShows: number;
+  flagged: boolean;
+};
+
+export function summarizeAttendance(
+  appointments: Array<{ status: string; startTime: Date; updatedAt: Date }>,
+  policy: CancellationPolicy = DEFAULT_CANCELLATION_POLICY,
+  now: Date = new Date(),
+): AttendanceSummary {
+  let completed = 0;
+  let cancelled = 0;
+  let lateCancels = 0;
+  let noShows = 0;
+  for (const a of appointments) {
+    if (a.startTime > now) continue;
+    if (a.status === "completed") completed += 1;
+    else if (a.status === "cancelled") {
+      cancelled += 1;
+      if (isLateCancellation(a.updatedAt, a.startTime, policy.lateCancelHoursBefore)) {
+        lateCancels += 1;
+      }
+    } else if (a.status === "no_show") noShows += 1;
+  }
+  return {
+    total: completed + cancelled + noShows,
+    completed,
+    cancelled,
+    lateCancels,
+    noShows,
+    flagged: noShows >= policy.maxNoShows,
+  };
+}
+
+/**
  * Patient self-service guards (portal cancel/reschedule). Pure and tested:
  * only the patient's own upcoming scheduled/confirmed visits can change,
  * and only while the visit is still in the future.

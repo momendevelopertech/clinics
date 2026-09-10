@@ -1,15 +1,15 @@
 # Progress Log — عيادات CRM Production Readiness
 
 ## Current status
-- Last updated: 2026-09-10 23:00 UTC+3
-- Current phase: P4 — Must-have Features (portal deepening DONE: documents/invoices/cancel/reschedule)
-- Current task: No-show / cancellation policy tracking
+- Last updated: 2026-09-10 23:16 UTC+3
+- Current phase: P4 — Must-have Features (**COMPLETE: all 4 tasks DONE, tsc clean**)
+- Current task: P5 — Should-have Features (next)
 - Status: NEXT
 
 ## How to resume
 لو الـ session اتقطع، اقرأ الملف ده الأول، شوف "Current task"، تحقق من حالته الفعلية في الكود (هل اتنفذ فعلاً ولا لأ)، وكمل من هناك. لا تعيد تنفيذ تاسكات مكتوب جنبها [x].
 
-التالي: P4 سياسة no-show والإلغاء.
+التالي: P5 (اختياري).
 
 Previous clinic-blueprint tracker (P0–P7 product modules) lived in this file and is largely complete except P4-T3 charge-generation policy (blocked on product decision). Do not confuse that list with the production-readiness tasks in `TASKS.md`.
 

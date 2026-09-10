@@ -41,7 +41,7 @@ Execute **one task at a time**, top to bottom. Mark `[x]` only after tests for t
 - [x] Patient self-booking: availability engine + public booking page — Phase P4 (done: pure `getAvailableSlots` engine 8/8 tests; public `GET /api/book/[orgSlug]/availability` + patient-session `POST .../appointments` with conflict tx + idempotency; 30/min IP rate limit; public `/book/[orgSlug]` page + portal quick-action link; proxy allowlists `/book` page+API; i18n en+ar)
 - [x] Reliable reminders (SMS + WhatsApp + Email) with hardened cron — Phase P4 (done: status filter scheduled/confirmed only, archived/suspended skipped, all 3 channels with per-channel sent/failed records + audits, failure counts in response; tested `tests/unit/reminders.test.ts`)
 - [x] Deeper patient portal (documents, invoices, cancel/reschedule) — Phase P4 (done: patient-scoped documents/invoices endpoints; cancel + reschedule endpoints with ownership/transition/conflict guards; portal UI cards + per-appointment actions; pure `canPatientCancel/Reschedule` guards tested; i18n en+ar)
-- [ ] No-show / cancellation policy tracking — Phase P4
+- [x] No-show / cancellation policy tracking — Phase P4 (done: per-org policy config in settings UI + schema, pure late-cancel/attendance engine tested, staff attendance endpoint, flagged-patient banner on timeline, i18n en+ar)
 
 ## P5 — Should-have Features
 

@@ -18,4 +18,12 @@ export const organizationSettingsSchema = z.object({
     .optional()
     .default(""),
   clinicLogoPublicId: z.string().trim().max(500).optional().nullable().default(null),
+  cancellationPolicy: z
+    .object({
+      lateCancelHoursBefore: z.number().int().min(1).max(168).optional(),
+      maxNoShows: z.number().int().min(1).max(20).optional(),
+      noShowFee: z.number().min(0).max(100000).optional(),
+    })
+    .optional()
+    .default({}),
 });

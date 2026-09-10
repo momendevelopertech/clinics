@@ -14,6 +14,8 @@ import {
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getDictionary } from "@/lib/i18n/server";
+import { parseOrgSettings } from "@/lib/org-settings";
+import { summarizeAttendance } from "@/lib/appointments";
 
 type TimelineEvent = {
   id: string;
@@ -65,6 +67,7 @@ export default async function PatientTimelinePage({
         select: {
           id: true,
           startTime: true,
+          updatedAt: true,
           status: true,
           appointmentType: true,
           tokenNumber: true,
@@ -124,6 +127,17 @@ export default async function PatientTimelinePage({
     ]);
 
   const t = await getDictionary();
+
+  const organization = await prisma.organization.findUnique({
+    where: { id: organizationId },
+    select: { settingsJson: true },
+  });
+  const orgPolicy = parseOrgSettings(organization?.settingsJson).cancellationPolicy;
+  const attendance = summarizeAttendance(appointments, {
+    lateCancelHoursBefore: orgPolicy?.lateCancelHoursBefore ?? 24,
+    maxNoShows: orgPolicy?.maxNoShows ?? 3,
+    noShowFee: orgPolicy?.noShowFee ?? 0,
+  });
 
   const apptStatusLabel = (status: string) => {
     const lower = status.toLowerCase();
@@ -274,6 +288,17 @@ export default async function PatientTimelinePage({
             <FileText className="h-4 w-4" />
             {events.length}
           </div>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
+          <span className="rounded-full bg-neutral-100 px-3 py-1 font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+            {t["timeline_attendance"]}: {attendance.completed} · {attendance.noShows}{" "}
+            {t["timeline_noShow"]} · {attendance.lateCancels} {t["timeline_lateCancels"]}
+          </span>
+          {attendance.flagged && (
+            <span className="rounded-full bg-red-100 px-3 py-1 font-semibold text-red-700 dark:bg-red-900/40 dark:text-red-300">
+              {t["timeline_policyFlag"]}
+            </span>
+          )}
         </div>
       </div>
 

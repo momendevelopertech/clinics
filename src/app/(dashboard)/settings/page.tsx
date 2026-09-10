@@ -20,7 +20,7 @@ type Section = "general" | "billing" | "team" | "notifications"
 export default function SettingsPage() {
   const { t } = useLocale()
   const [activeSection, setActiveSection] = React.useState<Section>("general")
-  const [settings, setSettings] = React.useState({ appointmentDurationMins: 30, currency: "USD", defaultTaxRate: 0, invoicePrefix: "INV-", appointmentReminders: true, newPatientAlerts: true, billingNotifications: true, clinicLogoUrl: "" as string, clinicLogoPublicId: null as string | null })
+  const [settings, setSettings] = React.useState({ appointmentDurationMins: 30, currency: "USD", defaultTaxRate: 0, invoicePrefix: "INV-", appointmentReminders: true, newPatientAlerts: true, billingNotifications: true, clinicLogoUrl: "" as string, clinicLogoPublicId: null as string | null, cancellationPolicy: { lateCancelHoursBefore: 24, maxNoShows: 3, noShowFee: 0 } })
   const { forbidden, guardedFetch } = usePermissionState()
 
   React.useEffect(() => {
@@ -124,6 +124,27 @@ export default function SettingsPage() {
                description={t("settings_yourAvatarHelp")}
                uploadLabel={t("settings_uploadAvatar")}
              />
+
+             <div>
+                <h3 className="text-lg font-medium border-b dark:border-neutral-800 pb-2 mb-4">{t("settings_cancellationPolicy")}</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="lateCancelHours">{t("settings_lateCancelHours")}</Label>
+                        <Input id="lateCancelHours" type="number" min={1} max={168} value={settings.cancellationPolicy.lateCancelHoursBefore} onChange={(event) => setSettings({ ...settings, cancellationPolicy: { ...settings.cancellationPolicy, lateCancelHoursBefore: Number(event.target.value) } })} />
+                        <p className="text-xs text-neutral-500">{t("settings_lateCancelHoursHelp")}</p>
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="maxNoShows">{t("settings_maxNoShows")}</Label>
+                        <Input id="maxNoShows" type="number" min={1} max={20} value={settings.cancellationPolicy.maxNoShows} onChange={(event) => setSettings({ ...settings, cancellationPolicy: { ...settings.cancellationPolicy, maxNoShows: Number(event.target.value) } })} />
+                        <p className="text-xs text-neutral-500">{t("settings_maxNoShowsHelp")}</p>
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="noShowFee">{t("settings_noShowFee")}</Label>
+                        <Input id="noShowFee" type="number" min={0} value={settings.cancellationPolicy.noShowFee} onChange={(event) => setSettings({ ...settings, cancellationPolicy: { ...settings.cancellationPolicy, noShowFee: Number(event.target.value) } })} />
+                        <p className="text-xs text-neutral-500">{t("settings_noShowFeeHelp")}</p>
+                    </div>
+                </div>
+             </div>
 
              <div>
                 <h3 className="text-lg font-medium border-b dark:border-neutral-800 pb-2 mb-4">{t("settings_appointmentPreferences")}</h3>

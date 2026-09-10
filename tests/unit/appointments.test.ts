@@ -5,7 +5,9 @@ import {
   getAvailableSlots,
   hasAppointmentConflict,
   isDoctorAvailable,
+  isLateCancellation,
   nextWalkInToken,
+  summarizeAttendance,
   toDayKey,
   toHM,
 } from "../../src/lib/appointments";
@@ -163,5 +165,38 @@ describe("patient self-service guards", () => {
     expect(
       canPatientRescheduleAppointment({ ...upcoming, status: "in_progress" }, "pat-1", now),
     ).toBe(false);
+  });
+});
+
+describe("cancellation policy tracking", () => {
+  const day = new Date(2026, 8, 8, 10, 0);
+
+  it("flags cancellations inside the late window only", () => {
+    expect(isLateCancellation(new Date(2026, 8, 7, 9, 0), day, 24)).toBe(false);
+    expect(isLateCancellation(new Date(2026, 8, 7, 12, 0), day, 24)).toBe(true);
+    expect(isLateCancellation(new Date(2026, 8, 9, 10, 0), day, 24)).toBe(false);
+  });
+
+  it("summarizes attendance and flags repeat no-shows", () => {
+    const summary = summarizeAttendance(
+      [
+        { status: "completed", startTime: day, updatedAt: day },
+        { status: "cancelled", startTime: day, updatedAt: new Date(2026, 8, 7, 12, 0) },
+        { status: "no_show", startTime: day, updatedAt: day },
+        { status: "no_show", startTime: day, updatedAt: day },
+        { status: "no_show", startTime: day, updatedAt: day },
+        { status: "scheduled", startTime: new Date(2026, 8, 20, 10, 0), updatedAt: day },
+      ],
+      { lateCancelHoursBefore: 24, maxNoShows: 3, noShowFee: 0 },
+      new Date(2026, 8, 10, 10, 0),
+    );
+    expect(summary).toEqual({
+      total: 5,
+      completed: 1,
+      cancelled: 1,
+      lateCancels: 1,
+      noShows: 3,
+      flagged: true,
+    });
   });
 });
