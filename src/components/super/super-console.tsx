@@ -60,7 +60,13 @@ type PlatformSettings = {
   announcement: string;
 };
 
-const PLANS = ["free", "clinic", "plus"] as const;
+type PlanOption = { code: string; nameEn: string };
+
+const FALLBACK_PLANS: PlanOption[] = [
+  { code: "free", nameEn: "Starter" },
+  { code: "clinic", nameEn: "Clinic" },
+  { code: "plus", nameEn: "Plus" },
+];
 type Section = "organizations" | "approvals" | "billing" | "audit" | "settings";
 
 function formatUsage(value: number, limit: number) {
@@ -88,6 +94,7 @@ export function SuperConsole({ t }: { t: Dictionary }) {
     supportEmail: "",
     announcement: "",
   });
+  const [availablePlans, setAvailablePlans] = useState<PlanOption[]>(FALLBACK_PLANS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -98,23 +105,34 @@ export function SuperConsole({ t }: { t: Dictionary }) {
     setLoading(true);
     setError(null);
     try {
-      const [orgResponse, auditResponse, settingsResponse] = await Promise.all([
+      const [orgResponse, auditResponse, settingsResponse, plansResponse] = await Promise.all([
         fetch("/api/super/orgs", { cache: "no-store" }),
         fetch("/api/super/audit", { cache: "no-store" }),
         fetch("/api/super/settings", { cache: "no-store" }),
+        fetch("/api/super/plans", { cache: "no-store" }),
       ]);
       if (!orgResponse.ok || !auditResponse.ok || !settingsResponse.ok) {
         setError(t["common_error"]);
         return;
       }
-      const [orgData, auditData, settingsData] = await Promise.all([
+      const [orgData, auditData, settingsData, plansData] = await Promise.all([
         orgResponse.json(),
         auditResponse.json(),
         settingsResponse.json(),
+        plansResponse.ok ? plansResponse.json() : Promise.resolve({ plans: [] }),
       ]);
       setOrgs(orgData.orgs ?? []);
       setAudit(auditData.logs ?? []);
       setSettings((current) => ({ ...current, ...(settingsData.settings ?? {}) }));
+      const catalogPlans: PlanOption[] = Array.isArray(plansData.plans)
+        ? plansData.plans
+            .filter((plan: { status?: string }) => plan.status !== "archived")
+            .map((plan: { code: string; nameEn: string }) => ({
+              code: plan.code,
+              nameEn: plan.nameEn,
+            }))
+        : [];
+      if (catalogPlans.length > 0) setAvailablePlans(catalogPlans);
     } catch {
       setError(t["common_error"]);
     } finally {
@@ -312,7 +330,7 @@ export function SuperConsole({ t }: { t: Dictionary }) {
               />
             ) : null}
             {section === "billing" ? (
-              <BillingSection orgs={orgs} t={t} busyId={busyId} act={act} />
+              <BillingSection orgs={orgs} t={t} busyId={busyId} act={act} plans={availablePlans} />
             ) : null}
             {section === "audit" ? <AuditSection audit={audit} t={t} /> : null}
             {section === "settings" ? (
@@ -322,6 +340,7 @@ export function SuperConsole({ t }: { t: Dictionary }) {
                 saving={savingSettings}
                 save={saveSettings}
                 t={t}
+                plans={availablePlans}
               />
             ) : null}
           </>
@@ -472,7 +491,7 @@ function ApprovalCard({ title, empty, emptyText, children }: { title: string; em
   );
 }
 
-function BillingSection({ orgs, t, busyId, act }: { orgs: OrgRow[]; t: Dictionary; busyId: string | null; act: (path: string, body: Record<string, unknown>) => Promise<void> }) {
+function BillingSection({ orgs, t, busyId, act, plans }: { orgs: OrgRow[]; t: Dictionary; busyId: string | null; act: (path: string, body: Record<string, unknown>) => Promise<void>; plans: PlanOption[] }) {
   return (
     <section className="mt-6 space-y-4">
       <div><h2 className="text-xl font-semibold">{t["super_sectionBilling"]}</h2><p className="text-sm text-muted-foreground">{t["super_billingHelp"]}</p></div>
@@ -481,7 +500,7 @@ function BillingSection({ orgs, t, busyId, act }: { orgs: OrgRow[]; t: Dictionar
           <table className="w-full min-w-[760px] text-left text-sm">
             <thead><tr className="border-b border-white/55 text-xs uppercase tracking-widest text-muted-foreground dark:border-white/6"><th className="px-5 py-3">{t["super_orgs"]}</th><th className="px-5 py-3">{t["super_plan"]}</th><th className="px-5 py-3">{t["super_setPlan"]}</th></tr></thead>
             <tbody className="divide-y divide-white/45 dark:divide-white/5">
-              {orgs.map((org) => <tr key={org.id}><td className="px-5 py-4 font-semibold">{org.name}</td><td className="px-5 py-4 capitalize">{org.plan}</td><td className="px-5 py-4"><div className="flex flex-wrap gap-1.5">{PLANS.map((plan) => <button key={plan} disabled={busyId !== null} onClick={() => void act(`/api/super/orgs/${org.id}/plan`, { plan })} className={`rounded-full px-3 py-1 text-xs font-semibold capitalize transition disabled:opacity-50 ${org.plan === plan ? "bg-primary text-white" : "border border-white/60 bg-white/60 text-muted-foreground hover:text-foreground dark:border-white/10 dark:bg-white/[0.04]"}`}>{plan}</button>)}</div></td></tr>)}
+              {orgs.map((org) => <tr key={org.id}><td className="px-5 py-4 font-semibold">{org.name}</td><td className="px-5 py-4 capitalize">{org.plan}</td><td className="px-5 py-4"><div className="flex flex-wrap gap-1.5">{plans.map((plan) => <button key={plan.code} disabled={busyId !== null} onClick={() => void act(`/api/super/orgs/${org.id}/plan`, { plan: plan.code })} className={`rounded-full px-3 py-1 text-xs font-semibold capitalize transition disabled:opacity-50 ${org.plan === plan.code ? "bg-primary text-white" : "border border-white/60 bg-white/60 text-muted-foreground hover:text-foreground dark:border-white/10 dark:bg-white/[0.04]"}`}>{plan.nameEn ?? plan.code}</button>)}</div></td></tr>)}
             </tbody>
           </table>
         </div>
@@ -501,14 +520,14 @@ function AuditSection({ audit, t }: { audit: AuditRow[]; t: Dictionary }) {
   );
 }
 
-function SettingsSection({ settings, setSettings, saving, save, t }: { settings: PlatformSettings; setSettings: React.Dispatch<React.SetStateAction<PlatformSettings>>; saving: boolean; save: () => Promise<void>; t: Dictionary }) {
+function SettingsSection({ settings, setSettings, saving, save, t, plans }: { settings: PlatformSettings; setSettings: React.Dispatch<React.SetStateAction<PlatformSettings>>; saving: boolean; save: () => Promise<void>; t: Dictionary; plans: PlanOption[] }) {
   return (
     <section className="mt-6 max-w-3xl space-y-4">
       <div><h2 className="text-xl font-semibold">{t["super_sectionSettings"]}</h2><p className="text-sm text-muted-foreground">{t["super_settingsHelp"]}</p></div>
       <div className="surface-panel space-y-5 rounded-[28px] border border-white/55 p-6 dark:border-white/6">
         <label className="flex items-center justify-between gap-4"><span><span className="block font-semibold">{t["super_maintenanceMode"]}</span><span className="text-xs text-muted-foreground">{t["super_maintenanceHelp"]}</span></span><input type="checkbox" checked={settings.maintenanceMode} onChange={(event) => setSettings((current) => ({ ...current, maintenanceMode: event.target.checked }))} className="size-5 accent-primary" /></label>
         <label className="flex items-center justify-between gap-4"><span><span className="block font-semibold">{t["super_allowSignups"]}</span><span className="text-xs text-muted-foreground">{t["super_allowSignupsHelp"]}</span></span><input type="checkbox" checked={settings.allowClinicSignups} onChange={(event) => setSettings((current) => ({ ...current, allowClinicSignups: event.target.checked }))} className="size-5 accent-primary" /></label>
-        <label className="block"><span className="mb-1 block text-sm font-semibold">{t["super_defaultPlan"]}</span><select value={settings.defaultPlan} onChange={(event) => setSettings((current) => ({ ...current, defaultPlan: event.target.value }))} className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]">{PLANS.map((plan) => <option key={plan} value={plan}>{plan}</option>)}</select></label>
+        <label className="block"><span className="mb-1 block text-sm font-semibold">{t["super_defaultPlan"]}</span><select value={settings.defaultPlan} onChange={(event) => setSettings((current) => ({ ...current, defaultPlan: event.target.value }))} className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]">{plans.map((plan) => <option key={plan.code} value={plan.code}>{plan.nameEn ?? plan.code}</option>)}</select></label>
         <label className="block"><span className="mb-1 block text-sm font-semibold">{t["super_supportEmail"]}</span><input value={settings.supportEmail} onChange={(event) => setSettings((current) => ({ ...current, supportEmail: event.target.value }))} className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]" /></label>
         <label className="block"><span className="mb-1 block text-sm font-semibold">{t["super_announcement"]}</span><textarea value={settings.announcement} onChange={(event) => setSettings((current) => ({ ...current, announcement: event.target.value }))} rows={3} className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]" /></label>
         <button onClick={() => void save()} disabled={saving} className="inline-flex items-center gap-2 rounded-[12px] bg-primary px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"><Save className="h-4 w-4" />{saving ? t["common_saving"] : t["common_save"]}</button>
