@@ -6,6 +6,7 @@ import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
+import { PackagesSection } from "@/components/packages/packages-section";
 
 type Service = { id: string; code: string; name: string; price: string; active: boolean };
 type Clinical = { id: string; system: string; code: string; name: string; category: string; active: boolean };
@@ -82,6 +83,7 @@ export default function CatalogsPage() {
           setClinicalPage(1);
         }}
       />
+      <PackagesSection />
       <section className="rounded-xl border bg-white p-5 dark:bg-neutral-900">
         <h2 className="mb-3 text-lg font-semibold">{t("catalogs_services")}</h2>
         <div className="space-y-2">
