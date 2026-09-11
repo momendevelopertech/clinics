@@ -23,3 +23,23 @@ export const paymentSchema = z.object({
   currency: z.string().length(3).default("usd"),
   description: z.string().max(200).optional(),
 });
+
+export const insurancePolicySchema = z.object({
+  patientId: z.string().min(1),
+  provider: z.string().trim().min(1).max(160),
+  policyNumber: z.string().trim().min(1).max(80),
+  groupNumber: z.string().trim().max(80).optional().nullable(),
+  type: z.enum(["primary", "secondary"]).default("primary"),
+});
+
+export const insuranceClaimSchema = z.object({
+  patientId: z.string().min(1),
+  invoiceId: z.string().min(1).optional().nullable(),
+  amountClaimed: z.number().finite().positive(),
+});
+
+export const insuranceClaimUpdateSchema = z.object({
+  status: z.enum(["submitted", "pending", "paid", "denied", "appeal"]),
+  amountPaid: z.number().finite().nonnegative().optional().nullable(),
+  denialReason: z.string().trim().max(1000).optional().nullable(),
+});
