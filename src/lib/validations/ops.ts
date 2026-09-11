@@ -6,6 +6,12 @@ export const waitlistCreateSchema = z.object({
   notes: z.string().max(2000).optional().nullable(),
 });
 
+export const waitlistUpdateSchema = z.object({
+  status: z.enum(["waiting", "offered", "cancelled"]).optional(),
+  notes: z.string().max(2000).optional().nullable(),
+  preferredDate: z.string().datetime().optional().nullable(),
+});
+
 export const taskCreateSchema = z.object({
   title: z.string().trim().min(1).max(200),
   description: z.string().max(4000).optional().nullable(),

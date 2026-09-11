@@ -5,6 +5,7 @@ import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { createAuditLog } from "@/lib/audit";
 import { logServerError } from "@/lib/safe-logger";
+import { waitlistUpdateSchema } from "@/lib/validations/ops";
 
 export async function PATCH(
     request: Request,
@@ -23,8 +24,14 @@ export async function PATCH(
         const { userId } = authz;
 
         const { id } = await params;
-        const body = await request.json();
-        const { status, notes, preferredDate } = body;
+        const parsed = waitlistUpdateSchema.safeParse(await request.json().catch(() => ({})));
+        if (!parsed.success) {
+            return NextResponse.json(
+                { error: "Invalid waitlist update", details: parsed.error.flatten() },
+                { status: 400 },
+            );
+        }
+        const { status, notes, preferredDate } = parsed.data;
 
         const existing = await prisma.waitlistEntry.findFirst({
             where: { id, organizationId: orgId },

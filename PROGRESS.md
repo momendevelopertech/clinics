@@ -1,15 +1,15 @@
 # Progress Log — عيادات CRM Production Readiness
 
 ## Current status
-- Last updated: 2026-09-11 11:40 UTC+3
-- Current phase: P5 — Should-have Features (intake consents DONE, tsc clean, 201/201 green)
-- Current task: Waitlist auto-offer on cancellation
+- Last updated: 2026-09-11 12:20 UTC+3
+- Current phase: P5 — Should-have Features (intake + waitlist DONE, tsc clean)
+- Current task: Insurance workflow (policy → eligibility → claim → invoice)
 - Status: NEXT
 
 ## How to resume
 لو الـ session اتقطع، اقرأ الملف ده الأول، شوف "Current task"، تحقق من حالته الفعلية في الكود (هل اتنفذ فعلاً ولا لأ)، وكمل من هناك. لا تعيد تنفيذ تاسكات مكتوب جنبها [x].
 
-التالي: P5 عرض تلقائي من الـ waitlist عند الإلغاء.
+التالي: P5 سير عمل التأمين.
 
 Previous clinic-blueprint tracker (P0–P7 product modules) lived in this file and is largely complete except P4-T3 charge-generation policy (blocked on product decision). Do not confuse that list with the production-readiness tasks in `TASKS.md`.
 

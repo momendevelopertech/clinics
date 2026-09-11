@@ -10,6 +10,7 @@ import {
   isDoctorAvailable,
   nextWalkInToken,
 } from "@/lib/appointments";
+import { autoOfferFreedSlot } from "@/lib/waitlist";
 import { checkPlanLimit } from "@/lib/plans";
 import { appointmentUpdateSchema, appointmentCreateSchema } from "@/lib/validations/appointment";
 import { isAppointmentTransitionAllowed } from "@/lib/appointments";
@@ -429,6 +430,24 @@ export async function PATCH(request: Request) {
       }),
     });
 
+    // A freed future slot goes straight to the waitlist (best-effort).
+    let waitlistOffers: Array<{ entryId: string; patientId: string; notified: boolean }> = [];
+    if (
+      isCancellation &&
+      existing.startTime.getTime() > Date.now() &&
+      existing.providerId
+    ) {
+      waitlistOffers = await autoOfferFreedSlot({
+        organizationId: orgId,
+        slot: {
+          providerId: existing.providerId,
+          startTime: existing.startTime,
+          endTime: existing.endTime,
+        },
+        actor: { type: "staff", userId },
+      });
+    }
+
     return NextResponse.json({
       id: updated.id,
       patientId: updated.patientId,
@@ -443,6 +462,7 @@ export async function PATCH(request: Request) {
       status: updated.status,
       tokenNumber: updated.tokenNumber,
       isWalkIn: updated.isWalkIn,
+      waitlistOffers,
     });
   } catch (error) {
     logServerError("Error updating appointment", error);

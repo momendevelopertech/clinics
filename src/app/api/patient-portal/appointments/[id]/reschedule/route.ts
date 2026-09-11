@@ -9,6 +9,7 @@ import {
   hasAppointmentConflict,
   isDoctorAvailable,
 } from "@/lib/appointments";
+import { autoOfferFreedSlot } from "@/lib/waitlist";
 import { parseOrgSettings } from "@/lib/org-settings";
 
 const rescheduleSchema = z.object({
@@ -89,6 +90,17 @@ export async function PATCH(
     if (!updated) {
       return NextResponse.json({ error: "This slot was just taken" }, { status: 409 });
     }
+
+    // The old slot is freed — offer it to the waitlist (best-effort).
+    await autoOfferFreedSlot({
+      organizationId: session.patient.organizationId,
+      slot: {
+        providerId: appointment.providerId,
+        startTime: appointment.startTime,
+        endTime: appointment.endTime,
+      },
+      actor: { type: "patient", identifier: session.patient.id },
+    });
 
     await createAuditLog({
       organizationId: session.patient.organizationId,
