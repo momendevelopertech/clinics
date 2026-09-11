@@ -59,6 +59,7 @@ model Organization {
   pushSubscriptions    PushSubscription[]
   coupons              Coupon[]
   installmentPlans     InstallmentPlan[]
+  shifts               Shift[]
 }
 
 // ============== SAAS: PLANS / SUBSCRIPTIONS / ENTITLEMENTS ==============
@@ -187,6 +188,7 @@ model User {
   procedureOrders        ProcedureOrder[]   @relation("ProcedureOrderAuthor")
   notifications          Notification[]
   pushSubscriptions      PushSubscription[]
+  shifts                 Shift[]
 
   @@index([organizationId, active])
 }
@@ -352,8 +354,28 @@ model Branch {
   rooms          Room[]
   appointments   Appointment[]
   staff          User[]
+  shifts         Shift[]
 
   @@index([organizationId, status])
+}
+
+model Shift {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  branchId       String?
+  branch         Branch?      @relation(fields: [branchId], references: [id])
+  weekday        Int // 0=Sunday … 6=Saturday
+  startTime      String // "HH:MM"
+  endTime        String // "HH:MM"
+  note           String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId, userId, weekday])
+  @@index([branchId, weekday])
 }
 
 model Appointment {

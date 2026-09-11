@@ -6,11 +6,16 @@ import { createAuditLog } from "@/lib/audit";
 import { staffProfileUpdateSchema } from "@/lib/validations/staff";
 import { logServerError } from "@/lib/safe-logger";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const { organizationId } = await requireOrgContext();
+    const branchId = new URL(request.url).searchParams.get("branchId");
     const staff = await prisma.user.findMany({
-      where: { organizationId, active: true },
+      where: {
+        organizationId,
+        active: true,
+        ...(branchId ? { branchId } : {}),
+      },
       orderBy: { name: "asc" },
       select: {
         id: true, name: true, email: true, role: true, specialty: true,

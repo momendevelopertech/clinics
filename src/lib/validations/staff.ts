@@ -11,3 +11,14 @@ export const staffProfileUpdateSchema = z.object({
   availableFrom: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).optional().nullable(),
   availableTo: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).optional().nullable(),
 });
+
+export const shiftCreateSchema = z
+  .object({
+    userId: z.string().min(1).max(100),
+    branchId: z.string().min(1).max(100).optional().nullable(),
+    weekday: z.number().int().min(0).max(6),
+    startTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+    endTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+    note: z.string().trim().max(500).optional().nullable(),
+  })
+  .refine((v) => v.startTime < v.endTime, { message: "End time must be after start time" });

@@ -84,6 +84,7 @@ const routeTitleKeys: Array<[string, string]> = [
   ["/catalogs", "nav_catalogs"],
   ["/audit", "nav_audit"],
   ["/security", "nav_security"],
+  ["/staff", "nav_staff"],
   ["/consents", "nav_consents"],
   ["/waitlist", "nav_waitlist"],
   ["/super", "nav_superAdmin"],
@@ -224,6 +225,7 @@ function CollapsibleSidebar({
     { icon: Settings, label: t("nav_settings"), href: "/settings", roles: ["Owner"] as NavRole[] },
     { icon: CalendarClock, label: t("nav_waitlist"), href: "/waitlist", roles: ["Receptionist"] as NavRole[] },
     { icon: ShieldCheck, label: t("nav_security"), href: "/security" },
+    { icon: Users, label: t("nav_staff"), href: "/staff", roles: ["Owner"] as NavRole[] },
     { icon: HelpCircle, label: t("nav_help"), href: "/help" },
   ]
     .filter((item) => canAccess(item.roles as NavRole[] | undefined))
