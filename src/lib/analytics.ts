@@ -11,3 +11,8 @@ export function averageMinutes(durationsMs: number[]): number {
   );
 }
 
+/** Net profit = collected revenue − recorded expenses (cent-safe). */
+export function netProfit(revenue: number, expenses: number): number {
+  return Math.round((revenue - expenses) * 100) / 100;
+}
+

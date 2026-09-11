@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
-import { averageMinutes, percentage } from "@/lib/analytics";
+import { averageMinutes, netProfit, percentage } from "@/lib/analytics";
 import { splitNewVsReturning } from "@/lib/appointments";
 
 function getDateBounds() {
@@ -42,6 +42,7 @@ export async function GET() {
     completedPayments,
     openInvoices,
     monthlyVisitors,
+    monthlyExpenses,
   ] = await Promise.all([
     prisma.patient.count({
       where: { organizationId, status: { not: "Archived" } },
@@ -93,6 +94,13 @@ export async function GET() {
       select: { patientId: true },
       distinct: ["patientId"],
     }),
+    prisma.expense.aggregate({
+      where: {
+        organizationId,
+        spentAt: { gte: monthStart, lt: nextMonthStart },
+      },
+      _sum: { amount: true },
+    }),
   ]);
 
   // First-ever visit per monthly visitor → new vs returning split.
@@ -132,6 +140,8 @@ export async function GET() {
       total + Math.max(0, Number(invoice.totalAmount) - Number(invoice.amountPaid)),
     0,
   );
+  const revenueThisMonth = Number(completedPayments._sum.amount ?? 0);
+  const expensesThisMonth = Number(monthlyExpenses._sum.amount ?? 0);
 
   return NextResponse.json({
     period: `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, "0")}`,
@@ -145,8 +155,10 @@ export async function GET() {
       averageVisitMinutes: averageMinutes(durations),
       monthlyCompletionRate: percentage(completed, totalMonthlyAppointments),
       monthlyNoShowRate: percentage(noShows, totalMonthlyAppointments),
-      revenueThisMonth: Number(completedPayments._sum.amount ?? 0),
+      revenueThisMonth,
       outstandingBalance: outstanding,
+      expensesThisMonth,
+      netProfitThisMonth: netProfit(revenueThisMonth, expensesThisMonth),
       newPatientsThisMonth: patientMix.newPatients,
       returningPatientsThisMonth: patientMix.returningPatients,
     },

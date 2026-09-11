@@ -20,7 +20,7 @@
 - [x] Calendar يومي + أكشنات Queue + حجز من الـ Waitlist — Day view بجانب الشهري + `POST/PATCH /api/queue` (استدعاء/تخطي/نقل) + زر "احجز من الانتظار" (waitlist → appointment + إغلاق العرض) — Phase (P0) — مرجع (🎯-P0-#7 / قسم 📅). ✅ DONE 2026-09-11: day agenda view + queue actions API/UI + waitlist book endpoint/UI.
 - [x] إعدادات التذكير + حالة التسليم — إعدادات per-org (cadences 24h/1h + quiet hours + قنوات) + عمود حالة per-channel في UI + إعادة المحاولة للفاشل — Phase (P0) — مرجع (🎯-P0-#8 / قسم 📱). ✅ DONE 2026-09-11: reminderConfig (24h/1h/channels/quiet) + cron honors + settings UI + ar/en.
 - [x] صفحة موظفين + shifts/rota + صلاحيات فرع — صفحة `staff/` (قائمة/تعيين أدوار/فروع) + موديل Shifts (نوبات + تعارض) + سكوب صلاحية per-branch — Phase (P0) — مرجع (🎯-P0-#9 / قسم 👨‍⚕️). ✅ DONE 2026-09-11: staff page + shifts API/UI + branch filter + nav.
-- [ ] تقرير مصروفات (Expenses) — موديل `Expense` (بند/مبلغ/تاريخ/فرع) + CRUD + صافي الربح في `reports/monthly` و `analytics/dashboard` — Phase (P0) — مرجع (🎯-P0-#10 / قسم 💰).
+- [x] تقرير مصروفات (Expenses) — موديل `Expense` (بند/مبلغ/تاريخ/فرع) + CRUD + صافي الربح في `reports/monthly` و `analytics/dashboard` — Phase (P0) — مرجع (🎯-P0-#10 / قسم 💰). ✅ DONE 2026-09-11: Expense ledger + net profit in dashboard/monthly + billing UI.
 
 ## P1 — مهم (تحويل واحتفاظ)
 

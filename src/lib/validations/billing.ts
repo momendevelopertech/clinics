@@ -39,6 +39,23 @@ export const paymentRefundSchema = z.object({
   amount: z.number().positive().optional().nullable(),
 });
 
+export const EXPENSE_CATEGORIES = [
+  "rent",
+  "salaries",
+  "supplies",
+  "utilities",
+  "marketing",
+  "other",
+] as const;
+
+export const expenseCreateSchema = z.object({
+  category: z.enum(EXPENSE_CATEGORIES),
+  amount: z.number().finite().positive().max(100_000_000),
+  spentAt: z.string().datetime().optional().nullable(),
+  branchId: z.string().min(1).max(100).optional().nullable(),
+  notes: z.string().trim().max(1000).optional().nullable(),
+});
+
 export const insurancePolicySchema = z.object({
   patientId: z.string().min(1),
   provider: z.string().trim().min(1).max(160),

@@ -4,6 +4,7 @@ import { requireOrgContext } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { reportsMonthQuerySchema } from "@/lib/validations/ops";
+import { netProfit } from "@/lib/analytics";
 
 function monthBounds(month?: string | null) {
   const now = new Date();
@@ -46,7 +47,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const { start, end } = monthBounds(searchParams.get("month"));
 
-  const [appointments, payments, invoiceAgg, perDayRows, perDoctorRows] =
+  const [appointments, payments, invoiceAgg, perDayRows, perDoctorRows, expensesAgg] =
     await Promise.all([
       prisma.appointment.findMany({
         where: { organizationId, startTime: { gte: start, lt: end } },
@@ -85,6 +86,10 @@ export async function GET(request: Request) {
         GROUP BY u.name
         ORDER BY appointments DESC
       `,
+      prisma.expense.aggregate({
+        where: { organizationId, spentAt: { gte: start, lt: end } },
+        _sum: { amount: true },
+      }),
     ]);
 
   const statusCounts: Record<string, number> = {};
@@ -100,6 +105,7 @@ export async function GET(request: Request) {
     totalAppointments === 0 ? 0 : Math.round((completed / totalAppointments) * 100);
 
   const revenue = Number(payments._sum.amount ?? 0);
+  const expenses = Number(expensesAgg._sum.amount ?? 0);
   const outstanding = invoiceAgg.reduce(
     (sum, invoice) =>
       sum + Math.max(0, Number(invoice.totalAmount) - Number(invoice.amountPaid)),
@@ -127,6 +133,8 @@ export async function GET(request: Request) {
       noShow,
       completionRate,
       revenue,
+      expenses,
+      net: netProfit(revenue, expenses),
       outstanding,
     },
     perDay,

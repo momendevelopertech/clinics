@@ -24,6 +24,8 @@ type ReportData = {
     completionRate: number;
     revenue: number;
     outstanding: number;
+    expenses?: number;
+    net?: number;
   };
   perDay: Array<{ day: string; total: number }>;
   perDoctor: Array<{ name: string; appointments: number }>;
@@ -79,6 +81,8 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
       ["Completion rate %", data.summary.completionRate].join(","),
       ["Revenue collected", data.summary.revenue].join(","),
       ["Outstanding added", data.summary.outstanding].join(","),
+      ["Expenses", data.summary.expenses ?? 0].join(","),
+      ["Net profit", data.summary.net ?? 0].join(","),
     );
     return lines.join("\n");
   }, [data]);
@@ -235,6 +239,28 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
                 <div>
                   <p className="text-2xl font-semibold tracking-tight">${data.summary.outstanding.toFixed(2)}</p>
                   <p className="text-sm text-muted-foreground">{t["reports_outstanding"]}</p>
+                </div>
+              </div>
+            </div>
+            <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+              <div className="flex items-center gap-3">
+                <div className="grid size-11 place-content-center rounded-[14px] bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400 print-hide">
+                  <Wallet className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-2xl font-semibold tracking-tight">${(data.summary.expenses ?? 0).toFixed(2)}</p>
+                  <p className="text-sm text-muted-foreground">{t["reports_expenses"]}</p>
+                </div>
+              </div>
+            </div>
+            <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+              <div className="flex items-center gap-3">
+                <div className="grid size-11 place-content-center rounded-[14px] bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-400 print-hide">
+                  <Wallet className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-2xl font-semibold tracking-tight">${(data.summary.net ?? 0).toFixed(2)}</p>
+                  <p className="text-sm text-muted-foreground">{t["reports_net"]}</p>
                 </div>
               </div>
             </div>

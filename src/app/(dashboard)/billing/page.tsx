@@ -15,6 +15,10 @@ import { usePermissionState } from "@/hooks/use-permission-state";
 import { NewInvoiceDialog } from "@/components/billing/new-invoice-dialog";
 import { InstallmentPlansDialog } from "@/components/billing/installment-plans-dialog";
 import { UpgradePrompt } from "@/components/plan/upgrade-prompt";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { logClientError } from "@/lib/client-logger";
 
 export default function BillingPage() {
   const { t } = useLocale();
@@ -31,6 +35,65 @@ export default function BillingPage() {
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [page, setPage] = React.useState(1);
   const { forbidden, guardedFetch } = usePermissionState();
+  const [expenses, setExpenses] = React.useState<Array<{
+    id: string;
+    category: string;
+    amount: number | string;
+    spentAt: string;
+    notes: string | null;
+  }>>([]);
+  const [expForm, setExpForm] = React.useState({ category: "rent", amount: "", date: "", notes: "" });
+
+  const loadExpenses = React.useCallback(() => {
+    guardedFetch<{ expenses: Array<{ id: string; category: string; amount: number | string; spentAt: string; notes: string | null }>; total: number }>("/api/expenses")
+      .then((data) => { if (data) setExpenses(data.expenses); })
+      .catch((error) => logClientError("Expenses fetch failed", error));
+  }, [guardedFetch]);
+
+  React.useEffect(() => {
+    loadExpenses();
+  }, [loadExpenses]);
+
+  const expTotal = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+
+  const handleAddExpense = async () => {
+    const amount = Number(expForm.amount);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      toast.error(t("exp_amount"));
+      return;
+    }
+    try {
+      const response = await fetch("/api/expenses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          category: expForm.category,
+          amount,
+          spentAt: expForm.date ? new Date(expForm.date).toISOString() : undefined,
+          notes: expForm.notes || undefined,
+        }),
+      });
+      if (!response.ok) throw new Error("create failed");
+      setExpForm({ category: "rent", amount: "", date: "", notes: "" });
+      loadExpenses();
+    } catch (error) {
+      toast.error(t("common_error"));
+      logClientError("Expense create failed", error);
+    }
+  };
+
+  const handleDeleteExpense = async (id: string) => {
+    try {
+      const response = await fetch(`/api/expenses/${id}`, { method: "DELETE" });
+      if (!response.ok) throw new Error("delete failed");
+      loadExpenses();
+    } catch (error) {
+      toast.error(t("common_error"));
+      logClientError("Expense delete failed", error);
+    }
+  };
+
+  const expCatLabel = (c: string) => t(`exp_cat_${c}`) === `exp_cat_${c}` ? c : t(`exp_cat_${c}`);
 
   const loadInvoices = React.useCallback(() => {
     guardedFetch<Array<{
@@ -249,6 +312,71 @@ export default function BillingPage() {
               onPageChange={setPage}
             />
           ) : null}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            {t("exp_title")}
+            <span className="text-sm font-normal text-neutral-500">
+              {t("exp_total")}: ${expTotal.toFixed(2)}
+            </span>
+          </CardTitle>
+          <p className="text-sm text-neutral-500">{t("exp_subtitle")}</p>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <div className="gap-2 flex flex-col">
+              <Label>{t("exp_category")}</Label>
+              <Select value={expForm.category} onValueChange={(v) => setExpForm({ ...expForm, category: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {["rent", "salaries", "supplies", "utilities", "marketing", "other"].map((c) => (
+                    <SelectItem key={c} value={c}>{expCatLabel(c)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="gap-2 flex flex-col">
+              <Label>{t("exp_amount")}</Label>
+              <Input type="number" min="0.01" step="0.01" value={expForm.amount} onChange={(e) => setExpForm({ ...expForm, amount: e.target.value })} />
+            </div>
+            <div className="gap-2 flex flex-col">
+              <Label>{t("exp_date")}</Label>
+              <Input type="date" value={expForm.date} onChange={(e) => setExpForm({ ...expForm, date: e.target.value })} />
+            </div>
+            <div className="gap-2 flex flex-col">
+              <Label>{t("exp_notes")}</Label>
+              <Input value={expForm.notes} onChange={(e) => setExpForm({ ...expForm, notes: e.target.value })} />
+            </div>
+            <div className="flex items-end">
+              <Button onClick={handleAddExpense}>{t("exp_add")}</Button>
+            </div>
+          </div>
+          {expenses.length === 0 ? (
+            <p className="text-sm text-neutral-500">{t("exp_empty")}</p>
+          ) : (
+            <div className="rounded-[5px] border overflow-x-auto">
+              <table className="w-full text-sm">
+                <tbody className="divide-y">
+                  {expenses.slice(0, 20).map((e) => (
+                    <tr key={e.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
+                      <td className="px-4 py-2">{expCatLabel(e.category)}</td>
+                      <td className="px-4 py-2 font-medium">${Number(e.amount).toFixed(2)}</td>
+                      <td className="px-4 py-2 text-neutral-500">{new Date(e.spentAt).toLocaleDateString()}</td>
+                      <td className="px-4 py-2 text-neutral-500">{e.notes ?? "—"}</td>
+                      <td className="px-4 py-2 text-right">
+                        <Button variant="ghost" size="sm" className="text-red-600" onClick={() => handleDeleteExpense(e.id)}>
+                          {t("exp_delete")}
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </CardContent>
       </Card>
     </motion.div>
