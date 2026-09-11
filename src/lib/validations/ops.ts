@@ -49,6 +49,16 @@ export const consentUpdateSchema = z.object({
   documentUrl: z.string().url().max(2048).optional().nullable(),
 });
 
+/** Consent types every patient must sign (digital intake). */
+export const REQUIRED_PATIENT_CONSENT_TYPES = ["treatment", "data_usage", "hipaa"] as const;
+
+export type RequiredPatientConsentType = (typeof REQUIRED_PATIENT_CONSENT_TYPES)[number];
+
+export const patientConsentSignSchema = z.object({
+  consentType: z.enum(REQUIRED_PATIENT_CONSENT_TYPES),
+  isGranted: z.boolean(),
+});
+
 export const auditListQuerySchema = z.object({
   entityType: z.string().max(80).optional().nullable(),
   entityId: z.string().max(80).optional().nullable(),

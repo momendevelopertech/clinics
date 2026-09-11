@@ -1251,6 +1251,14 @@ export const ar: Dictionary = {
   portal_loginToBook: "سجل الدخول كمريض للحجز",
   portal_noSlots: "لا توجد مواعيد متاحة في هذا اليوم",
   portal_clinicNotFound: "العيادة غير موجودة",
+  portal_consents: "الموافقات",
+  portal_consentsDesc: "اتفاقيات العلاج والخصوصية",
+  portal_consentSigned: "موقعة",
+  portal_consentPending: "بانتظار التوقيع",
+  portal_accept: "أوافق",
+  portal_decline: "أرفض",
+  portal_consentSaved: "تم حفظ الموافقة",
+  portal_consentError: "فشل حفظ الموافقة",
 
   // Language
   lang_label: "اللغة",

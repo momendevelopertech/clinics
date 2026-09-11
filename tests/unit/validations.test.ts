@@ -4,7 +4,7 @@ import {
   appointmentUpdateSchema,
 } from "../../src/lib/validations/appointment";
 import { patientCreateSchema } from "../../src/lib/validations/patient";
-import { consentCreateSchema, consentUpdateSchema } from "../../src/lib/validations/ops";
+import { consentCreateSchema, consentUpdateSchema, patientConsentSignSchema, REQUIRED_PATIENT_CONSENT_TYPES } from "../../src/lib/validations/ops";
 import { organizationSettingsSchema } from "../../src/lib/validations/settings";
 import { ar } from "../../src/lib/i18n/dictionaries/ar";
 import { en } from "../../src/lib/i18n/dictionaries/en";
@@ -97,7 +97,21 @@ describe("request validation", () => {
     }
   });
 
-  it("keeps English and Arabic dictionaries in sync", () => {    expect(Object.keys(en).sort()).toEqual(Object.keys(ar).sort());
+  it("restricts patient self-signing to the required intake types", () => {
+    expect(REQUIRED_PATIENT_CONSENT_TYPES).toContain("treatment");
+    expect(
+      patientConsentSignSchema.safeParse({ consentType: "treatment", isGranted: true }).success,
+    ).toBe(true);
+    expect(
+      patientConsentSignSchema.safeParse({ consentType: "marketing", isGranted: true }).success,
+    ).toBe(false);
+    expect(
+      patientConsentSignSchema.safeParse({ consentType: "treatment" }).success,
+    ).toBe(false);
+  });
+
+  it("keeps English and Arabic dictionaries in sync", () => {
+    expect(Object.keys(en).sort()).toEqual(Object.keys(ar).sort());
     for (const [key, value] of Object.entries(ar)) {
       expect(value).not.toBe(key);
     }

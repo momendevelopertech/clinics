@@ -41,6 +41,7 @@ export default function PatientPortalPage() {
   const [appointments, setAppointments] = React.useState<Array<{ id: string; type: string; provider: string; providerId: string; status: string; startTime: string }>>([]);
   const [documents, setDocuments] = React.useState<Array<{ id: string; name: string; type: string; url: string }>>([]);
   const [invoices, setInvoices] = React.useState<Array<{ id: string; invoiceNumber: string; status: string; totalAmount: number; amountPaid: number; balance: number }>>([]);
+  const [consents, setConsents] = React.useState<Array<{ type: string; granted: boolean; signedAt: string | null }>>([]);
   const [reschedulingId, setReschedulingId] = React.useState<string | null>(null);
   const [rescheduleDate, setRescheduleDate] = React.useState("");
   const [rescheduleSlots, setRescheduleSlots] = React.useState<Array<{ start: string; end: string }>>([]);
@@ -67,10 +68,11 @@ export default function PatientPortalPage() {
       setOrgSlug(overview.organizationSlug ?? null);
       setAppointments(overview.appointments);
 
-      // Documents/invoices are best-effort: their failure must not log out.
-      const [docsRes, invRes] = await Promise.all([
+      // Documents/invoices/consents are best-effort: failure must not log out.
+      const [docsRes, invRes, consRes] = await Promise.all([
         fetch("/api/patient-portal/documents").catch(() => null),
         fetch("/api/patient-portal/invoices").catch(() => null),
+        fetch("/api/patient-portal/consents").catch(() => null),
       ]);
       if (docsRes?.ok) {
         const docs = await docsRes.json().catch(() => null);
@@ -79,6 +81,10 @@ export default function PatientPortalPage() {
       if (invRes?.ok) {
         const invs = await invRes.json().catch(() => null);
         if (invs) setInvoices(invs.invoices ?? []);
+      }
+      if (consRes?.ok) {
+        const cons = await consRes.json().catch(() => null);
+        if (cons) setConsents(cons.consents ?? []);
       }
       setLabResults(overview.labResults);
       setOverviewVital(overview.latestVital);
@@ -161,8 +167,31 @@ export default function PatientPortalPage() {
     }
   };
 
-  const confirmReschedule = async (id: string) => {
-    if (!rescheduleSlot) return;
+  const signConsent = async (type: string, granted: boolean) => {
+    setWorkingId(`consent-${type}`);
+    try {
+      const response = await fetch("/api/patient-portal/consents", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ consentType: type, isGranted: granted }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || t("portal_consentError"));
+      toast.success(t("portal_consentSaved"));
+      setConsents((prev) =>
+        prev.map((c) =>
+          c.type === type ? { ...c, granted: payload.granted, signedAt: payload.signedAt } : c,
+        ),
+      );
+    } catch (error) {
+      logClientError("Patient sign consent failed", error);
+      toast.error(error instanceof Error ? error.message : t("portal_consentError"));
+    } finally {
+      setWorkingId(null);
+    }
+  };
+
+  const confirmReschedule = async (id: string) => {    if (!rescheduleSlot) return;
     setWorkingId(id);
     try {
       const response = await fetch(`/api/patient-portal/appointments/${id}/reschedule`, {
@@ -592,7 +621,7 @@ export default function PatientPortalPage() {
         </Card>
 
         {/* Invoices */}
-        <Card id="portal-invoices">
+        <Card className="mb-6" id="portal-invoices">
           <CardHeader>
             <CardTitle>{t("portal_invoices")}</CardTitle>
             <CardDescription>{t("portal_invoicesDesc")}</CardDescription>
@@ -623,6 +652,52 @@ export default function PatientPortalPage() {
               </div>
             ) : (
               <p className="text-neutral-500 text-center py-4">{t("portal_noInvoices")}</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Consents */}
+        <Card id="portal-consents">
+          <CardHeader>
+            <CardTitle>{t("portal_consents")}</CardTitle>
+            <CardDescription>{t("portal_consentsDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p className="text-neutral-500">{t("portal_loading")}</p>
+            ) : (
+              <div className="space-y-3">
+                {consents.map((c) => (
+                  <div key={c.type} className="border rounded p-3">
+                    <div className="flex justify-between items-center gap-2">
+                      <div>
+                        <p className="font-medium">{c.type}</p>
+                        <p className="text-sm text-neutral-500">
+                          {c.granted ? t("portal_consentSigned") : t("portal_consentPending")}
+                        </p>
+                      </div>
+                      <div className="flex gap-2 shrink-0">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={workingId === `consent-${c.type}`}
+                          onClick={() => signConsent(c.type, true)}
+                        >
+                          {t("portal_accept")}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          disabled={workingId === `consent-${c.type}`}
+                          onClick={() => signConsent(c.type, false)}
+                        >
+                          {t("portal_decline")}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </CardContent>
         </Card>

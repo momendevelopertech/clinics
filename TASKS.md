@@ -45,7 +45,7 @@ Execute **one task at a time**, top to bottom. Mark `[x]` only after tests for t
 
 ## P5 — Should-have Features
 
-- [ ] Digital intake / consent forms (Arabic + mobile-friendly) — Phase P5
+- [x] Digital intake / consent forms (Arabic + mobile-friendly) — Phase P5 (done: patient self-signing for required treatment/data_usage/hipaa consents with restricted schema, status endpoint, portal Consents card with accept/decline, responsive + i18n en+ar)
 - [ ] Waitlist auto-offer on cancellation — Phase P5
 - [ ] Insurance workflow: policy → eligibility → claim → invoice — Phase P5
 - [ ] Analytics pack: attendance, revenue, new vs returning — Phase P5
