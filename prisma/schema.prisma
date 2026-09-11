@@ -37,6 +37,7 @@ model Organization {
   roles                Role[]
   rooms                Room[]
   equipment            Equipment[]
+  equipmentMaintenances EquipmentMaintenance[]
   invoices             Invoice[]
   insuranceClaims      InsuranceClaim[]
   inventoryItems       InventoryItem[]
@@ -464,12 +465,36 @@ model Equipment {
   organization     Organization           @relation(fields: [organizationId], references: [id])
   name             String
   type             String? // xray, dialysis, etc.
+  lastCalibrationAt DateTime?
+  nextCalibrationAt DateTime?
+  status           String?                @default("active") // active, warning, maintenance_required, inactive
   createdAt        DateTime               @default(now())
   updatedAt        DateTime               @updatedAt
   appointmentSlots AppointmentEquipment[]
+  maintenances     EquipmentMaintenance[]
 }
 
-// ============== CLINICAL (EMR/EHR) ==============
+model EquipmentMaintenance {
+  id             String    @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  equipmentId    String
+  equipment      Equipment @relation(fields: [equipmentId], references: [id])
+  type           String // preventive, corrective, calibration
+  status         String    @default("scheduled") // scheduled, completed, overdue
+  description    String?
+  technician     String?
+  performedAt    DateTime?
+  dueAt          DateTime?
+  cost           Decimal?  @db.Decimal(10, 2)
+  notes          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([organizationId, equipmentId, dueAt])
+  @@index([organizationId, status, dueAt])
+}
+
 model Encounter {
   id               String            @id @default(cuid())
   organizationId   String
