@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocale } from "@/components/locale/locale-provider";
+import { isSoapEmpty, prefillSoap } from "@/lib/clinical-templates";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 
@@ -24,13 +25,17 @@ export function EncountersWorkspace() {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [encounters, setEncounters] = useState<Encounter[]>([]);
   const [patientId, setPatientId] = useState("");
-  const [note, setNote] = useState("");
   const [selectedId, setSelectedId] = useState("");
+  const [templates, setTemplates] = useState<Array<{ id: string; name: string; specialty: string | null; subjective: string | null; objective: string | null; assessment: string | null; plan: string | null }>>([]);
+  const [templateId, setTemplateId] = useState("");
+  const [soap, setSoap] = useState({ subjective: "", objective: "", assessment: "", plan: "" });
+  const [tplName, setTplName] = useState("");
+  const [tplSpecialty, setTplSpecialty] = useState("");
   const [error, setError] = useState("");
   const [forbidden, setForbidden] = useState(false);
 
   const refresh = useCallback(async () => {
-    const [patientsResponse, encountersResponse] = await Promise.all([fetch("/api/patients"), fetch("/api/encounters")]);
+    const [patientsResponse, encountersResponse, templatesResponse] = await Promise.all([fetch("/api/patients"), fetch("/api/encounters"), fetch("/api/clinical-templates")]);
     if (patientsResponse.status === 403 || encountersResponse.status === 403) {
       setForbidden(true);
       return;
@@ -38,12 +43,13 @@ export function EncountersWorkspace() {
     if (!patientsResponse.ok || !encountersResponse.ok) throw new Error(t("enc_loadError"));
     setPatients((await patientsResponse.json()) as Patient[]);
     setEncounters((await encountersResponse.json()) as Encounter[]);
+    if (templatesResponse.ok) setTemplates(await templatesResponse.json());
   }, [t]);
 
   useEffect(() => {
     let cancelled = false;
     async function loadInitialData() {
-      const [patientsResponse, encountersResponse] = await Promise.all([fetch("/api/patients"), fetch("/api/encounters")]);
+      const [patientsResponse, encountersResponse, templatesResponse] = await Promise.all([fetch("/api/patients"), fetch("/api/encounters"), fetch("/api/clinical-templates")]);
       if (patientsResponse.status === 403 || encountersResponse.status === 403) {
         if (!cancelled) setForbidden(true);
         return;
@@ -52,6 +58,7 @@ export function EncountersWorkspace() {
       if (!cancelled) {
         setPatients((await patientsResponse.json()) as Patient[]);
         setEncounters((await encountersResponse.json()) as Encounter[]);
+        if (templatesResponse.ok) setTemplates(await templatesResponse.json());
       }
     }
     void loadInitialData().catch((reason: unknown) => {
@@ -72,15 +79,42 @@ export function EncountersWorkspace() {
     await refresh();
   };
 
-  const addNote = async () => {
-    if (!selectedId || !note.trim()) return;
+  const applyTemplate = (id: string) => {
+    setTemplateId(id);
+    const tpl = templates.find((entry) => entry.id === id);
+    if (tpl) setSoap((prev) => prefillSoap(prev, tpl));
+  };
+
+  const addSoapNote = async () => {
+    if (!selectedId || isSoapEmpty(soap)) return;
     const response = await fetch(`/api/encounters/${selectedId}/notes`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ noteType: "freeform", text: note.trim() }),
+      body: JSON.stringify({ noteType: "soap", ...soap }),
     });
     if (!response.ok) throw new Error(t("enc_noteError"));
-    setNote("");
+    setSoap({ subjective: "", objective: "", assessment: "", plan: "" });
+    setTemplateId("");
+    await refresh();
+  };
+
+  const saveTemplate = async () => {
+    if (!tplName.trim() || isSoapEmpty(soap)) return;
+    const response = await fetch("/api/clinical-templates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: tplName.trim(), specialty: tplSpecialty.trim() || null, ...soap }),
+    });
+    if (!response.ok) throw new Error(t("enc_tplSaveError"));
+    setTplName("");
+    setTplSpecialty("");
+    await refresh();
+  };
+
+  const deleteTemplate = async (id: string) => {
+    const response = await fetch(`/api/clinical-templates/${id}`, { method: "DELETE" });
+    if (!response.ok) throw new Error(t("enc_tplDeleteError"));
+    if (templateId === id) setTemplateId("");
     await refresh();
   };
 
@@ -142,14 +176,43 @@ export function EncountersWorkspace() {
               </div>
               {encounter.notes.map((entry) => <p key={entry.id} className="mt-3 whitespace-pre-wrap text-sm text-muted-foreground">{entry.text ?? entry.assessment}</p>)}
               {encounter.status === "in_progress" ? (
-                <div className="mt-3 flex gap-2">
-                  <Textarea value={selectedId === encounter.id ? note : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setNote(event.target.value); }} placeholder={t("enc_notePlaceholder")} />
-                  <Button variant="outline" onClick={() => void addNote().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_noteError")))}>{t("enc_addNote")}</Button>
+                <div className="mt-3 flex flex-col gap-2">
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <select className="h-10 flex-1 rounded-md border bg-background px-3 text-sm" value={selectedId === encounter.id ? templateId : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); applyTemplate(event.target.value); }}>
+                      <option value="">{t("enc_tplSelect")}</option>
+                      {templates.map((tpl) => <option key={tpl.id} value={tpl.id}>{tpl.name}{tpl.specialty ? ` · ${tpl.specialty}` : ""}</option>)}
+                    </select>
+                  </div>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <div className="grid gap-1"><Label>{t("enc_soapSubjective")}</Label><Textarea value={selectedId === encounter.id ? soap.subjective : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, subjective: event.target.value }); }} placeholder={t("enc_soapSubjective")} /></div>
+                    <div className="grid gap-1"><Label>{t("enc_soapObjective")}</Label><Textarea value={selectedId === encounter.id ? soap.objective : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, objective: event.target.value }); }} placeholder={t("enc_soapObjective")} /></div>
+                    <div className="grid gap-1"><Label>{t("enc_soapAssessment")}</Label><Textarea value={selectedId === encounter.id ? soap.assessment : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, assessment: event.target.value }); }} placeholder={t("enc_soapAssessment")} /></div>
+                    <div className="grid gap-1"><Label>{t("enc_soapPlan")}</Label><Textarea value={selectedId === encounter.id ? soap.plan : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, plan: event.target.value }); }} placeholder={t("enc_soapPlan")} /></div>
+                  </div>
+                  <div><Button variant="outline" onClick={() => void addSoapNote().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_noteError")))}>{t("enc_addNote")}</Button></div>
                 </div>
               ) : null}
             </div>
           ))}
           {!encounters.length ? <p className="text-sm text-muted-foreground">{t("enc_empty")}</p> : null}
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader><CardTitle>{t("enc_tplTitle")}</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+        {templates.map((tpl) => (
+          <div key={tpl.id} className="flex items-center justify-between gap-3 rounded-lg border p-3">
+          <div><p className="text-sm font-medium">{tpl.name}</p><p className="text-xs text-muted-foreground">{tpl.specialty ?? t("enc_tplGeneral")}</p></div>
+          <Button size="sm" variant="ghost" className="text-red-600" onClick={() => void deleteTemplate(tpl.id).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_tplDeleteError")))}>{t("common_delete")}</Button>
+          </div>
+        ))}
+        {!templates.length ? <p className="text-sm text-muted-foreground">{t("enc_tplEmpty")}</p> : null}
+        <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-1"><Label>{t("enc_tplName")}</Label><Textarea value={tplName} onChange={(event) => setTplName(event.target.value)} placeholder={t("enc_tplName")} /></div>
+          <div className="grid gap-1"><Label>{t("enc_tplSpecialty")}</Label><Textarea value={tplSpecialty} onChange={(event) => setTplSpecialty(event.target.value)} placeholder={t("enc_tplSpecialty")} /></div>
+        </div>
+        <div><Button variant="outline" onClick={() => void saveTemplate().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_tplSaveError")))}>{t("enc_tplSave")}</Button></div>
+        <p className="text-xs text-muted-foreground">{t("enc_tplSaveHint")}</p>
         </CardContent>
       </Card>
     </div>

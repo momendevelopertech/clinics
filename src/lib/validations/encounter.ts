@@ -58,3 +58,16 @@ export const followUpSchema = z.object({
 export type SoapNoteInput = z.infer<typeof soapNoteSchema>;
 export type VitalInput = z.infer<typeof vitalSchema>;
 export type PrescriptionInput = z.infer<typeof prescriptionSchema>;
+
+export const clinicalTemplateCreateSchema = z.object({
+  name: z.string().trim().min(1).max(160),
+  specialty: z.string().trim().max(120).optional().nullable(),
+  noteType: z.string().trim().max(40).default("soap"),
+  subjective: z.string().max(5000).optional().nullable(),
+  objective: z.string().max(5000).optional().nullable(),
+  assessment: z.string().max(5000).optional().nullable(),
+  plan: z.string().max(5000).optional().nullable(),
+  isDefault: z.boolean().optional(),
+});
+
+export const clinicalTemplateUpdateSchema = clinicalTemplateCreateSchema.partial();

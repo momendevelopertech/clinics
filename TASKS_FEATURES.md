@@ -24,7 +24,7 @@
 
 ## P1 — مهم (تحويل واحتفاظ)
 
-- [ ] Clinical Templates per-specialty + SOAP UI منظمة — موديل `ClinicalTemplate` (تخصص + حقول SOAP افتراضية) + API + حقول SOAP منظمة في `encounters-workspace` بدل النص الحر — Phase (P1) — مرجع (🎯-P1-#1 / قسم 🩺).
+- [x] Clinical Templates per-specialty + SOAP UI منظمة — موديل `ClinicalTemplate` (تخصص + حقول SOAP افتراضية) + API + حقول SOAP منظمة في `encounters-workspace` بدل النص الحر — Phase (P1) — مرجع (🎯-P1-#1 / قسم 🩺). ✅ DONE 2026-09-11: ClinicalTemplate model/APIs + structured SOAP composer + template picker/manager + ar/en.
 - [ ] Packages/باقات جلسات — موديل `Package` (خدمات + عدد جلسات + سعر + خصم) + رصيد جلسات per-patient + استهلاك عند كل `procedure-order` — Phase (P1) — مرجع (🎯-P1-#2 / قسم 💊).
 - [ ] Treatment Plans ككيان — موديل `TreatmentPlan` (حالة + خطوات + ربط تشخيص/روشتة/إجراءات) + status machine + طباعة — Phase (P1) — مرجع (🎯-P1-#3 / قسم 🩺+💊).
 - [ ] Patient rating/feedback + طلب تقييم تلقائي — موديل `Feedback` (تقييم + تعليق) + رابط تقييم post-visit عبر رسالة تلقائية + متوسط التقييم per-doctor — Phase (P1) — مرجع (🎯-P1-#4 / قسم 📱).
