@@ -32,7 +32,7 @@
 - [x] Digital intake forms قبل الزيارة — نماذج دخول طبية (عربي/FHIR Questionnaire) يملأها المريض من الـ Portal قبل الموعد وتُحفظ في ملفه — Phase (P1) — مرجع (🎯-P1-#6 / قسم 📱). ✅ DONE 2026-09-11: IntakeForm/Field/Response models/APIs + portal answer card + settings manager + ar/en.
 - [ ] Google Calendar sync — OAuth per-doctor + مزامنة ثنائية الاتجاه (إنشاء/إلغاء) + إعداد per-org — Phase (P1) — مرجع (🎯-P1-#7 / قسم 🌐). ⛔ BLOCKED 2026-09-11 (F-B6): needs Google Cloud OAuth client ID/secret + per-doctor grant — no credentials in env, sync cannot be built/tested without them.
 - [x] Report builder + تصدير + تقارير مجدولة — تصدير CSV/XLS للتقارير الحالية + تقرير إيراد/عدد per-service/per-procedure + جدولة بريدية — Phase (P1) — مرجع (🎯-P1-#8 / قسم 📊). ✅ DONE 2026-09-11: per-service revenue + shared CSV + XLSX + monthly email schedules + ar/en.
-- [ ] منحنى تطور المريض — رسم vitals trend + مقارنة زيارات + outcome scores في صفحة المريض — Phase (P1) — مرجع (🎯-P1-#9 / قسم 🩺).
+- [x] منحنى تطور المريض — رسم vitals trend + مقارنة زيارات + outcome scores في صفحة المريض — Phase (P1) — مرجع (🎯-P1-#9 / قسم 🩺). ✅ DONE 2026-09-11: vitals trend API + SVG sparkline card + stats + ar/en.
 - [ ] تكامل LIS/PACS أساسي — طلب إلكتروني + استقبال نتيجة راجعة (HL7/FHIR write) لمعمل/أشعة واحد على الأقل — Phase (P1) — مرجع (🎯-P1-#10 / قسم 🧪+🌐).
 - [ ] إطلاق حملات WhatsApp (Business templates) — `POST /api/communications/campaigns/[id]/launch` + قوالب معتمدة + تتبع حالة الإرسال (الحملات عالقة في draft حاليًا) — Phase (P1) — مرجع (🎯-P1-#11 / قسم 📱).
 
