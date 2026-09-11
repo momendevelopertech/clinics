@@ -17,9 +17,12 @@ type LoginFormProps = {
 export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [totpToken, setTotpToken] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const authError = error === "CredentialsSignin" ? t["auth_invalidCredentials"] : null;
+  const needsTwoFactor = error === "2FA_REQUIRED";
+  const authError =
+    error === "CredentialsSignin" ? t["auth_invalidCredentials"] : null;
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -31,6 +34,7 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
     void signIn("credentials", {
       email,
       password,
+      ...(needsTwoFactor ? { totpToken } : {}),
       redirect: true,
       callbackUrl,
     });
@@ -145,6 +149,30 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
                 <p className="rounded-[18px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/25 dark:bg-red-500/10 dark:text-red-300">
                   {authError}
                 </p>
+              ) : null}
+
+              {needsTwoFactor ? (
+                <>
+                  <p className="rounded-[18px] border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm text-cyan-800 dark:border-cyan-500/25 dark:bg-cyan-500/10 dark:text-cyan-200">
+                    {t["auth_twoFactorRequired"]}
+                  </p>
+                  <label className="block space-y-2">
+                    <span className="text-sm font-medium text-foreground">
+                      {t["auth_twoFactorCode"]}
+                    </span>
+                    <input
+                      autoComplete="one-time-code"
+                      className="h-13 w-full rounded-[20px] border border-border bg-white/80 px-4 text-center text-lg tracking-[0.5em] outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15 dark:bg-white/[0.04]"
+                      name="totpToken"
+                      inputMode="numeric"
+                      onChange={(event) => setTotpToken(event.target.value)}
+                      value={totpToken}
+                    />
+                  </label>
+                  <p className="text-xs leading-5 text-muted-foreground">
+                    {t["auth_twoFactorHint"]}
+                  </p>
+                </>
               ) : null}
 
               <button

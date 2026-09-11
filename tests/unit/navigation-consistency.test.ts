@@ -27,6 +27,7 @@ const REQUIRED_NAV_KEYS = [
   "nav_catalogs",
   "nav_settings",
   "nav_waitlist",
+  "nav_security",
 ] as const;
 
 describe("navigation + i18n consistency", () => {

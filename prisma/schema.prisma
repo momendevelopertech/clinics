@@ -169,6 +169,10 @@ model User {
   availableFrom          String? // "09:00"
   availableTo            String? // "17:00"
   role                   String? // denormalized: superAdmin, owner, doctor, receptionist
+  totpSecret             String? // AES-encrypted TOTP secret (null = 2FA off)
+  totpEnabled            Boolean            @default(false)
+  totpBackupCodes        String? // JSON array of sha256 hashes (single-use recovery)
+  totpEnabledAt          DateTime?
   createdAt              DateTime           @default(now())
   updatedAt              DateTime           @updatedAt
   userRoles              UserRole[]

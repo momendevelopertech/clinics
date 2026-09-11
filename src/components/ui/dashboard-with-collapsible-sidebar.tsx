@@ -28,6 +28,7 @@ import {
   ScrollText,
   Search,
   Settings,
+  ShieldCheck,
   Stethoscope,
   Sun,
   User,
@@ -82,6 +83,7 @@ const routeTitleKeys: Array<[string, string]> = [
   ["/queue", "nav_queue"],
   ["/catalogs", "nav_catalogs"],
   ["/audit", "nav_audit"],
+  ["/security", "nav_security"],
   ["/consents", "nav_consents"],
   ["/waitlist", "nav_waitlist"],
   ["/super", "nav_superAdmin"],
@@ -221,6 +223,7 @@ function CollapsibleSidebar({
     { icon: ClipboardList, label: t("nav_catalogs"), href: "/catalogs", roles: ["Doctor", "Nurse", "Pharmacist"] as NavRole[] },
     { icon: Settings, label: t("nav_settings"), href: "/settings", roles: ["Owner"] as NavRole[] },
     { icon: CalendarClock, label: t("nav_waitlist"), href: "/waitlist", roles: ["Receptionist"] as NavRole[] },
+    { icon: ShieldCheck, label: t("nav_security"), href: "/security" },
     { icon: HelpCircle, label: t("nav_help"), href: "/help" },
   ]
     .filter((item) => canAccess(item.roles as NavRole[] | undefined))
@@ -742,6 +745,9 @@ function DashboardHeader({
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link href="/settings">{t("nav_settings")}</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/security">{t("nav_security")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/help">{t("nav_help")}</Link>

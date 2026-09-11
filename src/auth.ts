@@ -1,5 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { verifyPasswordHash } from "@/lib/password";
+import {
+  consumeBackupCode,
+  decryptTotpSecret,
+  parseBackupHashes,
+  verifyTotpToken,
+} from "@/lib/two-factor";
 import type { NextAuthOptions } from "next-auth";
 import { getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -95,6 +101,7 @@ function isPasswordValid(
 async function authenticateUser(
   email: string,
   password: string,
+  totpToken?: string,
 ): Promise<AuthenticatedUser | null> {
   const normalizedEmail = email.trim().toLowerCase();
   const user = await prisma.user.findUnique({
@@ -123,6 +130,31 @@ async function authenticateUser(
     return null;
   }
 
+  // Second factor: accounts with TOTP enabled must present a current code
+  // (or an unused backup code, consumed on success). No code at all surfaces
+  // as a distinct 2FA_REQUIRED error so the login UI can prompt for it;
+  // a wrong code fails closed as a generic credentials error.
+  if (user.totpEnabled) {
+    const secret = decryptTotpSecret(user.totpSecret);
+    if (!totpToken?.trim()) {
+      throw new Error("2FA_REQUIRED");
+    }
+    const tokenOk = secret ? verifyTotpToken(secret, totpToken) : false;
+    if (!tokenOk) {
+      const consumed = consumeBackupCode(
+        parseBackupHashes(user.totpBackupCodes),
+        totpToken,
+      );
+      if (!consumed) {
+        return null;
+      }
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { totpBackupCodes: JSON.stringify(consumed) },
+      });
+    }
+  }
+
   return {
     id: user.id,
     email: user.email,
@@ -148,6 +180,7 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        totpToken: { label: "Authenticator code", type: "text" },
       },
       async authorize(credentials) {
         const email = credentials?.email?.trim().toLowerCase();
@@ -157,7 +190,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        return authenticateUser(email, password);
+        return authenticateUser(email, password, credentials?.totpToken);
       },
     }),
   ],
