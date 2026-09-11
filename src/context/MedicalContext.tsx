@@ -36,6 +36,7 @@ export type Appointment = {
   endTime?: string
   tokenNumber?: string
   isWalkIn?: boolean
+  telehealthUrl?: string | null
 }
 
 type MedicalContextType = {
@@ -45,6 +46,7 @@ type MedicalContextType = {
   appointments: Appointment[]
   addAppointment: (appointment: Omit<Appointment, "id">) => void
   updateAppointment: (id: string, appointment: Partial<Appointment>) => void
+  refetchAppointments: () => Promise<void>
 }
 
 const MedicalContext = React.createContext<MedicalContextType | undefined>(undefined)
@@ -139,8 +141,20 @@ export function MedicalProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const refetchAppointments = React.useCallback(async () => {
+    try {
+      const res = await fetch('/api/appointments');
+      if (res.ok) {
+        const data = await res.json();
+        setAppointments(Array.isArray(data) ? data : []);
+      }
+    } catch (error) {
+      logClientError("Appointment refetch failed", error);
+    }
+  }, []);
+
   return (
-    <MedicalContext.Provider value={{ patients, addPatient, refetchPatients, appointments, addAppointment, updateAppointment }}>
+    <MedicalContext.Provider value={{ patients, addPatient, refetchPatients, appointments, addAppointment, updateAppointment, refetchAppointments }}>
       {children}
     </MedicalContext.Provider>
   )

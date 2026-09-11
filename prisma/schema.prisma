@@ -404,6 +404,7 @@ model Appointment {
   endTime            DateTime
   bufferMinutes      Int?                   @default(0)
   appointmentType    String? // consultation, procedure, telehealth, etc.
+  telehealthUrl      String? // bring-your-own meeting link (Meet/Zoom) for telehealth visits
   status             String // scheduled, arrived, in_progress, completed, cancelled, no_show
   notes              String?
   tokenNumber        String?

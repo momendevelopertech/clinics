@@ -72,6 +72,7 @@ export async function GET() {
         status: a.status,
         tokenNumber: a.tokenNumber,
         isWalkIn: a.isWalkIn,
+        telehealthUrl: a.telehealthUrl,
       };
     });
 
@@ -140,6 +141,7 @@ export async function POST(request: Request) {
             status: existing.status,
             tokenNumber: existing.tokenNumber,
             isWalkIn: existing.isWalkIn,
+            telehealthUrl: existing.telehealthUrl,
           },
           { status: 200 },
         );
@@ -302,6 +304,7 @@ export async function POST(request: Request) {
         status: appointment.status,
         tokenNumber: appointment.tokenNumber,
         isWalkIn: appointment.isWalkIn,
+        telehealthUrl: appointment.telehealthUrl,
       },
       { status: 201 },
     );
@@ -462,6 +465,7 @@ export async function PATCH(request: Request) {
       status: updated.status,
       tokenNumber: updated.tokenNumber,
       isWalkIn: updated.isWalkIn,
+      telehealthUrl: updated.telehealthUrl,
       waitlistOffers,
     });
   } catch (error) {

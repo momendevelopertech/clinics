@@ -25,6 +25,8 @@ import { toast } from "sonner"
 
 import { useMedical, Appointment } from "@/context/MedicalContext"
 import { BookAppointmentDialog } from "@/components/features/appointments/book-appointment-dialog"
+import { TelehealthLinkDialog } from "@/components/appointments/telehealth-link-dialog"
+import { isTelehealthAppointment } from "@/lib/telehealth"
 import {
   FullScreenCalendar,
   type CalendarEvent,
@@ -162,7 +164,7 @@ function EditAppointmentDialog({
 
 function AppointmentsPageContent() {
   const searchParams = useSearchParams()
-  const { appointments, patients, addAppointment, updateAppointment } = useMedical()
+  const { appointments, patients, addAppointment, updateAppointment, refetchAppointments } = useMedical()
   const [providers, setProviders] = React.useState<{ id: string; name: string }[]>([])
   const { t } = useLocale()
   const [searchQuery, setSearchQuery] = React.useState("")
@@ -447,7 +449,7 @@ function AppointmentsPageContent() {
                    <span className="px-2 py-1 rounded-[5px] text-xs font-medium bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">{statusLabel(apt.status)}</span>
                    <span className="ms-auto flex gap-3">
                      <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0 h-auto" onClick={() => setEditAptId(apt.id)}>{t("appts_edit")}</Button>
-                     <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}>{t("appts_cancel")}</Button>
+                     <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}>{t("appts_cancel")}</Button>{isTelehealthAppointment(apt.type) ? (<TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />) : null}
                    </span>
                  </div>
                )
@@ -520,6 +522,12 @@ function AppointmentsPageContent() {
                                       toast.success(t("appts_markedWalkIn"));
                                     }}>{t("appts_walkIn")}</Button>
                                     </FeatureTip>
+                                  ) : null}
+                                  {isTelehealthAppointment(apt.type) ? (
+                                    <span className="inline-flex items-center gap-2">
+                                      <span className="rounded-[5px] bg-teal-100 px-2 py-0.5 text-[11px] font-bold text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">{t("tele_badge")}</span>
+                                      <TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />
+                                    </span>
                                   ) : null}
                               </td>
                          </tr>

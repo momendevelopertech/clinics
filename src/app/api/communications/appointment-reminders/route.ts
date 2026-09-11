@@ -86,6 +86,7 @@ export async function POST(request: NextRequest) {
         patient.firstName,
         appointment.startTime,
         appointment.provider?.name || "Your Doctor",
+        appointment.telehealthUrl,
       );
 
       for (const cadence of cadences) {

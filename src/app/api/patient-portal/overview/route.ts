@@ -51,6 +51,7 @@ export async function GET(request: Request) {
         status: string;
         startTime: Date;
         providerId: string;
+        telehealthUrl: string | null;
         provider: { id: string; name: string | null } | null;
       }) => ({
         id: appointment.id,
@@ -59,6 +60,7 @@ export async function GET(request: Request) {
         providerId: appointment.providerId,
         status: appointment.status,
         startTime: appointment.startTime.toISOString(),
+        telehealthUrl: appointment.telehealthUrl,
       })),
       labResults: labResults.map((lab: {
         id: string;

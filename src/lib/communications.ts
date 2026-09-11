@@ -119,6 +119,7 @@ export function renderAppointmentReminder(
   patientName: string,
   appointmentTime: Date,
   providerName: string,
+  joinUrl?: string | null,
 ) {
   const time = appointmentTime.toLocaleString("en-US", {
     weekday: "long",
@@ -129,8 +130,8 @@ export function renderAppointmentReminder(
   });
 
   return {
-    sms: `Hi ${patientName}, reminder: you have an appointment with ${providerName} on ${time}. Reply CONFIRM to confirm or CANCEL to cancel.`,
-    whatsapp: `Hi ${patientName}, reminder: you have an appointment with ${providerName} on ${time}. Reply CONFIRM to confirm or CANCEL to cancel.`,
+    sms: `Hi ${patientName}, reminder: you have an appointment with ${providerName} on ${time}. Reply CONFIRM to confirm or CANCEL to cancel.${joinUrl ? ` Join online: ${joinUrl}` : ""}`,
+    whatsapp: `Hi ${patientName}, reminder: you have an appointment with ${providerName} on ${time}. Reply CONFIRM to confirm or CANCEL to cancel.${joinUrl ? ` Join online: ${joinUrl}` : ""}`,
     email: `
       <h2>Appointment Reminder</h2>
       <p>Hi ${patientName},</p>
@@ -138,6 +139,7 @@ export function renderAppointmentReminder(
       <ul>
         <li><strong>Provider:</strong> ${providerName}</li>
         <li><strong>Date & Time:</strong> ${time}</li>
+        ${joinUrl ? `<li><strong>Join online:</strong> <a href="${joinUrl}">${joinUrl}</a></li>` : ""}
       </ul>
       <p>Please reply if you need to reschedule.</p>
     `,

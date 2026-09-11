@@ -24,6 +24,7 @@ import {
 import { toast } from "sonner";
 import { useVitalsStream } from "@/hooks/use-vitals-stream";
 import { logClientError } from "@/lib/client-logger";
+import { shouldShowJoinLink } from "@/lib/telehealth";
 import { useLocale } from "@/components/locale/locale-provider";
 import type { VitalSnapshot } from "@/lib/vitals";
 
@@ -39,7 +40,7 @@ export default function PatientPortalPage() {
   const { t, lang } = useLocale();
   const [patient, setPatient] = React.useState<PatientData | null>(null);
   const [orgSlug, setOrgSlug] = React.useState<string | null>(null);
-  const [appointments, setAppointments] = React.useState<Array<{ id: string; type: string; provider: string; providerId: string; status: string; startTime: string }>>([]);
+  const [appointments, setAppointments] = React.useState<Array<{ id: string; type: string; provider: string; providerId: string; status: string; startTime: string; telehealthUrl?: string | null }>>([]);
   const [documents, setDocuments] = React.useState<Array<{ id: string; name: string; type: string; url: string }>>([]);
   const [invoices, setInvoices] = React.useState<Array<{ id: string; invoiceNumber: string; status: string; totalAmount: number; amountPaid: number; balance: number }>>([]);
   const [consents, setConsents] = React.useState<Array<{ type: string; granted: boolean; signedAt: string | null }>>([]);
@@ -524,6 +525,16 @@ export default function PatientPortalPage() {
                           >
                             {t("portal_reschedule")}
                           </Button>
+                          {shouldShowJoinLink({
+                            appointmentType: apt.type,
+                            telehealthUrl: apt.telehealthUrl,
+                            startTime: apt.startTime,
+                            status: apt.status,
+                          }) && apt.telehealthUrl ? (
+                            <a href={apt.telehealthUrl} target="_blank" rel="noopener noreferrer">
+                              <Button size="sm">{t("tele_join")}</Button>
+                            </a>
+                          ) : null}
                         </div>
                       )}
                       {reschedulingId === apt.id && (
