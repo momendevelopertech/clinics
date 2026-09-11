@@ -68,6 +68,7 @@ model Organization {
   feedbacks            Feedback[]
   intakeForms          IntakeForm[]
   intakeResponses      IntakeResponse[]
+  reportSchedules      ReportSchedule[]
 }
 
 // ============== SAAS: PLANS / SUBSCRIPTIONS / ENTITLEMENTS ==============
@@ -915,6 +916,21 @@ model IntakeResponse {
 
   @@index([organizationId, formId])
   @@index([patientId, formId])
+}
+
+model ReportSchedule {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  frequency      String       @default("monthly")
+  dayOfMonth     Int          @default(1)
+  recipients     String // JSON array of user ids (org staff)
+  active         Boolean      @default(true)
+  lastSentAt     DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([active, frequency])
 }
 
 model Payment {

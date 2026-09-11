@@ -47,7 +47,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const { start, end } = monthBounds(searchParams.get("month"));
 
-  const [appointments, payments, invoiceAgg, perDayRows, perDoctorRows, expensesAgg] =
+  const [appointments, payments, invoiceAgg, perDayRows, perDoctorRows, expensesAgg, serviceRows] =
     await Promise.all([
       prisma.appointment.findMany({
         where: { organizationId, startTime: { gte: start, lt: end } },
@@ -90,6 +90,16 @@ export async function GET(request: Request) {
         where: { organizationId, spentAt: { gte: start, lt: end } },
         _sum: { amount: true },
       }),
+      prisma.invoiceLineItem.findMany({
+        where: { invoice: { organizationId, createdAt: { gte: start, lt: end } } },
+        select: {
+          description: true,
+          quantity: true,
+          amount: true,
+          serviceCatalog: { select: { name: true } },
+        },
+        take: 2000,
+      }),
     ]);
 
   const statusCounts: Record<string, number> = {};
@@ -124,6 +134,16 @@ export async function GET(request: Request) {
     appointments: row.appointments,
   }));
 
+  const perServiceMap = new Map<string, { name: string; count: number; revenue: number }>();
+  for (const li of serviceRows) {
+    const name = li.serviceCatalog?.name || li.description || "Service";
+    const entry = perServiceMap.get(name) ?? { name, count: 0, revenue: 0 };
+    entry.count += li.quantity;
+    entry.revenue = Math.round((entry.revenue + Number(li.amount)) * 100) / 100;
+    perServiceMap.set(name, entry);
+  }
+  const perService = [...perServiceMap.values()].sort((a, b) => b.revenue - a.revenue);
+
   return NextResponse.json({
     month: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}`,
     summary: {
@@ -139,5 +159,6 @@ export async function GET(request: Request) {
     },
     perDay,
     perDoctor,
+    perService,
   });
 }

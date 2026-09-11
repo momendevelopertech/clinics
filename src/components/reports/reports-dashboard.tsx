@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n/locale";
 import { PermissionDenied } from "@/components/ui/permission-denied";
+import { buildMonthlyCsv } from "@/lib/report-export";
 
 type ReportData = {
   month: string;
@@ -29,6 +30,7 @@ type ReportData = {
   };
   perDay: Array<{ day: string; total: number }>;
   perDoctor: Array<{ name: string; appointments: number }>;
+  perService?: Array<{ name: string; count: number; revenue: number }>;
 };
 
 export function ReportsDashboard({ t }: { t: Dictionary }) {
@@ -61,30 +63,7 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
 
   const csv = useMemo(() => {
     if (!data) return "";
-    const lines: string[] = [];
-    lines.push(
-      ["Day", "Appointments"].join(","),
-      ...data.perDay.map((row) => [row.day, row.total].join(",")),
-    );
-    lines.push("");
-    lines.push(
-      ["Doctor", "Appointments"].join(","),
-      ...data.perDoctor.map((row) => [`"${row.name}"`, row.appointments].join(",")),
-    );
-    lines.push("");
-    lines.push(
-      ["Metric", "Value"].join(","),
-      ["Total appointments", data.summary.totalAppointments].join(","),
-      ["Completed", data.summary.completed].join(","),
-      ["Cancelled", data.summary.cancelled].join(","),
-      ["No-shows", data.summary.noShow].join(","),
-      ["Completion rate %", data.summary.completionRate].join(","),
-      ["Revenue collected", data.summary.revenue].join(","),
-      ["Outstanding added", data.summary.outstanding].join(","),
-      ["Expenses", data.summary.expenses ?? 0].join(","),
-      ["Net profit", data.summary.net ?? 0].join(","),
-    );
-    return lines.join("\n");
+    return buildMonthlyCsv(data.month, data.summary, data.perService ?? []);
   }, [data]);
 
   function exportCsv() {
@@ -95,6 +74,42 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
     link.download = `report-${data?.month ?? month}.csv`;
     link.click();
     URL.revokeObjectURL(url);
+  }
+
+  async function exportXlsx() {
+    if (!data) return;
+    const XLSX = await import("xlsx");
+    const wb = XLSX.utils.book_new();
+    const summaryRows: Array<[string, number | string]> = [
+      ["Month", data.month],
+      ["Total appointments", data.summary.totalAppointments],
+      ["Completed", data.summary.completed],
+      ["Cancelled", data.summary.cancelled],
+      ["No-shows", data.summary.noShow],
+      ["Completion rate %", data.summary.completionRate],
+      ["Revenue collected", data.summary.revenue],
+      ["Outstanding added", data.summary.outstanding],
+      ["Expenses", data.summary.expenses ?? 0],
+      ["Net profit", data.summary.net ?? 0],
+    ];
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summaryRows), "Summary");
+    XLSX.utils.book_append_sheet(
+      wb,
+      XLSX.utils.aoa_to_sheet([
+        ["Service", "Quantity", "Revenue"],
+        ...(data.perService ?? []).map((s) => [s.name, s.count, s.revenue] as Array<string | number>),
+      ]),
+      "Services",
+    );
+    XLSX.utils.book_append_sheet(
+      wb,
+      XLSX.utils.aoa_to_sheet([
+        ["Day", "Appointments"],
+        ...data.perDay.map((r) => [r.day, r.total] as Array<string | number>),
+      ]),
+      "Daily",
+    );
+    XLSX.writeFile(wb, `report-${data.month}.xlsx`);
   }
 
   const maxDay = useMemo(
@@ -144,6 +159,14 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
           >
             <Download className="h-4 w-4" />
             {t["reports_exportCsv"]}
+          </button>
+          <button
+            onClick={() => void exportXlsx()}
+            disabled={!data}
+            className="inline-flex h-11 items-center gap-2 rounded-[16px] border border-white/60 bg-white/70 px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-white dark:border-white/6 dark:bg-white/[0.04] disabled:opacity-50"
+          >
+            <Download className="h-4 w-4" />
+            {t["reports_exportXlsx"]}
           </button>
         </div>
       </div>
@@ -215,6 +238,27 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
                   ))
                 )}
               </div>
+            </div>
+          </div>
+
+          {/* Per-service revenue */}
+          <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+              {t["reports_perService"]}
+            </p>
+            <div className="mt-4 space-y-3">
+              {(data.perService ?? []).length === 0 ? (
+                <p className="text-sm text-muted-foreground">{t["reports_noData"]}</p>
+              ) : (
+                (data.perService ?? []).map((row) => (
+                  <div key={row.name} className="flex items-center justify-between gap-3 text-sm">
+                    <span className="font-medium text-foreground">{row.name}</span>
+                    <span className="text-muted-foreground">
+                      {row.count} · ${row.revenue.toFixed(2)}
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
