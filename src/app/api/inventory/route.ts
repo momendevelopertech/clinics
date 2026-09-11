@@ -53,7 +53,7 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
-    const { name, sku, category, quantity, reorderLevel, unit } = parsed.data;
+    const { name, sku, category, quantity, reorderLevel, unit, expiryDate, batchNumber } = parsed.data;
 
     const item = await prisma.$transaction(
       async (tx: Prisma.TransactionClient) => {
@@ -66,6 +66,8 @@ export async function POST(request: Request) {
           quantity: typeof quantity === "number" ? quantity : 0,
           reorderLevel: typeof reorderLevel === "number" ? reorderLevel : null,
           unit: unit || "each",
+          expiryDate: expiryDate ? new Date(expiryDate) : null,
+          batchNumber: batchNumber?.trim() || null,
         },
       });
 

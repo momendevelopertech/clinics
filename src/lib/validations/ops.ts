@@ -30,6 +30,18 @@ export const inventoryCreateSchema = z.object({
   quantity: z.number().int().min(0).optional(),
   reorderLevel: z.number().int().min(0).optional().nullable(),
   unit: z.string().max(40).optional().nullable(),
+  expiryDate: z.string().datetime().optional().nullable(),
+  batchNumber: z.string().trim().max(80).optional().nullable(),
+});
+
+export const inventoryUpdateSchema = z.object({
+  name: z.string().trim().min(1).max(200).optional(),
+  sku: z.string().max(80).optional().nullable(),
+  category: z.string().max(80).optional().nullable(),
+  reorderLevel: z.number().int().min(0).optional().nullable(),
+  unit: z.string().max(40).optional().nullable(),
+  expiryDate: z.string().datetime().optional().nullable(),
+  batchNumber: z.string().trim().max(80).optional().nullable(),
 });
 
 export const communicationCreateSchema = z.object({

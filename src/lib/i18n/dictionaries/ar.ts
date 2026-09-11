@@ -942,6 +942,12 @@ export const ar: Dictionary = {
   inv_colCategory: "الفئة",
   inv_colQty: "الكمية",
   inv_colReorder: "مستوى إعادة الطلب",
+  inv_colExpiry: "الصلاحية",
+  inv_colBatch: "الدفعة",
+  inv_expiry: "تاريخ الصلاحية",
+  inv_batch: "رقم الدفعة",
+  inv_expired: "{n} صنف (أصناف) منتهي الصلاحية:",
+  inv_expiringSoon: "{n} صنف (أصناف) تنتهي خلال 30 يومًا:",
 
   // Tasks
   tasks_title: "المهام والمتابعات",

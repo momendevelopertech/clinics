@@ -810,9 +810,13 @@ model InventoryItem {
   quantity       Int                    @default(0)
   reorderLevel   Int?
   unit           String?                @default("each")
+  expiryDate     DateTime?
+  batchNumber    String?
   createdAt      DateTime               @default(now())
   updatedAt      DateTime               @updatedAt
   transactions   InventoryTransaction[]
+
+  @@index([organizationId, expiryDate])
 }
 
 model InventoryTransaction {

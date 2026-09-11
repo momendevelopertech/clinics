@@ -24,7 +24,14 @@ export default function InventoryPage() {
     quantity: number;
     reorderLevel: number | null;
     unit: string | null;
+    expiryDate: string | null;
+    batchNumber: string | null;
   }>>([]);
+  const [alerts, setAlerts] = React.useState<{ expired: string[]; expiringSoon: string[]; lowStock: string[] }>({
+    expired: [],
+    expiringSoon: [],
+    lowStock: [],
+  });
   const [loading, setLoading] = React.useState(true);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [categoryFilter, setCategoryFilter] = React.useState("all");
@@ -40,17 +47,32 @@ export default function InventoryPage() {
       quantity: number;
       reorderLevel: number | null;
       unit: string | null;
+      expiryDate: string | null;
+      batchNumber: string | null;
     }>>("/api/inventory")
       .then((data) => { if (data) setItems(Array.isArray(data) ? data : []); })
       .catch(() => setItems([]))
       .finally(() => setLoading(false));
+    guardedFetch<{ expired: Array<{ id: string }>; expiringSoon: Array<{ id: string }>; lowStock: Array<{ id: string }> }>("/api/inventory/alerts")
+      .then((data) => {
+        if (data) {
+          setAlerts({
+            expired: data.expired.map((i) => i.id),
+            expiringSoon: data.expiringSoon.map((i) => i.id),
+            lowStock: data.lowStock.map((i) => i.id),
+          });
+        }
+      })
+      .catch(() => {});
   }, [guardedFetch]);
 
   React.useEffect(() => {
     loadItems();
   }, [loadItems]);
 
-  const lowStock = items.filter((i) => i.reorderLevel != null && i.quantity <= i.reorderLevel);
+  const lowStock = items.filter((i) => alerts.lowStock.includes(i.id));
+  const expiredItems = items.filter((i) => alerts.expired.includes(i.id));
+  const expiringItems = items.filter((i) => alerts.expiringSoon.includes(i.id));
 
   const categories = Array.from(new Set(items.map((i) => i.category).filter((c): c is string => Boolean(c))));
 
@@ -91,6 +113,28 @@ export default function InventoryPage() {
         <h1 className="text-2xl font-bold tracking-tight">{t("inv_title")}</h1>
         <AddItemDialog onSuccess={loadItems} />
       </div>
+
+      {expiredItems.length > 0 && (
+        <Card className="border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20">
+          <CardContent className="flex items-center gap-3 pt-6">
+            <AlertTriangle className="w-5 h-5 text-red-600" />
+            <span className="font-medium">
+              {t("inv_expired").replace("{n}", String(expiredItems.length))} {expiredItems.map((i) => i.name).join(", ")}
+            </span>
+          </CardContent>
+        </Card>
+      )}
+
+      {expiringItems.length > 0 && (
+        <Card className="border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20">
+          <CardContent className="flex items-center gap-3 pt-6">
+            <AlertTriangle className="w-5 h-5 text-amber-600" />
+            <span className="font-medium">
+              {t("inv_expiringSoon").replace("{n}", String(expiringItems.length))} {expiringItems.map((i) => i.name).join(", ")}
+            </span>
+          </CardContent>
+        </Card>
+      )}
 
       {lowStock.length > 0 && (
         <FeatureTip tipId="inventory-reorder">
@@ -159,6 +203,8 @@ export default function InventoryPage() {
                     <th className="px-4 py-3 text-left font-medium">{t("inv_colSku")}</th>
                     <th className="px-4 py-3 text-left font-medium">{t("inv_colCategory")}</th>
                     <th className="px-4 py-3 text-left font-medium">{t("inv_colQty")}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("inv_colExpiry")}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("inv_colBatch")}</th>
                     <th className="px-4 py-3 text-left font-medium">{t("inv_colReorder")}</th>
                   </tr>
                 </thead>
@@ -173,6 +219,16 @@ export default function InventoryPage() {
                           {item.quantity} {item.unit ?? ""}
                         </span>
                       </td>
+                      <td className="px-4 py-3">
+                        {item.expiryDate ? (
+                          <span className={alerts.expired.includes(item.id) ? "text-red-600 font-medium" : alerts.expiringSoon.includes(item.id) ? "text-amber-600 font-medium" : ""}>
+                            {new Date(item.expiryDate).toLocaleDateString()}
+                          </span>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-neutral-500">{item.batchNumber ?? "—"}</td>
                       <td className="px-4 py-3">{item.reorderLevel ?? "—"}</td>
                     </tr>
                   ))}

@@ -941,6 +941,12 @@ export const en: Dictionary = {
   inv_colCategory: "Category",
   inv_colQty: "Quantity",
   inv_colReorder: "Reorder Level",
+  inv_colExpiry: "Expiry",
+  inv_colBatch: "Batch",
+  inv_expiry: "Expiry date",
+  inv_batch: "Batch number",
+  inv_expired: "{n} expired item(s):",
+  inv_expiringSoon: "{n} expiring within 30 days:",
 
   // Tasks
   tasks_title: "Tasks & Follow-ups",

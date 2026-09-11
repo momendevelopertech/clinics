@@ -30,6 +30,8 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
     quantity: "",
     unit: "",
     reorderLevel: "",
+    expiryDate: "",
+    batchNumber: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,6 +57,8 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
             formData.reorderLevel === ""
               ? null
               : Number(formData.reorderLevel),
+          expiryDate: formData.expiryDate ? new Date(formData.expiryDate).toISOString() : null,
+          batchNumber: formData.batchNumber.trim() || null,
         }),
       });
 
@@ -68,6 +72,8 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
         quantity: "",
         unit: "",
         reorderLevel: "",
+        expiryDate: "",
+        batchNumber: "",
       });
       setOpen(false);
       onSuccess();
@@ -166,6 +172,31 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, reorderLevel: e.target.value })
                 }
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="gap-2 flex flex-col">
+              <Label htmlFor="item-expiry">Expiry date</Label>
+              <Input
+                id="item-expiry"
+                type="date"
+                value={formData.expiryDate}
+                onChange={(e) =>
+                  setFormData({ ...formData, expiryDate: e.target.value })
+                }
+              />
+            </div>
+            <div className="gap-2 flex flex-col">
+              <Label htmlFor="item-batch">Batch number</Label>
+              <Input
+                id="item-batch"
+                value={formData.batchNumber}
+                onChange={(e) =>
+                  setFormData({ ...formData, batchNumber: e.target.value })
+                }
+                placeholder="B-001"
               />
             </div>
           </div>
