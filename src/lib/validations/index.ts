@@ -10,3 +10,4 @@ export * from "./settings";
 export * from "./uploads";
 export * from "./ops";
 export * from "./feedback";
+export * from "./intake";

@@ -10,12 +10,13 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { useLocale } from "@/components/locale/locale-provider"
 import { StaffProfiles } from "@/components/settings/staff-profiles"
+import { IntakeFormsManager } from "@/components/settings/intake-forms-manager"
 import { ProfileAvatarCard } from "@/components/settings/profile-avatar-card"
 import { PermissionDenied } from "@/components/ui/permission-denied"
 import { usePermissionState } from "@/hooks/use-permission-state"
 import { CloudinaryImageUpload } from "@/components/uploads/cloudinary-image-upload"
 
-type Section = "general" | "billing" | "team" | "notifications"
+type Section = "general" | "billing" | "team" | "notifications" | "intake"
 
 export default function SettingsPage() {
   const { t } = useLocale()
@@ -49,6 +50,7 @@ export default function SettingsPage() {
     { id: "billing", label: t("settings_billing") },
     { id: "team", label: t("settings_team") },
     { id: "notifications", label: t("settings_notifications") },
+    { id: "intake", label: t("intake_title") },
   ]
 
   return (
@@ -198,8 +200,7 @@ export default function SettingsPage() {
 
             {activeSection === "notifications" && (
               <div>
-                <h3 className="text-lg font-medium border-b dark:border-neutral-800 pb-2 mb-4">{t("settings_notifications")}</h3>
-                <div className="space-y-4">
+                <h3 className="text-lg font-medium border-b dark:border-neutral-800 pb-2 mb-4">{t("settings_notifications")}</h3>                <div className="space-y-4">
                   <div className="flex items-center justify-between py-2">
                     <div>
                       <p className="font-medium text-sm">{t("settings_appointmentReminders")}</p>
@@ -287,6 +288,13 @@ export default function SettingsPage() {
                     <Checkbox checked={settings.billingNotifications} onCheckedChange={(checked) => setSettings({ ...settings, billingNotifications: checked === true })} />
                   </div>
                 </div>
+              </div>
+            )}
+
+            {activeSection === "intake" && (
+              <div>
+                <h3 className="text-lg font-medium border-b dark:border-neutral-800 pb-2 mb-4">{t("intake_title")}</h3>
+                <IntakeFormsManager />
               </div>
             )}
          </div>

@@ -66,6 +66,8 @@ model Organization {
   patientPackages      PatientPackage[]
   treatmentPlans       TreatmentPlan[]
   feedbacks            Feedback[]
+  intakeForms          IntakeForm[]
+  intakeResponses      IntakeResponse[]
 }
 
 // ============== SAAS: PLANS / SUBSCRIPTIONS / ENTITLEMENTS ==============
@@ -281,6 +283,7 @@ model Patient {
   patientPackages        PatientPackage[]
   treatmentPlans         TreatmentPlan[]
   feedbacks              Feedback[]
+  intakeResponses        IntakeResponse[]
 
   @@unique([organizationId, mrn])
   @@index([organizationId, status])
@@ -864,6 +867,54 @@ model Feedback {
 
   @@index([organizationId, createdAt])
   @@index([providerId, rating])
+}
+
+model IntakeForm {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  name           String
+  description    String?
+  active         Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  fields         IntakeField[]
+  responses      IntakeResponse[]
+
+  @@index([organizationId, active])
+}
+
+model IntakeField {
+  id        String     @id @default(cuid())
+  formId    String
+  form      IntakeForm @relation(fields: [formId], references: [id], onDelete: Cascade)
+  key       String
+  label     String
+  labelAr   String?
+  kind      String     @default("text") // text, multiline, number, date, boolean, choice
+  required  Boolean    @default(false)
+  options   String? // JSON array for choice kind
+  position  Int        @default(0)
+  createdAt DateTime   @default(now())
+
+  @@unique([formId, key])
+  @@index([formId, position])
+}
+
+model IntakeResponse {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  formId         String
+  form           IntakeForm   @relation(fields: [formId], references: [id])
+  patientId      String
+  patient        Patient      @relation(fields: [patientId], references: [id])
+  appointmentId  String?
+  answers        String // JSON object key -> value
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId, formId])
+  @@index([patientId, formId])
 }
 
 model Payment {

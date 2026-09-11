@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { useVitalsStream } from "@/hooks/use-vitals-stream";
 import { logClientError } from "@/lib/client-logger";
 import { shouldShowJoinLink } from "@/lib/telehealth";
+import { PortalIntakeCard } from "@/components/portal/portal-intake-card";
 import { useLocale } from "@/components/locale/locale-provider";
 import type { VitalSnapshot } from "@/lib/vitals";
 
@@ -648,6 +649,7 @@ export default function PatientPortalPage() {
         ) : null}
 
         {/* Lab Results */}
+        <PortalIntakeCard />
         <Card id="portal-lab-results">
           <CardHeader>
             <CardTitle>{t("portal_recentLabResults")}</CardTitle>
