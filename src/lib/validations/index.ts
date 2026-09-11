@@ -9,3 +9,4 @@ export * from "./notifications";
 export * from "./settings";
 export * from "./uploads";
 export * from "./ops";
+export * from "./feedback";

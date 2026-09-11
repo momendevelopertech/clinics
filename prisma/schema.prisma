@@ -65,6 +65,7 @@ model Organization {
   servicePackages      ServicePackage[]
   patientPackages      PatientPackage[]
   treatmentPlans       TreatmentPlan[]
+  feedbacks            Feedback[]
 }
 
 // ============== SAAS: PLANS / SUBSCRIPTIONS / ENTITLEMENTS ==============
@@ -279,6 +280,7 @@ model Patient {
   installmentPlans       InstallmentPlan[]
   patientPackages        PatientPackage[]
   treatmentPlans         TreatmentPlan[]
+  feedbacks              Feedback[]
 
   @@unique([organizationId, mrn])
   @@index([organizationId, status])
@@ -416,6 +418,7 @@ model Appointment {
   updatedAt          DateTime               @updatedAt
   encounter          Encounter?
   equipmentSlots     AppointmentEquipment[]
+  feedbacks          Feedback[]
 
   @@index([organizationId, startTime])
   @@index([providerId, startTime, status])
@@ -842,6 +845,24 @@ model TreatmentPlanStep {
   updatedAt DateTime      @updatedAt
 
   @@index([planId, status])
+}
+
+model Feedback {
+  id             String      @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  patientId      String
+  patient        Patient     @relation(fields: [patientId], references: [id])
+  appointmentId  String?
+  appointment    Appointment? @relation(fields: [appointmentId], references: [id])
+  providerId     String?
+  rating         Int // 1-5
+  comment        String?
+  source         String        @default("portal") // portal, staff, auto
+  createdAt      DateTime      @default(now())
+
+  @@index([organizationId, createdAt])
+  @@index([providerId, rating])
 }
 
 model Payment {

@@ -43,6 +43,7 @@ export async function GET() {
     openInvoices,
     monthlyVisitors,
     monthlyExpenses,
+    monthlyFeedback,
   ] = await Promise.all([
     prisma.patient.count({
       where: { organizationId, status: { not: "Archived" } },
@@ -100,6 +101,11 @@ export async function GET() {
         spentAt: { gte: monthStart, lt: nextMonthStart },
       },
       _sum: { amount: true },
+    }),
+    prisma.feedback.aggregate({
+      where: { organizationId, createdAt: { gte: monthStart, lt: nextMonthStart } },
+      _avg: { rating: true },
+      _count: { rating: true },
     }),
   ]);
 
@@ -159,6 +165,11 @@ export async function GET() {
       outstandingBalance: outstanding,
       expensesThisMonth,
       netProfitThisMonth: netProfit(revenueThisMonth, expensesThisMonth),
+      avgRatingThisMonth:
+        monthlyFeedback._avg.rating == null
+          ? null
+          : Math.round(monthlyFeedback._avg.rating * 10) / 10,
+      ratingsCountThisMonth: monthlyFeedback._count.rating,
       newPatientsThisMonth: patientMix.newPatients,
       returningPatientsThisMonth: patientMix.returningPatients,
     },

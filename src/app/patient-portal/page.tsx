@@ -10,6 +10,7 @@ import {
   Heart,
   LogOut,
   MessageSquare,
+  Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,6 +52,9 @@ export default function PatientPortalPage() {
   const [overviewVital, setOverviewVital] = React.useState<VitalSnapshot | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [isLoggingOut, setIsLoggingOut] = React.useState(false);
+  const [rateable, setRateable] = React.useState<Array<{ id: string; type: string; provider: string; startTime: string }>>([]);
+  const [stars, setStars] = React.useState<Record<string, number>>({});
+  const [comments, setComments] = React.useState<Record<string, string>>({});
   const router = useRouter();
   const { latestVital, status: vitalsStatus } = useVitalsStream(patient?.id);
 
@@ -98,6 +102,10 @@ export default function PatientPortalPage() {
 
   React.useEffect(() => {
     fetchPatientData();
+    fetch("/api/patient-portal/feedback/rateable")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((d) => setRateable(Array.isArray(d) ? d : []))
+      .catch((error) => logClientError("Rateable visits failed", error));
   }, [fetchPatientData]);
 
   const handleLogout = async () => {
@@ -234,6 +242,31 @@ export default function PatientPortalPage() {
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const submitRating = async (appointmentId: string) => {
+    const rating = stars[appointmentId] ?? 0;
+    if (rating < 1) {
+      toast.error(t("portal_ratePickStars"));
+      return;
+    }
+    try {
+      const response = await fetch("/api/patient-portal/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          appointmentId,
+          rating,
+          comment: comments[appointmentId] || undefined,
+        }),
+      });
+      if (!response.ok) throw new Error("rate failed");
+      setRateable((prev) => prev.filter((v) => v.id !== appointmentId));
+      toast.success(t("portal_rateThanks"));
+    } catch (error) {
+      toast.error(t("portal_rateError"));
+      logClientError("Rating submit failed", error);
+    }
   };
 
   if (!patient) {
@@ -551,6 +584,57 @@ export default function PatientPortalPage() {
             </Button>
           </CardContent>
         </Card>
+
+        {rateable.length > 0 ? (
+          <Card className="mb-6" id="portal-rate">
+            <CardHeader>
+              <CardTitle>{t("portal_rateTitle")}</CardTitle>
+              <CardDescription>{t("portal_rateDesc")}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {rateable.map((visit) => (
+                  <div key={visit.id} className="border rounded p-3">
+                    <p className="font-medium">
+                      {visit.type} · {visit.provider}
+                    </p>
+                    <p className="text-sm text-neutral-500">
+                      {new Date(visit.startTime).toLocaleDateString()}
+                    </p>
+                    <div className="mt-2 flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <button
+                          key={n}
+                          type="button"
+                          aria-label={`${n} stars`}
+                          onClick={() => setStars({ ...stars, [visit.id]: n })}
+                        >
+                          <Star
+                            className={`h-6 w-6 ${(stars[visit.id] ?? 0) >= n ? "fill-amber-400 text-amber-400" : "text-neutral-300"}`}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                    <Input
+                      className="mt-2"
+                      placeholder={t("portal_ratePlaceholder")}
+                      value={comments[visit.id] ?? ""}
+                      onChange={(e) => setComments({ ...comments, [visit.id]: e.target.value })}
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="mt-2"
+                      onClick={() => submitRating(visit.id)}
+                    >
+                      {t("portal_rateSubmit")}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : null}
 
         {/* Lab Results */}
         <Card id="portal-lab-results">

@@ -20,6 +20,8 @@ type DashboardKpis = {
   outstandingBalance: number;
   expensesThisMonth?: number;
   netProfitThisMonth?: number;
+  avgRatingThisMonth?: number | null;
+  ratingsCountThisMonth?: number;
 };
 
 export default function AnalyticsPage() {
@@ -107,6 +109,11 @@ export default function AnalyticsPage() {
             <Metric label={t("analytics_outstanding")} value={stats ? `$${stats.outstandingBalance.toFixed(2)}` : "—"} icon={Wallet} />
             <Metric label={t("analytics_expenses")} value={stats?.expensesThisMonth != null ? `$${stats.expensesThisMonth.toFixed(2)}` : "—"} icon={Wallet} />
             <Metric label={t("analytics_netProfit")} value={stats?.netProfitThisMonth != null ? `$${stats.netProfitThisMonth.toFixed(2)}` : "—"} icon={Wallet} />
+            <Metric
+              label={t("analytics_avgRating")}
+              value={stats?.avgRatingThisMonth != null ? `${stats.avgRatingThisMonth} ★ (${stats.ratingsCountThisMonth ?? 0})` : "—"}
+              icon={Wallet}
+            />
           </div>
         </CardContent>
       </Card>
