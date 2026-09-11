@@ -258,13 +258,40 @@ export default function CampaignsPage() {
                     {triggerLabel(campaign.triggerType)}
                   </TableCell>
                   <TableCell>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${statusBadge(
-                        campaign.status,
-                      )}`}
-                    >
-                      {statusLabel(campaign.status)}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${statusBadge(
+                          campaign.status,
+                        )}`}
+                      >
+                        {statusLabel(campaign.status)}
+                      </span>
+                      {campaign.status !== "archived" ? (
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            try {
+                              const response = await fetch(
+                                `/api/communications/campaigns/${campaign.id}/launch`,
+                                { method: "POST" },
+                              );
+                              const data = await response.json().catch(() => ({}));
+                              if (!response.ok) {
+                                throw new Error(data.error || "Launch failed");
+                              }
+                              toast.success(`Launched: ${data.sent} sent, ${data.failed} failed`);
+                              fetchCampaigns();
+                            } catch (error) {
+                              toast.error(error instanceof Error ? error.message : "Launch failed");
+                              logClientError("Campaign launch failed", error);
+                            }
+                          }}
+                          className="rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100"
+                        >
+                          Launch
+                        </button>
+                      ) : null}
+                    </div>
                   </TableCell>
                   <TableCell className="text-sm text-gray-600">
                     {new Date(campaign.createdAt).toLocaleDateString()}

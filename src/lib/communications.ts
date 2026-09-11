@@ -4,6 +4,50 @@ import nodemailer from "nodemailer";
 import twilio, { Twilio } from "twilio";
 import { logServerError } from "@/lib/safe-logger";
 
+export const approvedCampaignTemplates = {
+  welcome: {
+    key: "welcome",
+    channel: "whatsapp",
+    name: "Welcome message",
+    body: "Hello {patientName}, welcome to {clinicName}. We are happy to support your care journey. Reply STOP to opt out.",
+  },
+  post_visit: {
+    key: "post_visit",
+    channel: "whatsapp",
+    name: "Post-visit follow-up",
+    body: "Hello {patientName}, thank you for visiting {clinicName}. We hope your visit went well. Please reply if you need follow-up care or any assistance.",
+  },
+  chronic_care: {
+    key: "chronic_care",
+    channel: "whatsapp",
+    name: "Chronic care check-in",
+    body: "Hello {patientName}, this is a reminder from {clinicName} to check in on your care plan and confirm your next follow-up appointment.",
+  },
+} as const;
+
+export function resolveApprovedCampaignTemplate(triggerType?: string | null, fallbackName?: string) {
+  const key = triggerType && triggerType in approvedCampaignTemplates ? triggerType : "welcome";
+  const template = approvedCampaignTemplates[key as keyof typeof approvedCampaignTemplates];
+
+  return {
+    ...template,
+    name: fallbackName && !fallbackName.trim() ? template.name : (fallbackName || template.name),
+  };
+}
+
+export function renderApprovedCampaignTemplate(
+  triggerType: string | null | undefined,
+  patientName: string,
+  clinicName: string,
+  fallbackName?: string,
+) {
+  const template = resolveApprovedCampaignTemplate(triggerType, fallbackName);
+  return template.body
+    .replace(/\{patientName\}/g, patientName)
+    .replace(/\{clinicName\}/g, clinicName)
+    .replace(/\{campaignName\}/g, template.name);
+}
+
 // Twilio Configuration - lazy initialization to avoid build errors
 let twilioClient: Twilio | null = null;
 

@@ -34,7 +34,7 @@
 - [x] Report builder + تصدير + تقارير مجدولة — تصدير CSV/XLS للتقارير الحالية + تقرير إيراد/عدد per-service/per-procedure + جدولة بريدية — Phase (P1) — مرجع (🎯-P1-#8 / قسم 📊). ✅ DONE 2026-09-11: per-service revenue + shared CSV + XLSX + monthly email schedules + ar/en.
 - [x] منحنى تطور المريض — رسم vitals trend + مقارنة زيارات + outcome scores في صفحة المريض — Phase (P1) — مرجع (🎯-P1-#9 / قسم 🩺). ✅ DONE 2026-09-11: vitals trend API + SVG sparkline card + stats + ar/en.
 - [x] تكامل LIS/PACS أساسي — طلب إلكتروني + استقبال نتيجة راجعة (HL7/FHIR write) لمعمل/أشعة واحد على الأقل — Phase (P1) — مرجع (🎯-P1-#10 / قسم 🧪+🌐). ✅ DONE 2026-09-11: migration `20260913000000_lab_exchange` + `LabOrder.transmittedAt/externalRef` + `POST /api/lab-orders/[id]/transmit` + `POST /api/lab-orders/[id]/ingest` + `buildDiagnosticRequest` FHIR payload + UI `LabOrdersSection` + unit test 3/3 green.
-- [ ] إطلاق حملات WhatsApp (Business templates) — `POST /api/communications/campaigns/[id]/launch` + قوالب معتمدة + تتبع حالة الإرسال (الحملات عالقة في draft حاليًا) — Phase (P1) — مرجع (🎯-P1-#11 / قسم 📱).
+- [x] إطلاق حملات WhatsApp (Business templates) — `POST /api/communications/campaigns/[id]/launch` + قوالب معتمدة + تتبع حالة الإرسال (الحملات عالقة في draft حاليًا) — Phase (P1) — مرجع (🎯-P1-#11 / قسم 📱). ✅ DONE 2026-09-11: approved WhatsApp template resolver + `/launch` route sends to eligible patients, records `Communication` status rows, sets campaign to `active`, dashboard Launch button included; tests 2/2 green.
 
 ## P2 — تحسين (تميّز)
 
