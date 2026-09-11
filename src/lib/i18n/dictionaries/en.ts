@@ -602,6 +602,17 @@ export const en: Dictionary = {
   patients_dob: "DOB",
   patients_manage: "Manage",
   patients_timeline: "Timeline",
+  patients_merge: "Merge",
+  patients_mergeTitle: "Merge duplicate file",
+  patients_mergeDesc:
+    "Move every visit, prescription, lab, invoice, and document from this file into the surviving file. The duplicate is archived — nothing is deleted.",
+  patients_mergeSurvivor: "Surviving file (keep)",
+  patients_mergeSurvivorPlaceholder: "Select the file to keep...",
+  patients_mergeConfirm: "Merge files",
+  patients_mergeMerging: "Merging...",
+  patients_mergeSuccess: "Files merged successfully",
+  patients_mergeError: "Failed to merge files",
+  patients_mergeSelf: "Select a different file to merge into",
 
   // Patient profile sheet
   profile_title: "{names} – Patient Profile",

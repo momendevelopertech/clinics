@@ -21,6 +21,7 @@ import {
 import { toast } from "sonner"
 import { useMedical, Patient } from "@/context/MedicalContext"
 import { PatientProfileSheet } from "@/components/patients/patient-profile-sheet"
+import { MergePatientsDialog } from "@/components/patients/merge-patients-dialog"
 import { AddPatientDialog } from "@/components/patients/add-patient-dialog"
 import { DataPagination } from "@/components/ui/data-pagination"
 import { paginate } from "@/lib/pagination"
@@ -166,6 +167,7 @@ function PatientsPageContent() {
                                    >
                                      {t("patients_timeline")}
                                    </Link>
+                                   <MergePatientsDialog patient={patient} patients={patients} onSuccess={refetchPatients} />
                                  </div>
                                  </FeatureTip>
                                </td>

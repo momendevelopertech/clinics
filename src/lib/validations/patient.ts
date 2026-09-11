@@ -26,6 +26,19 @@ export const patientCreateSchema = z.object({
 
 export const patientUpdateSchema = patientCreateSchema.partial();
 
+export const patientListQuerySchema = z.object({
+  q: z.string().trim().max(100).optional().nullable(),
+  status: z.enum(["Active", "Inactive", "Archived"]).optional().nullable(),
+  page: z.coerce.number().int().min(1).max(1000).optional().nullable(),
+  pageSize: z.coerce.number().int().min(1).max(100).optional().nullable(),
+});
+
+export type PatientListQuery = z.infer<typeof patientListQuerySchema>;
+
+export const patientMergeSchema = z.object({
+  survivorId: z.string().min(1).max(100),
+});
+
 export const patientHistorySchema = z.object({
   category: z.string().trim().min(1).max(60),
   title: z.string().trim().min(1).max(160),

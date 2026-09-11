@@ -603,6 +603,17 @@ export const ar: Dictionary = {
   patients_dob: "تاريخ الميلاد",
   patients_manage: "إدارة",
   patients_timeline: "الخط الزمني",
+  patients_merge: "دمج",
+  patients_mergeTitle: "دمج ملف مكرر",
+  patients_mergeDesc:
+    "انقل كل الزيارات والروشتات والتحاليل والفواتير والمستندات من هذا الملف إلى الملف الباقي. الملف المكرر يُؤرشف — لا يُحذف شيء.",
+  patients_mergeSurvivor: "الملف الباقي (احتفاظ)",
+  patients_mergeSurvivorPlaceholder: "اختر الملف الذي سيبقى...",
+  patients_mergeConfirm: "دمج الملفات",
+  patients_mergeMerging: "جارٍ الدمج...",
+  patients_mergeSuccess: "تم دمج الملفات بنجاح",
+  patients_mergeError: "فشل دمج الملفات",
+  patients_mergeSelf: "اختر ملفًا مختلفًا للدمج فيه",
 
   // Patient profile sheet
   profile_title: "{names} – ملف المريض",

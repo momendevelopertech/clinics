@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { getCurrentUserId, hasPermission } from "@/lib/auth";
-import { patientCreateSchema } from "@/lib/validations";
+import { patientCreateSchema, patientListQuerySchema } from "@/lib/validations";
 import { logServerError } from "@/lib/safe-logger";
 import { checkPlanLimit } from "@/lib/plans";
 import {
@@ -64,7 +64,7 @@ function mapPatientToResponse(p: {
   };
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
@@ -74,12 +74,67 @@ export async function GET() {
     ]);
     if (authz.response) return authz.response;
 
-    const patients = await prisma.patient.findMany({
-      where: { organizationId: orgId },
-      orderBy: { createdAt: "desc" },
+    const url = new URL(request.url);
+    const parsed = patientListQuerySchema.safeParse({
+      q: url.searchParams.get("q"),
+      status: url.searchParams.get("status"),
+      page: url.searchParams.get("page"),
+      pageSize: url.searchParams.get("pageSize"),
     });
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid query", details: parsed.error.flatten().fieldErrors },
+        { status: 400 },
+      );
+    }
+    const { q, status } = parsed.data;
 
-    return NextResponse.json(patients.map(mapPatientToResponse));
+    // Backward compatible: no query params → legacy full-list array (existing
+    // consumers: MedicalContext, dialogs, workspace). Paginated object only
+    // when the caller opts in via ?q= / ?page= / ?pageSize= / ?status=.
+    const paginated =
+      q != null || status != null || parsed.data.page != null || parsed.data.pageSize != null;
+
+    const where: Prisma.PatientWhereInput = { organizationId: orgId };
+    if (status) where.status = status;
+    const term = q?.trim();
+    if (term) {
+      where.OR = [
+        { firstName: { contains: term, mode: "insensitive" } },
+        { lastName: { contains: term, mode: "insensitive" } },
+        { mrn: { contains: term, mode: "insensitive" } },
+        { phone: { contains: term, mode: "insensitive" } },
+        { email: { contains: term, mode: "insensitive" } },
+      ];
+    }
+
+    if (!paginated) {
+      const patients = await prisma.patient.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+      });
+      return NextResponse.json(patients.map(mapPatientToResponse));
+    }
+
+    const page = parsed.data.page ?? 1;
+    const pageSize = parsed.data.pageSize ?? 10;
+    const [total, rows] = await prisma.$transaction([
+      prisma.patient.count({ where }),
+      prisma.patient.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
+
+    return NextResponse.json({
+      data: rows.map(mapPatientToResponse),
+      total,
+      page,
+      pageSize,
+      pageCount: Math.max(1, Math.ceil(total / pageSize)),
+    });
   } catch (error) {
     logServerError("Error fetching patients", error);
     return NextResponse.json(
