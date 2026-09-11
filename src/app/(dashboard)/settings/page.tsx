@@ -20,7 +20,9 @@ type Section = "general" | "billing" | "team" | "notifications"
 export default function SettingsPage() {
   const { t } = useLocale()
   const [activeSection, setActiveSection] = React.useState<Section>("general")
-  const [settings, setSettings] = React.useState({ appointmentDurationMins: 30, currency: "USD", defaultTaxRate: 0, invoicePrefix: "INV-", appointmentReminders: true, newPatientAlerts: true, billingNotifications: true, clinicLogoUrl: "" as string, clinicLogoPublicId: null as string | null, cancellationPolicy: { lateCancelHoursBefore: 24, maxNoShows: 3, noShowFee: 0 } })
+  const [settings, setSettings] = React.useState({ appointmentDurationMins: 30, currency: "USD", defaultTaxRate: 0, invoicePrefix: "INV-", appointmentReminders: true, reminderConfig: { enabled24h: true, enabled1h: true, channels: { sms: true, whatsapp: true, email: true }, quietStart: null as string | null, quietEnd: null as string | null }, newPatientAlerts: true, billingNotifications: true, clinicLogoUrl: "" as string, clinicLogoPublicId: null as string | null, cancellationPolicy: { lateCancelHoursBefore: 24, maxNoShows: 3, noShowFee: 0 } })
+  const updateReminderConfig = (patch: Partial<{ enabled24h: boolean; enabled1h: boolean; channels: { sms: boolean; whatsapp: boolean; email: boolean }; quietStart: string | null; quietEnd: string | null }>) =>
+    setSettings((s) => ({ ...s, reminderConfig: { ...s.reminderConfig, ...patch } }))
   const { forbidden, guardedFetch } = usePermissionState()
 
   React.useEffect(() => {
@@ -205,6 +207,71 @@ export default function SettingsPage() {
                     </div>
                     <Checkbox checked={settings.appointmentReminders} onCheckedChange={(checked) => setSettings({ ...settings, appointmentReminders: checked === true })} />
                   </div>
+                  {settings.appointmentReminders ? (
+                    <div className="ms-4 space-y-3 border-s-2 border-neutral-200 ps-4 dark:border-neutral-800">
+                      <div className="flex items-center justify-between py-1">
+                        <div>
+                          <p className="font-medium text-sm">{t("settings_reminder24h")}</p>
+                          <p className="text-xs text-neutral-500">{t("settings_reminder24hHelp")}</p>
+                        </div>
+                        <Checkbox checked={settings.reminderConfig.enabled24h !== false} onCheckedChange={(checked) => updateReminderConfig({ enabled24h: checked === true })} />
+                      </div>
+                      <div className="flex items-center justify-between py-1">
+                        <div>
+                          <p className="font-medium text-sm">{t("settings_reminder1h")}</p>
+                          <p className="text-xs text-neutral-500">{t("settings_reminder1hHelp")}</p>
+                        </div>
+                        <Checkbox checked={settings.reminderConfig.enabled1h !== false} onCheckedChange={(checked) => updateReminderConfig({ enabled1h: checked === true })} />
+                      </div>
+                      <div className="py-1">
+                        <p className="font-medium text-sm mb-2">{t("settings_reminderChannels")}</p>
+                        <div className="flex flex-wrap gap-4">
+                          {(
+                            [
+                              ["sms", t("comm_channel_sms")],
+                              ["whatsapp", t("comm_channel_whatsapp")],
+                              ["email", t("comm_channel_email")],
+                            ] as const
+                          ).map(([channel, label]) => (
+                            <label key={channel} className="flex items-center gap-2 text-sm">
+                              <Checkbox
+                                checked={settings.reminderConfig.channels?.[channel] !== false}
+                                onCheckedChange={(checked) =>
+                                  updateReminderConfig({
+                                    channels: { ...settings.reminderConfig.channels, [channel]: checked === true } as { sms: boolean; whatsapp: boolean; email: boolean },
+                                  })
+                                }
+                              />
+                              {label}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="py-1">
+                        <p className="font-medium text-sm mb-2">{t("settings_quietHours")}</p>
+                        <div className="flex flex-wrap items-center gap-3">
+                          <label className="flex items-center gap-2 text-sm">
+                            {t("settings_quietStart")}
+                            <Input
+                              type="time"
+                              value={settings.reminderConfig.quietStart ?? ""}
+                              onChange={(e) => updateReminderConfig({ quietStart: e.target.value || null })}
+                              className="w-auto"
+                            />
+                          </label>
+                          <label className="flex items-center gap-2 text-sm">
+                            {t("settings_quietEnd")}
+                            <Input
+                              type="time"
+                              value={settings.reminderConfig.quietEnd ?? ""}
+                              onChange={(e) => updateReminderConfig({ quietEnd: e.target.value || null })}
+                              className="w-auto"
+                            />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
                   <div className="flex items-center justify-between py-2">
                     <div>
                       <p className="font-medium text-sm">{t("settings_newPatientAlerts")}</p>

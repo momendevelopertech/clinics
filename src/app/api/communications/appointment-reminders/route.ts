@@ -10,6 +10,14 @@ import {
 } from "@/lib/communications";
 import { logServerError } from "@/lib/safe-logger";
 import { authorizeCronRequest } from "@/lib/cron-auth";
+import { parseOrgSettings } from "@/lib/org-settings";
+import {
+  enabledReminderChannels,
+  isCadenceDue,
+  isQuietHour,
+  reminderTag,
+  type ReminderCadence,
+} from "@/lib/reminders";
 
 type ReminderAppointment = Prisma.AppointmentGetPayload<{
   include: {
@@ -18,11 +26,13 @@ type ReminderAppointment = Prisma.AppointmentGetPayload<{
   };
 }>;
 
-type ReminderChannel = "sms" | "whatsapp" | "email";
-
 /**
- * CRON endpoint: Sends appointment reminders (SMS + WhatsApp + Email).
- * Sends reminders 24 hours, 2 hours, and 30 minutes before appointments
+ * CRON endpoint: sends appointment reminders per org configuration.
+ * Two cadences — a 24h heads-up and a 1h last-call — each with its own
+ * dedupe tag, each toggleable per org, with per-channel toggles and quiet
+ * hours (a run inside quiet hours sends nothing and marks nothing, so the
+ * next run retries). One Communication row per channel keeps delivery
+ * status (sent/failed) observable in the communications module.
  */
 export async function GET(request: NextRequest) {
   return POST(request);
@@ -34,17 +44,10 @@ export async function POST(request: NextRequest) {
     if (!cronAuth.ok) return cronAuth.response;
 
     const now = new Date();
-    const reminders = [];
-
-    // Only actionable appointments: no reminders for cancelled, completed,
-    // no-show, or in-progress visits.
-    const in24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    const horizon = new Date(now.getTime() + 25 * 60 * 60 * 1000);
     const upcomingAppointments = await prisma.appointment.findMany({
       where: {
-        startTime: {
-          gte: now,
-          lte: in24Hours,
-        },
+        startTime: { gte: now, lte: horizon },
         status: { in: ["scheduled", "confirmed"] },
       },
       include: {
@@ -54,91 +57,77 @@ export async function POST(request: NextRequest) {
       take: 100,
     });
 
+    let sent = 0;
+    let failed = 0;
+    let skippedQuiet = 0;
+
     for (const appointment of upcomingAppointments as ReminderAppointment[]) {
       const patient = appointment.patient;
-      const provider = appointment.provider;
-
-      // Archived patients and suspended organizations get no reminders.
       if (patient.status === "Archived") continue;
       if (patient.organization?.status !== "active") continue;
 
-      // Check if reminder already sent (you might want to add a field to track this)
-      // For now, we'll send reminders if communication doesn't exist
-      const existingReminder = await prisma.communication.findFirst({
-        where: {
-          patientId: patient.id,
-          type: "reminder",
-          content: {
-            contains: appointment.id,
-          },
-        },
-      });
+      const settings = parseOrgSettings(patient.organization?.settingsJson);
+      if (settings.appointmentReminders === false) continue;
+      const cadences: ReminderCadence[] = [
+        ...(settings.reminderConfig?.enabled24h !== false ? (["24h"] as const) : []),
+        ...(settings.reminderConfig?.enabled1h !== false ? (["1h"] as const) : []),
+      ];
+      if (cadences.length === 0) continue;
+      if (
+        isQuietHour(now, settings.reminderConfig?.quietStart, settings.reminderConfig?.quietEnd)
+      ) {
+        skippedQuiet += 1;
+        continue;
+      }
+      const channels = enabledReminderChannels(settings.reminderConfig?.channels);
+      if (channels.length === 0) continue;
 
-      if (!existingReminder) {
-        const messages = renderAppointmentReminder(
-          patient.firstName,
-          appointment.startTime,
-          provider?.name || "Your Doctor",
-        );
+      const messages = renderAppointmentReminder(
+        patient.firstName,
+        appointment.startTime,
+        appointment.provider?.name || "Your Doctor",
+      );
 
-        const attempts: Array<{ channel: ReminderChannel; send: () => Promise<unknown> }> = [];
-        if (patient.phone) {
-          attempts.push({
-            channel: "sms",
-            send: () => sendSMS(patient.phone!, messages.sms),
-          });
-          attempts.push({
-            channel: "whatsapp",
-            send: () => sendWhatsApp(patient.phone!, messages.whatsapp),
-          });
-        }
-        if (patient.email) {
-          attempts.push({
-            channel: "email",
-            send: () => sendEmail(patient.email!, "Appointment Reminder", messages.email),
-          });
-        }
+      for (const cadence of cadences) {
+        if (!isCadenceDue(appointment.startTime, now, cadence)) continue;
+        const tag = reminderTag(appointment.id, cadence);
+        const existing = await prisma.communication.findFirst({
+          where: { patientId: patient.id, type: "reminder", content: { contains: tag } },
+          select: { id: true },
+        });
+        if (existing) continue;
 
-        const outcomes: Array<{ channel: ReminderChannel; status: "sent" | "failed" }> = [];
-        for (const attempt of attempts) {
+        for (const channel of channels) {
+          let status: "sent" | "failed" = "sent";
           try {
-            await attempt.send();
-            outcomes.push({ channel: attempt.channel, status: "sent" });
+            if (channel === "sms" && patient.phone) {
+              await sendSMS(patient.phone, messages.sms);
+            } else if (channel === "whatsapp" && patient.phone) {
+              await sendWhatsApp(patient.phone, messages.whatsapp);
+            } else if (channel === "email" && patient.email) {
+              await sendEmail(patient.email, "Appointment Reminder", messages.email);
+            } else {
+              throw new Error(`No recipient address for ${channel}`);
+            }
           } catch (error) {
-            logServerError(`Failed to send ${attempt.channel} reminder`, error);
-            outcomes.push({ channel: attempt.channel, status: "failed" });
+            logServerError(`Failed to send ${channel} reminder`, error);
+            status = "failed";
           }
-        }
-
-        // One communication record per channel with its true status, so
-        // failures are observable (and retried next run only if nothing
-        // was recorded — the dedupe tag below marks the appointment done).
-        const tag = `[APPOINTMENT_ID: ${appointment.id}]`;
-        for (const outcome of outcomes) {
           const body =
-            outcome.channel === "email"
-              ? messages.email
-              : outcome.channel === "whatsapp"
-                ? messages.whatsapp
-                : messages.sms;
+            channel === "email" ? messages.email : channel === "whatsapp" ? messages.whatsapp : messages.sms;
           const record = await prisma.communication.create({
             data: {
               organizationId: patient.organizationId,
               patientId: patient.id,
-              channel: outcome.channel,
+              channel,
               type: "reminder",
-              status: outcome.status,
+              status,
               content: `${tag}\n\n${body}`,
-              sentAt: outcome.status === "sent" ? now : null,
+              sentAt: status === "sent" ? now : null,
             },
           });
-          reminders.push({
-            appointmentId: appointment.id,
-            patientId: patient.id,
-            channel: outcome.channel,
-            status: outcome.status,
-          });
-
+          if (status === "sent") sent += 1;
+          else failed += 1;
           await createAuditLog({
             organizationId: patient.organizationId,
             action: "CREATE",
@@ -149,9 +138,10 @@ export async function POST(request: NextRequest) {
             afterState: JSON.stringify({
               patientId: patient.id,
               appointmentId: appointment.id,
-              channel: outcome.channel,
+              cadence,
+              channel,
               type: "reminder",
-              status: outcome.status,
+              status,
             }),
           });
         }
@@ -161,9 +151,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       appointmentsProcessed: upcomingAppointments.length,
-      remindersSent: reminders.filter((r) => r.status === "sent").length,
-      remindersFailed: reminders.filter((r) => r.status === "failed").length,
-      message: `Sent ${reminders.length} appointment reminders`,
+      remindersSent: sent,
+      remindersFailed: failed,
+      skippedQuiet,
     });
   } catch (error) {
     logServerError("Appointment reminder CRON error", error);

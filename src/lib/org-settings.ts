@@ -6,6 +6,13 @@ export type OrgSettings = {
   defaultTaxRate?: number;
   invoicePrefix?: string;
   appointmentReminders?: boolean;
+  reminderConfig?: {
+    enabled24h?: boolean;
+    enabled1h?: boolean;
+    channels?: { sms?: boolean; whatsapp?: boolean; email?: boolean };
+    quietStart?: string | null;
+    quietEnd?: string | null;
+  };
   newPatientAlerts?: boolean;
   billingNotifications?: boolean;
   clinicLogoUrl?: string;
@@ -17,9 +24,17 @@ export type OrgSettings = {
   };
 };
 
+const DEFAULT_REMINDER_CONFIG = {
+  enabled24h: true,
+  enabled1h: true,
+  channels: { sms: true, whatsapp: true, email: true },
+  quietStart: null as string | null,
+  quietEnd: null as string | null,
+};
+
 export function parseOrgSettings(settingsJson: string | null | undefined): OrgSettings {
   if (!settingsJson) {
-    return { appointmentDurationMins: 30 };
+    return { appointmentDurationMins: 30, reminderConfig: { ...DEFAULT_REMINDER_CONFIG } };
   }
 
   try {
@@ -32,6 +47,17 @@ export function parseOrgSettings(settingsJson: string | null | undefined): OrgSe
       defaultTaxRate: parsed.defaultTaxRate ?? 0,
       invoicePrefix: parsed.invoicePrefix ?? "INV-",
       appointmentReminders: parsed.appointmentReminders ?? true,
+      reminderConfig: {
+        enabled24h: parsed.reminderConfig?.enabled24h ?? true,
+        enabled1h: parsed.reminderConfig?.enabled1h ?? true,
+        channels: {
+          sms: parsed.reminderConfig?.channels?.sms ?? true,
+          whatsapp: parsed.reminderConfig?.channels?.whatsapp ?? true,
+          email: parsed.reminderConfig?.channels?.email ?? true,
+        },
+        quietStart: parsed.reminderConfig?.quietStart ?? DEFAULT_REMINDER_CONFIG.quietStart,
+        quietEnd: parsed.reminderConfig?.quietEnd ?? DEFAULT_REMINDER_CONFIG.quietEnd,
+      },
       newPatientAlerts: parsed.newPatientAlerts ?? true,
       billingNotifications: parsed.billingNotifications ?? true,
       clinicLogoUrl: parsed.clinicLogoUrl ?? "",
@@ -43,7 +69,7 @@ export function parseOrgSettings(settingsJson: string | null | undefined): OrgSe
       },
     };
   } catch {
-    return { appointmentDurationMins: 30 };
+    return { appointmentDurationMins: 30, reminderConfig: { ...DEFAULT_REMINDER_CONFIG } };
   }
 }
 

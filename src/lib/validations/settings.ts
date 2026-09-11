@@ -8,6 +8,30 @@ export const organizationSettingsSchema = z.object({
   defaultTaxRate: z.number().min(0).max(100).default(0),
   invoicePrefix: z.string().trim().min(1).max(20).default("INV-"),
   appointmentReminders: z.boolean().default(true),
+  reminderConfig: z
+    .object({
+      enabled24h: z.boolean().optional(),
+      enabled1h: z.boolean().optional(),
+      channels: z
+        .object({
+          sms: z.boolean().optional(),
+          whatsapp: z.boolean().optional(),
+          email: z.boolean().optional(),
+        })
+        .optional(),
+      quietStart: z
+        .string()
+        .regex(/^([01]\d|2[0-3]):[0-5]\d$/)
+        .optional()
+        .nullable(),
+      quietEnd: z
+        .string()
+        .regex(/^([01]\d|2[0-3]):[0-5]\d$/)
+        .optional()
+        .nullable(),
+    })
+    .optional()
+    .default({}),
   newPatientAlerts: z.boolean().default(true),
   billingNotifications: z.boolean().default(true),
   clinicLogoUrl: z
