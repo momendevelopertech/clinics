@@ -13,6 +13,7 @@ import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { NewInvoiceDialog } from "@/components/billing/new-invoice-dialog";
+import { InstallmentPlansDialog } from "@/components/billing/installment-plans-dialog";
 import { UpgradePrompt } from "@/components/plan/upgrade-prompt";
 
 export default function BillingPage() {
@@ -213,6 +214,7 @@ export default function BillingPage() {
                     <th className="px-4 py-3 text-left font-medium">{t("billing_colPatient")}</th>
                     <th className="px-4 py-3 text-left font-medium">{t("billing_colTotal")}</th>
                     <th className="px-4 py-3 text-left font-medium">{t("billing_colStatus")}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("common_actions")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -227,6 +229,11 @@ export default function BillingPage() {
                         <span className={`px-2 py-1 rounded-[5px] text-xs font-medium ${statusColor[inv.status] ?? "bg-neutral-100"}`}>
                           {statusLabel[inv.status] ?? inv.status}
                         </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        {!closedStatuses.has(inv.status) ? (
+                          <InstallmentPlansDialog invoiceId={inv.id} onSuccess={loadInvoices} />
+                        ) : null}
                       </td>
                     </tr>
                   ))}

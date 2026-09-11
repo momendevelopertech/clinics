@@ -14,6 +14,7 @@ export const invoiceCreateSchema = z.object({
   patientId: z.string().min(1),
   dueDate: z.string().date().optional().nullable(),
   idempotencyKey: z.string().max(100).optional().nullable(),
+  couponCode: z.string().trim().min(2).max(40).optional().nullable(),
   lineItems: z.array(invoiceLineItemSchema).min(1),
 });
 
@@ -56,4 +57,26 @@ export const insuranceClaimUpdateSchema = z.object({
   status: z.enum(["submitted", "pending", "paid", "denied", "appeal"]),
   amountPaid: z.number().finite().nonnegative().optional().nullable(),
   denialReason: z.string().trim().max(1000).optional().nullable(),
+});
+
+export const couponCreateSchema = z.object({
+  code: z.string().trim().min(2).max(40).toUpperCase(),
+  kind: z.enum(["percent", "fixed"]),
+  value: z.number().finite().positive().max(100000),
+  expiresAt: z.string().datetime().optional().nullable(),
+});
+
+export const installmentPlanCreateSchema = z.object({
+  invoiceId: z.string().min(1),
+  count: z.number().int().min(2).max(24),
+  firstDueDate: z.string().datetime(),
+  frequency: z.enum(["weekly", "monthly"]).default("monthly"),
+  downPayment: z.number().finite().nonnegative().default(0),
+  method: z.enum(["card", "online", "cash", "transfer", "check", "insurance"]).default("cash"),
+  notes: z.string().trim().max(1000).optional().nullable(),
+});
+
+export const installmentPaySchema = z.object({
+  installmentId: z.string().min(1),
+  method: z.enum(["card", "online", "cash", "transfer", "check", "insurance"]).default("cash"),
 });

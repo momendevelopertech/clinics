@@ -43,6 +43,7 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
     quantity: "1",
     unitPrice: "",
     dueDate: "",
+    couponCode: "",
   });
 
   React.useEffect(() => {
@@ -86,6 +87,7 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
           patientId: formData.patientId,
           dueDate: formData.dueDate || null,
           idempotencyKey: crypto.randomUUID(),
+          couponCode: formData.couponCode.trim() || undefined,
           lineItems: [
             {
               description:
@@ -97,7 +99,10 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to create invoice");
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to create invoice");
+      }
 
       toast.success("Invoice created successfully");
       setFormData({
@@ -106,11 +111,12 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
         quantity: "1",
         unitPrice: "",
         dueDate: "",
+        couponCode: "",
       });
       setOpen(false);
       onSuccess();
     } catch (error) {
-      toast.error("Failed to create invoice");
+      toast.error(error instanceof Error ? error.message : "Failed to create invoice");
       logClientError("Create invoice failed", error);
     } finally {
       setLoading(false);
@@ -204,6 +210,18 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
               onChange={(e) =>
                 setFormData({ ...formData, dueDate: e.target.value })
               }
+            />
+          </div>
+
+          <div className="gap-2 flex flex-col">
+            <Label htmlFor="invoice-coupon">Coupon code (optional)</Label>
+            <Input
+              id="invoice-coupon"
+              value={formData.couponCode}
+              onChange={(e) =>
+                setFormData({ ...formData, couponCode: e.target.value.toUpperCase() })
+              }
+              placeholder="RAMADAN10"
             />
           </div>
 

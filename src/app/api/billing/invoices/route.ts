@@ -7,6 +7,7 @@ import { requireModulePermission } from "@/lib/permissions";
 import { requireModuleEntitlement } from "@/lib/entitlements/access";
 import { logServerError } from "@/lib/safe-logger";
 import { invoiceCreateSchema } from "@/lib/validations";
+import { applyCouponDiscount } from "@/lib/installments";
 
 export async function GET(request: Request) {
   try {
@@ -65,7 +66,7 @@ export async function POST(request: Request) {
 
     const parsed = invoiceCreateSchema.safeParse(await request.json());
     if (!parsed.success) return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
-    const { patientId, dueDate, lineItems, idempotencyKey } = parsed.data;
+    const { patientId, dueDate, lineItems, idempotencyKey, couponCode } = parsed.data;
 
     if (idempotencyKey) {
       const existing = await prisma.invoice.findUnique({
@@ -98,6 +99,28 @@ export async function POST(request: Request) {
 
     const invoiceNumber = `INV-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 
+    // Optional org coupon: validated server-side, applied as order-level discount.
+    let appliedCoupon: string | null = null;
+    let orderDiscount = 0;
+    if (couponCode?.trim()) {
+      const coupon = await prisma.coupon.findFirst({
+        where: { organizationId: orgId, code: couponCode.trim().toUpperCase() },
+      });
+      if (!coupon || !coupon.active || (coupon.expiresAt && coupon.expiresAt.getTime() < Date.now())) {
+        return NextResponse.json({ error: "Invalid or expired coupon" }, { status: 400 });
+      }
+      orderDiscount = applyCouponDiscount(totalAmount, {
+        kind: coupon.kind,
+        value: Number(coupon.value),
+        active: coupon.active,
+        expiresAt: coupon.expiresAt,
+      });
+      if (orderDiscount > 0) {
+        appliedCoupon = coupon.code;
+        totalAmount = Math.max(0, Math.round((totalAmount - orderDiscount) * 100) / 100);
+      }
+    }
+
     const invoice = await prisma.$transaction(
       async (tx: Prisma.TransactionClient) => {
       const inv = await tx.invoice.create({
@@ -110,6 +133,8 @@ export async function POST(request: Request) {
           status: "draft",
           dueDate: dueDate ? new Date(dueDate) : null,
           idempotencyKey: idempotencyKey || null,
+          couponCode: appliedCoupon,
+          orderDiscount: orderDiscount.toFixed(2),
         },
       });
 
