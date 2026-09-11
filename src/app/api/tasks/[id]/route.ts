@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
+import { taskUpdateSchema } from "@/lib/validations/ops";
 import { logServerError } from "@/lib/safe-logger";
 
 export async function PATCH(
@@ -31,7 +32,14 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { status, assigneeId, priority, dueDate } = body;
+    const parsed = taskUpdateSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid task update", details: parsed.error.flatten().fieldErrors },
+        { status: 400 },
+      );
+    }
+    const { status, assigneeId, priority, dueDate } = parsed.data;
 
     const updateData: Record<string, unknown> = {};
     if (status !== undefined) updateData.status = status;

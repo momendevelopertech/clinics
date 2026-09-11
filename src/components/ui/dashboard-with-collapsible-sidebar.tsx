@@ -79,6 +79,8 @@ const routeTitleKeys: Array<[string, string]> = [
   ["/documents", "nav_documents"],
   ["/communications", "nav_communications"],
   ["/campaigns", "nav_campaigns"],
+  ["/queue", "nav_queue"],
+  ["/catalogs", "nav_catalogs"],
   ["/audit", "nav_audit"],
   ["/consents", "nav_consents"],
   ["/waitlist", "nav_waitlist"],
@@ -200,6 +202,8 @@ function CollapsibleSidebar({
         { icon: Stethoscope, label: t("nav_tasks"), href: "/tasks", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"] as NavRole[], moduleKey: "tasks", locked: false },
         { icon: FileText, label: t("nav_documents"), href: "/documents", roles: ["Doctor", "Nurse", "Receptionist"] as NavRole[], moduleKey: "documents", locked: false },
         { icon: MessageSquare, label: t("nav_communications"), href: "/communications", roles: ["Receptionist"] as NavRole[], moduleKey: "communications", locked: false },
+        { icon: MessageSquare, label: t("nav_campaigns"), href: "/campaigns", roles: ["Receptionist"] as NavRole[], moduleKey: "communications", locked: false },
+        { icon: Activity, label: t("nav_automation"), href: "/automation", roles: ["Doctor", "Nurse"] as NavRole[], moduleKey: "analytics", locked: false },
       ].filter((item) => canAccess(item.roles as NavRole[] | undefined)).map(wrap),
     },
   ];

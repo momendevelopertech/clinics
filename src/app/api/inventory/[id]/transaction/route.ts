@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
+import { inventoryTransactionSchema } from "@/lib/validations/ops";
 import { logServerError } from "@/lib/safe-logger";
 
 export async function POST(
@@ -24,22 +25,14 @@ export async function POST(
     const { userId } = authz;
 
     const body = await request.json();
-    const { type, quantity, reason } = body;
-
-    if (!type || !["restock", "usage", "adjustment"].includes(type)) {
+    const parsed = inventoryTransactionSchema.safeParse(body);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Type must be restock, usage, or adjustment" },
-        { status: 400 }
+        { error: "Invalid transaction", details: parsed.error.flatten().fieldErrors },
+        { status: 400 },
       );
     }
-
-    const qty = typeof quantity === "number" ? quantity : 0;
-    if (qty === 0) {
-      return NextResponse.json(
-        { error: "Quantity must be non-zero" },
-        { status: 400 }
-      );
-    }
+    const { type, quantity: qty, reason } = parsed.data;
 
     const item = await prisma.inventoryItem.findFirst({
       where: { id: itemId, organizationId: orgId },

@@ -71,6 +71,39 @@ export const auditListQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).optional(),
 });
 
+export const taskUpdateSchema = z
+  .object({
+    status: z.enum(["open", "in_progress", "completed", "cancelled"]).optional(),
+    priority: z.enum(["low", "medium", "high", "urgent"]).optional().nullable(),
+    assigneeId: z.string().min(1).max(100).optional().nullable(),
+    dueDate: z.string().datetime().optional().nullable(),
+  })
+  .refine((v) => Object.values(v).some((x) => x !== undefined), {
+    message: "No fields to update",
+  });
+
+export const inventoryTransactionSchema = z.object({
+  type: z.enum(["restock", "usage", "adjustment"]),
+  quantity: z.number().int().min(1).max(1_000_000),
+  reason: z.string().trim().max(2000).optional().nullable(),
+});
+
+export const availabilityUpdateSchema = z.object({
+  availabilityType: z.enum(["regular", "oncall", "by_appointment"]).optional(),
+  availableDays: z
+    .array(z.enum(["sun", "mon", "tue", "wed", "thu", "fri", "sat"]))
+    .max(7)
+    .optional(),
+  availableFrom: z
+    .string()
+    .regex(/^([01]\d|2[0-3]):[0-5]\d$/)
+    .optional(),
+  availableTo: z
+    .string()
+    .regex(/^([01]\d|2[0-3]):[0-5]\d$/)
+    .optional(),
+});
+
 export const reportsMonthQuerySchema = z.object({
   month: z
     .string()

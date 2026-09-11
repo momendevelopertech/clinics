@@ -203,7 +203,7 @@ export default async function HomePage() {
               {t["landing_clinicsTitle"]}
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
-              {t["landing_clinicsSubtitle"]}
+              {String(t["landing_clinicsSubtitle"]).replace("{appName}", String(t["appName"] ?? "OpenHealthCRM"))}
             </p>
           </div>
           <ClinicShowcase t={t} />

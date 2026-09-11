@@ -92,12 +92,22 @@ export default function CampaignsPage() {
 
   const statusBadge = (status: string) => {
     const colors: Record<string, string> = {
-      draft: "bg-gray-100 text-gray-800",
-      active: "bg-green-100 text-green-800",
-      paused: "bg-yellow-100 text-yellow-800",
-      archived: "bg-gray-200 text-gray-800",
+      draft: "bg-gray-100 text-gray-800 dark:bg-gray-500/15 dark:text-gray-300",
+      active: "bg-green-100 text-green-800 dark:bg-green-500/15 dark:text-green-300",
+      paused: "bg-yellow-100 text-yellow-800 dark:bg-yellow-500/15 dark:text-yellow-300",
+      archived: "bg-gray-200 text-gray-800 dark:bg-gray-500/15 dark:text-gray-300",
     };
-    return colors[status] || "bg-gray-100 text-gray-800";
+    return colors[status] || "bg-gray-100 text-gray-800 dark:bg-gray-500/15 dark:text-gray-300";
+  };
+
+  const statusLabel = (status: string) => {
+    const key = `camp_status_${status}` as
+      | "camp_status_draft"
+      | "camp_status_active"
+      | "camp_status_paused"
+      | "camp_status_archived";
+    const translated = t(key);
+    return translated === key ? status : translated;
   };
 
   const typeIcon = (type: string) => {
@@ -152,7 +162,7 @@ export default function CampaignsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="p-4">
           <div className="text-sm font-medium text-gray-600">
             {t("camp_total")}
@@ -253,7 +263,7 @@ export default function CampaignsPage() {
                         campaign.status,
                       )}`}
                     >
-                      {campaign.status}
+                      {statusLabel(campaign.status)}
                     </span>
                   </TableCell>
                   <TableCell className="text-sm text-gray-600">

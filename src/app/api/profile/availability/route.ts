@@ -2,10 +2,9 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
 import { requireModulePermission } from "@/lib/permissions";
+import { availabilityUpdateSchema } from "@/lib/validations/ops";
 import { createAuditLog } from "@/lib/audit";
-
-const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
-const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+import { logServerError } from "@/lib/safe-logger";
 
 export async function PATCH(request: Request) {
   const context = await requireOrgContext().catch(() => null);
@@ -15,28 +14,21 @@ export async function PATCH(request: Request) {
   const moduleAuthz = await requireModulePermission(context.organizationId, "availability");
   if (moduleAuthz.response) return moduleAuthz.response;
 
-  const body = (await request.json().catch(() => ({}))) as {
-    availabilityType?: string;
-    availableDays?: string[];
-    availableFrom?: string;
-    availableTo?: string;
-  };
-
-  const availabilityType = body.availabilityType ?? "regular";
-  if (!["regular", "oncall", "by_appointment"].includes(availabilityType)) {
-    return NextResponse.json({ error: "Invalid availability type" }, { status: 400 });
+  const body = (await request.json().catch(() => ({}))) as unknown;
+  const parsed = availabilityUpdateSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid availability", details: parsed.error.flatten().fieldErrors },
+      { status: 400 },
+    );
   }
 
-  const rawDays = body.availableDays ?? [];
-  const availableDays = rawDays
-    .filter((day) => (DAY_KEYS as readonly string[]).includes(day))
-    .join(",");
+  const availabilityType = parsed.data.availabilityType ?? "regular";
+  const rawDays = parsed.data.availableDays ?? [];
+  const availableDays = rawDays.join(",");
 
-  const availableFrom = body.availableFrom ?? "09:00";
-  const availableTo = body.availableTo ?? "17:00";
-  if (!TIME_RE.test(availableFrom) || !TIME_RE.test(availableTo)) {
-    return NextResponse.json({ error: "Invalid time window" }, { status: 400 });
-  }
+  const availableFrom = parsed.data.availableFrom ?? "09:00";
+  const availableTo = parsed.data.availableTo ?? "17:00";
 
   const updated = await prisma.user.update({
     where: { id: context.userId },
