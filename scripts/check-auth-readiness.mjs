@@ -13,11 +13,11 @@ const DEMO_STAFF_EMAILS = [
   "billing@acmeclinic.com",
 ];
 const DEMO_PATIENTS = [
-  { email: "john.doe@example.com", mrn: "MRN-1001" },
-  { email: "jane.smith@example.com", mrn: "MRN-1002" },
-  { email: "alice.j@example.com", mrn: "MRN-1003" },
-  { email: "marcus.lee@example.com", mrn: "MRN-1004" },
-  { email: "priya.patel@example.com", mrn: "MRN-1005" },
+  { email: "ahmed.sayed@example.com", mrn: "MRN-1001" },
+  { email: "fatma.hassan@example.com", mrn: "MRN-1002" },
+  { email: "mohamed.kamel@example.com", mrn: "MRN-1003" },
+  { email: "mariam.adel@example.com", mrn: "MRN-1004" },
+  { email: "khaled.samy@example.com", mrn: "MRN-1005" },
 ];
 const DEMO_TENANT_PATIENTS = [
   { email: "patient@alexandria.demo.openhealthcrm.test", mrn: "DM-demo-alexandria-family-clinic-001" },

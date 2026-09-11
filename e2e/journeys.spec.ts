@@ -135,7 +135,7 @@ test.describe("Journey: patient portal", () => {
     const page = await context.newPage();
 
     await page.goto("/patient-login");
-    await page.locator("#email").fill("john.doe@example.com");
+    await page.locator("#email").fill("ahmed.sayed@example.com");
     await page.locator("#mrn").fill("MRN-1001");
     await page.locator("#password").fill("patient123");
     await page.locator('form button[type="submit"]').click();
