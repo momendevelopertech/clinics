@@ -14,6 +14,7 @@ const selfBookingSchema = z.object({
   providerId: z.string().min(1),
   startTime: z.string().datetime(),
   idempotencyKey: z.string().max(100).optional().nullable(),
+  depositAmount: z.number().finite().positive().max(1000000).optional().nullable(),
 });
 
 export async function POST(
@@ -48,7 +49,7 @@ export async function POST(
         { status: 400 },
       );
     }
-    const { providerId, startTime, idempotencyKey } = parsed.data;
+    const { providerId, startTime, idempotencyKey, depositAmount } = parsed.data;
 
     if (idempotencyKey) {
       const existing = await prisma.appointment.findUnique({
@@ -88,7 +89,7 @@ export async function POST(
     const created = await prisma.$transaction(async (tx) => {
       const conflict = await hasAppointmentConflict(tx, provider.id, start, end);
       if (conflict) return null;
-      return tx.appointment.create({
+      const appointment = await tx.appointment.create({
         data: {
           organizationId: org.id,
           patientId: session.patient.id,
@@ -100,6 +101,36 @@ export async function POST(
         },
         select: { id: true, startTime: true, endTime: true, status: true, providerId: true },
       });
+
+      // Optional booking deposit: a draft invoice the patient settles via
+      // the portal pay endpoint (same transaction — no orphan invoices).
+      let depositDue: { invoiceId: string; amount: number } | null = null;
+      if (depositAmount != null) {
+        const invoiceNumber = `INV-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+        const invoice = await tx.invoice.create({
+          data: {
+            organizationId: org.id,
+            patientId: session.patient.id,
+            invoiceNumber,
+            totalAmount: depositAmount.toFixed(2),
+            amountPaid: "0",
+            status: "sent",
+            lineItems: {
+              create: {
+                description: "Booking deposit",
+                quantity: 1,
+                unitPrice: depositAmount.toFixed(2),
+                amount: depositAmount.toFixed(2),
+                discountAmount: "0",
+                taxAmount: "0",
+              },
+            },
+          },
+          select: { id: true },
+        });
+        depositDue = { invoiceId: invoice.id, amount: depositAmount };
+      }
+      return { appointment, depositDue };
     });
     if (!created) {
       return NextResponse.json({ error: "This slot was just taken" }, { status: 409 });
@@ -109,13 +140,21 @@ export async function POST(
       organizationId: org.id,
       action: "CREATE",
       entityType: "Appointment",
-      entityId: created.id,
+      entityId: created.appointment.id,
       actorType: "patient",
       actorIdentifier: session.patient.id,
-      afterState: JSON.stringify({ providerId, startTime: created.startTime, selfBooked: true }),
+      afterState: JSON.stringify({
+        providerId,
+        startTime: created.appointment.startTime,
+        selfBooked: true,
+        depositDue: created.depositDue,
+      }),
     });
 
-    return NextResponse.json(created, { status: 201 });
+    return NextResponse.json(
+      { ...created.appointment, depositDue: created.depositDue },
+      { status: 201 },
+    );
   } catch (error) {
     logServerError("Patient self-booking failed", error);
     return NextResponse.json({ error: "Booking failed" }, { status: 500 });

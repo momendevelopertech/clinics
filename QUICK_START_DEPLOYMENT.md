@@ -37,7 +37,7 @@ cp .env.example .env.production
 - [ ] **Redis**: Set up instance (AWS ElastiCache, Redis Labs, etc.)
 - [ ] **Database**: Verify Neon PostgreSQL connection
 - [ ] **SMTP**: Configure email service (Gmail OAuth2 or SendGrid)
-- [ ] **Stripe**: Configure webhook endpoint (`/api/webhooks/stripe`)
+- [ ] **Stripe**: Configure webhook endpoint (`/api/webhooks/stripe`) listening to `payment_intent.succeeded`, `payment_intent.payment_failed`, `charge.refunded`, and `checkout.session.completed` (patient online payments)
 
 ### Step 3: Security Patches (15 minutes)
 ```bash

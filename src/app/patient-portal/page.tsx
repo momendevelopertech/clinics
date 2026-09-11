@@ -167,8 +167,27 @@ export default function PatientPortalPage() {
     }
   };
 
-  const signConsent = async (type: string, granted: boolean) => {
-    setWorkingId(`consent-${type}`);
+  const payInvoice = async (invoiceId: string) => {
+    setWorkingId(`pay-${invoiceId}`);
+    try {
+      const response = await fetch("/api/patient-portal/payments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ invoiceId }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.url) {
+        throw new Error(payload.error || t("portal_paymentError"));
+      }
+      window.location.href = payload.url;
+    } catch (error) {
+      logClientError("Patient online payment failed", error);
+      toast.error(error instanceof Error ? error.message : t("portal_paymentError"));
+      setWorkingId(null);
+    }
+  };
+
+  const signConsent = async (type: string, granted: boolean) => {    setWorkingId(`consent-${type}`);
     try {
       const response = await fetch("/api/patient-portal/consents", {
         method: "POST",
@@ -645,6 +664,17 @@ export default function PatientPortalPage() {
                         <p className="text-sm text-neutral-500">
                           {inv.amountPaid}/{inv.totalAmount}
                         </p>
+                        {inv.balance > 0 && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="mt-2"
+                            disabled={workingId === `pay-${inv.id}`}
+                            onClick={() => payInvoice(inv.id)}
+                          >
+                            {t("portal_payNow")}
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>

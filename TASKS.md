@@ -48,6 +48,6 @@ Execute **one task at a time**, top to bottom. Mark `[x]` only after tests for t
 - [x] Digital intake / consent forms (Arabic + mobile-friendly) — Phase P5 (done: patient self-signing for required treatment/data_usage/hipaa consents with restricted schema, status endpoint, portal Consents card with accept/decline, responsive + i18n en+ar)
 - [x] Waitlist auto-offer on cancellation — Phase P5 (done: pure same-day/FIFO ranking tested; `autoOfferFreedSlot` flips top-3 to offered + audits + queued SMS/Email via dispatch pipeline, best-effort; wired into staff cancel, patient cancel + reschedule; waitlist PATCH now Zod-validated)
 - [x] Insurance workflow: policy → eligibility → claim → invoice — Phase P5 (done: policy CRUD, pure eligibility engine, claim filing with FK links, guarded status machine, paid claims credit invoices capped at balance, audits; `tests/unit/insurance.test.ts` green)
-- [ ] Analytics pack: attendance, revenue, new vs returning — Phase P5
-- [ ] Online payment / deposit at booking — Phase P5
+- [x] Analytics pack: attendance, revenue, new vs returning — Phase P5 (done: pure `splitNewVsReturning` tested; dashboard KPIs extended with monthly new/returning counts; attendance + revenue already present)
+- [x] Online payment / deposit at booking — Phase P5 (done: optional booking deposit creates draft invoice atomically; patient Checkout endpoint with server-computed amount + portal Pay button redirecting to Stripe; `checkout.session.completed` webhook completes payment; needs Stripe keys + webhook event enabled)
 - [ ] Staff & clinic profile media via Cloudinary — Phase P5

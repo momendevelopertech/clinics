@@ -128,6 +128,23 @@ export function appointmentDurationForOrg(organizationId: string) {
   };
 }
 
+/**
+ * New vs returning split for a period: a patient is new when their first
+ * recorded visit falls inside the period. Pure and unit-tested.
+ */
+export function splitNewVsReturning(
+  firstVisits: Array<{ patientId: string; firstStart: Date }>,
+  periodStart: Date,
+): { newPatients: number; returningPatients: number } {
+  let newPatients = 0;
+  let returningPatients = 0;
+  for (const v of firstVisits) {
+    if (v.firstStart >= periodStart) newPatients += 1;
+    else returningPatients += 1;
+  }
+  return { newPatients, returningPatients };
+}
+
 export type DaySlot = {
   start: Date;
   end: Date;

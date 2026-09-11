@@ -1234,6 +1234,8 @@ export const ar: Dictionary = {
   portal_invoicesDesc: "فواتيرك وأرصدتك",
   portal_noInvoices: "لا توجد فواتير بعد",
   portal_balance: "الرصيد",
+  portal_payNow: "ادفع أونلاين",
+  portal_paymentError: "تعذر بدء الدفع الإلكتروني",
   portal_cancelAppointment: "إلغاء",
   portal_cancelSuccess: "تم إلغاء الموعد",
   portal_cancelError: "فشل الإلغاء",

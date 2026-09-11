@@ -32,6 +32,17 @@ export async function POST(request: Request) {
 
     // Handle payment intent events
     switch (event.type) {
+      case "checkout.session.completed": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const paymentIntentId =
+          typeof session.payment_intent === "string" ? session.payment_intent : null;
+        if (!paymentIntentId) {
+          logServerError("Checkout session missing payment intent");
+          break;
+        }
+        await handlePaymentSuccess({ id: paymentIntentId } as Stripe.PaymentIntent);
+        break;
+      }
       case "payment_intent.succeeded":
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
         await handlePaymentSuccess(paymentIntent);

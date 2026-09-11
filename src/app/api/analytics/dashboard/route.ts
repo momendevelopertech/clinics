@@ -4,6 +4,7 @@ import { requireOrgContext } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { averageMinutes, percentage } from "@/lib/analytics";
+import { splitNewVsReturning } from "@/lib/appointments";
 
 function getDateBounds() {
   const now = new Date();
@@ -40,6 +41,7 @@ export async function GET() {
     monthlyAppointments,
     completedPayments,
     openInvoices,
+    monthlyVisitors,
   ] = await Promise.all([
     prisma.patient.count({
       where: { organizationId, status: { not: "Archived" } },
@@ -83,7 +85,32 @@ export async function GET() {
       },
       select: { totalAmount: true, amountPaid: true },
     }),
+    prisma.appointment.findMany({
+      where: {
+        organizationId,
+        startTime: { gte: monthStart, lt: nextMonthStart },
+      },
+      select: { patientId: true },
+      distinct: ["patientId"],
+    }),
   ]);
+
+  // First-ever visit per monthly visitor → new vs returning split.
+  const monthlyVisitorIds = [...new Set(monthlyVisitors.map((v) => v.patientId))];
+  const firstVisits =
+    monthlyVisitorIds.length > 0
+      ? await prisma.appointment.groupBy({
+          by: ["patientId"],
+          where: { organizationId, patientId: { in: monthlyVisitorIds } },
+          _min: { startTime: true },
+        })
+      : [];
+  const patientMix = splitNewVsReturning(
+    firstVisits.flatMap((v) =>
+      v._min.startTime ? [{ patientId: v.patientId, firstStart: v._min.startTime }] : [],
+    ),
+    monthStart,
+  );
 
   const monthlyStatusCounts = monthlyAppointments.reduce<Record<string, number>>(
     (counts, appointment) => {
@@ -120,6 +147,8 @@ export async function GET() {
       monthlyNoShowRate: percentage(noShows, totalMonthlyAppointments),
       revenueThisMonth: Number(completedPayments._sum.amount ?? 0),
       outstandingBalance: outstanding,
+      newPatientsThisMonth: patientMix.newPatients,
+      returningPatientsThisMonth: patientMix.returningPatients,
     },
   });
 }

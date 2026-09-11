@@ -7,11 +7,11 @@ import {
   isDoctorAvailable,
   isLateCancellation,
   nextWalkInToken,
+  splitNewVsReturning,
   summarizeAttendance,
   toDayKey,
   toHM,
 } from "../../src/lib/appointments";
-
 describe("appointment scheduling helpers", () => {
   it("formats dates using local day and time keys", () => {
     const date = new Date(2026, 8, 7, 9, 5);
@@ -175,6 +175,19 @@ describe("cancellation policy tracking", () => {
     expect(isLateCancellation(new Date(2026, 8, 7, 9, 0), day, 24)).toBe(false);
     expect(isLateCancellation(new Date(2026, 8, 7, 12, 0), day, 24)).toBe(true);
     expect(isLateCancellation(new Date(2026, 8, 9, 10, 0), day, 24)).toBe(false);
+  });
+
+  it("splits new vs returning patients by first visit", () => {
+    expect(
+      splitNewVsReturning(
+        [
+          { patientId: "a", firstStart: new Date(2026, 8, 5) },
+          { patientId: "b", firstStart: new Date(2026, 7, 20) },
+        ],
+        new Date(2026, 8, 1),
+      ),
+    ).toEqual({ newPatients: 1, returningPatients: 1 });
+    expect(splitNewVsReturning([], new Date())).toEqual({ newPatients: 0, returningPatients: 0 });
   });
 
   it("summarizes attendance and flags repeat no-shows", () => {

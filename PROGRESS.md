@@ -1,15 +1,15 @@
 # Progress Log — عيادات CRM Production Readiness
 
 ## Current status
-- Last updated: 2026-09-11 13:00 UTC+3
-- Current phase: P5 — Should-have Features (insurance DONE, tsc clean)
-- Current task: Analytics pack + online payment/deposit (last P5 items)
-- Status: NEXT
+- Last updated: 2026-09-11 13:23 UTC+3
+- Current phase: P5 — Should-have Features (**COMPLETE: all 6 tasks DONE — media in P2, intake, waitlist, insurance, analytics, online payment — tsc clean**)
+- Current task: Final verification + push
+- Status: READY
 
 ## How to resume
 لو الـ session اتقطع، اقرأ الملف ده الأول، شوف "Current task"، تحقق من حالته الفعلية في الكود (هل اتنفذ فعلاً ولا لأ)، وكمل من هناك. لا تعيد تنفيذ تاسكات مكتوب جنبها [x].
 
-التالي: P5 analytics + دفع أونلاين.
+التالي: تحقق نهائي ودفع.
 
 Previous clinic-blueprint tracker (P0–P7 product modules) lived in this file and is largely complete except P4-T3 charge-generation policy (blocked on product decision). Do not confuse that list with the production-readiness tasks in `TASKS.md`.
 
