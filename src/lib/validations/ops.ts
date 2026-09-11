@@ -7,9 +7,21 @@ export const waitlistCreateSchema = z.object({
 });
 
 export const waitlistUpdateSchema = z.object({
-  status: z.enum(["waiting", "offered", "cancelled"]).optional(),
+  status: z.enum(["waiting", "offered", "cancelled", "booked"]).optional(),
   notes: z.string().max(2000).optional().nullable(),
   preferredDate: z.string().datetime().optional().nullable(),
+});
+
+export const waitlistBookSchema = z.object({
+  providerId: z.string().min(1).max(100),
+  startTime: z.string().datetime(),
+  endTime: z.string().datetime().optional().nullable(),
+  roomId: z.string().min(1).max(100).optional().nullable(),
+});
+
+export const queueActionSchema = z.object({
+  action: z.enum(["call-next", "complete", "no-show"]),
+  appointmentId: z.string().min(1).max(100).optional().nullable(),
 });
 
 export const taskCreateSchema = z.object({

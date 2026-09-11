@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { AddToWaitlistDialog } from "@/components/waitlist/add-to-waitlist-dialog";
+import { BookFromWaitlistDialog } from "@/components/waitlist/book-from-waitlist-dialog";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { logClientError } from "@/lib/client-logger";
@@ -118,9 +119,14 @@ export default function WaitlistPage() {
       Contacted: t("wl_contacted"),
       Scheduled: t("wl_scheduled"),
       Cancelled: t("wl_cancelled"),
+      Booked: t("wl_booked"),
+      waiting: t("wl_waiting"),
+      offered: t("wl_contacted"),
+      cancelled: t("wl_cancelled"),
+      booked: t("wl_booked"),
     };
     const key = status.charAt(0).toUpperCase() + status.slice(1);
-    return map[key] ?? status;
+    return map[key] ?? map[status] ?? status;
   };
 
   const getStatusColor = (status: string) => {
@@ -131,6 +137,8 @@ export default function WaitlistPage() {
         return "bg-blue-100 text-blue-800";
       case "scheduled":
         return "bg-green-100 text-green-800";
+      case "booked":
+        return "bg-emerald-100 text-emerald-800";
       case "cancelled":
         return "bg-red-100 text-red-800";
       default:
@@ -279,6 +287,7 @@ export default function WaitlistPage() {
                   <th className="px-6 py-4 border-b hidden md:table-cell">
                     {t("wl_colAdded")}
                   </th>
+                  <th className="px-6 py-4 border-b">{t("common_actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
@@ -326,6 +335,15 @@ export default function WaitlistPage() {
                     </td>
                     <td className="px-6 py-4 hidden md:table-cell">
                       {new Date(entry.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      {entry.status === "waiting" || entry.status === "offered" ? (
+                        <BookFromWaitlistDialog
+                          waitlistId={entry.id}
+                          patientName={entry.patientName}
+                          onSuccess={fetchWaitlist}
+                        />
+                      ) : null}
                     </td>
                   </tr>
                 ))}

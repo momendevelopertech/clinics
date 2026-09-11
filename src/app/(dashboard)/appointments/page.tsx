@@ -166,7 +166,8 @@ function AppointmentsPageContent() {
   const [providers, setProviders] = React.useState<{ id: string; name: string }[]>([])
   const { t } = useLocale()
   const [searchQuery, setSearchQuery] = React.useState("")
-  const [view, setView] = React.useState<"list" | "calendar">("list")
+  const [view, setView] = React.useState<"list" | "day" | "calendar">("list")
+  const [selectedDay, setSelectedDay] = React.useState(() => new Date().toISOString().split("T")[0])
   const [editAptId, setEditAptId] = React.useState<string | null>(null)
   const [providerFilter, setProviderFilter] = React.useState<string>("all")
   const [page, setPage] = React.useState(1)
@@ -288,6 +289,13 @@ function AppointmentsPageContent() {
       .includes(normalized)
   })
 
+  const dayAppointments = React.useMemo(() => {
+    return appointments
+      .filter((apt) => apt.date === selectedDay && (providerFilter === "all" || apt.provider === providerFilter))
+      .slice()
+      .sort((a, b) => toTimeValue(a.time).localeCompare(toTimeValue(b.time)))
+  }, [appointments, selectedDay, providerFilter])
+
   const PAGE_SIZE = 10
   const pageCount = Math.max(1, Math.ceil(filteredAppointments.length / PAGE_SIZE))
   const visiblePage = Math.min(page, pageCount)
@@ -326,7 +334,9 @@ function AppointmentsPageContent() {
                  <CalendarIcon className="w-5 h-5 text-neutral-500" />
                  {view === "list"
                    ? t("appts_todayList")
-                   : t("appts_monthView")}
+                   : view === "day"
+                     ? t("appts_dayAgenda")
+                     : t("appts_monthView")}
                </div>
 <Input
                   type="search"
@@ -378,6 +388,20 @@ function AppointmentsPageContent() {
                      </button>
                      <button
                        role="tab"
+                       aria-selected={view === "day"}
+                       onClick={() => setView("day")}
+                       className={cn(
+                         "px-3 py-1.5 rounded-[5px] text-sm font-medium flex items-center gap-1.5 transition-all",
+                         view === "day"
+                           ? "bg-white dark:bg-neutral-700 shadow-sm text-neutral-900 dark:text-neutral-100"
+                           : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+                         )}
+                       >
+                         <Clock className="w-3.5 h-3.5" />
+                         {t("appts_day")}
+                     </button>
+                     <button
+                       role="tab"
                        aria-selected={view === "calendar"}
                        onClick={() => setView("calendar")}
                        className={cn(
@@ -402,6 +426,35 @@ function AppointmentsPageContent() {
                onEventClick={(ev) => setEditAptId(ev.id)}
              />
            </div>
+         ) : view === "day" ? (
+         <div className="p-6 overflow-auto flex-1">
+           <div className="mb-4 flex items-center gap-3">
+             <Label htmlFor="day-picker">{t("appts_selectDay")}</Label>
+             <Input id="day-picker" type="date" value={selectedDay} onChange={(e) => setSelectedDay(e.target.value)} className="w-auto" />
+           </div>
+           {dayAppointments.length === 0 ? (
+             <p className="text-sm text-neutral-500">{t("appts_noDayAppointments")}</p>
+           ) : (
+             <div className="flex flex-col gap-2">
+             {dayAppointments.map((apt) => {
+               const patient = patients.find((p) => p.id === apt.patientId)
+               const patientName = patient ? `${patient.firstName} ${patient.lastName}` : t("appts_unknownPatient")
+               return (
+                 <div key={apt.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-[5px] border px-4 py-3">
+                   <span className="font-mono font-medium">{apt.time}</span>
+                   <span className="font-medium">{patientName}</span>
+                   <span className="text-sm text-neutral-500">{apptTypeLabel(apt.type)} · {apt.provider}</span>
+                   <span className="px-2 py-1 rounded-[5px] text-xs font-medium bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">{statusLabel(apt.status)}</span>
+                   <span className="ms-auto flex gap-3">
+                     <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0 h-auto" onClick={() => setEditAptId(apt.id)}>{t("appts_edit")}</Button>
+                     <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}>{t("appts_cancel")}</Button>
+                   </span>
+                 </div>
+               )
+             })}
+             </div>
+           )}
+         </div>
          ) : (
          <div className="p-0 overflow-x-auto flex-1">
              <table className="w-full text-sm text-left">
