@@ -9,6 +9,7 @@ import { createAuditLog } from "@/lib/audit";
 import stripe from "@/lib/stripe";
 import { logServerError } from "@/lib/safe-logger";
 import { paymentSchema } from "@/lib/validations";
+import { MANUAL_METHODS, resolveInvoiceStatus } from "@/lib/payments";
 
 export async function POST(request: Request) {
   try {
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
 
     const parsed = paymentSchema.safeParse(await request.json());
     if (!parsed.success) return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
-    const { invoiceId, amount, currency, description } = parsed.data;
+    const { invoiceId, amount, currency, description, method } = parsed.data;
 
     // Verify invoice exists and belongs to org
     const invoice = await prisma.invoice.findFirst({
@@ -39,6 +40,41 @@ export async function POST(request: Request) {
     }
     const outstanding = Number(invoice.totalAmount) - Number(invoice.amountPaid);
     if (amount > outstanding + 0.005) return NextResponse.json({ error: "Payment exceeds invoice balance" }, { status: 400 });
+
+    // Record-only methods (cash/transfer/check/insurance) settle immediately
+    // without Stripe — the standard MENA counter flow.
+    if (MANUAL_METHODS.has(method)) {
+      const settled = await prisma.$transaction(
+        async (tx: Prisma.TransactionClient) => {
+          const payment = await tx.payment.create({
+            data: { invoiceId, amount, paymentMethod: method, status: "completed" },
+          });
+          const paid = Number(invoice.amountPaid) + amount;
+          const updatedInvoice = await tx.invoice.update({
+            where: { id: invoiceId },
+            data: {
+              amountPaid: paid.toFixed(2),
+              status: resolveInvoiceStatus(Number(invoice.totalAmount), paid),
+            },
+          });
+          await tx.auditLog.create({
+            data: {
+              organizationId: orgId,
+              userId,
+              action: "CREATE",
+              entityType: "Payment",
+              entityId: payment.id,
+              afterState: JSON.stringify({ invoiceId, amount, paymentMethod: method, status: "completed" }),
+            },
+          });
+          return { payment, updatedInvoice };
+        },
+      );
+      return NextResponse.json(
+        { id: settled.payment.id, amount, status: settled.payment.status, paymentMethod: method },
+        { status: 201 },
+      );
+    }
 
     // Create Stripe payment intent
     const paymentIntent = await stripe.paymentIntents.create({
@@ -57,7 +93,7 @@ export async function POST(request: Request) {
       data: {
         invoiceId,
         amount,
-        paymentMethod: "card",
+        paymentMethod: method,
         status: "pending",
         stripePaymentId: paymentIntent.id,
       },
@@ -149,6 +185,8 @@ export async function GET(request: Request) {
         amount: p.amount,
         currency: p.invoice.currency,
         status: p.status,
+        paymentMethod: p.paymentMethod,
+        refundedAmount: p.refundedAmount,
         createdAt: p.createdAt.toISOString(),
       })),
     );

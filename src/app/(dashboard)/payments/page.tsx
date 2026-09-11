@@ -35,6 +35,8 @@ interface Payment {
   amount: number | string;
   currency: string;
   status: string;
+  paymentMethod?: string | null;
+  refundedAmount?: number | string | null;
   createdAt: string;
 }
 
@@ -54,6 +56,7 @@ export default function PaymentsPage() {
   const [loading, setLoading] = React.useState(true);
   const [statusFilter, setStatusFilter] = React.useState<string | null>(null);
   const [page, setPage] = React.useState(1);
+  const [refundArmed, setRefundArmed] = React.useState<string | null>(null);
   const { forbidden, setForbidden } = usePermissionState();
 
   React.useEffect(() => {
@@ -149,6 +152,45 @@ export default function PaymentsPage() {
       refunded: t("pay_refunded"),
     };
     return map[status] ?? status;
+  };
+
+  const methodLabel = (method?: string | null) => {
+    const map: Record<string, string> = {
+      card: t("pay_method_card"),
+      online: t("pay_method_online"),
+      cash: t("pay_method_cash"),
+      transfer: t("pay_method_transfer"),
+      check: t("pay_method_check"),
+      insurance: t("pay_method_insurance"),
+    };
+    return (method && map[method]) || method || "—";
+  };
+
+  const handleRefund = async (payment: Payment) => {
+    if (refundArmed !== payment.id) {
+      setRefundArmed(payment.id);
+      window.setTimeout(() => {
+        setRefundArmed((armed) => (armed === payment.id ? null : armed));
+      }, 5000);
+      return;
+    }
+    try {
+      setRefundArmed(null);
+      const response = await fetch(`/api/payments/${payment.id}/refund`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Refund failed");
+      }
+      toast.success(t("pay_refundedSuccess"));
+      await fetchPayments();
+    } catch (error) {
+      toast.error(t("pay_refundError"));
+      logClientError("Payment refund failed", error);
+    }
   };
 
   const totalRevenue = payments
@@ -322,10 +364,12 @@ export default function PaymentsPage() {
                   <th className="px-6 py-4 border-b">{t("pay_colInvoice")}</th>
                   <th className="px-6 py-4 border-b">{t("pay_colPatient")}</th>
                   <th className="px-6 py-4 border-b">{t("pay_colAmount")}</th>
+                  <th className="px-6 py-4 border-b">{t("pay_colMethod")}</th>
                   <th className="px-6 py-4 border-b">{t("common_status")}</th>
                   <th className="px-6 py-4 border-b hidden md:table-cell">
                     {t("pay_colDate")}
                   </th>
+                  <th className="px-6 py-4 border-b">{t("common_actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
@@ -351,6 +395,11 @@ export default function PaymentsPage() {
                       </p>
                     </td>
                     <td className="px-6 py-4">
+                      <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                        {methodLabel(payment.paymentMethod)}
+                      </p>
+                    </td>
+                    <td className="px-6 py-4">
                       <span
                         className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(payment.status)}`}
                       >
@@ -359,6 +408,23 @@ export default function PaymentsPage() {
                     </td>
                     <td className="px-6 py-4 hidden md:table-cell">
                       {new Date(payment.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      {payment.status === "completed" ? (
+                        <Button
+                          variant="link"
+                          size="sm"
+                          className={`p-0 h-auto text-sm font-medium ${refundArmed === payment.id ? "text-red-700" : "text-red-600 hover:text-red-700"}`}
+                          onClick={() => handleRefund(payment)}
+                        >
+                          {refundArmed === payment.id
+                            ? t("pay_refundConfirm").replace(
+                                "{amount}",
+                                `${toAmount(payment.amount).toFixed(2)} ${payment.currency.toUpperCase()}`,
+                              )
+                            : t("pay_refund")}
+                        </Button>
+                      ) : null}
                     </td>
                   </tr>
                 ))}

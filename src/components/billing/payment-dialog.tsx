@@ -47,7 +47,9 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
     amount: "",
     currency: "usd",
     description: "",
+    method: "card",
   });
+  const isManual = formData.method !== "card" && formData.method !== "online";
 
   React.useEffect(() => {
     if (open) {
@@ -99,6 +101,7 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
           amount: parseFloat(formData.amount),
           currency: formData.currency,
           description: formData.description || undefined,
+          method: formData.method,
         }),
       });
 
@@ -109,13 +112,16 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
 
       const data = await response.json();
 
-      toast.success(t("pay_intentCreated").replace("{id}", data.id));
+      toast.success(
+        isManual ? t("pay_recorded") : t("pay_intentCreated").replace("{id}", data.id),
+      );
 
       setFormData({
         invoiceId: "",
         amount: "",
         currency: "usd",
         description: "",
+        method: "card",
       });
       setOpen(false);
       onSuccess?.();
@@ -211,6 +217,28 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
           </div>
 
           <div className="gap-2 flex flex-col">
+            <Label htmlFor="method">{t("pay_methodLabel")}</Label>
+            <Select
+              value={formData.method}
+              onValueChange={(value) =>
+                setFormData({ ...formData, method: value })
+              }
+            >
+              <SelectTrigger id="method">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="card">{t("pay_method_card")}</SelectItem>
+                <SelectItem value="online">{t("pay_method_online")}</SelectItem>
+                <SelectItem value="cash">{t("pay_method_cash")}</SelectItem>
+                <SelectItem value="transfer">{t("pay_method_transfer")}</SelectItem>
+                <SelectItem value="check">{t("pay_method_check")}</SelectItem>
+                <SelectItem value="insurance">{t("pay_method_insurance")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="gap-2 flex flex-col">
             <Label htmlFor="description">{t("pay_descriptionLabel")}</Label>
             <Input
               id="description"
@@ -222,10 +250,12 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
             />
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
-            <p className="font-medium mb-1">{t("pay_secureStripe")}</p>
-            <p>{t("pay_secureStripeDesc")}</p>
-          </div>
+          {!isManual ? (
+            <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
+              <p className="font-medium mb-1">{t("pay_secureStripe")}</p>
+              <p>{t("pay_secureStripeDesc")}</p>
+            </div>
+          ) : null}
 
           <div className="flex gap-2 justify-end">
             <Button
@@ -242,7 +272,7 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
               className="flex items-center gap-2"
             >
               <CreditCard className="w-4 h-4" />
-              {loading ? t("pay_processing") : t("pay_createPayment")}
+              {loading ? t("pay_processing") : isManual ? t("pay_recordPayment") : t("pay_createPayment")}
             </Button>
           </div>
         </form>

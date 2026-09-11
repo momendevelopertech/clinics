@@ -17,11 +17,25 @@ export const invoiceCreateSchema = z.object({
   lineItems: z.array(invoiceLineItemSchema).min(1),
 });
 
+export const paymentMethodSchema = z.enum([
+  "card",
+  "online",
+  "cash",
+  "transfer",
+  "check",
+  "insurance",
+]);
+
 export const paymentSchema = z.object({
   invoiceId: z.string().min(1),
   amount: z.number().positive(),
   currency: z.string().length(3).default("usd"),
   description: z.string().max(200).optional(),
+  method: paymentMethodSchema.default("card"),
+});
+
+export const paymentRefundSchema = z.object({
+  amount: z.number().positive().optional().nullable(),
 });
 
 export const insurancePolicySchema = z.object({
