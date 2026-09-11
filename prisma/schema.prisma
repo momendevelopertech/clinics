@@ -640,6 +640,8 @@ model LabOrder {
   testName       String
   priority       String       @default("routine") // routine, urgent, stat
   indication     String?
+  transmittedAt  DateTime?
+  externalRef    String?
   status         String       @default("ordered") // ordered, collected, resulted, reviewed, cancelled
   orderedAt      DateTime     @default(now())
   results        LabResult[]
