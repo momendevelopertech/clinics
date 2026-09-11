@@ -34,6 +34,7 @@
     "@radix-ui/react-hover-card": "^1.1.15",
     "@radix-ui/react-popover": "^1.1.15",
     "@radix-ui/react-separator": "^1.1.8",
+    "@react-pdf/renderer": "^4.9.0",
     "@serwist/turbopack": "^9.5.12",
     "bullmq": "^5.70.1",
     "class-variance-authority": "^0.7.1",

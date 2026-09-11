@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/loading";
 import { toast } from "sonner";
 import { UploadDocumentDialog } from "@/components/documents/upload-document-dialog";
+import { GenerateDocumentDialog } from "@/components/documents/generate-document-dialog";
 import { paginate } from "@/lib/pagination";
 import { filterDocuments, formatTypeLabel, getDocumentTypeColor, isExternalUrl } from "@/lib/documents";
 import { logClientError } from "@/lib/client-logger";
@@ -62,6 +63,12 @@ const DOC_TYPE_KEYS: Record<string, string> = {
   consent: "docType_consent",
   medical_record: "docType_medicalRecord",
   prescription: "docType_prescription",
+  referral: "doc_tpl_referral",
+  medical_report: "doc_tpl_medical_report",
+  lab_request: "doc_tpl_lab_request",
+  imaging_request: "doc_tpl_imaging_request",
+  discharge_summary: "doc_tpl_discharge_summary",
+  sick_leave: "doc_tpl_sick_leave",
   other: "docType_other",
 };
 
@@ -172,7 +179,10 @@ export default function DocumentsPage() {
           <p className="text-sm text-neutral-500">{t("doc_subtitle")}</p>
         </div>
 
-        <UploadDocumentDialog onSuccess={fetchDocuments} />
+        <div className="flex gap-2">
+          <GenerateDocumentDialog onSuccess={fetchDocuments} />
+          <UploadDocumentDialog onSuccess={fetchDocuments} />
+        </div>
       </div>
 
       <div className="bg-white dark:bg-neutral-900 border rounded-[5px] flex-1 shadow-sm flex flex-col pt-2">

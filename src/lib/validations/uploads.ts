@@ -64,6 +64,12 @@ export const documentCreateSchema = z.object({
     "consent",
     "medical_record",
     "prescription",
+    "referral",
+    "medical_report",
+    "lab_request",
+    "imaging_request",
+    "discharge_summary",
+    "sick_leave",
     "other",
   ]),
   name: z.string().trim().min(1).max(255),
@@ -80,6 +86,23 @@ export const documentCreateSchema = z.object({
 });
 
 export type DocumentCreateInput = z.infer<typeof documentCreateSchema>;
+
+export const documentTemplateSchema = z.enum([
+  "referral",
+  "medical_report",
+  "lab_request",
+  "imaging_request",
+  "discharge_summary",
+  "sick_leave",
+]);
+
+export const documentGenerateSchema = z.object({
+  template: documentTemplateSchema,
+  patientId: z.string().min(1),
+  encounterId: z.string().min(1).optional().nullable(),
+  labOrderId: z.string().min(1).optional().nullable(),
+  fields: z.record(z.string(), z.string().max(2000)).optional().nullable(),
+});
 
 export function isMimeAllowedForPurpose(
   purpose: UploadPurpose,
