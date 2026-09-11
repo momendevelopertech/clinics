@@ -26,7 +26,7 @@
 
 - [x] Clinical Templates per-specialty + SOAP UI منظمة — موديل `ClinicalTemplate` (تخصص + حقول SOAP افتراضية) + API + حقول SOAP منظمة في `encounters-workspace` بدل النص الحر — Phase (P1) — مرجع (🎯-P1-#1 / قسم 🩺). ✅ DONE 2026-09-11: ClinicalTemplate model/APIs + structured SOAP composer + template picker/manager + ar/en.
 - [x] Packages/باقات جلسات — موديل `Package` (خدمات + عدد جلسات + سعر + خصم) + رصيد جلسات per-patient + استهلاك عند كل `procedure-order` — Phase (P1) — مرجع (🎯-P1-#2 / قسم 💊). ✅ DONE 2026-09-11: ServicePackage/PatientPackage models/APIs + balance/consume + catalogs UI + ar/en.
-- [ ] Treatment Plans ككيان — موديل `TreatmentPlan` (حالة + خطوات + ربط تشخيص/روشتة/إجراءات) + status machine + طباعة — Phase (P1) — مرجع (🎯-P1-#3 / قسم 🩺+💊).
+- [x] Treatment Plans ككيان — موديل `TreatmentPlan` (حالة + خطوات + ربط تشخيص/روشتة/إجراءات) + status machine + طباعة — Phase (P1) — مرجع (🎯-P1-#3 / قسم 🩺+💊). ✅ DONE 2026-09-11: TreatmentPlan+Step models/APIs + patient-page section + treatment_plan PDF + ar/en.
 - [ ] Patient rating/feedback + طلب تقييم تلقائي — موديل `Feedback` (تقييم + تعليق) + رابط تقييم post-visit عبر رسالة تلقائية + متوسط التقييم per-doctor — Phase (P1) — مرجع (🎯-P1-#4 / قسم 📱).
 - [ ] Telehealth video مربوط بنوع الموعد — مزود فيديو واحد (Twilio/Daily/WebRTC) + رابط جلسة على الموعد + صلاحية دخول (طاقم/مريض) — Phase (P1) — مرجع (🎯-P1-#5 / قسم 📱).
 - [ ] Digital intake forms قبل الزيارة — نماذج دخول طبية (عربي/FHIR Questionnaire) يملأها المريض من الـ Portal قبل الموعد وتُحفظ في ملفه — Phase (P1) — مرجع (🎯-P1-#6 / قسم 📱).

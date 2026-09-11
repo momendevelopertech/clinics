@@ -64,6 +64,7 @@ model Organization {
   clinicalTemplates    ClinicalTemplate[]
   servicePackages      ServicePackage[]
   patientPackages      PatientPackage[]
+  treatmentPlans       TreatmentPlan[]
 }
 
 // ============== SAAS: PLANS / SUBSCRIPTIONS / ENTITLEMENTS ==============
@@ -277,6 +278,7 @@ model Patient {
   insuranceClaims        InsuranceClaim[]
   installmentPlans       InstallmentPlan[]
   patientPackages        PatientPackage[]
+  treatmentPlans         TreatmentPlan[]
 
   @@unique([organizationId, mrn])
   @@index([organizationId, status])
@@ -482,6 +484,7 @@ model Encounter {
   labOrders        LabOrder[]
   procedureOrders  ProcedureOrder[]
   invoiceLineItems InvoiceLineItem[]
+  treatmentPlans   TreatmentPlan[]
 
   @@index([organizationId, patientId, startTime])
 }
@@ -806,6 +809,39 @@ model PatientPackage {
 
   @@index([organizationId, patientId, status])
   @@index([packageId, status])
+}
+
+model TreatmentPlan {
+  id             String              @id @default(cuid())
+  organizationId String
+  organization   Organization        @relation(fields: [organizationId], references: [id])
+  patientId      String
+  patient        Patient             @relation(fields: [patientId], references: [id])
+  encounterId    String?
+  encounter      Encounter?          @relation(fields: [encounterId], references: [id])
+  title          String
+  notes          String?
+  status         String              @default("draft") // draft, active, completed, cancelled
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  steps          TreatmentPlanStep[]
+
+  @@index([organizationId, patientId, status])
+}
+
+model TreatmentPlanStep {
+  id        String        @id @default(cuid())
+  planId    String
+  plan      TreatmentPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  kind      String // diagnosis, prescription, procedure, followup, note
+  refId     String?
+  title     String
+  dueDate   DateTime?
+  status    String        @default("pending") // pending, done, skipped
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([planId, status])
 }
 
 model Payment {

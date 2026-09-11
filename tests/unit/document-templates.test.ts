@@ -40,9 +40,9 @@ const fixture = (): TemplateData => ({
 });
 
 describe("template registry", () => {
-  it("has six unique templates with file names", () => {
+  it("has seven unique templates with file names", () => {
     const ids = TEMPLATE_REGISTRY.map((t) => t.id);
-    expect(new Set(ids).size).toBe(6);
+    expect(new Set(ids).size).toBe(7);
     for (const t of TEMPLATE_REGISTRY) {
       expect(getTemplateDef(t.id)?.docType).toBeTruthy();
       expect(t.fileName(fixture()).endsWith(".pdf")).toBe(true);

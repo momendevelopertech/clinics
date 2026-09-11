@@ -54,12 +54,20 @@ export interface TemplateLabOrder {
   orderedAt: Date | string;
 }
 
+export interface TemplatePlan {
+  title: string;
+  status: string;
+  notes?: string | null;
+  steps: Array<{ title: string; kind: string; status: string; dueDate?: Date | string | null }>;
+}
+
 export interface TemplateData {
   org: TemplateOrg;
   patient: TemplatePatient;
   doctorName?: string | null;
   encounter?: TemplateEncounter | null;
   labOrder?: TemplateLabOrder | null;
+  plan?: TemplatePlan | null;
   fields: Record<string, string>;
   issuedAt: Date;
 }
@@ -70,7 +78,8 @@ export type TemplateId =
   | "lab_request"
   | "imaging_request"
   | "discharge_summary"
-  | "sick_leave";
+  | "sick_leave"
+  | "treatment_plan";
 
 export interface TemplateDef {
   id: TemplateId;
@@ -125,6 +134,13 @@ export const TEMPLATE_REGISTRY: TemplateDef[] = [
     requiredFields: ["restDays", "startDate", "diagnosisText"],
     needsLabOrder: false,
     fileName: (d) => `sick-leave-${d.patient.lastName}-${stamp(d.issuedAt)}.pdf`,
+  },
+  {
+    id: "treatment_plan",
+    docType: "treatment_plan",
+    requiredFields: [],
+    needsLabOrder: false,
+    fileName: (d) => `treatment-plan-${d.patient.lastName}-${stamp(d.issuedAt)}.pdf`,
   },
 ];
 
@@ -322,6 +338,30 @@ function TemplateDoc({ id, data }: { id: TemplateId; data: TemplateData }) {
           </View>
         </Shell>
       );
+    case "treatment_plan": {
+      const plan = data.plan;
+      return (
+        <Shell title="Treatment Plan" data={data}>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Plan</Text>
+            <Field label="Title" value={plan?.title} />
+            <Field label="Status" value={plan?.status} />
+            <Field label="Notes" value={plan?.notes} />
+          </View>
+          {plan && plan.steps.length > 0 ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Steps</Text>
+              {plan.steps.map((s, i) => (
+                <Text key={i} style={styles.bullet}>
+                  • [{s.status}] {s.title} ({s.kind})
+                </Text>
+              ))}
+            </View>
+          ) : null}
+          <EncounterSections data={data} />
+        </Shell>
+      );
+    }
   }
 }
 

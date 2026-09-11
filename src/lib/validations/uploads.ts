@@ -70,6 +70,7 @@ export const documentCreateSchema = z.object({
     "imaging_request",
     "discharge_summary",
     "sick_leave",
+    "treatment_plan",
     "other",
   ]),
   name: z.string().trim().min(1).max(255),
@@ -94,6 +95,7 @@ export const documentTemplateSchema = z.enum([
   "imaging_request",
   "discharge_summary",
   "sick_leave",
+  "treatment_plan",
 ]);
 
 export const documentGenerateSchema = z.object({
@@ -101,6 +103,7 @@ export const documentGenerateSchema = z.object({
   patientId: z.string().min(1),
   encounterId: z.string().min(1).optional().nullable(),
   labOrderId: z.string().min(1).optional().nullable(),
+  planId: z.string().min(1).optional().nullable(),
   fields: z.record(z.string(), z.string().max(2000)).optional().nullable(),
 });
 

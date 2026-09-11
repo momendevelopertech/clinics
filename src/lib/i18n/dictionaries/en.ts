@@ -1093,6 +1093,18 @@ export const en: Dictionary = {
   enc_tplSaveHint: "Saves the current SOAP draft above as a reusable template.",
   enc_tplSaveError: "Unable to save template.",
   enc_tplDeleteError: "Unable to delete template.",
+  tp_title: "Treatment plans",
+  tp_create: "Create plan",
+  tp_newPlaceholder: "Plan title, e.g. Hypertension 3-month plan",
+  tp_activate: "Activate",
+  tp_complete: "Complete",
+  tp_print: "Print",
+  tp_printed: "Treatment plan PDF ready",
+  tp_done: "Done",
+  tp_skip: "Skip",
+  tp_addStep: "Add step",
+  tp_stepPlaceholder: "Step, e.g. CBC lab",
+  tp_error: "Operation failed.",
 
   // Waitlist
   wl_title: "Waitlist",
@@ -1303,6 +1315,7 @@ export const en: Dictionary = {
   doc_tpl_imaging_request: "Imaging request",
   doc_tpl_discharge_summary: "Discharge summary",
   doc_tpl_sick_leave: "Sick leave certificate",
+  doc_tpl_treatment_plan: "Treatment plan",
   doc_csvHeaders:
     "Patient Name,Document Type,File Name,File Size (MB),Uploaded By,Date",
   doc_uploadTrigger: "Upload Document",

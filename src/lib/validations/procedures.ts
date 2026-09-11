@@ -14,6 +14,30 @@ export const procedureUpdateSchema = z.object({
   notes: z.string().max(2000).optional().nullable(),
 });
 
+export const treatmentPlanCreateSchema = z.object({
+  patientId: z.string().min(1),
+  encounterId: z.string().min(1).optional().nullable(),
+  title: z.string().trim().min(1).max(200),
+  notes: z.string().trim().max(4000).optional().nullable(),
+});
+
+export const treatmentPlanUpdateSchema = z.object({
+  title: z.string().trim().min(1).max(200).optional(),
+  notes: z.string().trim().max(4000).optional().nullable(),
+  status: z.enum(["draft", "active", "completed", "cancelled"]).optional(),
+});
+
+export const treatmentPlanStepCreateSchema = z.object({
+  kind: z.enum(["diagnosis", "prescription", "procedure", "followup", "note"]),
+  refId: z.string().min(1).max(100).optional().nullable(),
+  title: z.string().trim().min(1).max(200),
+  dueDate: z.string().datetime().optional().nullable(),
+});
+
+export const treatmentPlanStepUpdateSchema = z.object({
+  status: z.enum(["pending", "done", "skipped"]),
+});
+
 export const servicePackageCreateSchema = z.object({
   name: z.string().trim().min(1).max(160),
   serviceCatalogId: z.string().min(1).max(100).optional().nullable(),

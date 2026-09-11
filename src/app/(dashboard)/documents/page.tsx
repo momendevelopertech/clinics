@@ -69,6 +69,7 @@ const DOC_TYPE_KEYS: Record<string, string> = {
   imaging_request: "doc_tpl_imaging_request",
   discharge_summary: "doc_tpl_discharge_summary",
   sick_leave: "doc_tpl_sick_leave",
+  treatment_plan: "doc_tpl_treatment_plan",
   other: "docType_other",
 };
 

@@ -44,7 +44,7 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
-    const { template, patientId, encounterId, labOrderId, fields } = parsed.data;
+    const { template, patientId, encounterId, labOrderId, planId, fields } = parsed.data;
     const def = getTemplateDef(template);
     if (!def) return NextResponse.json({ error: "Unknown template" }, { status: 400 });
 
@@ -92,6 +92,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Lab order not found for patient" }, { status: 404 });
     }
 
+    const treatmentPlan = planId
+      ? await prisma.treatmentPlan.findFirst({
+          where: { id: planId, organizationId: orgId, patientId },
+          include: { steps: { orderBy: { createdAt: "asc" } } },
+        })
+      : null;
+    if (planId && !treatmentPlan) {
+      return NextResponse.json({ error: "Treatment plan not found for patient" }, { status: 404 });
+    }
+
     const data: TemplateData = {
       org: { name: org?.name ?? "Clinic" },
       patient: {
@@ -105,6 +115,19 @@ export async function POST(request: Request) {
       doctorName: doctor?.name ?? null,
       encounter,
       labOrder,
+      plan: treatmentPlan
+        ? {
+            title: treatmentPlan.title,
+            status: treatmentPlan.status,
+            notes: treatmentPlan.notes,
+            steps: treatmentPlan.steps.map((s) => ({
+              title: s.title,
+              kind: s.kind,
+              status: s.status,
+              dueDate: s.dueDate,
+            })),
+          }
+        : null,
       fields: fields ?? {},
       issuedAt: new Date(),
     };

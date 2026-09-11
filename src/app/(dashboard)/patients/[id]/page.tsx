@@ -16,6 +16,7 @@ import { prisma } from "@/lib/prisma";
 import { getDictionary } from "@/lib/i18n/server";
 import { parseOrgSettings } from "@/lib/org-settings";
 import { summarizeAttendance } from "@/lib/appointments";
+import { TreatmentPlansSection } from "@/components/treatment/treatment-plans-section";
 
 type TimelineEvent = {
   id: string;
@@ -301,6 +302,8 @@ export default async function PatientTimelinePage({
           )}
         </div>
       </div>
+
+      <TreatmentPlansSection patientId={patientId} t={t} />
 
       {events.length === 0 ? (
         <p className="rounded-[20px] border border-white/55 bg-white/60 p-8 text-center text-sm text-muted-foreground dark:border-white/6 dark:bg-white/[0.03]">

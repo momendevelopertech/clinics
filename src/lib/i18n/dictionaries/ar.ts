@@ -1094,6 +1094,18 @@ export const ar: Dictionary = {
   enc_tplSaveHint: "يحفظ مسودة SOAP أعلاه كقالب قابل لإعادة الاستخدام.",
   enc_tplSaveError: "تعذر حفظ القالب.",
   enc_tplDeleteError: "تعذر حذف القالب.",
+  tp_title: "خطط العلاج",
+  tp_create: "إنشاء خطة",
+  tp_newPlaceholder: "عنوان الخطة، مثال: خطة ضغط 3 أشهر",
+  tp_activate: "تفعيل",
+  tp_complete: "إكمال",
+  tp_print: "طباعة",
+  tp_printed: "ملف خطة العلاج جاهز",
+  tp_done: "تم",
+  tp_skip: "تخطي",
+  tp_addStep: "إضافة خطوة",
+  tp_stepPlaceholder: "خطوة، مثال: تحليل CBC",
+  tp_error: "فشلت العملية.",
 
   // Waitlist
   wl_title: "قائمة الانتظار",
@@ -1302,6 +1314,7 @@ export const ar: Dictionary = {
   doc_tpl_imaging_request: "طلب أشعة",
   doc_tpl_discharge_summary: "ملخص خروج",
   doc_tpl_sick_leave: "شهادة إجازة مرضية",
+  doc_tpl_treatment_plan: "خطة علاج",
   doc_csvHeaders:
     "اسم المريض,نوع المستند,اسم الملف,الحجم (مب),رُفع بواسطة,التاريخ",
   doc_uploadTrigger: "رفع مستند",
