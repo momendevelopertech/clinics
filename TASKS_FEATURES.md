@@ -45,7 +45,7 @@
 - [ ] تطبيقات native — [يحتاج قرار بيزنس] iOS/Android (الـ PWA الحالي كافٍ مؤقتًا) — Phase (P2) — مرجع (🎯-P2-#5 / قسم 🌐).
 - [ ] Group appointments/classes + لغات إضافية + ولاء — [اللغات/الولاء: قرار بيزنس] حجوزات جماعية + (FR/UR) + نقاط ولاء — Phase (P2) — مرجع (🎯-P2-#6 / قسم 🌐).
 - [x] Equipment maintenance API — سجل صيانة + تنبيه معايرة على موديل `Equipment` الموجود (بلا API حاليًا) — Phase (P2) — مرجع (🎯-P2-#7 / قسم 📦). ✅ DONE 2026-09-11: migration `20260914000000_equipment_maintenance` + `Equipment.lastCalibrationAt/nextCalibrationAt/status` + `EquipmentMaintenance` log + `GET/POST /api/equipment` + `GET/POST /api/equipment/[id]/maintenance` + calibration alert helper + unit test 3/3 green.
-- [ ] ملخص مريض قابل للمشاركة — مستند Patient Summary قابل للطباعة + QR للإحالات/التأمين — Phase (P2) — مرجع (🎯-P2-#8 / قسم 📄).
+- [x] ملخص مريض قابل للمشاركة — مستند Patient Summary قابل للطباعة + QR للإحالات/التأمين — Phase (P2) — مرجع (🎯-P2-#8 / قسم 📄). ✅ DONE 2026-09-11: `GET /api/patients/[id]/summary` builds printable payload with diagnoses/vitals/medications + QR URL; patient summary page renders print-friendly view; unit test 1/1 green.
 
 ## استكمال بنود 🟡 (جزئية مؤثرة تشغيليًا — غير مغطاة أعلاه)
 
