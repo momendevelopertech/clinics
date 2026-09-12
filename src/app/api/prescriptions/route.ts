@@ -27,6 +27,7 @@ export async function GET(request: Request) {
       include: {
         patient: { select: { firstName: true, lastName: true } },
         prescriber: { select: { name: true } },
+        items: { select: { id: true } },
       },
       orderBy: { createdAt: "desc" },
     });
