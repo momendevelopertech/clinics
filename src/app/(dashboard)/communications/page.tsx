@@ -35,6 +35,8 @@ import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { UpgradePrompt } from "@/components/plan/upgrade-prompt";
+import { FeatureNotConfiguredBanner } from "@/components/ui/feature-not-configured-banner";
+import { useFeatureConfig } from "@/hooks/use-feature-config";
 import { useLocale } from "@/components/locale/locale-provider";
 
 interface Communication {
@@ -83,6 +85,8 @@ export default function CommunicationsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const { forbidden, setForbidden } = usePermissionState();
+  const { get } = useFeatureConfig();
+  const twilio = get("twilio");
 
   // Map handlers to convert "all" sentinel to empty string for API queries
   const handleChannelChange = (value: string) => {
@@ -193,6 +197,9 @@ export default function CommunicationsPage() {
   return (
     <div className="space-y-6">
       <UpgradePrompt moduleKey="communications" />
+      {twilio && !twilio.configured ? (
+        <FeatureNotConfiguredBanner feature="twilio" missingEnvVars={twilio.missing} />
+      ) : null}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">{t("nav_communications")}</h1>

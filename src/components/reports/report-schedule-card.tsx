@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
+import { FeatureNotConfiguredBanner } from "@/components/ui/feature-not-configured-banner";
+import { useFeatureConfig } from "@/hooks/use-feature-config";
 import type { Dictionary } from "@/lib/i18n/locale";
 
 interface Schedule {
@@ -27,6 +29,8 @@ export function ReportScheduleCard({ t }: { t: Dictionary }) {
   const [staff, setStaff] = useState<Array<{ id: string; name: string | null; email: string }>>([]);
   const [day, setDay] = useState("1");
   const [recipient, setRecipient] = useState("");
+  const { get } = useFeatureConfig();
+  const email = get("email");
 
   const load = useCallback(async () => {
     try {
@@ -83,6 +87,15 @@ export function ReportScheduleCard({ t }: { t: Dictionary }) {
         {t["reports_schedTitle"]}
       </p>
       <p className="mt-1 text-sm text-muted-foreground">{t["reports_schedDesc"]}</p>
+      {email && !email.configured ? (
+        <div className="mt-4">
+          <FeatureNotConfiguredBanner
+            feature="email"
+            missingEnvVars={email.missing}
+            devFallback={email.devFallback}
+          />
+        </div>
+      ) : null}
       <div className="mt-4 space-y-2">
         {schedules.map((s) => (
           <div key={s.id} className="flex items-center justify-between gap-3 text-sm">

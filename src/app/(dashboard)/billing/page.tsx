@@ -12,6 +12,8 @@ import { useLocale } from "@/components/locale/locale-provider";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
+import { FeatureNotConfiguredBanner } from "@/components/ui/feature-not-configured-banner";
+import { useFeatureConfig } from "@/hooks/use-feature-config";
 import { NewInvoiceDialog } from "@/components/billing/new-invoice-dialog";
 import { InstallmentPlansDialog } from "@/components/billing/installment-plans-dialog";
 import { UpgradePrompt } from "@/components/plan/upgrade-prompt";
@@ -35,6 +37,8 @@ export default function BillingPage() {
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [page, setPage] = React.useState(1);
   const { forbidden, guardedFetch } = usePermissionState();
+  const { get } = useFeatureConfig();
+  const stripe = get("stripe");
   const [expenses, setExpenses] = React.useState<Array<{
     id: string;
     category: string;
@@ -183,6 +187,9 @@ export default function BillingPage() {
       transition={{ duration: 0.3 }}
     >
       <UpgradePrompt moduleKey="billing" />
+      {stripe && !stripe.configured ? (
+        <FeatureNotConfiguredBanner feature="stripe" missingEnvVars={stripe.missing} />
+      ) : null}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">{t("billing_title")}</h1>
         <NewInvoiceDialog onSuccess={loadInvoices} />

@@ -25,6 +25,8 @@ import { useLocale } from "@/components/locale/locale-provider";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
+import { FeatureNotConfiguredBanner } from "@/components/ui/feature-not-configured-banner";
+import { useFeatureConfig } from "@/hooks/use-feature-config";
 import { UpgradePrompt } from "@/components/plan/upgrade-prompt";
 
 interface Payment {
@@ -58,6 +60,8 @@ export default function PaymentsPage() {
   const [page, setPage] = React.useState(1);
   const [refundArmed, setRefundArmed] = React.useState<string | null>(null);
   const { forbidden, setForbidden } = usePermissionState();
+  const { get } = useFeatureConfig();
+  const stripe = get("stripe");
 
   React.useEffect(() => {
     fetchPayments();
@@ -222,6 +226,9 @@ export default function PaymentsPage() {
   return (
     <div className="flex flex-col gap-6 w-full h-full">
       <UpgradePrompt moduleKey="payments" />
+      {stripe && !stripe.configured ? (
+        <FeatureNotConfiguredBanner feature="stripe" missingEnvVars={stripe.missing} />
+      ) : null}
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">

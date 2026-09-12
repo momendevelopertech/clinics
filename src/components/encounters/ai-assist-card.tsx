@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { FeatureNotConfiguredBanner } from "@/components/ui/feature-not-configured-banner";
 import { useLocale } from "@/components/locale/locale-provider";
 import type { SoapNote } from "@/components/encounters/encounters-workspace";
 
@@ -43,6 +44,7 @@ export function AiAssistCard({ encounterId, soap, setSoap }: AiAssistCardProps) 
   const [notice, setNotice] = useState<string | null>(null);
   const [summary, setSummary] = useState<SummaryResult["structured"] | null>(null);
   const [aiUnavailable, setAiUnavailable] = useState(false);
+  const [aiMissing, setAiMissing] = useState<string[]>([]);
 
   const runScribe = async () => {
     if (!transcript.trim()) return;
@@ -57,6 +59,7 @@ export function AiAssistCard({ encounterId, soap, setSoap }: AiAssistCardProps) 
       const result = (await response.json()) as ScribeResult;
       if (response.status === 503 && result.enabled === false) {
         setAiUnavailable(true);
+        setAiMissing(["AI_PROVIDER", "AI_API_KEY"]);
         setNotice(t("ai_notConfigured"));
         return;
       }
@@ -87,6 +90,7 @@ export function AiAssistCard({ encounterId, soap, setSoap }: AiAssistCardProps) 
       const result = (await response.json()) as SummaryResult;
       if (response.status === 503 && result.enabled === false) {
         setAiUnavailable(true);
+        setAiMissing(["AI_PROVIDER", "AI_API_KEY"]);
         setNotice(t("ai_notConfigured"));
         return;
       }
@@ -110,7 +114,7 @@ export function AiAssistCard({ encounterId, soap, setSoap }: AiAssistCardProps) 
         </summary>
         <div className="mt-2 space-y-2">
           {aiUnavailable ? (
-            <p className="text-xs text-muted-foreground">{t("ai_notConfigured")}</p>
+            <FeatureNotConfiguredBanner feature="ai" missingEnvVars={aiMissing} />
           ) : (
             <>
               <Textarea

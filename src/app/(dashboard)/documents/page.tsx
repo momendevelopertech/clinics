@@ -28,6 +28,8 @@ import { filterDocuments, formatTypeLabel, getDocumentTypeColor, isExternalUrl }
 import { logClientError } from "@/lib/client-logger";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
+import { FeatureNotConfiguredBanner } from "@/components/ui/feature-not-configured-banner";
+import { useFeatureConfig } from "@/hooks/use-feature-config";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { useLocale } from "@/components/locale/locale-provider";
 
@@ -83,6 +85,8 @@ export default function DocumentsPage() {
   const [typeFilter, setTypeFilter] = React.useState<string | null>(null);
   const [page, setPage] = React.useState(1);
   const { forbidden, setForbidden } = usePermissionState();
+  const { get } = useFeatureConfig();
+  const cloudinary = get("cloudinary");
 
   const fetchDocuments = React.useCallback(async () => {
     try {
@@ -172,6 +176,9 @@ export default function DocumentsPage() {
 
   return (
     <div className="flex flex-col gap-6 w-full h-full">
+      {cloudinary && !cloudinary.configured ? (
+        <FeatureNotConfiguredBanner feature="cloudinary" missingEnvVars={cloudinary.missing} />
+      ) : null}
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">

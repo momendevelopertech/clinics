@@ -35,6 +35,8 @@ import {
   User,
   Users,
   Wallet,
+  Webhook,
+  Wrench,
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -59,6 +61,8 @@ import { Lock } from "lucide-react";
 import { PendingChangesButton } from "@/components/pwa/pending-changes";
 import { clearAllPwaData } from "@/lib/pwa/cache-clear";
 import { PushNotificationToggle } from "@/components/pwa/push-notification-toggle";
+import { useFeatureConfig } from "@/hooks/use-feature-config";
+import type { ConfigGatedFeature } from "@/lib/feature-config";
 
 const routeTitleKeys: Array<[string, string]> = [
   ["/dashboard", "nav_dashboard"],
@@ -88,6 +92,9 @@ const routeTitleKeys: Array<[string, string]> = [
   ["/staff", "nav_staff"],
   ["/consents", "nav_consents"],
   ["/prescriptions", "nav_prescriptions"],
+  ["/insurance", "nav_insurance"],
+  ["/equipment", "nav_equipment"],
+  ["/integrations", "nav_integrations"],
   ["/waitlist", "nav_waitlist"],
   ["/super", "nav_superAdmin"],
 ];
@@ -137,6 +144,7 @@ function CollapsibleSidebar({
 }) {
   const { t } = useLocale();
   const { appointments } = useMedical();
+  const { get } = useFeatureConfig();
 
   const isLocked = (moduleKey?: string) =>
     !!moduleKey && !!planModules && planModules[moduleKey] !== true;
@@ -166,6 +174,9 @@ function CollapsibleSidebar({
     roles?: NavRole[];
     moduleKey?: string;
     locked?: boolean;
+    /** Env-dependent feature shown as "not configured" badge (page stays visible). */
+    configFeature?: ConfigGatedFeature;
+    notConfigured?: boolean;
   };
 
   const canAccess = (allowed?: NavRole[]) => {
@@ -181,9 +192,12 @@ function CollapsibleSidebar({
   const wrap = (item: NavItem): NavItem => ({
     ...item,
     locked: item.moduleKey ? isLocked(item.moduleKey) : false,
+    notConfigured: item.configFeature
+      ? get(item.configFeature)?.configured === false
+      : false,
   });
 
-  const navGroups = [
+  const navGroups: Array<{ label: string; items: NavItem[] }> = [
     {
       label: t("nav_overview"),
       items: [
@@ -196,21 +210,23 @@ function CollapsibleSidebar({
         { icon: FileCheck2, label: t("nav_consents"), href: "/consents", roles: ["Doctor", "Nurse", "Receptionist"] as NavRole[], moduleKey: "consents", locked: false },
         { icon: ScrollText, label: t("nav_audit"), href: "/audit", roles: ["Doctor", "Biller"] as NavRole[], moduleKey: "audit", locked: false },
         { icon: Pill, label: t("nav_prescriptions"), href: "/prescriptions", roles: ["Doctor", "Nurse", "Pharmacist"] as NavRole[], moduleKey: "labs", locked: false },
-      ].filter((item) => canAccess(item.roles as NavRole[] | undefined)).map(wrap),
+      ].filter((item) => canAccess(item.roles as NavRole[] | undefined)).map((item: NavItem) => wrap(item)),
     },
     {
       label: t("nav_operations"),
       items: [
         { icon: DollarSign, label: t("nav_billing"), href: "/billing", roles: ["Biller"] as NavRole[], moduleKey: "billing", locked: false },
-        { icon: Wallet, label: t("nav_payments"), href: "/payments", roles: ["Biller"] as NavRole[], moduleKey: "payments", locked: false },
+        { icon: Wallet, label: t("nav_payments"), href: "/payments", roles: ["Biller"] as NavRole[], moduleKey: "payments", locked: false, configFeature: "stripe" as ConfigGatedFeature },
+        { icon: ShieldCheck, label: t("nav_insurance"), href: "/insurance", roles: ["Biller"] as NavRole[], moduleKey: "billing", locked: false } as NavItem,
         { icon: FlaskConical, label: t("nav_labs"), href: "/labs", roles: ["Doctor", "Nurse", "Pharmacist"] as NavRole[], moduleKey: "labs", locked: false },
         { icon: Package, label: t("nav_inventory"), href: "/inventory", roles: ["Nurse", "Pharmacist"] as NavRole[], moduleKey: "inventory", locked: false },
+        { icon: Wrench, label: t("nav_equipment"), href: "/equipment", roles: ["Nurse", "Pharmacist"] as NavRole[], moduleKey: "inventory", locked: false } as NavItem,
         { icon: Stethoscope, label: t("nav_tasks"), href: "/tasks", roles: ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"] as NavRole[], moduleKey: "tasks", locked: false },
-        { icon: FileText, label: t("nav_documents"), href: "/documents", roles: ["Doctor", "Nurse", "Receptionist"] as NavRole[], moduleKey: "documents", locked: false },
-        { icon: MessageSquare, label: t("nav_communications"), href: "/communications", roles: ["Receptionist"] as NavRole[], moduleKey: "communications", locked: false },
-        { icon: MessageSquare, label: t("nav_campaigns"), href: "/campaigns", roles: ["Receptionist"] as NavRole[], moduleKey: "communications", locked: false },
+        { icon: FileText, label: t("nav_documents"), href: "/documents", roles: ["Doctor", "Nurse", "Receptionist"] as NavRole[], moduleKey: "documents", locked: false, configFeature: "cloudinary" as ConfigGatedFeature },
+        { icon: MessageSquare, label: t("nav_communications"), href: "/communications", roles: ["Receptionist"] as NavRole[], moduleKey: "communications", locked: false, configFeature: "twilio" as ConfigGatedFeature },
+        { icon: MessageSquare, label: t("nav_campaigns"), href: "/campaigns", roles: ["Receptionist"] as NavRole[], moduleKey: "communications", locked: false, configFeature: "twilio" as ConfigGatedFeature },
         { icon: Activity, label: t("nav_automation"), href: "/automation", roles: ["Doctor", "Nurse"] as NavRole[], moduleKey: "analytics", locked: false },
-      ].filter((item) => canAccess(item.roles as NavRole[] | undefined)).map(wrap),
+      ].filter((item) => canAccess(item.roles as NavRole[] | undefined)).map((item: NavItem) => wrap(item)),
     },
   ];
   if (isSuperAdmin) {
@@ -219,20 +235,21 @@ function CollapsibleSidebar({
     navGroups.length = 0;
   }
 
-  const systemItems = [
+  const systemItems: NavItem[] = [
     { icon: ClipboardList, label: t("nav_plan"), href: "/plan", roles: ["Owner"] as NavRole[] },
-    { icon: Activity, label: t("nav_reports"), href: "/reports", roles: ["Doctor", "Nurse", "Biller"] as NavRole[] },
+    { icon: Activity, label: t("nav_reports"), href: "/reports", roles: ["Doctor", "Nurse", "Biller"] as NavRole[], configFeature: "email" as ConfigGatedFeature },
     { icon: Calendar, label: t("nav_availability"), href: "/availability", roles: ["Doctor", "Nurse"] as NavRole[] },
     { icon: Settings, label: t("nav_locations"), href: "/locations", roles: ["Receptionist"] as NavRole[] },
     { icon: ClipboardList, label: t("nav_catalogs"), href: "/catalogs", roles: ["Doctor", "Nurse", "Pharmacist"] as NavRole[] },
     { icon: Settings, label: t("nav_settings"), href: "/settings", roles: ["Owner"] as NavRole[] },
+    { icon: Webhook, label: t("nav_integrations"), href: "/integrations", roles: ["Owner"] as NavRole[] } as NavItem,
     { icon: CalendarClock, label: t("nav_waitlist"), href: "/waitlist", roles: ["Receptionist"] as NavRole[] },
     { icon: ShieldCheck, label: t("nav_security"), href: "/security" },
     { icon: Users, label: t("nav_staff"), href: "/staff", roles: ["Owner"] as NavRole[] },
     { icon: HelpCircle, label: t("nav_help"), href: "/help" },
   ]
     .filter((item) => canAccess(item.roles as NavRole[] | undefined))
-    .map(wrap);
+    .map((item: NavItem) => wrap(item));
 
   if (isSuperAdmin) {
     systemItems.length = 0;
@@ -333,7 +350,7 @@ function NavLink({
   item,
   open,
 }: {
-  item: { icon: React.ElementType; label: string; href: string; locked?: boolean };
+  item: { icon: React.ElementType; label: string; href: string; locked?: boolean; notConfigured?: boolean };
   open: boolean;
 }) {
   const pathname = usePathname();
@@ -344,6 +361,7 @@ function NavLink({
   const Icon = item.icon;
   const { t } = useLocale();
   const locked = Boolean(item.locked);
+  const notConfigured = Boolean(item.notConfigured) && !locked;
 
   return (
     <Link
@@ -392,12 +410,24 @@ function NavLink({
             <span className="shrink-0 rounded-full bg-amber-100 px-1.5 py-0.5 text-amber-700 dark:bg-amber-400/15 dark:text-amber-300">
               <Lock className="h-3 w-3" />
             </span>
+          ) : notConfigured ? (
+            <span
+              title={t("cfg_badge")}
+              className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:bg-amber-400/15 dark:text-amber-300"
+            >
+              {t("cfg_badge")}
+            </span>
           ) : null}
         </div>
       ) : locked ? (
         <span className="absolute right-2 top-1/2 -translate-y-1/2 text-amber-500">
           <Lock className="h-3 w-3" />
         </span>
+      ) : notConfigured ? (
+        <span
+          title={t("cfg_badge")}
+          className="absolute right-2 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-amber-500"
+        />
       ) : null}
     </Link>
   );
