@@ -19,6 +19,7 @@ import { summarizeAttendance } from "@/lib/appointments";
 import { TreatmentPlansSection } from "@/components/treatment/treatment-plans-section";
 import { VitalsTrendCard } from "@/components/patients/vitals-trend-card";
 import { PatientAllergiesCard } from "@/components/patients/patient-allergies-card";
+import { RepeatLastRxButton } from "@/components/prescriptions/repeat-last-rx-button";
 
 type TimelineEvent = {
   id: string;
@@ -35,6 +36,7 @@ type TimelineEvent = {
   date: Date;
   title: string;
   subtitle?: string | null;
+  href?: string;
 };
 
 export default async function PatientTimelinePage({
@@ -91,10 +93,24 @@ export default async function PatientTimelinePage({
         select: {
           id: true,
           createdAt: true,
+          encounterId: true,
           medicationName: true,
           dosage: true,
+          frequency: true,
+          duration: true,
+          instructions: true,
+          items: {
+            select: {
+              medicationName: true,
+              dosage: true,
+              frequency: true,
+              duration: true,
+              instructions: true,
+            },
+          },
           prescriber: { select: { name: true } },
         },
+        orderBy: { createdAt: "desc" },
       }),
       prisma.invoice.findMany({
         where: { patientId, organizationId },
@@ -177,6 +193,7 @@ export default async function PatientTimelinePage({
       date: p.createdAt,
       title: [p.medicationName, p.dosage].filter(Boolean).join(" · "),
       subtitle: p.prescriber.name,
+      href: `/print/prescription/${p.id}`,
     })),
     ...invoices.map((inv) => ({
       id: `inv-${inv.id}`,
@@ -291,6 +308,19 @@ export default async function PatientTimelinePage({
             <FileText className="h-4 w-4" />
             {events.length}
           </div>
+          {prescriptions.length > 0 ? (
+            <div className="print-hide">
+              <RepeatLastRxButton
+                prescription={prescriptions[0]}
+                patientId={patient.id}
+                patientName={`${patient.firstName} ${patient.lastName}`.trim()}
+                encounterId={prescriptions[0].encounterId ?? undefined}
+              />
+            </div>
+          ) : null}
+          <Link href="/prescriptions" className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground shadow print-hide hover:bg-primary/90">
+            <Pill className="h-4 w-4" /> {t["nav_prescriptions"] ?? "Prescriptions"}
+          </Link>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
           <span className="rounded-full bg-neutral-100 px-3 py-1 font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
@@ -319,11 +349,8 @@ export default async function PatientTimelinePage({
         <ol className="space-y-3">
           {events.map((event) => {
             const Icon = iconFor(event);
-            return (
-              <li
-                key={event.id}
-                className="flex gap-4 rounded-[20px] border border-white/55 bg-white/60 p-4 dark:border-white/6 dark:bg-white/[0.03]"
-              >
+            const content = (
+              <>
                 <div className="grid size-11 shrink-0 place-content-center rounded-[14px] bg-primary/10 text-primary">
                   <Icon className="h-5 w-5" />
                 </div>
@@ -345,6 +372,23 @@ export default async function PatientTimelinePage({
                     {formatDate(event.date)}
                   </p>
                 </div>
+              </>
+            );
+            return (
+              <li
+                key={event.id}
+                className="flex gap-4 rounded-[20px] border border-white/55 bg-white/60 p-4 dark:border-white/6 dark:bg-white/[0.03]"
+              >
+                {event.href && event.kind === "prescription" ? (
+                  <Link
+                    href={event.href}
+                    className="flex flex-1 gap-4 rounded-lg outline-none transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-primary"
+                  >
+                    {content}
+                  </Link>
+                ) : (
+                  content
+                )}
               </li>
             );
           })}
