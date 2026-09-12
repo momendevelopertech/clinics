@@ -42,11 +42,14 @@ export async function GET(request: Request) {
     if (!patient) return NextResponse.json({ error: "Patient not found" }, { status: 404 });
 
     const since = new Date(Date.now() - parsed.data.days * 24 * 60 * 60 * 1000);
+    // Fetch the NEWEST N readings then reverse, so long histories never drop
+    // the most recent values.
     const vitals = await prisma.vital.findMany({
       where: { patientId: patient.id, recordedAt: { gte: since } },
-      orderBy: { recordedAt: "asc" },
+      orderBy: { recordedAt: "desc" },
       take: 1000,
     });
+    vitals.reverse();
     const metric = parsed.data.metric as TrendMetric;
     const points = toTrendSeries(
       vitals as unknown as Array<Record<string, unknown>>,

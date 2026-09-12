@@ -25,8 +25,8 @@ describe("treatment plan machines", () => {
     expect(isStepTransitionAllowed("skipped", "done")).toBe(false);
   });
 
-  it("requires every step resolved before finishing", () => {
-    expect(isPlanFinishable([])).toBe(false);
+  it("requires every step resolved before finishing (empty plan is finishable)", () => {
+    expect(isPlanFinishable([])).toBe(true);
     expect(isPlanFinishable(["done", "skipped"])).toBe(true);
     expect(isPlanFinishable(["done", "pending"])).toBe(false);
   });

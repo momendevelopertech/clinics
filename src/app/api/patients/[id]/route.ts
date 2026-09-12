@@ -180,6 +180,8 @@ export async function PATCH(
           country: nextSensitive.country,
           bloodType: data.bloodType ?? existing.bloodType,
           allergies: data.allergies ?? existing.allergies,
+          marketingOptOut:
+            data.marketingOptOut !== undefined ? data.marketingOptOut : existing.marketingOptOut,
           primaryCareProvider:
             data.primaryCareProvider ?? existing.primaryCareProvider,
           familyHistory: nextSensitive.familyHistory,

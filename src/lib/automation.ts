@@ -10,6 +10,18 @@ export type AutomationSignal = {
   dueAt: string;
 };
 
+/**
+ * Patient-facing outreach text for the automatic follow-up escalation cron.
+ * Pure and unit-tested so the SMS/WhatsApp copy stays stable.
+ */
+export function buildFollowUpEscalationMessage(input: {
+  patientFirstName: string;
+  clinicName: string;
+  reason: string;
+}) {
+  return `Hi ${input.patientFirstName}, this is a reminder from ${input.clinicName}: your follow-up (${input.reason}) was due — please contact the clinic to book your visit.`;
+}
+
 export function buildAutomationSignals(input: {
   overdueFollowUps: Array<{
     id: string;

@@ -54,7 +54,8 @@ export async function POST(request: NextRequest) {
         patient: { include: { organization: true } },
         provider: true,
       },
-      take: 100,
+      orderBy: { startTime: "asc" },
+      take: 200,
     });
 
     let sent = 0;
@@ -92,8 +93,15 @@ export async function POST(request: NextRequest) {
       for (const cadence of cadences) {
         if (!isCadenceDue(appointment.startTime, now, cadence)) continue;
         const tag = reminderTag(appointment.id, cadence);
+        // A previous run counts only if at least one channel actually
+        // delivered; failed sends keep the tag retryable on the next run.
         const existing = await prisma.communication.findFirst({
-          where: { patientId: patient.id, type: "reminder", content: { contains: tag } },
+          where: {
+            patientId: patient.id,
+            type: "reminder",
+            status: "sent",
+            content: { contains: tag },
+          },
           select: { id: true },
         });
         if (existing) continue;

@@ -74,18 +74,30 @@ export async function POST(
           status: "completed",
         },
       });
-      const paid = Number(plan.invoice.amountPaid) + Number(due.amount);
+
+      // Compare-and-set: only an unpaid due can transition to paid. A
+      // concurrent payment of the same due matches 0 rows and aborts the
+      // transaction instead of double-crediting the invoice.
+      const claimed = await tx.installment.updateMany({
+        where: { id: due.id, planId, status: { in: ["pending", "overdue"] } },
+        data: { status: "paid", paidAt: new Date(), paymentId: payment.id },
+      });
+      if (claimed.count !== 1) {
+        throw new InstallmentConflictError();
+      }
+
+      // Atomic increment avoids a lost update on amountPaid when two dues
+      // settle in parallel; status is recomputed from the resulting row.
+      const fresh = await tx.invoice.findUniqueOrThrow({ where: { id: plan.invoiceId } });
+      const paid = Number(fresh.amountPaid) + Number(due.amount);
       await tx.invoice.update({
         where: { id: plan.invoiceId },
         data: {
-          amountPaid: paid.toFixed(2),
-          status: resolveInvoiceStatus(Number(plan.invoice.totalAmount), paid),
+          amountPaid: { increment: due.amount },
+          status: resolveInvoiceStatus(Number(fresh.totalAmount), paid),
         },
       });
-      await tx.installment.update({
-        where: { id: due.id },
-        data: { status: "paid", paidAt: new Date(), paymentId: payment.id },
-      });
+
       const remaining = await tx.installment.count({
         where: { planId, status: { in: ["pending", "overdue"] } },
       });
@@ -111,7 +123,15 @@ export async function POST(
     });
     return NextResponse.json(full);
   } catch (error) {
+    if (error instanceof InstallmentConflictError) {
+      return NextResponse.json(
+        { error: "Installment was already paid", alreadyPaid: true },
+        { status: 409 },
+      );
+    }
     logServerError("Error paying installment", error);
     return NextResponse.json({ error: "Failed to pay installment" }, { status: 500 });
   }
 }
+
+class InstallmentConflictError extends Error {}

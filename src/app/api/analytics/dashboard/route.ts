@@ -40,6 +40,7 @@ export async function GET() {
     encountersThisMonth,
     monthlyAppointments,
     completedPayments,
+    completedPaymentsRefunded,
     openInvoices,
     monthlyVisitors,
     monthlyExpenses,
@@ -79,6 +80,15 @@ export async function GET() {
         createdAt: { gte: monthStart, lt: nextMonthStart },
       },
       _sum: { amount: true },
+    }),
+    prisma.payment.aggregate({
+      where: {
+        invoice: { organizationId },
+        status: "completed",
+        refundedAmount: { gt: 0 },
+        createdAt: { gte: monthStart, lt: nextMonthStart },
+      },
+      _sum: { refundedAmount: true },
     }),
     prisma.invoice.findMany({
       where: {
@@ -146,7 +156,8 @@ export async function GET() {
       total + Math.max(0, Number(invoice.totalAmount) - Number(invoice.amountPaid)),
     0,
   );
-  const revenueThisMonth = Number(completedPayments._sum.amount ?? 0);
+  const revenueThisMonth =
+    Number(completedPayments._sum.amount ?? 0) - Number(completedPaymentsRefunded._sum.refundedAmount ?? 0);
   const expensesThisMonth = Number(monthlyExpenses._sum.amount ?? 0);
 
   return NextResponse.json({

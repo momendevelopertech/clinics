@@ -204,3 +204,36 @@ export function renderCampaignMessage(
     `,
   };
 }
+
+type RxLine = {
+  medicationName: string;
+  dosage?: string | null;
+  frequency?: string | null;
+  duration?: string | null;
+  instructions?: string | null;
+};
+
+/**
+ * Concise patient-facing prescription summary for SMS/WhatsApp. Pure and
+ * unit-tested. Includes the main medication plus every structured item.
+ */
+export function renderPrescriptionMessage(
+  patientName: string,
+  clinicName: string,
+  lines: RxLine[],
+): { sms: string; whatsapp: string } {
+  const bodyLines = lines
+    .map((l) => {
+      const bits = [
+        l.medicationName,
+        l.dosage ? `(${l.dosage})` : null,
+        l.frequency ?? null,
+        l.duration ? `for ${l.duration}` : null,
+      ].filter(Boolean);
+      const line = bits.join(" ");
+      return l.instructions ? `${line} - ${l.instructions}` : line;
+    })
+    .join("\n");
+  const message = `Hi ${patientName}, your prescription from ${clinicName}:\n${bodyLines}\nPlease follow the instructions above.`;
+  return { sms: message, whatsapp: message };
+}

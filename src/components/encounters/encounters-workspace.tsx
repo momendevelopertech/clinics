@@ -9,6 +9,9 @@ import { useLocale } from "@/components/locale/locale-provider";
 import { isSoapEmpty, prefillSoap } from "@/lib/clinical-templates";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
+import { AiAssistCard } from "@/components/encounters/ai-assist-card";
+
+export type SoapNote = { subjective: string; objective: string; assessment: string; plan: string };
 
 type Patient = { id: string; firstName: string; lastName: string; mrn: string };
 type Encounter = {
@@ -28,7 +31,7 @@ export function EncountersWorkspace() {
   const [selectedId, setSelectedId] = useState("");
   const [templates, setTemplates] = useState<Array<{ id: string; name: string; specialty: string | null; subjective: string | null; objective: string | null; assessment: string | null; plan: string | null }>>([]);
   const [templateId, setTemplateId] = useState("");
-  const [soap, setSoap] = useState({ subjective: "", objective: "", assessment: "", plan: "" });
+  const [soap, setSoap] = useState<SoapNote>({ subjective: "", objective: "", assessment: "", plan: "" });
   const [tplName, setTplName] = useState("");
   const [tplSpecialty, setTplSpecialty] = useState("");
   const [error, setError] = useState("");
@@ -190,6 +193,7 @@ export function EncountersWorkspace() {
                     <div className="grid gap-1"><Label>{t("enc_soapPlan")}</Label><Textarea value={selectedId === encounter.id ? soap.plan : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, plan: event.target.value }); }} placeholder={t("enc_soapPlan")} /></div>
                   </div>
                   <div><Button variant="outline" onClick={() => void addSoapNote().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_noteError")))}>{t("enc_addNote")}</Button></div>
+                  <AiAssistCard encounterId={encounter.id} soap={soap} setSoap={setSoap} />
                 </div>
               ) : null}
             </div>

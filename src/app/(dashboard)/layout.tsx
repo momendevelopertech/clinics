@@ -6,6 +6,7 @@ import { requireSuperAdmin } from "@/lib/roles"
 import { resolveOrgEntitlements } from "@/lib/entitlements/resolve"
 import { Toaster } from "@/components/ui/sonner"
 import { MedicalProvider } from "@/context/MedicalContext"
+import { RoleProvider } from "@/context/RoleContext"
 import { FeatureTipsProvider } from "@/components/feature-tips/feature-tips-provider"
 import { DashboardWithCollapsibleSidebar } from "@/components/ui/dashboard-with-collapsible-sidebar"
 
@@ -37,17 +38,19 @@ export default async function DashboardLayout({ children }: { children: React.Re
     if (org) {
       return (
         <MedicalProvider>
-          <FeatureTipsProvider>
-            <DashboardWithCollapsibleSidebar
-              roles={roles}
-              isSuperAdmin={superAdmin.ok}
-              orgName={org.name}
-              planModules={planModules}
-            >
-              {children}
-            </DashboardWithCollapsibleSidebar>
-            <Toaster position="top-right" richColors />
-          </FeatureTipsProvider>
+          <RoleProvider roles={roles} userId={session?.user?.id ?? null}>
+            <FeatureTipsProvider>
+              <DashboardWithCollapsibleSidebar
+                roles={roles}
+                isSuperAdmin={superAdmin.ok}
+                orgName={org.name}
+                planModules={planModules}
+              >
+                {children}
+              </DashboardWithCollapsibleSidebar>
+              <Toaster position="top-right" richColors />
+            </FeatureTipsProvider>
+          </RoleProvider>
         </MedicalProvider>
       )
     }
@@ -55,15 +58,17 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <MedicalProvider>
-      <FeatureTipsProvider>
-        <DashboardWithCollapsibleSidebar
-          roles={roles}
-          isSuperAdmin={superAdmin.ok}
-        >
-          {children}
-        </DashboardWithCollapsibleSidebar>
-        <Toaster position="top-right" richColors />
-      </FeatureTipsProvider>
+      <RoleProvider roles={roles} userId={session?.user?.id ?? null}>
+        <FeatureTipsProvider>
+          <DashboardWithCollapsibleSidebar
+            roles={roles}
+            isSuperAdmin={superAdmin.ok}
+          >
+            {children}
+          </DashboardWithCollapsibleSidebar>
+          <Toaster position="top-right" richColors />
+        </FeatureTipsProvider>
+      </RoleProvider>
     </MedicalProvider>
   )
 }

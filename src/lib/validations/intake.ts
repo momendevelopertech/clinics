@@ -5,6 +5,12 @@ export const intakeFormCreateSchema = z.object({
   description: z.string().trim().max(1000).optional().nullable(),
 });
 
+export const intakeFormUpdateSchema = z.object({
+  name: z.string().trim().min(1).max(160).optional(),
+  description: z.string().trim().max(1000).optional().nullable(),
+  active: z.boolean().optional(),
+});
+
 export const intakeFieldCreateSchema = z.object({
   label: z.string().trim().min(1).max(200),
   labelAr: z.string().trim().max(200).optional().nullable(),

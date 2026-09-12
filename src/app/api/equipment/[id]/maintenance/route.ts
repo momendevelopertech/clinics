@@ -1,28 +1,27 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireOrgContext } from "@/lib/org";
+import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { createAuditLog } from "@/lib/audit";
+import { logServerError } from "@/lib/safe-logger";
 import { getEquipmentCalibrationAlertStatus } from "@/lib/equipment-maintenance";
+import { maintenanceCreateSchema } from "@/lib/validations/ops";
 
-export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { organizationId } = await requireOrgContext();
-    const { id } = await params;
-    const moduleAuthz = await requireModulePermission(organizationId, "locations");
+    const orgId = await getOrgId();
+    assertOrgScope(orgId);
+    const moduleAuthz = await requireModulePermission(orgId, "inventory");
     if (moduleAuthz.response) return moduleAuthz.response;
-    const authz = await requireAnyPermission(organizationId, [
-      { action: "appointments:write", resource: "appointments" },
-      { action: "patients:write", resource: "patients" },
+    const authz = await requireAnyPermission(orgId, [
+      { action: "inventory:read", resource: "inventory" },
     ]);
     if (authz.response) return authz.response;
 
+    const { id } = await params;
     const equipment = await prisma.equipment.findFirst({
-      where: { id, organizationId },
+      where: { id, organizationId: orgId },
       include: { maintenances: { orderBy: { dueAt: "desc" } } },
     });
 
@@ -37,68 +36,76 @@ export async function GET(
       },
       maintenances: equipment.maintenances,
     });
-  } catch {
-    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  } catch (error) {
+    logServerError("Error fetching equipment maintenance", error);
+    return NextResponse.json({ error: "Failed to fetch maintenance log" }, { status: 500 });
   }
 }
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const context = await requireOrgContext();
+    const orgId = await getOrgId();
+    assertOrgScope(orgId);
+    const moduleAuthz = await requireModulePermission(orgId, "inventory");
+    if (moduleAuthz.response) return moduleAuthz.response;
+    const authz = await requireAnyPermission(orgId, [
+      { action: "inventory:write", resource: "inventory" },
+    ]);
+    if (authz.response) return authz.response;
+    const { userId } = authz;
+
     const { id } = await params;
     const equipment = await prisma.equipment.findFirst({
-      where: { id, organizationId: context.organizationId },
+      where: { id, organizationId: orgId },
     });
-
     if (!equipment) {
       return NextResponse.json({ error: "Equipment not found" }, { status: 404 });
     }
 
-    const parsed = await request.json().catch(() => ({}));
-    const type = typeof parsed.type === "string" ? parsed.type : "preventive";
-    const status = typeof parsed.status === "string" ? parsed.status : "completed";
-    const description = typeof parsed.description === "string" ? parsed.description : null;
-    const technician = typeof parsed.technician === "string" ? parsed.technician : null;
-    const dueAt = parsed.dueAt ? new Date(parsed.dueAt) : null;
-    const performedAt = parsed.performedAt ? new Date(parsed.performedAt) : new Date();
-    const notes = typeof parsed.notes === "string" ? parsed.notes : null;
+    const parsed = maintenanceCreateSchema.safeParse(await request.json().catch(() => ({})));
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Validation failed", details: parsed.error.flatten() },
+        { status: 400 },
+      );
+    }
+
+    const { type, status, description, technician, dueAt, performedAt, notes, cost } = parsed.data;
+    const performed = performedAt ? new Date(performedAt) : new Date();
+    const due = dueAt ? new Date(dueAt) : null;
 
     const maintenance = await prisma.equipmentMaintenance.create({
       data: {
-        organizationId: context.organizationId,
+        organizationId: orgId,
         equipmentId: equipment.id,
         type,
         status,
         description,
         technician,
-        dueAt,
-        performedAt,
+        dueAt: due,
+        performedAt: performed,
         notes,
-        cost: parsed.cost ? Number(parsed.cost) : null,
+        cost: cost ?? null,
       },
     });
 
-    const nextCalibrationAt =
-      type === "calibration" && dueAt ? dueAt : equipment.nextCalibrationAt;
+    const nextCalibrationAt = type === "calibration" && due ? due : equipment.nextCalibrationAt;
+    const needsMaintenance =
+      status === "overdue" || (nextCalibrationAt && nextCalibrationAt <= new Date());
 
     await prisma.equipment.update({
       where: { id: equipment.id },
       data: {
-        lastCalibrationAt: type === "calibration" && performedAt ? performedAt : equipment.lastCalibrationAt,
+        lastCalibrationAt:
+          type === "calibration" && performed ? performed : equipment.lastCalibrationAt,
         nextCalibrationAt,
-        status:
-          status === "overdue" || (nextCalibrationAt && nextCalibrationAt <= new Date())
-            ? "maintenance_required"
-            : "active",
+        status: needsMaintenance ? "maintenance_required" : "active",
       },
     });
 
     await createAuditLog({
-      organizationId: context.organizationId,
-      userId: context.userId,
+      organizationId: orgId,
+      userId,
       action: "CREATE",
       entityType: "EquipmentMaintenance",
       entityId: maintenance.id,
@@ -106,7 +113,8 @@ export async function POST(
     });
 
     return NextResponse.json(maintenance, { status: 201 });
-  } catch {
-    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  } catch (error) {
+    logServerError("Error saving equipment maintenance", error);
+    return NextResponse.json({ error: "Failed to save maintenance log" }, { status: 500 });
   }
 }

@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import { AddLabResultDialog } from "@/components/labs/add-lab-result-dialog";
 import { AddLabOrderDialog } from "@/components/labs/add-lab-order-dialog";
+import { LabOrdersSection } from "@/components/labs/lab-orders-section";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { logClientError } from "@/lib/client-logger";
@@ -410,6 +411,8 @@ export default function LabResultsPage() {
           />
         ) : null}
       </div>
+
+      <LabOrdersSection onChanged={fetchLabResults} />
     </div>
   );
 }

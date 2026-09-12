@@ -74,3 +74,47 @@ export async function PATCH(
     return NextResponse.json({ error: "Failed to update plan" }, { status: 500 });
   }
 }
+
+/** DELETE /api/treatment-plans/[id] — removes a draft/active plan with its steps. */
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params;
+    const orgId = await getOrgId();
+    assertOrgScope(orgId);
+    const moduleAuthz = await requireModulePermission(orgId, "encounters");
+    if (moduleAuthz.response) return moduleAuthz.response;
+    const authz = await requireAnyPermission(orgId, [
+      { action: "encounters:write", resource: "encounters" },
+    ]);
+    if (authz.response) return authz.response;
+    const { userId } = authz;
+
+    const plan = await prisma.treatmentPlan.findFirst({
+      where: { id, organizationId: orgId },
+    });
+    if (!plan) return NextResponse.json({ error: "Plan not found" }, { status: 404 });
+    if (plan.status === "completed") {
+      return NextResponse.json(
+        { error: "Completed plans are kept for the medical record" },
+        { status: 409 },
+      );
+    }
+
+    await prisma.treatmentPlan.delete({ where: { id } });
+    await createAuditLog({
+      organizationId: orgId,
+      userId,
+      action: "DELETE",
+      entityType: "TreatmentPlan",
+      entityId: id,
+      beforeState: JSON.stringify({ status: plan.status, title: plan.title }),
+    });
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    logServerError("Error deleting treatment plan", error);
+    return NextResponse.json({ error: "Failed to delete plan" }, { status: 500 });
+  }
+}

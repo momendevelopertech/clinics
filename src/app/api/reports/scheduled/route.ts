@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { logServerError } from "@/lib/safe-logger";
 import { authorizeCronRequest } from "@/lib/cron-auth";
-import { buildMonthlyCsv, isScheduleDue } from "@/lib/report-export";
+import { buildMonthlyCsv, isScheduleDue, type ServiceRow } from "@/lib/report-export";
 import { netProfit } from "@/lib/analytics";
 
 function monthBounds(now: Date) {
@@ -57,40 +57,79 @@ export async function POST(request: NextRequest) {
       if (org?.status !== "active") continue;
 
       const { start, end, label } = monthBounds(now);
-      const [payments, invoiceAgg, expensesAgg] = await Promise.all([
-        prisma.payment.aggregate({
-          where: { invoice: { organizationId: schedule.organizationId }, status: "completed", createdAt: { gte: start, lt: end } },
-          _sum: { amount: true },
-        }),
-        prisma.invoice.findMany({
-          where: { organizationId: schedule.organizationId, status: { in: ["sent", "partially_paid", "overdue"] }, createdAt: { gte: start, lt: end } },
-          select: { totalAmount: true, amountPaid: true },
-        }),
-        prisma.expense.aggregate({
-          where: { organizationId: schedule.organizationId, spentAt: { gte: start, lt: end } },
-          _sum: { amount: true },
-        }),
-      ]);
-      const revenue = Number(payments._sum.amount ?? 0);
+      const [appointments, payments, paymentsRefunded, invoiceAgg, expensesAgg, perDoctorRows] =
+        await Promise.all([
+          prisma.appointment.findMany({
+            where: {
+              organizationId: schedule.organizationId,
+              startTime: { gte: start, lt: end },
+            },
+            select: { status: true },
+          }),
+          prisma.payment.aggregate({
+            where: { invoice: { organizationId: schedule.organizationId }, status: "completed", createdAt: { gte: start, lt: end } },
+            _sum: { amount: true },
+          }),
+          prisma.payment.aggregate({
+            where: { invoice: { organizationId: schedule.organizationId }, status: "completed", refundedAmount: { gt: 0 }, createdAt: { gte: start, lt: end } },
+            _sum: { refundedAmount: true },
+          }),
+          prisma.invoice.findMany({
+            where: { organizationId: schedule.organizationId, status: { in: ["sent", "partially_paid", "overdue"] }, createdAt: { gte: start, lt: end } },
+            select: { totalAmount: true, amountPaid: true },
+          }),
+          prisma.expense.aggregate({
+            where: { organizationId: schedule.organizationId, spentAt: { gte: start, lt: end } },
+            _sum: { amount: true },
+          }),
+          prisma.$queryRaw`
+            SELECT u.name AS name, COUNT(a.id)::int AS appointments
+            FROM "Appointment" a
+            JOIN "User" u ON u.id = a."providerId"
+            WHERE a."organizationId" = ${schedule.organizationId}
+              AND a."startTime" >= ${start} AND a."startTime" < ${end}
+            GROUP BY u.name
+            ORDER BY appointments DESC
+          `,
+        ]);
+      const revenue =
+        Number(payments._sum.amount ?? 0) - Number(paymentsRefunded._sum.refundedAmount ?? 0);
       const expenses = Number(expensesAgg._sum.amount ?? 0);
+      const statusCounts: Record<string, number> = {};
+      for (const appointment of appointments) {
+        statusCounts[appointment.status] = (statusCounts[appointment.status] ?? 0) + 1;
+      }
+      const totalAppointments = appointments.length;
+      const completed = statusCounts["completed"] ?? 0;
+      const cancelled = statusCounts["cancelled"] ?? 0;
+      const noShow = statusCounts["no_show"] ?? 0;
+      const completionRate =
+        totalAppointments === 0 ? 0 : Math.round((completed / totalAppointments) * 100);
       const outstanding = invoiceAgg.reduce(
         (s, i) => s + Math.max(0, Number(i.totalAmount) - Number(i.amountPaid)),
         0,
       );
+      const perService: ServiceRow[] = (
+        perDoctorRows as Array<{ name: string | null; appointments: number }>
+      ).map((row) => ({
+        name: `Dr. ${row.name ?? "Unassigned"}`,
+        count: row.appointments,
+        revenue: 0,
+      }));
       const csv = buildMonthlyCsv(
         label,
         {
-          totalAppointments: 0,
-          completed: 0,
-          cancelled: 0,
-          noShow: 0,
-          completionRate: 0,
+          totalAppointments,
+          completed,
+          cancelled,
+          noShow,
+          completionRate,
           revenue,
           expenses,
           net: netProfit(revenue, expenses),
           outstanding,
         },
-        [],
+        perService,
       );
 
       let recipients: string[] = [];

@@ -18,6 +18,7 @@ import { parseOrgSettings } from "@/lib/org-settings";
 import { summarizeAttendance } from "@/lib/appointments";
 import { TreatmentPlansSection } from "@/components/treatment/treatment-plans-section";
 import { VitalsTrendCard } from "@/components/patients/vitals-trend-card";
+import { PatientAllergiesCard } from "@/components/patients/patient-allergies-card";
 
 type TimelineEvent = {
   id: string;
@@ -307,6 +308,8 @@ export default async function PatientTimelinePage({
       <TreatmentPlansSection patientId={patientId} t={t} />
 
       <VitalsTrendCard patientId={patientId} t={t} />
+
+      <PatientAllergiesCard patientId={patientId} t={t} />
 
       {events.length === 0 ? (
         <p className="rounded-[20px] border border-white/55 bg-white/60 p-8 text-center text-sm text-muted-foreground dark:border-white/6 dark:bg-white/[0.03]">

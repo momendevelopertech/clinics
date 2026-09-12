@@ -14,14 +14,21 @@ import Link from "next/link";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useMedical, Patient } from "@/context/MedicalContext";
+import { useRoles } from "@/context/RoleContext";
+import { DoctorBoard } from "@/components/dashboard/doctor-board";
+import { ReceptionBoard } from "@/components/dashboard/reception-board";
 import { PatientProfileSheet } from "@/components/patients/patient-profile-sheet";
 import { AddPatientDialog } from "@/components/patients/add-patient-dialog";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/components/locale/locale-provider";
 
 export default function DashboardPage() {
+  const { roles } = useRoles();
   const { t, lang } = useLocale();
   const { patients, appointments, refetchPatients } = useMedical();
+
+  const isDoctor = roles.includes("Doctor");
+  const isReception = roles.includes("Care Coordinator");
 
   const [today] = React.useState(() => new Date().toISOString().split("T")[0]);
   const [now] = React.useState(() => Date.now());
@@ -209,6 +216,9 @@ export default function DashboardPage() {
     amber: "bg-amber-500/12 text-amber-700 dark:text-amber-300",
     red: "bg-red-500/12 text-red-700 dark:text-red-300",
   };
+
+  if (isDoctor) return <DoctorBoard />;
+  if (isReception) return <ReceptionBoard />;
 
   return (
     <motion.div

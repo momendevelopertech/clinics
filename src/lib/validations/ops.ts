@@ -135,3 +135,36 @@ export const reportsMonthQuerySchema = z.object({
     .optional()
     .nullable(),
 });
+
+export const EQUIPMENT_STATUSES = [
+  "active",
+  "inactive",
+  "maintenance_required",
+] as const;
+
+export const EQUIPMENT_TYPES = [
+  "device",
+  "instrument",
+  "furniture",
+  "vehicle",
+  "other",
+] as const;
+
+export const equipmentCreateSchema = z.object({
+  name: z.string().trim().min(1).max(200),
+  type: z.enum(EQUIPMENT_TYPES).optional().nullable(),
+  status: z.enum(EQUIPMENT_STATUSES).default("active"),
+  lastCalibrationAt: z.string().datetime().optional().nullable(),
+  nextCalibrationAt: z.string().datetime().optional().nullable(),
+});
+
+export const maintenanceCreateSchema = z.object({
+  type: z.enum(["preventive", "repair", "calibration", "inspection"]).default("preventive"),
+  status: z.enum(["scheduled", "in_progress", "completed", "overdue"]).default("completed"),
+  description: z.string().trim().max(4000).optional().nullable(),
+  technician: z.string().trim().max(200).optional().nullable(),
+  dueAt: z.string().datetime().optional().nullable(),
+  performedAt: z.string().datetime().optional().nullable(),
+  notes: z.string().trim().max(4000).optional().nullable(),
+  cost: z.number().finite().nonnegative().optional().nullable(),
+});

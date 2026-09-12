@@ -9,6 +9,7 @@ export const patientCreateSchema = z.object({
   email: z.string().email().optional().nullable().or(z.literal("")),
   phone: z.string().max(20).optional().nullable(),
   phoneSecondary: z.string().max(20).optional().nullable(),
+  marketingOptOut: z.boolean().optional(),
   address: z.string().max(500).optional().nullable(),
   city: z.string().max(100).optional().nullable(),
   state: z.string().max(100).optional().nullable(),
@@ -47,6 +48,16 @@ export const patientHistorySchema = z.object({
   resolvedAt: z.string().date().optional().nullable(),
   status: z.enum(["active", "resolved"]).default("active"),
 });
+
+export const patientAllergyCreateSchema = z.object({
+  allergen: z.string().trim().min(1).max(200),
+  severity: z.enum(["mild", "moderate", "severe"]).optional().nullable(),
+  reaction: z.string().trim().max(500).optional().nullable(),
+  onset: z.string().datetime().optional().nullable(),
+  active: z.boolean().optional(),
+});
+
+export const patientAllergyUpdateSchema = patientAllergyCreateSchema.partial();
 
 export type PatientCreateInput = z.infer<typeof patientCreateSchema>;
 export type PatientUpdateInput = z.infer<typeof patientUpdateSchema>;

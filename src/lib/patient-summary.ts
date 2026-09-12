@@ -1,3 +1,5 @@
+import QRCode from "qrcode";
+
 export function buildPatientSummaryPayload(input: {
   id: string;
   firstName?: string | null;
@@ -49,6 +51,22 @@ export function buildPatientSummaryPayload(input: {
       : null,
     lastVisit: input.lastVisit || null,
     qrData,
-    qrUrl: `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=220x220`,
+    qrUrl: "",
   };
+}
+
+/**
+ * Renders the summary QR locally as a PNG data URL so the patient's name/MRN
+ * never leave the server (no third-party QR service involved).
+ */
+export async function buildPatientSummaryQR(payload: ReturnType<typeof buildPatientSummaryPayload>): Promise<string> {
+  try {
+    return await QRCode.toDataURL(payload.qrData, {
+      width: 220,
+      margin: 1,
+      errorCorrectionLevel: "M",
+    });
+  } catch {
+    return "";
+  }
 }

@@ -260,6 +260,18 @@ function EncounterSections({ data }: { data: TemplateData }) {
           ))}
         </View>
       ) : null}
+      {e.vitals.length > 0 ? (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Vitals</Text>
+          {e.vitals.map((v, i) => (
+            <Text key={i} style={styles.bullet}>
+              • BP {v.bloodPressureSystolic ?? "—"}/{v.bloodPressureDiastolic ?? "—"} mmHg
+              {v.heartRate ? ` · HR ${v.heartRate} bpm` : ""}
+              {v.temperature ? ` · Temp ${v.temperature}°C` : ""}
+            </Text>
+          ))}
+        </View>
+      ) : null}
       {e.notes.length > 0 && e.notes[0] ? (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Clinical notes</Text>

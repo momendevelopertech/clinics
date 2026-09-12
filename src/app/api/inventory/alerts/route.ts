@@ -87,6 +87,7 @@ export async function POST(request: NextRequest) {
           entityType: "inventory_digest",
           entityId,
         })),
+        skipDuplicates: true,
       });
       digests += 1;
     }

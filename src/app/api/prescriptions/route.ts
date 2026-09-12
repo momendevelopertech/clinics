@@ -5,6 +5,7 @@ import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { prescriptionItemSchema, prescriptionSchema } from "@/lib/validations";
+import { findMedicationAllergyWarnings, type MedAllergyWarning } from "@/lib/allergies";
 import { logServerError } from "@/lib/safe-logger";
 
 export async function GET(request: Request) {
@@ -76,6 +77,22 @@ export async function POST(request: Request) {
     if (!patient) {
       return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
+
+    // Advisory allergy screening: flag active allergies that clash with the
+    // prescribed medication(s). The doctor still decides — this is a warning,
+    // not a hard block.
+    const activeAllergies = await prisma.patientAllergy.findMany({
+      where: { patientId, organizationId: orgId, active: true },
+      select: { allergen: true, severity: true, reaction: true },
+    });
+    const allergyWarnings: MedAllergyWarning[] = [
+      ...findMedicationAllergyWarnings(activeAllergies, rxData.medicationName ?? ""),
+      ...(Array.isArray(items) ? items : [])
+        .map((item) => item?.medicationName && findMedicationAllergyWarnings(activeAllergies, String(item.medicationName)) || [])
+        .flat(),
+    ];
+    const dedupedWarnings = [...new Map(allergyWarnings.map((w) => [w.allergen, w])).values()];
+
     if (encounterId) {
       const encounter = await prisma.encounter.findFirst({
         where: { id: encounterId, organizationId: orgId, patientId },
@@ -136,7 +153,10 @@ export async function POST(request: Request) {
       },
     );
 
-    return NextResponse.json(prescription, { status: 201 });
+    return NextResponse.json(
+      { ...prescription, allergyWarnings: dedupedWarnings },
+      { status: 201 },
+    );
   } catch (error) {
     logServerError("Error creating prescription", error);
     return NextResponse.json(

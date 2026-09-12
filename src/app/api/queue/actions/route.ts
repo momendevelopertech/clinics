@@ -75,10 +75,23 @@ export async function POST(request: Request) {
       );
     }
 
-    const updated = await prisma.appointment.update({
-      where: { id: appointment.id },
+    // Atomic compare-and-swap: only transitions if the source status is still
+    // in the allowed set, so two concurrent actions cannot both apply.
+    const updated = await prisma.appointment.updateMany({
+      where: {
+        id: appointment.id,
+        organizationId: orgId,
+        status: { in: ACTION_SOURCE[action] },
+      },
       data: { status: target },
     });
+    if (updated.count !== 1) {
+      return NextResponse.json(
+        { error: "Appointment already moved by another action" },
+        { status: 409 },
+      );
+    }
+
     await createAuditLog({
       organizationId: orgId,
       userId,
@@ -88,7 +101,7 @@ export async function POST(request: Request) {
       beforeState: JSON.stringify({ status: appointment.status }),
       afterState: JSON.stringify({ status: target, queueAction: action }),
     });
-    return NextResponse.json(updated);
+    return NextResponse.json({ id: appointment.id, status: target });
   } catch (error) {
     logServerError("Queue action failed", error);
     return NextResponse.json({ error: "Queue action failed" }, { status: 500 });

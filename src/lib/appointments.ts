@@ -62,6 +62,21 @@ export function isAppointmentTransitionAllowed(current: string, next: string): b
   return ALLOWED_TRANSITIONS[current]?.includes(next) ?? false;
 }
 
+/** Reception check-in: only scheduled/confirmed visits can be marked arrived. */
+export function canCheckInAppointment(status: string): boolean {
+  return status === "scheduled" || status === "confirmed";
+}
+
+/** Reception check-out: an in-progress visit is the one leaving the room. */
+export function canCheckOutAppointment(status: string): boolean {
+  return status === "in_progress";
+}
+
+/** Reception no-show: a patient who never showed for a booked visit. */
+export function canMarkAppointmentNoShow(status: string): boolean {
+  return status === "scheduled" || status === "confirmed" || status === "arrived";
+}
+
 type AppointmentDb = {
   appointment: Pick<typeof prisma.appointment, "findFirst" | "count">;
 };

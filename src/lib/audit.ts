@@ -1,7 +1,7 @@
 import type { PrismaClient, Prisma } from "@prisma/client";
 import { prisma } from "./prisma";
 
-export type AuditAction = "CREATE" | "UPDATE" | "DELETE";
+export type AuditAction = "CREATE" | "UPDATE" | "DELETE" | "READ";
 type AuditDbClient = PrismaClient | Prisma.TransactionClient;
 
 export interface CreateAuditParams {

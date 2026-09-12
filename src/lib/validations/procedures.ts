@@ -51,3 +51,8 @@ export const patientPackageCreateSchema = z.object({
   packageId: z.string().min(1),
   pricePaid: z.number().finite().nonnegative().max(100_000_000).optional().nullable(),
 });
+
+export const patientPackageUpdateSchema = z.object({
+  status: z.enum(["active", "cancelled"]).optional(),
+  pricePaid: z.number().finite().nonnegative().max(100_000_000).optional().nullable(),
+});

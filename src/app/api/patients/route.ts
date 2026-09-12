@@ -208,6 +208,7 @@ export async function POST(request: Request) {
           country: sensitiveData.country,
           bloodType: data.bloodType || null,
           allergies: data.allergies || null,
+          marketingOptOut: data.marketingOptOut ?? false,
           primaryCareProvider: data.primaryCareProvider || null,
           familyHistory: sensitiveData.familyHistory,
           sensitiveDataEncrypted: sensitiveData.sensitiveDataEncrypted,

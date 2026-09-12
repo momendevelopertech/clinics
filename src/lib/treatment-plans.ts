@@ -21,7 +21,7 @@ export function isStepTransitionAllowed(current: string, next: string): boolean 
   return STEP_TRANSITIONS[current]?.includes(next) ?? false;
 }
 
-/** A plan with no pending steps left is finishable. */
+/** A plan with no pending steps is finishable (including one with no steps). */
 export function isPlanFinishable(stepStatuses: string[]): boolean {
-  return stepStatuses.length > 0 && stepStatuses.every((s) => s !== "pending");
+  return stepStatuses.every((s) => s !== "pending");
 }

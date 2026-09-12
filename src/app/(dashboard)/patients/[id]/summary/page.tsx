@@ -3,17 +3,57 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
+interface SummaryVitals {
+  bloodPressure: string | null;
+  heartRate: number | null;
+  weightKg: number | null;
+  recordedAt: string | null;
+}
+
+interface SummaryItem {
+  name: string;
+  status?: string | null;
+  dosage?: string | null;
+  frequency?: string | null;
+  date?: string | null;
+}
+
+interface PatientSummary {
+  id: string;
+  name: string;
+  mrn: string | null;
+  dob: string | null;
+  phone: string | null;
+  email: string | null;
+  diagnoses: SummaryItem[];
+  medications: SummaryItem[];
+  latestVitals: SummaryVitals | null;
+  lastVisit: string | null;
+  qrUrl: string;
+}
+
 export default function PatientSummaryPage() {
   const params = useParams<{ id: string }>();
-  const [summary, setSummary] = useState<any>(null);
+  const [summary, setSummary] = useState<PatientSummary | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!params?.id) return;
     fetch(`/api/patients/${params.id}/summary`)
-      .then((res) => res.json())
-      .then((data) => setSummary(data))
-      .catch(() => setSummary(null));
+      .then((res) => {
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        setSummary(data);
+        setError(null);
+      })
+      .catch(() => setError("Failed to load summary"));
   }, [params?.id]);
+
+  if (error) {
+    return <div className="p-6 text-sm text-red-600">{error}</div>;
+  }
 
   if (!summary) {
     return <div className="p-6 text-sm text-gray-500">Loading summary…</div>;
@@ -27,7 +67,9 @@ export default function PatientSummaryPage() {
             <h1 className="text-2xl font-bold">Patient summary</h1>
             <p className="text-sm text-gray-500">MRN: {summary.mrn ?? "—"}</p>
           </div>
-          <img src={summary.qrUrl} alt="Patient QR code" className="h-28 w-28 rounded border bg-white p-2" />
+          {summary.qrUrl ? (
+            <img src={summary.qrUrl} alt="Patient QR code" className="h-28 w-28 rounded border bg-white p-2" />
+          ) : null}
         </div>
       </div>
 
@@ -62,7 +104,7 @@ export default function PatientSummaryPage() {
         <h2 className="mb-3 font-semibold">Diagnoses</h2>
         {summary.diagnoses.length ? (
           <ul className="space-y-2 text-sm">
-            {summary.diagnoses.map((item: any, index: number) => (
+            {summary.diagnoses.map((item: SummaryItem, index: number) => (
               <li key={`${item.name}-${index}`}>• {item.name} {item.status ? `(${item.status})` : ""}</li>
             ))}
           </ul>
@@ -75,7 +117,7 @@ export default function PatientSummaryPage() {
         <h2 className="mb-3 font-semibold">Medications</h2>
         {summary.medications.length ? (
           <ul className="space-y-2 text-sm">
-            {summary.medications.map((item: any, index: number) => (
+            {summary.medications.map((item: SummaryItem, index: number) => (
               <li key={`${item.name}-${index}`}>• {item.name} {item.dosage ? `· ${item.dosage}` : ""} {item.frequency ? `· ${item.frequency}` : ""}</li>
             ))}
           </ul>

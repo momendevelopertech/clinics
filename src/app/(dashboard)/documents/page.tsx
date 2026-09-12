@@ -38,6 +38,7 @@ interface Document {
   name: string;
   type: string;
   storageKey: string;
+  downloadUrl?: string;
   mimeType: string | null;
   createdAt: string;
 }
@@ -325,7 +326,7 @@ export default function DocumentsPage() {
                     <td className="px-6 py-4">
                       {isExternalUrl(document.storageKey) ? (
                         <a
-                          href={document.storageKey}
+                          href={document.downloadUrl ?? document.storageKey}
                           target="_blank"
                           rel="noopener noreferrer"
                         >

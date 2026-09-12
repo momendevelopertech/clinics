@@ -1,7 +1,9 @@
 import { existsSync } from "node:fs";
-import { execFileSync } from "node:child_process";
+import { execSync } from "node:child_process";
 
 if (process.env.VERCEL !== "1" && process.env.CI !== "true" && existsSync(".git")) {
-  const npx = process.platform === "win32" ? "npx.cmd" : "npx";
-  execFileSync(npx, ["husky"], { stdio: "inherit" });
+  execSync(process.platform === "win32" ? "npx.cmd husky" : "npx husky", {
+    stdio: "inherit",
+    shell: process.platform === "win32",
+  });
 }

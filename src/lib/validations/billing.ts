@@ -37,6 +37,7 @@ export const paymentSchema = z.object({
 
 export const paymentRefundSchema = z.object({
   amount: z.number().positive().optional().nullable(),
+  refundKey: z.string().trim().min(8).max(100).optional().nullable(),
 });
 
 export const EXPENSE_CATEGORIES = [

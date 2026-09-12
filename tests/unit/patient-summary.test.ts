@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildPatientSummaryPayload } from "@/lib/patient-summary";
+import { buildPatientSummaryPayload, buildPatientSummaryQR } from "@/lib/patient-summary";
 
 describe("patient summary", () => {
   it("builds a printable summary payload with QR data", () => {
@@ -18,8 +18,21 @@ describe("patient summary", () => {
     });
 
     expect(payload.name).toBe("Sara Ali");
-    expect(payload.qrUrl).toContain("api.qrserver.com");
+    expect(payload.qrUrl).toBe("");
+    expect(payload.qrData).toContain('"mrn":"MRN-100"');
     expect(payload.diagnoses[0].name).toBe("Hypertension");
     expect(payload.medications[0].name).toBe("Amlodipine");
+  });
+
+  it("renders the QR locally as a data URL (no third-party service)", async () => {
+    const payload = buildPatientSummaryPayload({
+      id: "p1",
+      firstName: "Sara",
+      lastName: "Ali",
+      mrn: "MRN-100",
+    });
+    const qrUrl = await buildPatientSummaryQR(payload);
+    expect(qrUrl.startsWith("data:image/png;base64,")).toBe(true);
+    expect(qrUrl).not.toContain("api.qrserver.com");
   });
 });

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
-import { buildPatientSummaryPayload } from "@/lib/patient-summary";
+import { buildPatientSummaryPayload, buildPatientSummaryQR } from "@/lib/patient-summary";
 
 export async function GET(
   _request: Request,
@@ -27,7 +27,11 @@ export async function GET(
         diagnoses: { orderBy: { createdAt: "desc" }, take: 5 },
         prescriptions: { orderBy: { createdAt: "desc" }, take: 5 },
         vitals: { orderBy: { recordedAt: "desc" }, take: 1 },
-        appointments: { orderBy: { startTime: "desc" }, take: 1 },
+        appointments: {
+          where: { status: { in: ["completed", "arrived", "in_progress"] } },
+          orderBy: { startTime: "desc" },
+          take: 1,
+        },
       },
     });
 
@@ -65,6 +69,8 @@ export async function GET(
         : null,
       lastVisit: patient.appointments[0]?.startTime ? new Date(patient.appointments[0].startTime).toISOString() : null,
     });
+
+    summary.qrUrl = await buildPatientSummaryQR(summary);
 
     return NextResponse.json(summary);
   } catch {

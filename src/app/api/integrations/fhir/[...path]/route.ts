@@ -3,6 +3,15 @@ import { requireOrgContext, isAuthContextError } from "@/lib/org";
 import { hasPermission } from "@/lib/auth";
 import { logServerError } from "@/lib/safe-logger";
 import { prisma } from "@/lib/prisma";
+import { authenticateApiKey, extractBearerToken } from "@/lib/api-keys";
+import { deliverWebhook } from "@/lib/webhook-delivery";
+import { createAuditLog } from "@/lib/audit";
+import {
+  parseFhirPatient,
+  parseFhirObservation,
+  buildFhirResourceResponse,
+  type FhirResourceInput,
+} from "@/lib/fhir-write";
 
 export const runtime = "nodejs";
 
@@ -235,5 +244,188 @@ export async function GET(
       { error: "Failed to reach FHIR upstream" },
       { status: 502 },
     );
+  }
+}
+
+/**
+ * FHIR R4 write-back: `POST .../Patient` and `POST .../Observation`.
+ *
+ * Two auth modes:
+ *   - Staff session with `patients:write`.
+ *   - Machine API key: `Authorization: Bearer crm_live_…` + the owning org's
+ *     `x-org-slug` header; the key must hold the `fhir:write` scope.
+ *
+ * Writes are immutable-to-the-source: Patient create / Vital append, then an
+ * `observation.created` / `patient.created` webhook is fired to any subscribed
+ * webhook of the org.
+ */
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ path: string[] }> },
+) {
+  try {
+    const { path } = await params;
+    const resourceType = path?.[0];
+    if (path?.length !== 1 || (resourceType !== "Patient" && resourceType !== "Observation")) {
+      return NextResponse.json(
+        { error: "Write-back supports only Patient and Observation", status: 501 },
+        { status: 501 },
+      );
+    }
+
+    const resource = (await request.json().catch(() => null)) as FhirResourceInput | null;
+    if (!resource || typeof resource !== "object") {
+      return NextResponse.json({ error: "Invalid FHIR resource body" }, { status: 400 });
+    }
+
+    const bearer = extractBearerToken(request.headers.get("authorization"));
+    let organizationId: string;
+    let userId: string | null = null;
+    let auditOrgId: string;
+
+    if (bearer?.startsWith("crm_live_")) {
+      if (!request.headers.get("x-org-slug")) {
+        return NextResponse.json(
+          { error: "x-org-slug header is required for API key authentication" },
+          { status: 400 },
+        );
+      }
+      const org = await prisma.organization.findFirst({
+        where: { slug: request.headers.get("x-org-slug") ?? "" },
+        select: { id: true },
+      });
+      if (!org) {
+        return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+      }
+      const keyAuth = await authenticateApiKey(org.id, bearer);
+      if (!keyAuth.ok) {
+        return NextResponse.json({ error: "Invalid or expired API key" }, { status: 401 });
+      }
+      if (!keyAuth.scopes.includes("fhir:write")) {
+        return NextResponse.json({ error: "API key lacks fhir:write scope" }, { status: 403 });
+      }
+      organizationId = org.id;
+      auditOrgId = org.id;
+    } else {
+      const context = await requireOrgContext();
+      const canWrite = await hasPermission(
+        context.userId,
+        context.organizationId,
+        "patients:write",
+        "patients",
+      );
+      if (!canWrite) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+      organizationId = context.organizationId;
+      userId = context.userId;
+      auditOrgId = context.organizationId;
+    }
+
+    if (resourceType === "Patient") {
+      const parsed = parseFhirPatient(resource);
+      if (!parsed.ok) {
+        return NextResponse.json({ error: parsed.error }, { status: 422 });
+      }
+      const patient = await prisma.$transaction(async (tx) => {
+        try {
+          return await tx.patient.create({
+            data: {
+              organizationId,
+              firstName: parsed.payload.firstName,
+              lastName: parsed.payload.lastName,
+              gender: parsed.payload.gender,
+              dateOfBirth: parsed.payload.dateOfBirth,
+              phone: parsed.payload.phone,
+              mrn: parsed.payload.mrn,
+            },
+          });
+        } catch (error) {
+          if (
+            typeof error === "object" &&
+            error !== null &&
+            (error as { code?: string }).code === "P2002"
+          ) {
+            return null; // duplicate MRN
+          }
+          throw error;
+        }
+      });
+      if (!patient) {
+        return NextResponse.json({ error: "MRN already exists for this clinic" }, { status: 409 });
+      }
+      await createAuditLog({
+        organizationId: auditOrgId,
+        userId,
+        action: "CREATE",
+        entityType: "Patient",
+        entityId: patient.id,
+        actorType: userId ? "user" : "system",
+        afterState: JSON.stringify({
+          source: "fhir:write",
+          mrn: patient.mrn,
+        }),
+      });
+      void deliverWebhook(organizationId, "patient.created", {
+        resourceType: "Patient",
+        id: patient.id,
+        mrn: patient.mrn,
+        fullName: `${patient.firstName} ${patient.lastName}`,
+      });
+      return new NextResponse(
+        JSON.stringify(buildFhirResourceResponse("Patient", patient.id)),
+        { status: 201, headers: { "Content-Type": "application/fhir+json" } },
+      );
+    }
+
+    const parsed = parseFhirObservation(resource);
+    if (!parsed.ok) {
+      return NextResponse.json({ error: parsed.error }, { status: 422 });
+    }
+    const patient = await prisma.patient.findFirst({
+      where: { id: parsed.payload.patientId, organizationId },
+      select: { id: true },
+    });
+    if (!patient) {
+      return NextResponse.json({ error: "Patient not found in this clinic" }, { status: 404 });
+    }
+    const vital = await prisma.vital.create({
+      data: {
+        patientId: patient.id,
+        weightKg: parsed.payload.weightKg,
+        heightCm: parsed.payload.heightCm,
+        bloodPressureSystolic: parsed.payload.bloodPressureSystolic,
+        bloodPressureDiastolic: parsed.payload.bloodPressureDiastolic,
+        heartRate: parsed.payload.heartRate,
+        spO2: parsed.payload.spO2,
+        temperature: parsed.payload.temperature,
+        recordedAt: parsed.payload.recordedAt ?? new Date(),
+      },
+    });
+    await createAuditLog({
+      organizationId: auditOrgId,
+      userId,
+      action: "CREATE",
+      entityType: "Vital",
+      entityId: vital.id,
+      actorType: userId ? "user" : "system",
+      afterState: JSON.stringify({ source: "fhir:write", code: parsed.payload.codeLabel }),
+    });
+    void deliverWebhook(organizationId, "observation.created", {
+      resourceType: "Observation",
+      id: vital.id,
+      patientId: vital.patientId,
+      code: parsed.payload.codeLabel,
+    });
+    return new NextResponse(
+      JSON.stringify(buildFhirResourceResponse("Observation", vital.id)),
+      { status: 201, headers: { "Content-Type": "application/fhir+json" } },
+    );
+  } catch (error) {
+    if (isAuthContextError(error)) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    logServerError("FHIR write-back failed", error);
+    return NextResponse.json({ error: "Failed to write FHIR resource" }, { status: 500 });
   }
 }

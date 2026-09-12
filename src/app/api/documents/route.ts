@@ -7,6 +7,7 @@ import { requireModulePermission } from "@/lib/permissions";
 import { createAuditLog } from "@/lib/audit";
 import { logServerError } from "@/lib/safe-logger";
 import { documentCreateSchema } from "@/lib/validations/uploads";
+import { mintDocumentDownloadToken } from "@/lib/signed-urls";
 
 export async function GET(request: Request) {
   try {
@@ -46,6 +47,9 @@ export async function GET(request: Request) {
         name: d.name,
         type: d.type,
         storageKey: d.storageKey,
+        downloadUrl: `/api/documents/${d.id}/download?token=${encodeURIComponent(
+          mintDocumentDownloadToken({ orgId, documentId: d.id }),
+        )}`,
         mimeType: d.mimeType,
         createdAt: d.createdAt.toISOString(),
       })),

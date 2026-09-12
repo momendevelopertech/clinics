@@ -47,7 +47,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const { start, end } = monthBounds(searchParams.get("month"));
 
-  const [appointments, payments, invoiceAgg, perDayRows, perDoctorRows, expensesAgg, serviceRows] =
+  const [appointments, payments, paymentsRefunded, invoiceAgg, perDayRows, perDoctorRows, expensesAgg, serviceRows] =
     await Promise.all([
       prisma.appointment.findMany({
         where: { organizationId, startTime: { gte: start, lt: end } },
@@ -60,6 +60,15 @@ export async function GET(request: Request) {
           createdAt: { gte: start, lt: end },
         },
         _sum: { amount: true },
+      }),
+      prisma.payment.aggregate({
+        where: {
+          invoice: { organizationId },
+          status: "completed",
+          refundedAmount: { gt: 0 },
+          createdAt: { gte: start, lt: end },
+        },
+        _sum: { refundedAmount: true },
       }),
       prisma.invoice.findMany({
         where: {
@@ -114,7 +123,8 @@ export async function GET(request: Request) {
   const completionRate =
     totalAppointments === 0 ? 0 : Math.round((completed / totalAppointments) * 100);
 
-  const revenue = Number(payments._sum.amount ?? 0);
+  const revenue =
+    Number(payments._sum.amount ?? 0) - Number(paymentsRefunded._sum.refundedAmount ?? 0);
   const expenses = Number(expensesAgg._sum.amount ?? 0);
   const outstanding = invoiceAgg.reduce(
     (sum, invoice) =>

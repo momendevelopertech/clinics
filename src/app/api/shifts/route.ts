@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
@@ -62,25 +63,48 @@ export async function POST(request: Request) {
     if (branchId && !branch) {
       return NextResponse.json({ error: "Branch not found" }, { status: 400 });
     }
-    const existing = await prisma.shift.findMany({
-      where: { organizationId: context.organizationId, userId, weekday },
-      select: { userId: true, weekday: true, startTime: true, endTime: true },
-    });
-    if (findShiftConflict(existing, { userId, weekday, startTime, endTime })) {
+    // Conflict check + insert run in one SERIALIZABLE transaction so two
+    // concurrent creations cannot both pass the overlap check. A lost race
+    // surfaces as a P2034 serialization failure -> 409.
+    let shift;
+    try {
+      shift = await prisma.$transaction(
+        async (tx: Prisma.TransactionClient) => {
+          const existing = await tx.shift.findMany({
+            where: { organizationId: context.organizationId, userId, weekday },
+            select: { userId: true, weekday: true, startTime: true, endTime: true },
+          });
+          if (findShiftConflict(existing, { userId, weekday, startTime, endTime })) {
+            return null;
+          }
+          return tx.shift.create({
+            data: {
+              organizationId: context.organizationId,
+              userId,
+              branchId: branchId ?? null,
+              weekday,
+              startTime,
+              endTime,
+              note: note || null,
+            },
+          });
+        },
+        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+      );
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2034"
+      ) {
+        return NextResponse.json({ error: "Shift overlaps an existing shift" }, { status: 409 });
+      }
+      throw error;
+    }
+
+    if (!shift) {
       return NextResponse.json({ error: "Shift overlaps an existing shift" }, { status: 409 });
     }
 
-    const shift = await prisma.shift.create({
-      data: {
-        organizationId: context.organizationId,
-        userId,
-        branchId: branchId ?? null,
-        weekday,
-        startTime,
-        endTime,
-        note: note || null,
-      },
-    });
     await createAuditLog({
       organizationId: context.organizationId,
       userId: context.userId,

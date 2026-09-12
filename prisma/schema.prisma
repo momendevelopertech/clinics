@@ -69,7 +69,10 @@ model Organization {
   feedbacks            Feedback[]
   intakeForms          IntakeForm[]
   intakeResponses      IntakeResponse[]
+  patientAllergies     PatientAllergy[]
   reportSchedules      ReportSchedule[]
+  apiKeys              ApiKey[]
+  webhooks             Webhook[]
 }
 
 // ============== SAAS: PLANS / SUBSCRIPTIONS / ENTITLEMENTS ==============
@@ -247,6 +250,7 @@ model Patient {
   email                  String?
   phone                  String?
   phoneSecondary         String?
+  marketingOptOut        Boolean            @default(false)
   address                String?
   city                   String?
   state                  String?
@@ -286,11 +290,29 @@ model Patient {
   treatmentPlans         TreatmentPlan[]
   feedbacks              Feedback[]
   intakeResponses        IntakeResponse[]
+  patientAllergies       PatientAllergy[]
 
   @@unique([organizationId, mrn])
   @@index([organizationId, status])
   @@index([organizationId, lastName])
   @@index([organizationId, phone])
+}
+
+model PatientAllergy {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  patientId      String
+  patient        Patient      @relation(fields: [patientId], references: [id])
+  allergen       String
+  severity       String? // mild, moderate, severe
+  reaction       String?
+  onset          DateTime?
+  active         Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId, patientId])
 }
 
 model PatientSession {
@@ -415,6 +437,8 @@ model Appointment {
   tokenNumber        String?
   isWalkIn           Boolean                @default(false)
   cancellationReason String?
+  checkedInAt        DateTime?
+  checkedOutAt       DateTime?
   idempotencyKey     String?                @unique // For duplicate prevention
   isRecurring        Boolean                @default(false)
   recurrenceRule     String? // RRULE or custom
@@ -969,6 +993,7 @@ model Payment {
   stripePaymentId String?
   status          String // pending, completed, failed, refunded
   refundedAmount  Decimal       @default(0) @db.Decimal(12, 2)
+  refundKey       String?       @unique // refund idempotency (one refund per key)
   installments    Installment[]
   updatedAt       DateTime      @updatedAt
   createdAt       DateTime      @default(now())
@@ -1255,4 +1280,54 @@ model PushSubscription {
   @@unique([endpoint, userId])
   @@index([userId])
   @@index([organizationId])
+}
+
+// ============== INTEGRATIONS: API KEYS & WEBHOOKS ==============
+model ApiKey {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  name           String
+  prefix         String
+  keyHash        String
+  scopes         String       @default("[]") // JSON array, e.g. ["fhir:write"]
+  active         Boolean      @default(true)
+  lastUsedAt     DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([organizationId, prefix])
+  @@index([organizationId])
+}
+
+model Webhook {
+  id             String            @id @default(cuid())
+  organizationId String
+  organization   Organization      @relation(fields: [organizationId], references: [id])
+  url            String
+  secretHash     String? // HMAC secret (hashed at rest)
+  eventTypes     String            @default("[]") // JSON array
+  active         Boolean           @default(true)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  deliveries     WebhookDelivery[]
+
+  @@index([organizationId])
+}
+
+model WebhookDelivery {
+  id             String    @id @default(cuid())
+  webhookId      String
+  webhook        Webhook   @relation(fields: [webhookId], references: [id])
+  eventType      String
+  attempt        Int       @default(1)
+  status         String // pending, delivered, failed
+  payload        Json?
+  responseStatus Int?
+  responseBody   String?
+  error          String?
+  deliveredAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([webhookId, createdAt])
 }

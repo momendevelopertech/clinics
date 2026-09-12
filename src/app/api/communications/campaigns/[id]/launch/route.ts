@@ -41,6 +41,15 @@ export async function POST(
       return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
     }
 
+    // A campaign can be launched only from draft; re-launching an active
+    // campaign would re-send to everyone (no dedupe).
+    if (campaign.status !== "draft") {
+      return NextResponse.json(
+        { error: "Only draft campaigns can be launched" },
+        { status: 409 },
+      );
+    }
+
     const customerIds = Array.isArray(body.patientIds) ? body.patientIds : null;
     const targetChannel = body.channel === "sms" ? "sms" : "whatsapp";
     const templateKey = body.templateKey || campaign.triggerType || "welcome";
@@ -53,6 +62,7 @@ export async function POST(
     const patients = await prisma.patient.findMany({
       where: {
         organizationId: orgId,
+        marketingOptOut: false,
         ...(customerIds && customerIds.length > 0 ? { id: { in: customerIds } } : {}),
       },
       select: {
