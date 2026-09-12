@@ -10,6 +10,7 @@ import { isSoapEmpty, prefillSoap } from "@/lib/clinical-templates";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { AiAssistCard } from "@/components/encounters/ai-assist-card";
+import { NewPrescriptionDialog } from "@/components/prescriptions/new-prescription-dialog";
 
 export type SoapNote = { subjective: string; objective: string; assessment: string; plan: string };
 
@@ -19,7 +20,7 @@ type Encounter = {
   status: string;
   encounterType: string | null;
   startTime: string;
-  patient: { firstName: string; lastName: string };
+  patient: { id: string; firstName: string; lastName: string };
   notes: { id: string; text: string | null; assessment: string | null }[];
 };
 
@@ -194,6 +195,15 @@ export function EncountersWorkspace() {
                   </div>
                   <div><Button variant="outline" onClick={() => void addSoapNote().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_noteError")))}>{t("enc_addNote")}</Button></div>
                   <AiAssistCard encounterId={encounter.id} soap={soap} setSoap={setSoap} />
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed p-3">
+                    <div><p className="text-sm font-semibold">{t("rx_cardTitle")}</p><p className="text-xs text-muted-foreground">{t("rx_cardDesc")}</p></div>
+                    <NewPrescriptionDialog
+                      onSuccess={() => { /* list page refreshes itself */ }}
+                      defaultPatientId={encounter.patient.id}
+                      defaultPatientLabel={`${encounter.patient.firstName} ${encounter.patient.lastName}`}
+                      defaultEncounterId={encounter.id}
+                    />
+                  </div>
                 </div>
               ) : null}
             </div>

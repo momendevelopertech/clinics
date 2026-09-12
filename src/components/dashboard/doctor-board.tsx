@@ -14,7 +14,7 @@ const ACTIVE = new Set(["scheduled", "confirmed", "arrived", "in progress", "in 
 
 type PrescriptionSummary = {
   id: string;
-  prescriberId?: string | null;
+  prescribedById?: string | null;
   createdAt?: string;
   medicationName: string;
 };
@@ -31,7 +31,7 @@ export function DoctorBoard() {
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error("fetch failed"))))
       .then((data: PrescriptionSummary[]) => {
         if (!cancelled && Array.isArray(data)) {
-          setMyRxCount(data.filter((rx) => rx.prescriberId === userId).length);
+          setMyRxCount(data.filter((rx) => rx.prescribedById === userId).length);
         }
       })
       .catch((error) => logClientError("Fetch prescriptions in doctor board failed", error));

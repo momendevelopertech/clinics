@@ -28,7 +28,7 @@ export async function GET(request: Request) {
         ...(patientId ? { patientId } : {}),
       },
       include: {
-        patient: { select: { firstName: true, lastName: true } },
+        patient: { select: { id: true, firstName: true, lastName: true } },
         appointment: true,
         notes: true,
       },

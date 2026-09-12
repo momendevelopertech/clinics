@@ -25,6 +25,7 @@ import {
   Menu,
   Moon,
   Package,
+  Pill,
   ScrollText,
   Search,
   Settings,
@@ -86,6 +87,7 @@ const routeTitleKeys: Array<[string, string]> = [
   ["/security", "nav_security"],
   ["/staff", "nav_staff"],
   ["/consents", "nav_consents"],
+  ["/prescriptions", "nav_prescriptions"],
   ["/waitlist", "nav_waitlist"],
   ["/super", "nav_superAdmin"],
 ];
@@ -193,6 +195,7 @@ function CollapsibleSidebar({
         { icon: Activity, label: t("nav_analytics"), href: "/analytics", roles: ["Doctor", "Nurse", "Biller"] as NavRole[], moduleKey: "analytics", locked: false },
         { icon: FileCheck2, label: t("nav_consents"), href: "/consents", roles: ["Doctor", "Nurse", "Receptionist"] as NavRole[], moduleKey: "consents", locked: false },
         { icon: ScrollText, label: t("nav_audit"), href: "/audit", roles: ["Doctor", "Biller"] as NavRole[], moduleKey: "audit", locked: false },
+        { icon: Pill, label: t("nav_prescriptions"), href: "/prescriptions", roles: ["Doctor", "Nurse", "Pharmacist"] as NavRole[], moduleKey: "labs", locked: false },
       ].filter((item) => canAccess(item.roles as NavRole[] | undefined)).map(wrap),
     },
     {
