@@ -335,6 +335,7 @@ export const ar: Dictionary = {
   rx_template_save_error: "تعذّر حفظ القالب",
   rx_template_loaded: "تم تطبيق القالب",
   rx_template_replace_confirm: "سيؤدي هذا إلى استبدال الأدوية التي أدخلتها. هل تريد المتابعة؟",
+  rx_clone: "نسخ",
   rx_createdSuccess: "تم حفظ الروشتة",
   rx_createError: "تعذّر حفظ الروشتة.",
   rx_allergyWarning: "تحذير حساسية",

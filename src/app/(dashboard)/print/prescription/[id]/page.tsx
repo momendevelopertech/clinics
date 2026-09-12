@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { getDictionary } from "@/lib/i18n/server";
 import { PrintButton } from "@/components/print/print-button";
 import { SendRxButton } from "@/components/print/send-rx-button";
+import { CloneRxButton } from "@/components/prescriptions/clone-rx-button";
 
 export default async function PrescriptionPrintPage({
   params,
@@ -20,6 +21,8 @@ export default async function PrescriptionPrintPage({
     where: { id: (await params).id, organizationId },
     select: {
       id: true,
+      patientId: true,
+      encounterId: true,
       medicationName: true,
       dosage: true,
       frequency: true,
@@ -28,7 +31,7 @@ export default async function PrescriptionPrintPage({
       createdAt: true,
       items: { select: { id: true, medicationName: true, dosage: true, frequency: true, duration: true, instructions: true } },
       patient: {
-        select: { firstName: true, lastName: true, mrn: true, dateOfBirth: true },
+        select: { id: true, firstName: true, lastName: true, mrn: true, dateOfBirth: true },
       },
       prescriber: { select: { name: true, specialty: true } },
       organization: { select: { name: true, phone: true, address: true } },
@@ -64,6 +67,12 @@ export default async function PrescriptionPrintPage({
             {t["timeline_backToPatients"]}
           </Link>
           <div className="flex items-center gap-2">
+            <CloneRxButton
+              prescription={prescription}
+              patientId={prescription.patientId}
+              patientName={`${prescription.patient.firstName} ${prescription.patient.lastName}`}
+              encounterId={prescription.encounterId ?? undefined}
+            />
             <SendRxButton rxId={prescription.id} t={t} />
             <PrintButton />
           </div>

@@ -334,6 +334,7 @@ export const en: Dictionary = {
   rx_template_save_error: "Could not save the template",
   rx_template_loaded: "Template applied",
   rx_template_replace_confirm: "This will replace the medications you already entered. Continue?",
+  rx_clone: "Clone",
   rx_createdSuccess: "Prescription saved",
   rx_createError: "Could not save the prescription.",
   rx_allergyWarning: "Allergy warning",
