@@ -15,6 +15,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -31,6 +36,15 @@ type PatientOption = {
   firstName: string;
   lastName: string;
   mrn: string;
+};
+
+type FavoriteItem = {
+  id: string;
+  medicationName: string;
+  defaultDosage: string | null;
+  defaultFrequency: string | null;
+  defaultDuration: string | null;
+  usageCount: number;
 };
 
 type MedLine = {
@@ -57,6 +71,140 @@ const toMedLines = (lines: RxMedLine[]): MedLine[] =>
     duration: line.duration ?? "",
     instructions: line.instructions ?? "",
   }));
+
+/**
+ * Searchable medication-name field backed by the current doctor's favorites.
+ * Live filtering starts at 2 characters; selecting a favorite also fills its
+ * default dosage/frequency/duration (all still editable afterwards).
+ */
+function MedicationNameInput({
+  value,
+  onChange,
+  placeholder,
+  onApplyDefaults,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  onApplyDefaults: (defaults: {
+    dosage: string;
+    frequency: string;
+    duration: string;
+  }) => void;
+}) {
+  const { t } = useLocale();
+  const [results, setResults] = React.useState<FavoriteItem[]>([]);
+  const [open, setOpen] = React.useState(false);
+  const [activeIndex, setActiveIndex] = React.useState(-1);
+  const debounceRef = React.useRef<number | null>(null);
+
+  const load = React.useCallback(async (query: string) => {
+    try {
+      const response = await fetch(
+        `/api/prescriptions/favorites?q=${encodeURIComponent(query)}`,
+      );
+      if (!response.ok) return;
+      const data = (await response.json()) as FavoriteItem[];
+      if (Array.isArray(data)) {
+        setResults(data);
+        setOpen(true);
+        setActiveIndex(-1);
+      }
+    } catch {
+      logClientError("Prescription favorites lookup failed");
+    }
+  }, []);
+
+  const scheduleLoad = (query: string) => {
+    if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    debounceRef.current = window.setTimeout(() => void load(query), 200);
+  };
+
+  React.useEffect(() => {
+    if (open) {
+      if (value.trim().length >= 2) scheduleLoad(value);
+      else void load("");
+    }
+    return () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    };
+  }, [open]);
+
+  const apply = (item: FavoriteItem) => {
+    onChange(item.medicationName);
+    onApplyDefaults({
+      dosage: item.defaultDosage ?? "",
+      frequency: item.defaultFrequency ?? "",
+      duration: item.defaultDuration ?? "",
+    });
+    setOpen(false);
+    setResults([]);
+  };
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "ArrowDown" && results.length > 0) {
+      event.preventDefault();
+      setActiveIndex((prev) => (prev + 1) % results.length);
+    } else if (event.key === "ArrowUp" && results.length > 0) {
+      event.preventDefault();
+      setActiveIndex((prev) => (prev - 1 + results.length) % results.length);
+    } else if (event.key === "Enter" && activeIndex >= 0) {
+      event.preventDefault();
+      const item = results[activeIndex];
+      if (item) apply(item);
+    } else if (event.key === "Escape") {
+      setOpen(false);
+    }
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Input
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          onFocus={() => setOpen(true)}
+          onKeyDown={onKeyDown}
+          placeholder={placeholder}
+        />
+      </PopoverTrigger>
+      <PopoverContent className="w-72 p-0" align="start" sideOffset={4}>
+        {results.length === 0 ? (
+          <p className="px-3 py-3 text-sm text-muted-foreground">{t("rx_no_favorites")}</p>
+        ) : (
+          <ul className="max-h-64 overflow-auto py-1">
+            {results.map((item, index) => (
+              <li key={item.id}>
+                <button
+                  type="button"
+                  className={`flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition ${
+                    index === activeIndex
+                      ? "bg-neutral-100 dark:bg-neutral-800"
+                      : "hover:bg-neutral-50 dark:hover:bg-neutral-800/60"
+                  }`}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => apply(item)}
+                >
+                  <span className="min-w-0 flex-1 truncate">{item.medicationName}</span>
+                  <span className="flex shrink-0 items-center gap-2">
+                    {item.defaultDosage ? (
+                      <span className="ltr-on-rtl text-xs text-muted-foreground">
+                        {item.defaultDosage}
+                      </span>
+                    ) : null}
+                    <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                      {item.usageCount}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 interface NewPrescriptionDialogProps {
   onSuccess: () => void;
@@ -251,10 +399,19 @@ export function NewPrescriptionDialog({
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="flex flex-col gap-1 sm:col-span-2">
                     <Label>{t("rx_medication")}</Label>
-                    <Input
+                    <MedicationNameInput
                       value={line.medicationName}
-                      onChange={(e) => updateLine(index, "medicationName", e.target.value)}
+                      onChange={(value) => updateLine(index, "medicationName", value)}
                       placeholder={t("rx_medicationPlaceholder")}
+                      onApplyDefaults={(defaults) => {
+                        setLines((prev) =>
+                          prev.map((lineState, i) =>
+                            i === index
+                              ? { ...lineState, ...defaults }
+                              : lineState,
+                          ),
+                        );
+                      }}
                     />
                   </div>
                   <div className="flex flex-col gap-1">

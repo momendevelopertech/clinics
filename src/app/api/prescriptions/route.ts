@@ -6,6 +6,7 @@ import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { prescriptionItemSchema, prescriptionSchema } from "@/lib/validations";
 import { findMedicationAllergyWarnings, type MedAllergyWarning } from "@/lib/allergies";
+import { buildFavoriteSeeds } from "@/lib/prescriptions";
 import { logServerError } from "@/lib/safe-logger";
 
 export async function GET(request: Request) {
@@ -148,6 +149,33 @@ export async function POST(request: Request) {
           afterState: JSON.stringify(rx),
         },
       });
+
+      // Personal autocomplete favorites: upsert every medication written on
+      // this prescription for the prescribing doctor inside the same tx.
+      const favoriteSeeds = buildFavoriteSeeds(data, validItems);
+      for (const seed of favoriteSeeds) {
+        await tx.medicationFavorite.upsert({
+          where: {
+            userId_medicationName: { userId, medicationName: seed.medicationName },
+          },
+          create: {
+            organizationId: orgId,
+            userId,
+            medicationName: seed.medicationName,
+            defaultDosage: seed.dosage,
+            defaultFrequency: seed.frequency,
+            defaultDuration: seed.duration,
+            usageCount: 1,
+          },
+          update: {
+            usageCount: { increment: 1 },
+            defaultDosage: seed.dosage,
+            defaultFrequency: seed.frequency,
+            defaultDuration: seed.duration,
+            lastUsedAt: new Date(),
+          },
+        });
+      }
 
       return rx;
       },

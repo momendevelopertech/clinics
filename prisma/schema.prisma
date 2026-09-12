@@ -73,6 +73,7 @@ model Organization {
   reportSchedules      ReportSchedule[]
   apiKeys              ApiKey[]
   webhooks             Webhook[]
+  medicationFavorites  MedicationFavorite[]
 }
 
 // ============== SAAS: PLANS / SUBSCRIPTIONS / ENTITLEMENTS ==============
@@ -202,6 +203,7 @@ model User {
   notifications          Notification[]
   pushSubscriptions      PushSubscription[]
   shifts                 Shift[]
+  medicationFavorites    MedicationFavorite[]
 
   @@index([organizationId, active])
 }
@@ -1330,4 +1332,22 @@ model WebhookDelivery {
   createdAt      DateTime  @default(now())
 
   @@index([webhookId, createdAt])
+}
+
+model MedicationFavorite {
+  id               String       @id @default(cuid())
+  organizationId   String
+  userId           String
+  medicationName   String
+  defaultDosage    String?
+  defaultFrequency String?
+  defaultDuration  String?
+  usageCount       Int          @default(0)
+  lastUsedAt       DateTime     @default(now())
+  createdAt        DateTime     @default(now())
+  organization     Organization @relation(fields: [organizationId], references: [id])
+  user             User         @relation(fields: [userId], references: [id])
+
+  @@unique([userId, medicationName])
+  @@index([organizationId, userId])
 }

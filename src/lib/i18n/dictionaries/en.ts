@@ -317,6 +317,8 @@ export const en: Dictionary = {
   rx_addLine: "Add another medication",
   rx_removeLine: "Remove this line",
   rx_save: "Save prescription",
+  rx_no_favorites: "No matching favorites yet — keep typing to use a free-text medication.",
+  rx_favorite_hint: "Start typing — your frequently used medications appear here.",
   rx_createdSuccess: "Prescription saved",
   rx_createError: "Could not save the prescription.",
   rx_allergyWarning: "Allergy warning",

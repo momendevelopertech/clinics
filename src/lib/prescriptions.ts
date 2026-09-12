@@ -72,3 +72,45 @@ export function splitDraftIntoPrescriptionPayload(lines: RxMedLine[]) {
     })),
   };
 }
+
+/**
+ * One row of the doctor's per-user medication favorites that the POST route
+ * upserts after a prescription is saved. `defaultDosage/Frequency/Duration`
+ * are refreshed with the values the doctor just used.
+ */
+export type FavoriteSeed = {
+  medicationName: string;
+  dosage: string | null;
+  frequency: string | null;
+  duration: string | null;
+};
+
+/**
+ * Builds the favorite seeds for every medication written on a prescription
+ * (main line + additional items). Repeated drug names are deduped (first
+ * occurrence wins) so a single prescription can't double-count usage.
+ */
+export function buildFavoriteSeeds(
+  main: RxMedLine,
+  items: RxMedLine[],
+): FavoriteSeed[] {
+  const seen = new Set<string>();
+  const seeds: FavoriteSeed[] = [];
+  const push = (name: string, dosage: string | null, frequency: string | null, duration: string | null) => {
+    const key = name.trim().toLowerCase();
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    seeds.push({
+      medicationName: name.trim(),
+      dosage,
+      frequency,
+      duration,
+    });
+  };
+
+  push(main.medicationName, main.dosage ?? null, main.frequency ?? null, main.duration ?? null);
+  for (const item of items) {
+    push(item.medicationName, item.dosage ?? null, item.frequency ?? null, item.duration ?? null);
+  }
+  return seeds;
+}

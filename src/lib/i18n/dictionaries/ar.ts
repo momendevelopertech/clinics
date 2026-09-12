@@ -318,6 +318,8 @@ export const ar: Dictionary = {
   rx_addLine: "إضافة دواء آخر",
   rx_removeLine: "حذف هذا السطر",
   rx_save: "حفظ الروشتة",
+  rx_no_favorites: "لا توجد أدوية مفضلة مطابقة حتى الآن — اكتب بالكامل لإدخال دواء جديد.",
+  rx_favorite_hint: "ابدأ الكتابة — ستظهر أدويتك الأكثر استخداماً هنا.",
   rx_createdSuccess: "تم حفظ الروشتة",
   rx_createError: "تعذّر حفظ الروشتة.",
   rx_allergyWarning: "تحذير حساسية",
