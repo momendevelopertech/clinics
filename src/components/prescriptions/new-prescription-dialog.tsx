@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Plus, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X, Copy, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -45,6 +45,16 @@ type FavoriteItem = {
   defaultFrequency: string | null;
   defaultDuration: string | null;
   usageCount: number;
+};
+
+type TemplateItem = {
+  id: string;
+  name: string;
+  specialty: string | null;
+  isShared: boolean;
+  isOwn: boolean;
+  usageCount: number;
+  items: RxMedLine[];
 };
 
 type MedLine = {
@@ -236,10 +246,18 @@ export function NewPrescriptionDialog({
   const [patientId, setPatientId] = React.useState(defaultPatientId ?? "");
   const [lines, setLines] = React.useState<MedLine[]>([{ ...EMPTY_LINE }]);
   const [warnings, setWarnings] = React.useState<string[]>([]);
+  const [templates, setTemplates] = React.useState<TemplateItem[]>([]);
+  const [templatesOpen, setTemplatesOpen] = React.useState(false);
+  const [saveTemplateOpen, setSaveTemplateOpen] = React.useState(false);
+  const [templateName, setTemplateName] = React.useState("");
+  const [templateSpecialty, setTemplateSpecialty] = React.useState("");
+  const [templateShared, setTemplateShared] = React.useState(false);
+  const [savingTemplate, setSavingTemplate] = React.useState(false);
 
   React.useEffect(() => {
     if (open) {
       fetchPatients();
+      void fetchTemplates();
       setWarnings([]);
       if (initialLines && initialLines.length > 0) {
         setLines(toMedLines(initialLines));
@@ -258,6 +276,73 @@ export function NewPrescriptionDialog({
       logClientError("Prescription patient lookup failed", error);
     }
   };
+
+  const fetchTemplates = React.useCallback(async () => {
+    try {
+      const response = await fetch("/api/prescription-templates");
+      if (!response.ok) throw new Error("Failed to fetch templates");
+      const data = (await response.json()) as { templates?: TemplateItem[] };
+      setTemplates(Array.isArray(data.templates) ? data.templates : []);
+    } catch (error) {
+      logClientError("Prescription templates fetch failed", error);
+    }
+  }, []);
+
+  const applyTemplate = (tpl: TemplateItem) => {
+    const filledCount = lines.filter((line) => line.medicationName.trim().length > 0).length;
+    if (filledCount > 0 && !window.confirm(t("rx_template_replace_confirm"))) {
+      return;
+    }
+    const items = Array.isArray(tpl.items) ? tpl.items : [];
+    if (items.length > 0) setLines(toMedLines(items));
+    setTemplatesOpen(false);
+    void fetch(`/api/prescription-templates/${tpl.id}/use`, {
+      method: "POST",
+    }).catch(() => undefined);
+    toast.success(t("rx_template_loaded"));
+  };
+
+  const saveTemplate = async () => {
+    if (!templateName.trim()) {
+      toast.error(t("rx_template_name_required"));
+      return;
+    }
+    const filled = lines.filter((line) => line.medicationName.trim().length > 0);
+    if (filled.length === 0) return;
+    try {
+      setSavingTemplate(true);
+      const response = await fetch("/api/prescription-templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: templateName.trim(),
+          specialty: templateSpecialty.trim() || null,
+          isShared: templateShared,
+          items: filled.map((line) => ({
+            medicationName: line.medicationName.trim(),
+            dosage: line.dosage.trim() || null,
+            frequency: line.frequency.trim() || null,
+            duration: line.duration.trim() || null,
+            instructions: line.instructions.trim() || null,
+          })),
+        }),
+      });
+      if (!response.ok) throw new Error("Failed to save template");
+      toast.success(t("rx_template_saved"));
+      setSaveTemplateOpen(false);
+      setTemplateName("");
+      setTemplateSpecialty("");
+      setTemplateShared(false);
+      await fetchTemplates();
+    } catch (error) {
+      toast.error(t("rx_template_save_error"));
+      logClientError("Save prescription template failed", error);
+    } finally {
+      setSavingTemplate(false);
+    }
+  };
+
+  const hasAnyMedication = lines.some((line) => line.medicationName.trim().length > 0);
 
   const updateLine = (index: number, field: keyof MedLine, value: string) => {
     setLines((prev) =>
@@ -373,6 +458,64 @@ export function NewPrescriptionDialog({
             )}
           </div>
 
+          <div className="flex flex-wrap items-center gap-2">
+            <Popover open={templatesOpen} onOpenChange={setTemplatesOpen}>
+              <PopoverTrigger asChild>
+                <Button type="button" variant="outline" size="sm">
+                  <Copy className="me-2 h-4 w-4" />
+                  {t("rx_use_template")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-0" align="start">
+                {templates.length === 0 ? (
+                  <p className="py-3 px-4 text-sm text-muted-foreground">
+                    {t("rx_templates_empty")}
+                  </p>
+                ) : (
+                  <ul className="max-h-72 overflow-y-auto py-1">
+                    {templates.map((tpl) => (
+                      <li key={tpl.id}>
+                        <button
+                          type="button"
+                          className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition hover:bg-neutral-50 dark:hover:bg-neutral-800/60"
+                          onClick={() => applyTemplate(tpl)}
+                        >
+                          <span className="flex min-w-0 flex-col">
+                            <span className="flex items-center gap-2">
+                              <span className="truncate font-medium">{tpl.name}</span>
+                              {!tpl.isOwn ? (
+                                <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                                  {t("rx_template_shared")}
+                                </span>
+                              ) : null}
+                            </span>
+                            {tpl.specialty ? (
+                              <span className="text-xs text-muted-foreground">{tpl.specialty}</span>
+                            ) : null}
+                          </span>
+                          <span className="shrink-0 text-xs text-muted-foreground">
+                            {tpl.usageCount}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </PopoverContent>
+            </Popover>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={!hasAnyMedication}
+              onClick={() => setSaveTemplateOpen(true)}
+            >
+              <Bookmark className="me-2 h-4 w-4" />
+              {t("rx_save_as_template")}
+            </Button>
+          </div>
+
           <div className="space-y-3">
             {lines.map((line, index) => (
               <div
@@ -483,6 +626,51 @@ export function NewPrescriptionDialog({
           </div>
         </form>
       </DialogContent>
+
+      <Dialog open={saveTemplateOpen} onOpenChange={setSaveTemplateOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("rx_save_as_template")}</DialogTitle>
+            <DialogDescription>{t("rx_template_save_desc")}</DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="tpl-name">{t("rx_template_name")}</Label>
+              <Input
+                id="tpl-name"
+                value={templateName}
+                onChange={(e) => setTemplateName(e.target.value)}
+                placeholder={t("rx_template_name_placeholder")}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="tpl-specialty">{t("rx_template_specialty")}</Label>
+              <Input
+                id="tpl-specialty"
+                value={templateSpecialty}
+                onChange={(e) => setTemplateSpecialty(e.target.value)}
+                placeholder={t("rx_template_specialty_placeholder")}
+              />
+            </div>
+            <label className="flex cursor-pointer items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={templateShared}
+                onChange={(e) => setTemplateShared(e.target.checked)}
+                className="h-4 w-4 rounded border-neutral-300 accent-[var(--clinic)]"
+              />
+              {t("rx_template_share")}
+            </label>
+            <Button
+              type="button"
+              onClick={saveTemplate}
+              disabled={savingTemplate || !templateName.trim()}
+            >
+              {savingTemplate ? t("common_loading") : t("rx_save_template")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }
