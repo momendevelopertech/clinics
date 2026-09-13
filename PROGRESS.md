@@ -1,7 +1,7 @@
 # Progress Log — عيادات CRM Production Readiness
 
 ## Current status
-- Last updated: 2026-09-13 09:25 UTC+3
+- Last updated: 2026-09-13 09:45 UTC+3
 - Current phase: Feature-checklist active (audit fixes + 🟡 P1 completions done; P2 backend items done; insurance/equipment/integrations pages + config-gated banners done).
 - Current task: A13 verified — insurance/equipment/integrations pages + config-gated banners. Full unit+integration suite 77 files / 374 tests green, tsc clean; tree clean on origin/main.
 - Status: IN PROGRESS
@@ -51,7 +51,7 @@ Previous clinic-blueprint tracker (P0–P7 product modules) lived in this file a
 | F22 | P2#8 patient summary shareable (TASKS_FEATURES.md) | P2 | DONE 2026-09-11 | `GET /api/patients/[id]/summary` builds a printable summary payload (diagnoses, meds, vitals, last visit) with a QR-code URL for referrals/insurance; print-friendly patient summary page added; unit test 1/1 green. |
 | F-B6 | Google Calendar OAuth sync (TASKS_FEATURES.md P1#7) | P1 | BLOCKED | Needs Google Cloud OAuth client ID/secret + doctor grant flow. No credentials available; nothing shippable without them. |
 | F-B5 | Managed in-app video (Daily/Twilio SFU rooms) | P1 | BLOCKED | Needs vendor account + API keys. Coordination layer (links/Join/reminders) shipped in F15; no fake rooms generated. |
-| F-FLAG1 | CLINICAL REVIEW: duplicate active Concor 5mg prescriptions (both sentToPharmacy) for أحمد سيد مصطفى + vitals conflict (152/94 vs 132/82) + foreign-patient seed records under encounter E_B (B01.9, Khaled X-ray) | P0-safety | OPEN | Needs doctor/owner review. Seed-contamination cleanup (detach B01.9 + X-ray from E_B) proposed as separate task. |
+| F-FLAG1 | CLINICAL REVIEW: duplicate active Concor 5mg prescriptions (both sentToPharmacy) for أحمد سيد مصطفى + vitals conflict (152/94 vs 132/82) + foreign-patient seed records under encounter E_B (B01.9, Khaled X-ray) | P0-safety | REVIEWED 2026-09-13, still needs doctor/owner sign-off to CLOSE | Read-only DB check 2026-09-13: patient MRN-1001 has exactly 1 active Rx (كونكور Cor 5mg, sentToPharmacy, created 2026-09-12), 1 vital (152/94, HR 82), 1 diagnosis (I10 essential hypertension — consistent with the Rx), 1 encounter (in_progress), 1 document (BP plan PDF). No second Concor, no 132/82 reading, no B01.9, no foreign X-ray — the flagged data condition no longer exists, so no engineering mutation was made (clinical data must not be auto-edited). Doctor/owner to confirm the single active Rx is intentional, then mark CLOSED. |
 | F-B1 | Public marketplace / SEO doctor pages direction | P2 | BLOCKED | Needs business decision (B2C acquisition vs ops-only). TASKS_FEATURES.md P2. |
 | F-B2 | Native mobile apps (iOS/Android) | P2 | BLOCKED | Needs business decision (PWA suffices for now). TASKS_FEATURES.md P2. |
 | F-B3 | Extra locales/loyalty program + real insurance clearinghouse vendor | P2 | BLOCKED | Needs business/product decision (vendor + scope). TASKS_FEATURES.md P2 + 🟡 completions. |
