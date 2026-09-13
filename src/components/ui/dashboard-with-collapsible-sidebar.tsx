@@ -695,7 +695,7 @@ function DashboardHeader({
   };
 
   return (
-    <header className="sticky top-0 z-20 border-b border-border bg-white/95 backdrop-blur-xs px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-20 border-b border-border bg-white px-4 sm:px-6 lg:px-8">
       <div className="flex h-16 items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
           <Button
