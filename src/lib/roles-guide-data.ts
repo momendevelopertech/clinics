@@ -1,8 +1,65 @@
 /** Roles Guide data — single source for the /roles-guide page and user-stories-by-role.md.
  * Every task traces to a real button/route/component (see cited paths in text).
- * Staff module checklists resolve live from ROLE_MODULE_ACCESS (src/lib/permissions.ts).
+ *
+ * IMPORTANT (build): this file is imported by a CLIENT component, so it must
+ * stay free of server-only imports (prisma/pg). The module lists below are a
+ * frozen mirror of src/lib/permissions.ts (CLINIC_MODULES + ROLE_MODULE_ACCESS);
+ * tests/unit/roles-guide.test.ts asserts deep parity so truth stays in one place.
  */
-import { CLINIC_MODULES, ROLE_MODULE_ACCESS } from "@/lib/permissions";
+
+const GUIDE_CLINIC_MODULES = [
+  "dashboard",
+  "patients",
+  "appointments",
+  "queue",
+  "encounters",
+  "analytics",
+  "consents",
+  "audit",
+  "labs",
+  "tasks",
+  "documents",
+  "reports",
+  "availability",
+  "catalogs",
+  "communications",
+  "locations",
+  "waitlist",
+  "billing",
+  "payments",
+  "inventory",
+  "automation",
+  "campaigns",
+  "settings",
+  "plan",
+  "help",
+] as const;
+
+const GUIDE_ROLE_MODULE_ACCESS: Record<string, readonly string[]> = {
+  Owner: GUIDE_CLINIC_MODULES,
+  Doctor: [
+    "dashboard", "patients", "appointments", "queue", "encounters", "analytics",
+    "consents", "audit", "labs", "tasks", "documents", "reports", "availability",
+    "catalogs", "help",
+  ],
+  "Care Coordinator": [
+    "dashboard", "patients", "appointments", "queue", "consents", "tasks",
+    "documents", "communications", "locations", "waitlist", "help",
+  ],
+  Nurse: [
+    "dashboard", "patients", "appointments", "encounters", "analytics", "consents",
+    "labs", "inventory", "tasks", "documents", "reports", "availability", "catalogs",
+    "help",
+  ],
+  Biller: [
+    "dashboard", "patients", "appointments", "analytics", "audit", "billing",
+    "payments", "tasks", "reports", "help",
+  ],
+  Pharmacist: [
+    "dashboard", "patients", "appointments", "labs", "inventory", "tasks",
+    "catalogs", "help",
+  ],
+};
 
 export type LText = { ar: string; en: string };
 const t = (ar: string, en: string): LText => ({ ar, en });
@@ -32,8 +89,8 @@ export type GuideRole = {
 
 export function getRoleModules(role: GuideRole): { key: string; available: boolean }[] {
   if (role.moduleSource === "rbac" && role.roleKey) {
-    const allowed = new Set<string>(ROLE_MODULE_ACCESS[role.roleKey] ?? []);
-    return [...CLINIC_MODULES].map((key) => ({ key, available: allowed.has(key) }));
+    const allowed = new Set<string>(GUIDE_ROLE_MODULE_ACCESS[role.roleKey] ?? []);
+    return [...GUIDE_CLINIC_MODULES].map((key) => ({ key, available: allowed.has(key) }));
   }
   return (role.customModules ?? []).map((m) => ({ key: m.key, available: true }));
 }

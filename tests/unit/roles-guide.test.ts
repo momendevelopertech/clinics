@@ -53,7 +53,7 @@ describe("roles guide data integrity (mirrors user-stories-by-role.md)", () => {
     }
   });
 
-  it("staff module checklists match ROLE_MODULE_ACCESS exactly", () => {
+  it("frozen client-safe mirror matches src/lib/permissions.ts exactly (server import would break the browser build)", () => {
     for (const role of ROLES_GUIDE) {
       if (role.moduleSource !== "rbac" || !role.roleKey) continue;
       const expected = new Set<string>(ROLE_MODULE_ACCESS[role.roleKey] ?? []);
