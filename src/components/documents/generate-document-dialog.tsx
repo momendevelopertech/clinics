@@ -156,7 +156,7 @@ export function GenerateDocumentDialog({ onSuccess }: { onSuccess?: () => void }
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline"><FileText />{t("doc_generate")}</Button>
+        <Button variant="outline" className="h-9"><FileText className="h-4 w-4 mr-1" />{t("doc_generate")}</Button>
       </DialogTrigger>
       <DialogContent className="max-w-lg">
         <DialogHeader>
@@ -168,7 +168,7 @@ export function GenerateDocumentDialog({ onSuccess }: { onSuccess?: () => void }
             <div className="gap-2 flex flex-col">
               <Label>{t("doc_genTemplate")}</Label>
               <Select value={templateId} onValueChange={(v) => { setTemplateId(v); setFields({}); }}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {templates.map((x) => (
                     <SelectItem key={x.id} value={x.id}>{tplLabel(x.id)}</SelectItem>
@@ -179,7 +179,7 @@ export function GenerateDocumentDialog({ onSuccess }: { onSuccess?: () => void }
             <div className="gap-2 flex flex-col">
               <Label>{t("doc_genPatient")}</Label>
               <Select value={patientId} onValueChange={(v) => { setPatientId(v); setEncounterId(""); setLabOrderId(""); }}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {patients.map((p) => (
                     <SelectItem key={p.id} value={p.id}>{p.firstName} {p.lastName}</SelectItem>
@@ -192,7 +192,7 @@ export function GenerateDocumentDialog({ onSuccess }: { onSuccess?: () => void }
             <div className="gap-2 flex flex-col">
               <Label>{t("doc_genEncounter")}</Label>
               <Select value={encounterId} onValueChange={setEncounterId}>
-                <SelectTrigger><SelectValue placeholder={t("doc_genNoEncounter")} /></SelectTrigger>
+                <SelectTrigger className="h-9"><SelectValue placeholder={t("doc_genNoEncounter")} /></SelectTrigger>
                 <SelectContent>
                   {encounters.map((e) => (
                     <SelectItem key={e.id} value={e.id}>
@@ -206,7 +206,7 @@ export function GenerateDocumentDialog({ onSuccess }: { onSuccess?: () => void }
               <div className="gap-2 flex flex-col">
                 <Label>{t("doc_genLabOrder")}</Label>
                 <Select value={labOrderId} onValueChange={setLabOrderId}>
-                  <SelectTrigger><SelectValue placeholder={t("doc_genNoOrder")} /></SelectTrigger>
+                  <SelectTrigger className="h-9"><SelectValue placeholder={t("doc_genNoOrder")} /></SelectTrigger>
                   <SelectContent>
                     {orders.map((o) => (
                       <SelectItem key={o.id} value={o.id}>{o.testName}</SelectItem>
@@ -222,16 +222,17 @@ export function GenerateDocumentDialog({ onSuccess }: { onSuccess?: () => void }
               <Input
                 value={fields[f] ?? ""}
                 onChange={(e) => setFields({ ...fields, [f]: e.target.value })}
+                className="h-9"
               />
             </div>
           ))}
         </div>
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>
-            <X />{t("common_cancel")}
+        <div className="flex justify-end gap-2 mt-2">
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={saving} className="h-9">
+            <X className="h-4 w-4 mr-1" />{t("common_cancel")}
           </Button>
-          <Button onClick={handleGenerate} disabled={!templateId || !patientId || saving}>
-            <FileText />{saving ? t("doc_genGenerating") : t("doc_genCreate")}
+          <Button onClick={handleGenerate} disabled={!templateId || !patientId || saving} className="h-9">
+            <FileText className="h-4 w-4 mr-1" />{saving ? t("doc_genGenerating") : t("doc_genCreate")}
           </Button>
         </div>
       </DialogContent>

@@ -102,13 +102,13 @@ function PendingChangesDialog({
   const statusIcon = (status: OfflineOperation["status"]) => {
     switch (status) {
       case "pending":
-        return <Clock className="h-3.5 w-3.5 text-amber-500" />;
+        return <Clock className="h-3.5 w-3.5 text-warning-text" />;
       case "syncing":
-        return <RefreshCw className="h-3.5 w-3.5 animate-spin text-cyan-500" />;
+        return <RefreshCw className="h-3.5 w-3.5 animate-spin text-accent-blue-text" />;
       case "synced":
-        return <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />;
+        return <CheckCircle2 className="h-3.5 w-3.5 text-success-text" />;
       case "conflict":
-        return <AlertTriangle className="h-3.5 w-3.5 text-red-500" />;
+        return <AlertTriangle className="h-3.5 w-3.5 text-critical-text" />;
     }
   };
 
@@ -116,25 +116,25 @@ function PendingChangesDialog({
     switch (status) {
       case "pending":
         return (
-          <Badge variant="outline" className="border-amber-300 text-amber-700">
+          <Badge variant="outline" className="border-warning-text/20 bg-warning-bg text-warning-text">
             Pending
           </Badge>
         );
       case "syncing":
         return (
-          <Badge variant="outline" className="border-cyan-300 text-cyan-700">
+          <Badge variant="outline" className="border-accent-blue-text/20 bg-accent-blue-bg text-accent-blue-text">
             Syncing
           </Badge>
         );
       case "synced":
         return (
-          <Badge variant="outline" className="border-emerald-300 text-emerald-700">
+          <Badge variant="outline" className="border-success-text/20 bg-success-bg text-success-text">
             Synced
           </Badge>
         );
       case "conflict":
         return (
-          <Badge variant="outline" className="border-red-300 text-red-700">
+          <Badge variant="outline" className="border-critical-text/20 bg-critical-bg text-critical-text">
             Conflict
           </Badge>
         );
@@ -151,13 +151,13 @@ function PendingChangesDialog({
         <Button
           variant="ghost"
           size="sm"
-          className="relative h-9 rounded-md border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100"
+          className="relative h-9 rounded-md border border-warning-text/20 bg-warning-bg text-warning-text hover:opacity-90"
         >
           <Eye className="mr-1.5 h-3.5 w-3.5" />
           {count} pending
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg rounded-lg border border-border bg-white shadow-xl">
+      <DialogContent className="max-w-lg rounded-lg border border-border bg-card shadow-xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground">
             Pending Changes
@@ -178,7 +178,7 @@ function PendingChangesDialog({
             {operations.map((op) => (
               <div
                 key={op.id}
-                className="flex items-center gap-3 rounded-md border border-border bg-[#F8FAFC] p-3"
+                className="flex items-center gap-3 rounded-md border border-border bg-muted/40 p-3"
               >
                 {statusIcon(op.status)}
                 <div className="min-w-0 flex-1">
@@ -189,7 +189,7 @@ function PendingChangesDialog({
                     {formatTime(op.timestamp)}
                   </p>
                   {op.conflictDetails && (
-                    <p className="mt-1 text-xs text-red-600">
+                    <p className="mt-1 text-xs text-critical-text">
                       {op.conflictDetails}
                     </p>
                   )}

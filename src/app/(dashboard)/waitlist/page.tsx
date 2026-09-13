@@ -130,26 +130,26 @@ export default function WaitlistPage() {
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case "waiting":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-warning-bg text-warning-text";
       case "contacted":
-        return "bg-blue-100 text-blue-800";
+      case "offered":
+        return "bg-accent-blue-bg text-accent-blue-text";
       case "scheduled":
-        return "bg-green-100 text-green-800";
       case "booked":
-        return "bg-emerald-100 text-emerald-800";
+        return "bg-success-bg text-success-text";
       case "cancelled":
-        return "bg-red-100 text-red-800";
+        return "bg-critical-bg text-critical-text";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted-bg text-muted-foreground";
     }
   };
 
   if (forbidden) {
     return (
       <div className="flex flex-col gap-6 w-full h-full">
-        <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground mb-1">
           Waitlist
         </h2>
         <PermissionDenied
@@ -164,11 +164,11 @@ export default function WaitlistPage() {
     <div className="flex flex-col gap-6 w-full h-full">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
-            <Clock className="w-6 h-6 inline mr-2" />
+          <h2 className="text-2xl font-bold tracking-tight text-foreground mb-1">
+            <Clock className="w-6 h-6 inline mr-2 text-primary" />
             {t("wl_title")}
           </h2>
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-muted-foreground">
             {t("wl_subtitle")}
           </p>
         </div>
@@ -176,8 +176,8 @@ export default function WaitlistPage() {
         <AddToWaitlistDialog onSuccess={fetchWaitlist} />
       </div>
 
-      <div className="bg-white dark:bg-neutral-900 border rounded-[5px] flex-1 shadow-sm flex flex-col pt-2">
-        <div className="px-6 py-4 border-b flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-card border border-border rounded-lg flex-1 shadow-sm flex flex-col pt-2">
+        <div className="px-6 py-4 border-b border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <Input
             type="search"
             placeholder={t("wl_search")}
@@ -269,36 +269,36 @@ export default function WaitlistPage() {
         <div className="p-0 overflow-x-auto flex-1">
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <p className="text-neutral-500">{t("wl_loading")}</p>
+              <p className="text-muted-foreground">{t("wl_loading")}</p>
             </div>
           ) : filteredEntries.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-center">
-              <Calendar className="w-12 h-12 text-neutral-300 mb-4" />
-              <p className="text-neutral-600">{t("wl_empty")}</p>
+              <Calendar className="w-12 h-12 text-muted-foreground/40 mb-4" />
+              <p className="text-muted-foreground">{t("wl_empty")}</p>
             </div>
           ) : (
             <table className="w-full text-sm text-left">
-              <thead className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 font-medium">
+              <thead className="bg-muted/40 text-muted-foreground font-medium">
                 <tr>
-                  <th className="px-6 py-4 border-b">{t("wl_colPatient")}</th>
-                  <th className="px-6 py-4 border-b">{t("wl_colContact")}</th>
-                  <th className="px-6 py-4 border-b">{t("wl_colPreferredDate")}</th>
-                  <th className="px-6 py-4 border-b">{t("wl_colStatus")}</th>
-                  <th className="px-6 py-4 border-b hidden md:table-cell">
+                  <th className="px-6 py-4 border-b border-border">{t("wl_colPatient")}</th>
+                  <th className="px-6 py-4 border-b border-border">{t("wl_colContact")}</th>
+                  <th className="px-6 py-4 border-b border-border">{t("wl_colPreferredDate")}</th>
+                  <th className="px-6 py-4 border-b border-border">{t("wl_colStatus")}</th>
+                  <th className="px-6 py-4 border-b border-border hidden md:table-cell">
                     {t("wl_colAdded")}
                   </th>
-                  <th className="px-6 py-4 border-b">{t("common_actions")}</th>
+                  <th className="px-6 py-4 border-b border-border">{t("common_actions")}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
+              <tbody className="divide-y divide-border text-foreground">
                 {pagedEntries.map((entry) => (
                   <tr
                     key={entry.id}
-                    className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition"
+                    className="hover:bg-muted/50 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-[5px] bg-indigo-100 text-indigo-700 font-bold flex justify-center items-center text-xs">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 text-primary font-bold flex justify-center items-center text-xs">
                           {entry.patientName
                             .split(" ")
                             .map((n) => n[0])
@@ -308,7 +308,7 @@ export default function WaitlistPage() {
                         <div>
                           <p className="font-medium">{entry.patientName}</p>
                           {entry.notes && (
-                            <p className="text-xs text-neutral-500">
+                            <p className="text-xs text-muted-foreground">
                               {entry.notes.substring(0, 30)}...
                             </p>
                           )}
@@ -318,7 +318,7 @@ export default function WaitlistPage() {
                     <td className="px-6 py-4">
                       <div className="text-sm">
                         <p>{entry.patientEmail}</p>
-                        <p className="text-neutral-500">{entry.patientPhone}</p>
+                        <p className="text-muted-foreground">{entry.patientPhone}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -328,7 +328,7 @@ export default function WaitlistPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(entry.status)}`}
+                        className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${getStatusColor(entry.status)}`}
                       >
                         {statusLabel(entry.status)}
                       </span>

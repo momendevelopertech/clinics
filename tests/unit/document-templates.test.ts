@@ -1,4 +1,15 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("@react-pdf/renderer", () => ({
+  renderToBuffer: vi.fn(async () => Buffer.from("%PDF-1.4\n" + "x".repeat(1024))),
+  Document: ({ children }: any) => children,
+  Page: ({ children }: any) => children,
+  Text: ({ children }: any) => children,
+  View: ({ children }: any) => children,
+  StyleSheet: { create: (styles: any) => styles },
+  Font: { register: vi.fn() },
+}));
+
 import {
   TEMPLATE_REGISTRY,
   getTemplateDef,

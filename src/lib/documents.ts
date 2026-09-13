@@ -32,14 +32,14 @@ export function isExternalUrl(storageKey: string): boolean {
 }
 
 const DOCUMENT_TYPE_COLORS: Record<string, string> = {
-  imaging: "bg-purple-100 text-purple-800",
-  lab: "bg-blue-100 text-blue-800",
-  lab_report: "bg-blue-100 text-blue-800",
-  pathology: "bg-pink-100 text-pink-800",
-  consent: "bg-green-100 text-green-800",
-  medical_record: "bg-orange-100 text-orange-800",
-  prescription: "bg-cyan-100 text-cyan-800",
-  other: "bg-gray-100 text-gray-800",
+  imaging: "bg-purple-100 text-purple-800 dark:bg-purple-500/15 dark:text-purple-300",
+  lab: "bg-accent-blue-bg text-accent-blue-text",
+  lab_report: "bg-accent-blue-bg text-accent-blue-text",
+  pathology: "bg-pink-100 text-pink-800 dark:bg-pink-500/15 dark:text-pink-300",
+  consent: "bg-success-bg text-success-text",
+  medical_record: "bg-warning-bg text-warning-text",
+  prescription: "bg-accent-blue-bg text-accent-blue-text",
+  other: "bg-muted-bg text-muted-foreground",
 };
 
 export function getDocumentTypeColor(type: string): string {

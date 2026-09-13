@@ -158,7 +158,7 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
                 setFormData({ ...formData, patientId: value })
               }
             >
-              <SelectTrigger id="patient">
+              <SelectTrigger id="patient" className="h-9">
                 <SelectValue placeholder={t("common_selectPatient")} />
               </SelectTrigger>
               <SelectContent>
@@ -179,7 +179,7 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
                 setFormData({ ...formData, consentType: value })
               }
             >
-              <SelectTrigger id="consent-type">
+              <SelectTrigger id="consent-type" className="h-9">
                 <SelectValue placeholder={t("consent_selectType")} />
               </SelectTrigger>
               <SelectContent>
@@ -201,6 +201,7 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
               onChange={(e) =>
                 setFormData({ ...formData, signedAt: e.target.value })
               }
+              className="h-9"
             />
           </div>
 
@@ -213,6 +214,7 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
               onChange={(e) =>
                 setFormData({ ...formData, documentUrl: e.target.value })
               }
+              className="h-9"
             />
           </div>
 
@@ -224,22 +226,23 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
                 setFormData({ ...formData, isGranted: checked as boolean })
               }
             />
-            <Label htmlFor="is-granted" className="cursor-pointer">
+            <Label htmlFor="is-granted" className="cursor-pointer text-foreground">
               {t("consent_grantedLabel")}
             </Label>
           </div>
 
-          <div className="flex gap-2 justify-end">
+          <div className="flex gap-2 justify-end mt-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
               disabled={loading}
+              className="h-9"
             >
-              <X />{t("common_cancel")}
+              <X className="h-4 w-4 mr-1" />{t("common_cancel")}
             </Button>
-            <Button type="submit" disabled={loading}>
-              <Save />{loading ? t("consent_recording") : t("consent_newTrigger")}
+            <Button type="submit" disabled={loading} className="h-9">
+              <Save className="h-4 w-4 mr-1" />{loading ? t("consent_recording") : t("consent_newTrigger")}
             </Button>
           </div>
         </form>

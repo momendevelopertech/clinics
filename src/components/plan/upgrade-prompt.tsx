@@ -27,31 +27,31 @@ export function UpgradePrompt({ moduleKey }: { moduleKey: string }) {
 
   if (state === "loading") {
     return (
-      <div className="rounded-[16px] border border-amber-200 bg-amber-50/80 px-4 py-3 dark:border-amber-400/20 dark:bg-amber-400/8">
-        <Loader2 className="h-4 w-4 animate-spin text-amber-600" />
+      <div className="rounded-md border border-warning-text/20 bg-warning-bg px-4 py-3">
+        <Loader2 className="h-4 w-4 animate-spin text-warning-text" />
       </div>
     );
   }
   if (state !== "locked") return null;
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-[18px] border border-amber-300/70 bg-linear-to-r from-amber-50 to-amber-100/60 px-4 py-3.5 dark:border-amber-400/25 dark:from-amber-400/10 dark:to-amber-400/5">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-warning-text/20 bg-warning-bg px-4 py-3.5">
       <div className="flex items-start gap-3">
-        <div className="mt-0.5 grid size-9 shrink-0 place-content-center rounded-[12px] bg-amber-500/15 text-amber-600 dark:text-amber-300">
+        <div className="mt-0.5 grid size-9 shrink-0 place-content-center rounded-md bg-background/50 text-warning-text">
           <Lock className="h-4 w-4" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-amber-900 dark:text-amber-100">
+          <p className="text-sm font-semibold text-warning-text">
             {t("upg_lockedTitle")}
           </p>
-          <p className="mt-0.5 text-xs text-amber-800/90 dark:text-amber-200/80">
+          <p className="mt-0.5 text-xs text-warning-text/90">
             {t("upg_lockedBody")}
           </p>
         </div>
       </div>
       <Link
         href={`/plan?lock=${encodeURIComponent(moduleKey)}`}
-        className="inline-flex items-center gap-1.5 rounded-[12px] bg-amber-600 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-amber-700"
+        className="inline-flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
       >
         {t("upg_seePlans")}
         <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />

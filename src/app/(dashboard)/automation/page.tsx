@@ -25,14 +25,14 @@ export default function AutomationPage() {
   return (
     <div className="space-y-6">
       <UpgradePrompt moduleKey="automation" />
-      <div className="surface-panel rounded-[28px] border border-white/55 p-6 dark:border-white/6">
+      <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
         <div className="flex items-start gap-4">
-          <div className="grid size-12 place-content-center rounded-2xl bg-primary/10 text-primary">
+          <div className="grid size-12 place-content-center rounded-lg bg-primary/10 text-primary">
             <Sparkles className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-semibold">{t("automation_title")}</h1>
-            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{t("automation_subtitle")}</p>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("automation_title")}</h1>
+            <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{t("automation_subtitle")}</p>
           </div>
         </div>
       </div>
@@ -40,23 +40,23 @@ export default function AutomationPage() {
       {loading ? (
         <p className="text-sm text-muted-foreground">{t("common_loading")}</p>
       ) : signals.length === 0 ? (
-        <div className="surface-panel rounded-[24px] border border-white/55 p-8 text-center dark:border-white/6">
-          <p className="font-medium">{t("automation_empty")}</p>
+        <div className="rounded-lg border border-border bg-card p-8 text-center shadow-sm">
+          <p className="font-medium text-foreground">{t("automation_empty")}</p>
         </div>
       ) : (
         <div className="grid gap-4">
           {signals.map((signal) => (
-            <div key={signal.id} className="surface-panel flex flex-wrap items-center justify-between gap-4 rounded-[24px] border border-white/55 p-5 dark:border-white/6">
+            <div key={signal.id} className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-card p-5 shadow-sm">
               <div className="flex min-w-0 items-start gap-3">
                 <div className="mt-0.5 text-primary">
                   {signal.kind === "lab_review" ? <FlaskConical className="h-5 w-5" /> : signal.kind === "no_show" ? <UserRound className="h-5 w-5" /> : <Clock3 className="h-5 w-5" />}
                 </div>
                 <div className="min-w-0">
-                  <p className="font-semibold">{signal.title}</p>
+                  <p className="font-semibold text-foreground">{signal.title}</p>
                   <p className="text-sm text-muted-foreground">{signal.patientName} · {signal.detail}</p>
                 </div>
               </div>
-              <Link href={signal.href} className="inline-flex items-center gap-2 rounded-xl bg-primary px-3 py-2 text-sm font-semibold text-white">
+              <Link href={signal.href} className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors h-9">
                 {t("automation_review")} <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
@@ -65,7 +65,7 @@ export default function AutomationPage() {
       )}
 
       <p className="flex items-center gap-2 text-xs text-muted-foreground">
-        <AlertTriangle className="h-4 w-4" /> {t("automation_readOnly")}
+        <AlertTriangle className="h-4 w-4 text-warning-text" /> {t("automation_readOnly")}
       </p>
     </div>
   );

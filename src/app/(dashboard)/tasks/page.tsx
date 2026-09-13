@@ -65,10 +65,10 @@ export default function TasksPage() {
   }
 
   const statusColor: Record<string, string> = {
-    open: "bg-blue-100 text-blue-700 dark:bg-blue-900/40",
-    in_progress: "bg-amber-100 text-amber-700 dark:bg-amber-900/40",
-    completed: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40",
-    cancelled: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400",
+    open: "bg-accent-blue-bg text-accent-blue-text",
+    in_progress: "bg-warning-bg text-warning-text",
+    completed: "bg-success-bg text-success-text",
+    cancelled: "bg-muted-bg text-muted-foreground",
   };
 
   const filteredTasks = tasks.filter((task) => {
@@ -142,9 +142,9 @@ export default function TasksPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="p-8 text-center text-neutral-500">{t("common_loading")}</div>
+            <div className="p-8 text-center text-muted-foreground">{t("common_loading")}</div>
           ) : tasks.length === 0 ? (
-            <div className="p-8 text-center text-neutral-500 border rounded-[5px]">
+            <div className="p-8 text-center text-muted-foreground border border-border rounded-md">
               {t("tasks_empty")}
             </div>
           ) : (
@@ -152,14 +152,14 @@ export default function TasksPage() {
               {pagedTasks.map((task) => (
                 <div
                   key={task.id}
-                  className="flex items-center justify-between p-4 border rounded-[5px] hover:bg-neutral-50 dark:hover:bg-neutral-800/30"
+                  className="flex items-center justify-between p-4 border border-border rounded-md hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium">{task.title}</p>
+                    <p className="font-medium text-foreground">{task.title}</p>
                     {task.description && (
-                      <p className="text-sm text-neutral-500 mt-1 truncate">{task.description}</p>
+                      <p className="text-sm text-muted-foreground mt-1 truncate">{task.description}</p>
                     )}
-                    <div className="flex items-center gap-3 mt-2 text-xs text-neutral-500">
+                    <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                       {task.patient && (
                         <span>{task.patient.firstName} {task.patient.lastName}</span>
                       )}
@@ -168,7 +168,7 @@ export default function TasksPage() {
                       )}
                     </div>
                   </div>
-                  <span className={`px-2 py-1 rounded-[5px] text-xs font-medium shrink-0 ${statusColor[task.status] ?? "bg-neutral-100"}`}>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold shrink-0 ${statusColor[task.status] ?? "bg-muted-bg text-muted-foreground"}`}>
                     {task.status}
                   </span>
                 </div>

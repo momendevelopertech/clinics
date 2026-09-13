@@ -4,6 +4,8 @@ import { Plus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type Branch = { id: string; name: string; status: string; _count?: { rooms: number } };
 type Room = { id: string; name: string; number: string | null; status: string; branch?: { name: string } | null };
@@ -54,7 +56,7 @@ export default function LocationsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold">{t("locations_title")}</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("locations_title")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{t("locations_subtitle")}</p>
         </div>
         <PermissionDenied
@@ -68,27 +70,72 @@ export default function LocationsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">{t("locations_title")}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("locations_title")}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{t("locations_subtitle")}</p>
       </div>
-      {error ? <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p> : null}
+      {error ? (
+        <div className="rounded-md border border-critical/20 bg-critical-bg p-3 text-sm text-critical-text">
+          {error}
+        </div>
+      ) : null}
       <div className="grid gap-6 lg:grid-cols-2">
-        <section className="rounded-2xl border bg-card p-5">
-          <h2 className="text-lg font-semibold">{t("locations_branches")}</h2>
+        <section className="rounded-lg border border-border bg-card p-5 shadow-xs">
+          <h2 className="text-base font-semibold text-foreground">{t("locations_branches")}</h2>
           <div className="mt-4 flex gap-2">
-            <input value={branchName} onChange={(event) => setBranchName(event.target.value)} placeholder={t("locations_branchName")} className="h-10 min-w-0 flex-1 rounded-lg border bg-background px-3 text-sm" />
-            <button onClick={() => void addBranch()} disabled={!branchName.trim()} className="rounded-lg bg-primary px-4 text-sm text-primary-foreground disabled:opacity-50"><Plus className="h-4 w-4" />{t("common_add")}</button>
+            <Input
+              value={branchName}
+              onChange={(event) => setBranchName(event.target.value)}
+              placeholder={t("locations_branchName")}
+              className="h-9 flex-1 bg-background"
+            />
+            <Button
+              onClick={() => void addBranch()}
+              disabled={!branchName.trim()}
+              className="h-9 gap-1.5"
+            >
+              <Plus className="h-4 w-4" />{t("common_add")}
+            </Button>
           </div>
-          <ul className="mt-4 space-y-2">{branches.map((branch) => <li key={branch.id} className="flex justify-between rounded-lg border p-3 text-sm"><span>{branch.name}</span><span className="text-muted-foreground">{branch._count?.rooms ?? 0} {t("locations_rooms")}</span></li>)}</ul>
+          <ul className="mt-4 space-y-2">
+            {branches.map((branch) => (
+              <li key={branch.id} className="flex justify-between items-center rounded-md border border-border bg-background p-3 text-sm transition-colors hover:bg-muted-bg/50">
+                <span className="font-medium">{branch.name}</span>
+                <span className="text-xs text-muted-foreground">{branch._count?.rooms ?? 0} {t("locations_rooms")}</span>
+              </li>
+            ))}
+          </ul>
         </section>
-        <section className="rounded-2xl border bg-card p-5">
-          <h2 className="text-lg font-semibold">{t("locations_rooms")}</h2>
+        <section className="rounded-lg border border-border bg-card p-5 shadow-xs">
+          <h2 className="text-base font-semibold text-foreground">{t("locations_rooms")}</h2>
           <div className="mt-4 grid gap-2 sm:grid-cols-[1fr_120px_auto]">
-            <input value={roomName} onChange={(event) => setRoomName(event.target.value)} placeholder={t("locations_roomName")} className="h-10 rounded-lg border bg-background px-3 text-sm" />
-            <input value={roomNumber} onChange={(event) => setRoomNumber(event.target.value)} placeholder={t("locations_roomNumber")} className="h-10 rounded-lg border bg-background px-3 text-sm" />
-            <button onClick={() => void addRoom()} disabled={!roomName.trim()} className="rounded-lg bg-primary px-4 text-sm text-primary-foreground disabled:opacity-50"><Plus className="h-4 w-4" />{t("common_add")}</button>
+            <Input
+              value={roomName}
+              onChange={(event) => setRoomName(event.target.value)}
+              placeholder={t("locations_roomName")}
+              className="h-9 bg-background"
+            />
+            <Input
+              value={roomNumber}
+              onChange={(event) => setRoomNumber(event.target.value)}
+              placeholder={t("locations_roomNumber")}
+              className="h-9 bg-background"
+            />
+            <Button
+              onClick={() => void addRoom()}
+              disabled={!roomName.trim()}
+              className="h-9 gap-1.5"
+            >
+              <Plus className="h-4 w-4" />{t("common_add")}
+            </Button>
           </div>
-          <ul className="mt-4 space-y-2">{rooms.map((room) => <li key={room.id} className="flex justify-between rounded-lg border p-3 text-sm"><span>{room.name}{room.number ? ` · ${room.number}` : ""}</span><span className="text-muted-foreground">{room.branch?.name ?? t("locations_unassigned")}</span></li>)}</ul>
+          <ul className="mt-4 space-y-2">
+            {rooms.map((room) => (
+              <li key={room.id} className="flex justify-between items-center rounded-md border border-border bg-background p-3 text-sm transition-colors hover:bg-muted-bg/50">
+                <span className="font-medium">{room.name}{room.number ? ` · ${room.number}` : ""}</span>
+                <span className="text-xs text-muted-foreground">{room.branch?.name ?? t("locations_unassigned")}</span>
+              </li>
+            ))}
+          </ul>
         </section>
       </div>
     </div>

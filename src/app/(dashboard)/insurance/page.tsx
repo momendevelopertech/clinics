@@ -265,7 +265,7 @@ export default function InsurancePage() {
         </div>
       </div>
 
-      <Card>
+      <Card className="border-border bg-card shadow-sm">
         <CardHeader>
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
             <div className="grid gap-2 w-full sm:w-64">
@@ -277,7 +277,7 @@ export default function InsurancePage() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-9">
                   <SelectValue placeholder={t("common_all")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -300,7 +300,7 @@ export default function InsurancePage() {
                     setPage(1);
                   }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="h-9">
                     <SelectValue placeholder={t("common_all")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -318,24 +318,24 @@ export default function InsurancePage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="p-8 text-center text-neutral-500">{t("common_loading")}</div>
+            <div className="p-8 text-center text-muted-foreground">{t("common_loading")}</div>
           ) : tab === "policies" ? (
-            <div className="rounded-[5px] border overflow-x-auto">
+            <div className="rounded-lg border border-border overflow-x-auto">
               <table className="w-full min-w-[720px] text-sm">
-                <thead className="bg-neutral-50 dark:bg-neutral-800/50">
+                <thead className="bg-muted-bg text-muted-foreground font-medium">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_patient")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("ins_colProvider")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("ins_colPolicyNumber")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_type")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("ins_colEligibility")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_actions")}</th>
+                    <th className="px-4 py-3 text-left">{t("common_patient")}</th>
+                    <th className="px-4 py-3 text-left">{t("ins_colProvider")}</th>
+                    <th className="px-4 py-3 text-left">{t("ins_colPolicyNumber")}</th>
+                    <th className="px-4 py-3 text-left">{t("common_type")}</th>
+                    <th className="px-4 py-3 text-left">{t("ins_colEligibility")}</th>
+                    <th className="px-4 py-3 text-left">{t("common_actions")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y">
+                <tbody className="divide-y divide-border text-foreground">
                   {pagedPolicies.map((p) => (
-                    <tr key={p.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
-                      <td className="px-4 py-3 font-medium">{patientName(p.patientId)}</td>
+                    <tr key={p.id} className="hover:bg-muted-bg/50 transition-colors">
+                      <td className="px-4 py-3 font-medium text-foreground">{patientName(p.patientId)}</td>
                       <td className="px-4 py-3">{p.provider}</td>
                       <td className="px-4 py-3 font-mono">{p.policyNumber}</td>
                       <td className="px-4 py-3">{t(`ins_type_${p.type}`) === `ins_type_${p.type}` ? p.type : t(`ins_type_${p.type}`)}</td>
@@ -343,10 +343,10 @@ export default function InsurancePage() {
                         {eligibility[p.id] ? (
                           <span
                             className={cn(
-                              "rounded-full px-2.5 py-1 text-xs font-semibold",
+                              "rounded-full px-2.5 py-0.5 text-xs font-medium",
                               eligibility[p.id].eligible
-                                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
-                                : "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300",
+                                ? "bg-success-bg text-success-text"
+                                : "bg-critical-bg text-critical-text",
                             )}
                           >
                             {eligibility[p.id].eligible
@@ -361,10 +361,11 @@ export default function InsurancePage() {
                         <Button
                           variant="ghost"
                           size="sm"
+                          className="h-8"
                           disabled={checkingId === p.id}
                           onClick={() => void checkEligibility(p.id)}
                         >
-                          <Search />{t("ins_checkEligibility")}
+                          <Search className="h-3.5 w-3.5 mr-1" />{t("ins_checkEligibility")}
                         </Button>
                       </td>
                     </tr>
@@ -376,22 +377,22 @@ export default function InsurancePage() {
               ) : null}
             </div>
           ) : (
-            <div className="rounded-[5px] border overflow-x-auto">
+            <div className="rounded-lg border border-border overflow-x-auto">
               <table className="w-full min-w-[860px] text-sm">
-                <thead className="bg-neutral-50 dark:bg-neutral-800/50">
+                <thead className="bg-muted-bg text-muted-foreground font-medium">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_patient")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("ins_colClaimed")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_status")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("ins_colAdvance")}</th>
+                    <th className="px-4 py-3 text-left">{t("common_patient")}</th>
+                    <th className="px-4 py-3 text-left">{t("ins_colClaimed")}</th>
+                    <th className="px-4 py-3 text-left">{t("common_status")}</th>
+                    <th className="px-4 py-3 text-left">{t("ins_colAdvance")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y">
+                <tbody className="divide-y divide-border text-foreground">
                   {pagedClaims.map((c) => {
                     const nextOptions = CLAIM_STATUSES.filter((s) => canTransitionClaim(c.status, s));
                     return (
-                      <tr key={c.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
-                        <td className="px-4 py-3 font-medium">
+                      <tr key={c.id} className="hover:bg-muted-bg/50 transition-colors">
+                        <td className="px-4 py-3 font-medium text-foreground">
                           {c.patient ? `${c.patient.firstName} ${c.patient.lastName}` : patientName(c.patientId)}
                           {c.invoice ? (
                             <span className="block text-xs font-normal text-muted-foreground">
@@ -401,7 +402,7 @@ export default function InsurancePage() {
                         </td>
                         <td className="px-4 py-3">${Number(c.amountClaimed).toFixed(2)}</td>
                         <td className="px-4 py-3">
-                          <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+                          <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                             {t(`ins_claim_${c.status}`) === `ins_claim_${c.status}` ? c.status : t(`ins_claim_${c.status}`)}
                           </span>
                         </td>
@@ -412,7 +413,7 @@ export default function InsurancePage() {
                                 value={advancing[c.id] ?? ""}
                                 onValueChange={(v) => setAdvancing((prev) => ({ ...prev, [c.id]: v }))}
                               >
-                                <SelectTrigger className="w-36">
+                                <SelectTrigger className="w-36 h-8 text-xs">
                                   <SelectValue placeholder={t("ins_colAdvance")} />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -428,14 +429,14 @@ export default function InsurancePage() {
                                   type="number"
                                   min="0"
                                   step="0.01"
-                                  className="w-28"
+                                  className="w-28 h-8 text-xs"
                                   placeholder={t("ins_colPaid")}
                                   value={amountPaid[c.id] ?? ""}
                                   onChange={(e) => setAmountPaid((prev) => ({ ...prev, [c.id]: e.target.value }))}
                                 />
                               ) : null}
-                              <Button size="sm" disabled={!advancing[c.id]} onClick={() => void advanceClaim(c)}>
-                                <Check />{t("common_confirm")}
+                              <Button size="sm" className="h-8" disabled={!advancing[c.id]} onClick={() => void advanceClaim(c)}>
+                                <Check className="h-3.5 w-3.5 mr-1" />{t("common_confirm")}
                               </Button>
                             </div>
                           ) : (
@@ -464,15 +465,15 @@ export default function InsurancePage() {
       </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
+        <Card className="border-border bg-card shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg">{t("ins_newPolicy")}</CardTitle>
+            <CardTitle className="text-lg text-foreground">{t("ins_newPolicy")}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3">
             <div className="grid gap-2">
               <Label>{t("common_patientRequired")}</Label>
               <Select value={policyForm.patientId} onValueChange={(v) => setPolicyForm({ ...policyForm, patientId: v })}>
-                <SelectTrigger>
+                <SelectTrigger className="h-9">
                   <SelectValue placeholder={t("common_selectPatient")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -486,24 +487,24 @@ export default function InsurancePage() {
             </div>
             <div className="grid gap-2">
               <Label>{t("ins_colProvider")}</Label>
-              <Input value={policyForm.provider} onChange={(e) => setPolicyForm({ ...policyForm, provider: e.target.value })} />
+              <Input value={policyForm.provider} onChange={(e) => setPolicyForm({ ...policyForm, provider: e.target.value })} className="h-9" />
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="grid gap-2">
                 <Label>{t("ins_colPolicyNumber")}</Label>
-                <Input value={policyForm.policyNumber} onChange={(e) => setPolicyForm({ ...policyForm, policyNumber: e.target.value })} />
+                <Input value={policyForm.policyNumber} onChange={(e) => setPolicyForm({ ...policyForm, policyNumber: e.target.value })} className="h-9" />
               </div>
               <div className="grid gap-2">
                 <Label>
                   {t("ins_colGroupNumber")} ({t("common_optional")})
                 </Label>
-                <Input value={policyForm.groupNumber} onChange={(e) => setPolicyForm({ ...policyForm, groupNumber: e.target.value })} />
+                <Input value={policyForm.groupNumber} onChange={(e) => setPolicyForm({ ...policyForm, groupNumber: e.target.value })} className="h-9" />
               </div>
             </div>
             <div className="grid gap-2">
               <Label>{t("common_type")}</Label>
               <Select value={policyForm.type} onValueChange={(v) => setPolicyForm({ ...policyForm, type: v })}>
-                <SelectTrigger>
+                <SelectTrigger className="h-9">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -516,22 +517,23 @@ export default function InsurancePage() {
               <Button
                 disabled={!policyForm.patientId || !policyForm.provider.trim() || !policyForm.policyNumber.trim()}
                 onClick={() => void createPolicy()}
+                className="h-9"
               >
-                <Plus />{t("common_add")}
+                <Plus className="h-4 w-4 mr-1" />{t("common_add")}
               </Button>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-border bg-card shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg">{t("ins_newClaim")}</CardTitle>
+            <CardTitle className="text-lg text-foreground">{t("ins_newClaim")}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3">
             <div className="grid gap-2">
               <Label>{t("common_patientRequired")}</Label>
               <Select value={claimForm.patientId} onValueChange={(v) => setClaimForm({ ...claimForm, patientId: v })}>
-                <SelectTrigger>
+                <SelectTrigger className="h-9">
                   <SelectValue placeholder={t("common_selectPatient")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -552,6 +554,7 @@ export default function InsurancePage() {
                   placeholder={t("ins_invoiceHint")}
                   value={claimForm.invoiceId}
                   onChange={(e) => setClaimForm({ ...claimForm, invoiceId: e.target.value })}
+                  className="h-9"
                 />
               </div>
               <div className="grid gap-2">
@@ -562,6 +565,7 @@ export default function InsurancePage() {
                   step="0.01"
                   value={claimForm.amountClaimed}
                   onChange={(e) => setClaimForm({ ...claimForm, amountClaimed: e.target.value })}
+                  className="h-9"
                 />
               </div>
             </div>
@@ -569,8 +573,9 @@ export default function InsurancePage() {
               <Button
                 disabled={!claimForm.patientId || !(Number(claimForm.amountClaimed) > 0)}
                 onClick={() => void fileClaim()}
+                className="h-9"
               >
-                <Plus />{t("common_add")}
+                <Plus className="h-4 w-4 mr-1" />{t("common_add")}
               </Button>
             </div>
           </CardContent>

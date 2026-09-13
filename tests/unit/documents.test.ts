@@ -79,7 +79,7 @@ describe("formatTypeLabel", () => {
 
 describe("getDocumentTypeColor", () => {
   it("maps known types and falls back to other", () => {
-    expect(getDocumentTypeColor("imaging")).toBe("bg-purple-100 text-purple-800");
-    expect(getDocumentTypeColor("unknown_type")).toBe("bg-gray-100 text-gray-800");
+    expect(getDocumentTypeColor("imaging")).toBe("bg-purple-100 text-purple-800 dark:bg-purple-500/15 dark:text-purple-300");
+    expect(getDocumentTypeColor("unknown_type")).toBe("bg-muted-bg text-muted-foreground");
   });
 });

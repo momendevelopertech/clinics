@@ -211,7 +211,7 @@ export function AddCommunicationDialog({
               }
               rows={4}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {t("comm_characters").replace(
                 "{count}",
                 String(formData.content.length),
@@ -229,19 +229,20 @@ export function AddCommunicationDialog({
               onChange={(e) =>
                 setFormData({ ...formData, scheduledFor: e.target.value })
               }
+              className="h-9"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {t("comm_sendImmediately")}
             </p>
           </div>
         </div>
 
         <div className="flex gap-2 justify-end mt-6">
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            <X />{t("common_cancel")}
+          <Button variant="outline" onClick={() => setOpen(false)} className="h-9">
+            <X className="h-4 w-4 mr-1" />{t("common_cancel")}
           </Button>
-          <Button onClick={handleSubmit} disabled={loading}>
-            <Send />{loading ? t("comm_sending") : t("comm_send")}
+          <Button onClick={handleSubmit} disabled={loading} className="h-9">
+            <Send className="h-4 w-4 mr-1" />{loading ? t("comm_sending") : t("comm_send")}
           </Button>
         </div>
       </DialogContent>

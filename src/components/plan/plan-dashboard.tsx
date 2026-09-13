@@ -76,16 +76,16 @@ function UsageBar({ entry, t }: { entry: LimitUsage; t: Dictionary }) {
           {unlimited ? "∞" : `${used.toLocaleString()} / ${limit.toLocaleString()}`}
         </span>
       </div>
-      <div className="h-2.5 overflow-hidden rounded-full bg-white/70 dark:bg-white/[0.06]">
+      <div className="h-2.5 overflow-hidden rounded-full bg-muted">
         <div
           className={`h-full rounded-full transition-all ${
-            percent >= 90 ? "bg-red-500" : percent >= 70 ? "bg-amber-500" : "bg-emerald-500"
+            percent >= 90 ? "bg-critical-text" : percent >= 70 ? "bg-warning-text" : "bg-success-text"
           }`}
           style={{ width: `${unlimited ? 0 : percent}%` }}
         />
       </div>
       {unlimited ? null : nearLimit ? (
-        <p className="text-xs font-medium text-amber-600 dark:text-amber-400">
+        <p className="text-xs font-medium text-warning-text">
           {t["upg_nearLimit"].replace("{used}", used.toLocaleString()).replace("{limit}", limit.toLocaleString()).replace("{percent}", String(percent))}
         </p>
       ) : null}
@@ -182,7 +182,7 @@ export function PlanDashboard({
 
       {/* Header: current plan + usage */}
       <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+        <div className="surface-panel rounded-lg border border-border p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
               {t["plan_currentPlan"]}
@@ -192,7 +192,7 @@ export function PlanDashboard({
             </span>
           </div>
           {hasPendingUpgrade ? (
-            <div className="mt-4 flex items-start gap-2 rounded-[16px] border border-cyan-200 bg-cyan-50/70 p-3 text-sm text-cyan-800 dark:border-cyan-400/20 dark:bg-cyan-400/8 dark:text-cyan-200">
+            <div className="mt-4 flex items-start gap-2 rounded-md border border-accent-blue-text/20 bg-accent-blue-bg p-3 text-sm text-accent-blue-text">
               <Zap className="mt-0.5 h-4 w-4 shrink-0" />
               <div>
                 {t["plan_upgradeRequested"]} ·{" "}
@@ -209,24 +209,24 @@ export function PlanDashboard({
           )}
 
           <dl className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <div className="rounded-[16px] bg-white/50 p-3 dark:bg-white/[0.03]">
+            <div className="rounded-md bg-muted/40 p-3">
               <dt className="text-xs text-muted-foreground">{t["upg_price"]}</dt>
               <dd className="mt-1 text-lg font-semibold">{formatPrice(currentPlan.price)}<span className="text-xs font-normal text-muted-foreground">/mo</span></dd>
             </div>
-            <div className="rounded-[16px] bg-white/50 p-3 dark:bg-white/[0.03]">
+            <div className="rounded-md bg-muted/40 p-3">
               <dt className="text-xs text-muted-foreground">{t["upg_status"]}</dt>
               <dd className="mt-1 text-sm font-semibold capitalize">
                 {org.subscriptionStatus ? t[`sub_status${org.subscriptionStatus}` as keyof Dictionary] ?? org.subscriptionStatus : t["sub_statusactive"]}
               </dd>
             </div>
-            <div className="rounded-[16px] bg-white/50 p-3 dark:bg-white/[0.03]">
+            <div className="rounded-md bg-muted/40 p-3">
               <dt className="text-xs text-muted-foreground">{t["upg_patients"]}</dt>
               <dd className="mt-1 text-lg font-semibold">{usage.patients.toLocaleString()}</dd>
             </div>
           </dl>
         </div>
 
-        <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+        <div className="surface-panel rounded-lg border border-border p-6 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
             {t["plan_usage"]}
           </p>
@@ -240,13 +240,13 @@ export function PlanDashboard({
 
       {/* Next plan recommendation */}
       {recommendation && nextPlan && !hasPendingUpgrade ? (
-        <div className={`rounded-[24px] border bg-linear-to-r p-6 ${
-          lockModule ? "border-primary/50 from-primary/10 to-cyan-500/5 shadow-lg shadow-primary/5"
-            : "border-white/60 from-primary/5 to-cyan-500/5 dark:border-white/8"
+        <div className={`rounded-lg border p-6 ${
+          lockModule ? "border-primary/50 bg-primary/5 shadow-sm"
+            : "border-border bg-muted/30"
         }`}>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="grid size-11 place-content-center rounded-[16px] bg-primary/10 text-primary">
+              <div className="grid size-11 place-content-center rounded-md bg-primary/10 text-primary">
                 <TrendingUp className="h-5 w-5" />
               </div>
               <div>
@@ -264,7 +264,7 @@ export function PlanDashboard({
                   {t["upg_limitTip"].replace("{count}", String(nearLimitEntries.length))}
                 </p>
               ) : recommendation.lockedFeature ? (
-                <p className="text-sm text-amber-700 dark:text-amber-300">
+                <p className="text-sm font-medium text-warning-text">
                   {recommendation.lockedFeature} <Lock className="inline h-3.5 w-3.5" />
                 </p>
               ) : null}
@@ -277,7 +277,7 @@ export function PlanDashboard({
       ) : null}
 
       {error ? (
-        <p className="rounded-[16px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/25 dark:bg-red-500/10 dark:text-red-300">
+        <p className="rounded-md border border-critical-text/20 bg-critical-bg px-4 py-3 text-sm text-critical-text">
           {error}
         </p>
       ) : null}
@@ -312,14 +312,14 @@ export function PlanDashboard({
           return (
             <div
               key={plan.code}
-              className={`surface-panel relative rounded-[28px] border p-6 ${
+              className={`surface-panel relative rounded-lg border p-6 shadow-sm ${
                 isRecommended
-                  ? "border-primary/40 shadow-lg shadow-primary/5"
-                  : "border-white/55 dark:border-white/6"
+                  ? "border-primary/50 shadow-md"
+                  : "border-border"
               }`}
             >
               {isCurrent ? (
-                <span className="absolute right-4 top-4 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+                <span className="absolute right-4 top-4 rounded-full bg-success-bg px-2.5 py-1 text-xs font-semibold text-success-text">
                   {t["plan_onThisPlan"]}
                 </span>
               ) : isRecommended ? (
@@ -328,7 +328,7 @@ export function PlanDashboard({
                 </span>
               ) : null}
 
-              <div className="grid size-12 place-content-center rounded-[16px] bg-primary/10 text-primary">
+              <div className="grid size-11 place-content-center rounded-md bg-primary/10 text-primary">
                 <HighlightIcon code={plan.code} />
               </div>
               <h2 className="mt-4 text-xl font-semibold">{plan.name}</h2>
@@ -338,7 +338,7 @@ export function PlanDashboard({
                 <span className="text-sm font-normal text-muted-foreground">/mo</span>
               </p>
               {plan.trialDays > 0 ? (
-                <p className="mt-1 text-xs font-medium text-cyan-600 dark:text-cyan-300">
+                <p className="mt-1 text-xs font-medium text-accent-blue-text">
                   {t["upg_trialDays"].replace("{days}", String(plan.trialDays))}
                 </p>
               ) : null}
@@ -348,11 +348,11 @@ export function PlanDashboard({
                   return (
                     <li key={index} className="flex items-start gap-2 text-sm">
                       {isLocked ? (
-                        <Lock className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+                        <Lock className="mt-0.5 h-4 w-4 shrink-0 text-warning-text" />
                       ) : (
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-success-text" />
                       )}
-                      <span className={isLocked ? "text-amber-700/90 dark:text-amber-300/80" : "text-foreground/80"}>
+                      <span className={isLocked ? "text-warning-text" : "text-foreground/90"}>
                         {highlight}
                       </span>
                     </li>
@@ -364,7 +364,7 @@ export function PlanDashboard({
                 {isCurrent ? (
                   <button
                     disabled
-                    className="h-11 w-full rounded-[16px] border border-white/60 bg-white/60 text-sm font-semibold text-muted-foreground dark:border-white/6 dark:bg-white/[0.03]"
+                    className="h-9 w-full rounded-md border border-border bg-muted/50 text-sm font-medium text-muted-foreground"
                   >
                     {t["plan_onThisPlan"]}
                   </button>
@@ -374,7 +374,7 @@ export function PlanDashboard({
                     onClick={() => {
                       void requestUpgrade(plan.code);
                     }}
-                    className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[16px] bg-linear-to-r from-primary to-cyan-500 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-primary text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {submitting && targetPlan === plan.code ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -386,7 +386,7 @@ export function PlanDashboard({
                 ) : (
                   <button
                     disabled
-                    className="h-11 w-full rounded-[16px] border border-white/60 bg-white/60 text-sm font-semibold text-muted-foreground dark:border-white/6 dark:bg-white/[0.03]"
+                    className="h-9 w-full rounded-md border border-border bg-muted/50 text-sm font-medium text-muted-foreground"
                   >
                     {t["plan_onThisPlan"]}
                   </button>
@@ -398,28 +398,28 @@ export function PlanDashboard({
       </div>
 
       {/* Compare table */}
-      <div className="surface-panel overflow-hidden rounded-[28px] border border-white/55 dark:border-white/6">
-        <div className="border-b border-white/50 px-6 py-5 dark:border-white/8">
+      <div className="surface-panel overflow-hidden rounded-lg border border-border shadow-sm">
+        <div className="border-b border-border px-6 py-5">
           <h2 className="text-lg font-semibold">{t["upg_compareTitle"]}</h2>
           <p className="text-sm text-muted-foreground">{t["upg_compareSubtitle"]}</p>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead>
-              <tr className="border-b border-white/55 text-xs uppercase tracking-widest text-muted-foreground dark:border-white/6">
+              <tr className="border-b border-border text-xs uppercase tracking-widest text-muted-foreground bg-muted/30">
                 <th className="px-6 py-3">{t["upg_feature"]}</th>
                 {plans.map((plan) => (
-                  <th key={plan.code} className={`px-4 py-3 text-center ${plan.code === org.plan ? "text-primary" : ""}`}>
+                  <th key={plan.code} className={`px-4 py-3 text-center ${plan.code === org.plan ? "text-primary font-semibold" : ""}`}>
                     {plan.name}
                     {plan.code === org.plan ? <span className="block text-[10px] font-semibold normal-case">{t["plan_onThisPlan"]}</span> : null}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/45 dark:divide-white/5">
+            <tbody className="divide-y divide-border">
               {compareGroups.map(({ group, rows }) => (
                 <Fragment key={group}>
-                  <tr className="bg-white/50 dark:bg-white/[0.03]">
+                  <tr className="bg-muted/40">
                     <td className="px-6 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground" colSpan={plans.length + 1}>
                       {t[MODULE_GROUPS[group] as keyof Dictionary] ?? group}
                     </td>
@@ -430,20 +430,20 @@ export function PlanDashboard({
                     const rowLocked =
                       row.premium && currentValue === false && (row.type === "feature" || row.type === "module");
                     return (
-                      <tr key={`${group}-${row.code}`} className="hover:bg-white/40 dark:hover:bg-white/[0.03]">
-                        <td className="px-6 py-2.5 font-medium text-foreground/85">
+                      <tr key={`${group}-${row.code}`} className="hover:bg-muted/30">
+                        <td className="px-6 py-2.5 font-medium text-foreground">
                           <span className="inline-flex items-center gap-2">
                             {t[row.labelKey as keyof Dictionary]}
-                            {rowLocked ? <Lock className="h-3 w-3 text-amber-500" /> : null}
+                            {rowLocked ? <Lock className="h-3 w-3 text-warning-text" /> : null}
                           </span>
                         </td>
                         {row.values.map((value, index) => {
                           const isCurrentCol = plans[index]?.code === org.plan;
                           return (
-                            <td key={index} className={`px-4 py-2.5 text-center ${isCurrentCol ? "text-primary" : ""}`}>
+                            <td key={index} className={`px-4 py-2.5 text-center ${isCurrentCol ? "text-primary font-medium" : ""}`}>
                               {row.type === "module" ? (
                                 value === true ? (
-                                  <Check className="mx-auto h-4 w-4 text-emerald-500" />
+                                  <Check className="mx-auto h-4 w-4 text-success-text" />
                                 ) : (
                                   <span className="text-muted-foreground">—</span>
                                 )
@@ -451,10 +451,10 @@ export function PlanDashboard({
                                 typeof value === "number" ? (
                                   <span className="font-semibold">{formatLimit(value)}</span>
                                 ) : (
-                                  <span className="font-semibold text-emerald-600">∞</span>
+                                  <span className="font-semibold text-success-text">∞</span>
                                 )
                               ) : value === true ? (
-                                <Check className="mx-auto h-4 w-4 text-emerald-500" />
+                                <Check className="mx-auto h-4 w-4 text-success-text" />
                               ) : (
                                 <span className="text-muted-foreground">—</span>
                               )}
@@ -472,21 +472,21 @@ export function PlanDashboard({
       </div>
 
       {isOwner ? (
-        <div className="surface-panel rounded-[24px] border border-white/55 p-5 dark:border-white/6">
+        <div className="surface-panel rounded-lg border border-border p-5 shadow-sm">
           <label className="block space-y-2">
             <span className="text-sm font-medium text-foreground">{t["plan_upgradeNote"]}</span>
             <textarea
               value={note}
               onChange={(event) => setNote(event.target.value)}
               rows={2}
-              className="w-full rounded-[16px] border border-border bg-white/80 px-4 py-3 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15 dark:bg-white/[0.04]"
+              className="w-full rounded-md border border-border bg-background px-4 py-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
           </label>
         </div>
       ) : null}
 
       {sent ? (
-        <p className="rounded-[16px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 dark:border-emerald-500/25 dark:bg-emerald-500/10 dark:text-emerald-300">
+        <p className="rounded-md border border-success-text/20 bg-success-bg px-4 py-3 text-sm font-medium text-success-text">
           {t["plan_upgradeSent"]}
         </p>
       ) : null}

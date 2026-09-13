@@ -26,17 +26,17 @@ export function FeatureNotConfiguredBanner({
   return (
     <div
       role="alert"
-      className="rounded-[20px] border border-amber-200 bg-amber-50/70 p-4 text-sm shadow-sm dark:border-amber-800/60 dark:bg-amber-950/20 sm:p-5"
+      className="rounded-lg border border-warning-text/20 bg-warning-bg p-4 text-sm shadow-sm sm:p-5"
     >
       <div className="flex items-start gap-3">
-        <div className="grid size-10 shrink-0 place-content-center rounded-[14px] bg-amber-100 text-amber-700 dark:bg-amber-400/15 dark:text-amber-300">
+        <div className="grid size-10 shrink-0 place-content-center rounded-md bg-warning-text/10 text-warning-text">
           <AlertTriangle className="h-5 w-5" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="font-semibold text-amber-900 dark:text-amber-200">
+          <p className="font-semibold text-warning-text">
             {t(`cfg_feature_${feature}`)} · {t("cfg_badge")}
           </p>
-          <p className="mt-1 text-amber-800 dark:text-amber-200/90">
+          <p className="mt-1 text-warning-text/90">
             {devFallback ? t("cfg_devFallback") : t(`cfg_reason_${feature}`)}
           </p>
           {missingEnvVars.length > 0 ? (
@@ -44,14 +44,14 @@ export function FeatureNotConfiguredBanner({
               {missingEnvVars.map((name) => (
                 <code
                   key={name}
-                  className="rounded-full bg-amber-100 px-2.5 py-1 font-mono text-xs font-semibold text-amber-800 dark:bg-amber-400/15 dark:text-amber-200"
+                  className="rounded-full bg-warning-text/15 px-2.5 py-1 font-mono text-xs font-semibold text-warning-text"
                 >
                   {name}
                 </code>
               ))}
             </div>
           ) : null}
-          <ol className="mt-3 list-decimal space-y-1 ps-5 text-amber-800 dark:text-amber-200/90">
+          <ol className="mt-3 list-decimal space-y-1 ps-5 text-warning-text/90">
             <li>{t("cfg_stepEnv")}</li>
             <li>{t("cfg_stepRestart")}</li>
             <li>{t(`cfg_thirdParty_${feature}`)}</li>
@@ -61,7 +61,7 @@ export function FeatureNotConfiguredBanner({
               href={docsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 inline-flex items-center gap-1.5 font-medium text-amber-900 underline underline-offset-2 dark:text-amber-100"
+              className="mt-3 inline-flex items-center gap-1.5 font-medium text-warning-text underline underline-offset-2 hover:opacity-80"
             >
               {t("cfg_docsLink")}
               <ExternalLink className="h-3.5 w-3.5" />

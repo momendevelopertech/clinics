@@ -90,11 +90,11 @@ export function PortalIntakeCard() {
       ) => setAnswer(formId, field.key, e.target.value),
     };
     if (field.kind === "multiline") {
-      return <textarea className="w-full rounded border bg-background px-3 py-2 text-sm" rows={3} {...common} />;
+      return <textarea className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" rows={3} {...common} />;
     }
     if (field.kind === "boolean") {
       return (
-        <select className="h-10 rounded-md border bg-background px-3 text-sm" {...common}>
+        <select className="h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" {...common}>
           <option value="">—</option>
           <option value="yes">Yes / نعم</option>
           <option value="no">No / لا</option>
@@ -109,7 +109,7 @@ export function PortalIntakeCard() {
         options = [];
       }
       return (
-        <select className="h-10 rounded-md border bg-background px-3 text-sm" {...common}>
+        <select className="h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" {...common}>
           <option value="">—</option>
           {options.map((o) => (
             <option key={o} value={o}>{o}</option>
@@ -120,13 +120,14 @@ export function PortalIntakeCard() {
     return (
       <Input
         type={field.kind === "number" ? "number" : field.kind === "date" ? "date" : "text"}
+        className="h-9"
         {...common}
       />
     );
   };
 
   return (
-    <Card className="mb-6" id="portal-intake">
+    <Card className="mb-6 border-border bg-card shadow-sm" id="portal-intake">
       <CardHeader>
         <CardTitle>{t("portal_intakeTitle")}</CardTitle>
         <CardDescription>{t("portal_intakeDesc")}</CardDescription>
@@ -134,24 +135,24 @@ export function PortalIntakeCard() {
       <CardContent>
         <div className="space-y-4">
           {pending.length === 0 ? (
-            <p className="text-sm text-neutral-500">{t("portal_intakeDone")}</p>
+            <p className="text-sm text-muted-foreground">{t("portal_intakeDone")}</p>
           ) : (
             pending.map((form) => (
-              <div key={form.id} className="border rounded p-3 space-y-3">
-                <p className="font-medium">{form.name}</p>
+              <div key={form.id} className="border border-border rounded-lg p-4 space-y-3 bg-muted-bg/30">
+                <p className="font-medium text-foreground">{form.name}</p>
                 {form.description ? (
-                  <p className="text-sm text-neutral-500">{form.description}</p>
+                  <p className="text-sm text-muted-foreground">{form.description}</p>
                 ) : null}
                 {form.fields.map((field) => (
                   <div key={field.id} className="gap-1 flex flex-col">
-                    <Label>
+                    <Label className="text-foreground">
                       {labelFor(field)}
                       {field.required ? " *" : ""}
                     </Label>
                     {renderField(form.id, field)}
                   </div>
                 ))}
-                <Button size="sm" onClick={() => submit(form)}>
+                <Button size="sm" className="h-9" onClick={() => submit(form)}>
                   {t("portal_intakeSubmit")}
                 </Button>
               </div>

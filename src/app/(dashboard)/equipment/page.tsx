@@ -204,17 +204,17 @@ export default function EquipmentPage() {
         <p className="text-sm text-muted-foreground">{t("eq_subtitle")}</p>
       </div>
 
-      <Card>
+      <Card className="border-border bg-card shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Wrench className="w-5 h-5" />
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <Wrench className="w-5 h-5 text-primary" />
             {t("eq_items")}
           </CardTitle>
           <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
             <Input
               type="search"
               placeholder={t("eq_search")}
-              className="w-full sm:max-w-sm"
+              className="w-full sm:max-w-sm h-9"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -228,7 +228,7 @@ export default function EquipmentPage() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-full sm:w-48">
+              <SelectTrigger className="w-full sm:w-48 h-9">
                 <SelectValue placeholder={t("common_status")} />
               </SelectTrigger>
               <SelectContent>
@@ -244,26 +244,26 @@ export default function EquipmentPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="p-8 text-center text-neutral-500">{t("common_loading")}</div>
+            <div className="p-8 text-center text-muted-foreground">{t("common_loading")}</div>
           ) : items.length === 0 ? (
-            <div className="p-8 text-center text-neutral-500 border rounded-[5px]">{t("eq_empty")}</div>
+            <div className="p-8 text-center text-muted-foreground border border-border rounded-lg bg-card">{t("eq_empty")}</div>
           ) : (
-            <div className="rounded-[5px] border overflow-x-auto">
+            <div className="rounded-lg border border-border overflow-x-auto">
               <table className="w-full min-w-[720px] text-sm">
-                <thead className="bg-neutral-50 dark:bg-neutral-800/50">
+                <thead className="bg-muted-bg text-muted-foreground font-medium">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_name")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_type")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_status")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("eq_colCalibration")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_actions")}</th>
+                    <th className="px-4 py-3 text-left">{t("common_name")}</th>
+                    <th className="px-4 py-3 text-left">{t("common_type")}</th>
+                    <th className="px-4 py-3 text-left">{t("common_status")}</th>
+                    <th className="px-4 py-3 text-left">{t("eq_colCalibration")}</th>
+                    <th className="px-4 py-3 text-left">{t("common_actions")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y">
+                <tbody className="divide-y divide-border text-foreground">
                   {paged.map((item) => (
-                    <tr key={item.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
-                      <td className="px-4 py-3 font-medium">{item.name}</td>
-                      <td className="px-4 py-3">{item.type ?? "—"}</td>
+                    <tr key={item.id} className="hover:bg-muted-bg/50 transition-colors">
+                      <td className="px-4 py-3 font-medium text-foreground">{item.name}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{item.type ?? "—"}</td>
                       <td className="px-4 py-3">
                         {t(`eq_status_${item.status}`) === `eq_status_${item.status}`
                           ? item.status
@@ -272,12 +272,12 @@ export default function EquipmentPage() {
                       <td className="px-4 py-3">
                         <span
                           className={cn(
-                            "rounded-full px-2.5 py-1 text-xs font-semibold",
+                            "rounded-full px-2.5 py-0.5 text-xs font-medium",
                             item.calibrationAlert === "overdue"
-                              ? "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300"
+                              ? "bg-critical-bg text-critical-text"
                               : item.calibrationAlert === "warning"
-                                ? "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"
-                                : "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+                                ? "bg-warning-bg text-warning-text"
+                                : "bg-success-bg text-success-text",
                           )}
                         >
                           {alertLabel(item.calibrationAlert)}
@@ -287,9 +287,10 @@ export default function EquipmentPage() {
                         <Button
                           variant={selectedId === item.id ? "default" : "ghost"}
                           size="sm"
+                          className="h-8"
                           onClick={() => setSelectedId(selectedId === item.id ? null : item.id)}
                         >
-                          <Eye />{t("eq_viewLog")}
+                          <Eye className="h-3.5 w-3.5 mr-1" />{t("eq_viewLog")}
                         </Button>
                       </td>
                     </tr>
@@ -310,20 +311,20 @@ export default function EquipmentPage() {
       </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
+        <Card className="border-border bg-card shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg">{t("eq_new")}</CardTitle>
+            <CardTitle className="text-lg text-foreground">{t("eq_new")}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3">
             <div className="grid gap-2">
               <Label>{t("common_name")}</Label>
-              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="h-9" />
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="grid gap-2">
                 <Label>{t("common_type")}</Label>
                 <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v })}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-9">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -338,7 +339,7 @@ export default function EquipmentPage() {
               <div className="grid gap-2">
                 <Label>{t("common_status")}</Label>
                 <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-9">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -359,19 +360,20 @@ export default function EquipmentPage() {
                 type="date"
                 value={form.nextCalibrationAt}
                 onChange={(e) => setForm({ ...form, nextCalibrationAt: e.target.value })}
+                className="h-9"
               />
             </div>
             <div>
-              <Button disabled={!form.name.trim()} onClick={() => void createEquipment()}>
-                <Plus />{t("common_add")}
+              <Button disabled={!form.name.trim()} onClick={() => void createEquipment()} className="h-9">
+                <Plus className="h-4 w-4 mr-1" />{t("common_add")}
               </Button>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-border bg-card shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg">{t("eq_maintenance")}</CardTitle>
+            <CardTitle className="text-lg text-foreground">{t("eq_maintenance")}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             {!selectedId ? (
@@ -383,17 +385,17 @@ export default function EquipmentPage() {
                 {log.length === 0 ? (
                   <p className="text-sm text-muted-foreground">{t("eq_emptyLog")}</p>
                 ) : (
-                  <div className="rounded-[5px] border overflow-x-auto">
+                  <div className="rounded-lg border border-border overflow-x-auto">
                     <table className="w-full text-sm">
-                      <tbody className="divide-y">
+                      <tbody className="divide-y divide-border">
                         {log.map((m) => (
-                          <tr key={m.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
-                            <td className="px-4 py-2 font-medium">{m.type}</td>
-                            <td className="px-4 py-2">{m.status}</td>
-                            <td className="px-4 py-2 text-neutral-500">
+                          <tr key={m.id} className="hover:bg-muted-bg/50 transition-colors">
+                            <td className="px-4 py-2 font-medium text-foreground">{m.type}</td>
+                            <td className="px-4 py-2 text-foreground">{m.status}</td>
+                            <td className="px-4 py-2 text-muted-foreground">
                               {m.performedAt ? new Date(m.performedAt).toLocaleDateString() : "—"}
                             </td>
-                            <td className="px-4 py-2 text-neutral-500">{m.technician ?? "—"}</td>
+                            <td className="px-4 py-2 text-muted-foreground">{m.technician ?? "—"}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -404,7 +406,7 @@ export default function EquipmentPage() {
                   <div className="grid gap-2">
                     <Label>{t("common_type")}</Label>
                     <Select value={maintForm.type} onValueChange={(v) => setMaintForm({ ...maintForm, type: v })}>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-9">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -419,7 +421,7 @@ export default function EquipmentPage() {
                   <div className="grid gap-2">
                     <Label>{t("common_status")}</Label>
                     <Select value={maintForm.status} onValueChange={(v) => setMaintForm({ ...maintForm, status: v })}>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-9">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -437,7 +439,7 @@ export default function EquipmentPage() {
                     <Label>
                       {t("eq_technician")} ({t("common_optional")})
                     </Label>
-                    <Input value={maintForm.technician} onChange={(e) => setMaintForm({ ...maintForm, technician: e.target.value })} />
+                    <Input value={maintForm.technician} onChange={(e) => setMaintForm({ ...maintForm, technician: e.target.value })} className="h-9" />
                   </div>
                   <div className="grid gap-2">
                     <Label>
@@ -447,6 +449,7 @@ export default function EquipmentPage() {
                       type="date"
                       value={maintForm.dueAt}
                       onChange={(e) => setMaintForm({ ...maintForm, dueAt: e.target.value })}
+                      className="h-9"
                     />
                   </div>
                 </div>
@@ -454,10 +457,10 @@ export default function EquipmentPage() {
                   <Label>
                     {t("common_notes")} ({t("common_optional")})
                   </Label>
-                  <Input value={maintForm.description} onChange={(e) => setMaintForm({ ...maintForm, description: e.target.value })} />
+                  <Input value={maintForm.description} onChange={(e) => setMaintForm({ ...maintForm, description: e.target.value })} className="h-9" />
                 </div>
                 <div>
-                  <Button onClick={() => void addMaintenance()}>{t("eq_addLog")}</Button>
+                  <Button onClick={() => void addMaintenance()} className="h-9">{t("eq_addLog")}</Button>
                 </div>
               </>
             )}

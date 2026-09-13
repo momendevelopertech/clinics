@@ -25,7 +25,7 @@ import {
   Trash2,
   UserPlus,
   Users,
-} from "lucide-react";;
+} from "lucide-react";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -190,14 +190,14 @@ export default function StaffPage() {
     <div className="flex flex-col gap-6 w-full">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <Users className="w-6 h-6" /> {t("staff_title")}
+          <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+            <Users className="w-6 h-6 text-primary" /> {t("staff_title")}
           </h2>
-          <p className="text-sm text-neutral-500">{t("staff_subtitle")}</p>
+          <p className="text-sm text-muted-foreground">{t("staff_subtitle")}</p>
         </div>
         <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline"><UserPlus />{t("staff_assignRole")}</Button>
+            <Button variant="outline" className="h-9 gap-1.5"><UserPlus className="h-4 w-4" />{t("staff_assignRole")}</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
@@ -207,7 +207,7 @@ export default function StaffPage() {
               <div className="gap-2 flex flex-col">
                 <Label>{t("staff_member")}</Label>
                 <Select value={assignUser} onValueChange={setAssignUser}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {staff.map((s) => (
                       <SelectItem key={s.id} value={s.id}>
@@ -220,7 +220,7 @@ export default function StaffPage() {
               <div className="gap-2 flex flex-col">
                 <Label>{t("staff_role")}</Label>
                 <Select value={assignRole} onValueChange={setAssignRole}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {roles.map((r) => (
                       <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>
@@ -229,8 +229,8 @@ export default function StaffPage() {
                 </Select>
               </div>
               <div className="flex justify-end">
-                <Button onClick={handleAssign} disabled={!assignUser || !assignRole}>
-                  <Check />{t("staff_assign")}
+                <Button onClick={handleAssign} disabled={!assignUser || !assignRole} className="h-9 gap-1.5">
+                  <Check className="h-4 w-4" />{t("staff_assign")}
                 </Button>
               </div>
             </div>
@@ -238,25 +238,27 @@ export default function StaffPage() {
         </Dialog>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("staff_directory")}</CardTitle>
-          <div className="flex gap-3">
-            <Select value={branchFilter} onValueChange={(v) => { setBranchFilter(v); void loadStaff(v); }}>
-              <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("staff_allBranches")}</SelectItem>
-                {branches.map((b) => (
-                  <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+      <Card className="rounded-lg border border-border bg-card shadow-xs">
+        <CardHeader className="p-5 border-b border-border">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base font-semibold text-foreground">{t("staff_directory")}</CardTitle>
+            <div className="flex gap-3">
+              <Select value={branchFilter} onValueChange={(v) => { setBranchFilter(v); void loadStaff(v); }}>
+                <SelectTrigger className="w-48 h-9"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t("staff_allBranches")}</SelectItem>
+                  {branches.map((b) => (
+                    <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="rounded border overflow-x-auto">
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-neutral-50 dark:bg-neutral-800/50">
+              <thead className="bg-muted-bg/60 text-muted-foreground border-b border-border">
                 <tr>
                   <th className="px-4 py-3 text-left font-medium">{t("staff_member")}</th>
                   <th className="px-4 py-3 text-left font-medium">{t("staff_role")}</th>
@@ -264,17 +266,17 @@ export default function StaffPage() {
                   <th className="px-4 py-3 text-left font-medium">{t("staff_specialty")}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
+              <tbody className="divide-y divide-border">
                 {staff.map((s) => (
                   <tr
                     key={s.id}
                     onClick={() => setSelectedId(s.id)}
-                    className={`cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800/30 ${selectedId === s.id ? "bg-indigo-50/60 dark:bg-indigo-950/20" : ""}`}
+                    className={`cursor-pointer hover:bg-muted-bg/50 transition-colors ${selectedId === s.id ? "bg-primary/10" : ""}`}
                   >
-                    <td className="px-4 py-3 font-medium">{s.name ?? s.email}</td>
-                    <td className="px-4 py-3 text-neutral-600">{roleNames(s)}</td>
+                    <td className="px-4 py-3 font-medium text-foreground">{s.name ?? s.email}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{roleNames(s)}</td>
                     <td className="px-4 py-3">{s.branch?.name ?? "—"}</td>
-                    <td className="px-4 py-3 text-neutral-500">{s.specialty ?? "—"}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{s.specialty ?? "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -284,34 +286,34 @@ export default function StaffPage() {
       </Card>
 
       {selectedId ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("staff_shifts")}</CardTitle>
+        <Card className="rounded-lg border border-border bg-card shadow-xs">
+          <CardHeader className="p-5 border-b border-border">
+            <CardTitle className="text-base font-semibold text-foreground">{t("staff_shifts")}</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col gap-4">
+          <CardContent className="flex flex-col gap-4 p-5">
             {shifts.length === 0 ? (
-              <p className="text-sm text-neutral-500">{t("staff_noShifts")}</p>
+              <p className="text-sm text-muted-foreground">{t("staff_noShifts")}</p>
             ) : (
               <div className="flex flex-col gap-2">
                 {shifts.map((sh) => (
-                  <div key={sh.id} className="flex items-center justify-between rounded border px-3 py-2 text-sm">
+                  <div key={sh.id} className="flex items-center justify-between rounded-md border border-border bg-background px-3 py-2 text-sm">
                     <span>
-                      {t(WEEKDAY_KEYS[sh.weekday] ?? "staff_mon")} · {sh.startTime}–{sh.endTime}
+                      <span className="font-semibold text-foreground">{t(WEEKDAY_KEYS[sh.weekday] ?? "staff_mon")}</span> · {sh.startTime}–{sh.endTime}
                       {sh.branch ? ` · ${sh.branch.name}` : ""}
                       {sh.note ? ` · ${sh.note}` : ""}
                     </span>
-                    <Button size="sm" variant="ghost" className="text-red-600" onClick={() => handleDeleteShift(sh.id)}>
-                      <Trash2 />{t("common_delete")}
+                    <Button size="sm" variant="ghost" className="h-8 gap-1 text-critical-text hover:bg-critical-bg/50 hover:text-critical-text" onClick={() => handleDeleteShift(sh.id)}>
+                      <Trash2 className="h-3.5 w-3.5" />{t("common_delete")}
                     </Button>
                   </div>
                 ))}
               </div>
             )}
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 border-t pt-4">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 border-t border-border pt-4">
               <div className="gap-2 flex flex-col">
-                <Label>{t("staff_weekday")}</Label>
+                <Label className="text-xs">{t("staff_weekday")}</Label>
                 <Select value={shiftForm.weekday} onValueChange={(v) => setShiftForm({ ...shiftForm, weekday: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {WEEKDAY_KEYS.map((k, i) => (
                       <SelectItem key={k} value={String(i)}>{t(k)}</SelectItem>
@@ -320,17 +322,17 @@ export default function StaffPage() {
                 </Select>
               </div>
               <div className="gap-2 flex flex-col">
-                <Label>{t("staff_from")}</Label>
-                <Input type="time" value={shiftForm.startTime} onChange={(e) => setShiftForm({ ...shiftForm, startTime: e.target.value })} />
+                <Label className="text-xs">{t("staff_from")}</Label>
+                <Input className="h-9 bg-background" type="time" value={shiftForm.startTime} onChange={(e) => setShiftForm({ ...shiftForm, startTime: e.target.value })} />
               </div>
               <div className="gap-2 flex flex-col">
-                <Label>{t("staff_to")}</Label>
-                <Input type="time" value={shiftForm.endTime} onChange={(e) => setShiftForm({ ...shiftForm, endTime: e.target.value })} />
+                <Label className="text-xs">{t("staff_to")}</Label>
+                <Input className="h-9 bg-background" type="time" value={shiftForm.endTime} onChange={(e) => setShiftForm({ ...shiftForm, endTime: e.target.value })} />
               </div>
               <div className="gap-2 flex flex-col">
-                <Label>{t("staff_branch")}</Label>
+                <Label className="text-xs">{t("staff_branch")}</Label>
                 <Select value={shiftForm.branchId} onValueChange={(v) => setShiftForm({ ...shiftForm, branchId: v })}>
-                  <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
+                  <SelectTrigger className="h-9"><SelectValue placeholder="—" /></SelectTrigger>
                   <SelectContent>
                     {branches.map((b) => (
                       <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
@@ -339,7 +341,7 @@ export default function StaffPage() {
                 </Select>
               </div>
               <div className="flex items-end">
-                <Button onClick={handleAddShift}><CalendarPlus />{t("staff_addShift")}</Button>
+                <Button onClick={handleAddShift} className="h-9 w-full gap-1.5"><CalendarPlus className="h-4 w-4" />{t("staff_addShift")}</Button>
               </div>
             </div>
           </CardContent>

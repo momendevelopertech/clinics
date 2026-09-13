@@ -33,7 +33,7 @@ export function DemoLoginButtons() {
           key={account.email}
           onClick={() => handleLogin(account.email, account.password)}
           disabled={pendingEmail !== null}
-          className="flex h-9 items-center justify-center gap-1.5 rounded-md border border-border bg-white px-2.5 py-1.5 text-xs font-semibold text-foreground shadow-2xs transition hover:bg-muted disabled:opacity-60 cursor-pointer"
+          className="flex h-9 items-center justify-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-semibold text-foreground shadow-xs transition hover:bg-muted disabled:opacity-60 cursor-pointer"
         >
           {pendingEmail === account.email ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
