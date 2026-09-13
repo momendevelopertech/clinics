@@ -76,15 +76,15 @@ export function DoctorBoard() {
   const statusChip = (status?: string | null) =>
     cn(
       "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize border",
-      status?.toLowerCase() === "confirmed" && "bg-emerald-50 text-emerald-800 border-emerald-200",
+      status?.toLowerCase() === "confirmed" && "bg-success-bg text-success-text border-success/30",
       (status?.toLowerCase() === "scheduled" ||
         status?.toLowerCase() === "in waiting room" ||
         status?.toLowerCase() === "in_waiting_room") &&
-        "bg-cyan-50 text-cyan-800 border-cyan-200",
+        "bg-primary/10 text-primary border-primary/20",
       (status?.toLowerCase() === "arrived" || status?.toLowerCase() === "in progress") &&
-        "bg-purple-50 text-purple-800 border-purple-200",
-      status?.toLowerCase() === "completed" && "bg-emerald-50 text-emerald-800 border-emerald-200",
-      ACTIVE.has(status?.toLowerCase() ?? "") ? "" : "bg-muted text-muted-foreground border-border",
+        "bg-accent-blue-bg text-accent-blue-text border-accent-blue/30",
+      status?.toLowerCase() === "completed" && "bg-success-bg text-success-text border-success/30",
+      ACTIVE.has(status?.toLowerCase() ?? "") ? "" : "bg-muted-bg text-muted-foreground border-border",
     );
 
   const stats = [
@@ -109,9 +109,9 @@ export function DoctorBoard() {
   ];
 
   const accent = {
-    emerald: "bg-emerald-50 text-emerald-800 border border-emerald-200",
-    cyan: "bg-cyan-50 text-cyan-800 border border-cyan-200",
-    violet: "bg-purple-50 text-purple-800 border border-purple-200",
+    emerald: "bg-success-bg text-success-text border border-success/30",
+    cyan: "bg-primary/10 text-primary border border-primary/20",
+    violet: "bg-accent-blue-bg text-accent-blue-text border border-accent-blue/30",
   };
 
   return (
@@ -123,7 +123,7 @@ export function DoctorBoard() {
       <motion.section
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-lg border border-border bg-white p-6 shadow-2xs sm:p-8"
+        className="relative overflow-hidden rounded-lg border border-border bg-card p-6 shadow-2xs sm:p-8"
       >
         <div className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-primary/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
           <Stethoscope className="h-3.5 w-3.5" />
@@ -138,7 +138,7 @@ export function DoctorBoard() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="flex items-start justify-between rounded-lg border border-border bg-white p-5 shadow-2xs"
+            className="flex items-start justify-between rounded-lg border border-border bg-card p-5 shadow-2xs"
           >
             <div>
               <p className="text-xs font-semibold text-muted-foreground">{stat.label}</p>
@@ -154,7 +154,7 @@ export function DoctorBoard() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="rounded-lg border border-border bg-white p-5 shadow-2xs lg:col-span-2">
+        <div className="rounded-lg border border-border bg-card p-5 shadow-2xs lg:col-span-2">
           <div className="mb-4 flex items-center justify-between border-b border-border pb-3">
             <h2 className="text-sm font-bold tracking-tight text-foreground">
               {t("doctor_todaySchedule")}
@@ -182,7 +182,7 @@ export function DoctorBoard() {
                 return (
                   <div
                     key={appointment.id}
-                    className="flex items-center gap-3 rounded-md border border-border/50 bg-[#F8FAFC] px-3.5 py-2.5 transition-colors hover:bg-muted/50"
+                    className="flex items-center gap-3 rounded-md border border-border/50 bg-muted-bg/50 px-3.5 py-2.5 transition-colors hover:bg-muted/50"
                   >
                     <span className="w-16 shrink-0 font-mono text-xs font-bold tabular-nums text-foreground ltr-on-rtl">
                       {time}
@@ -201,7 +201,7 @@ export function DoctorBoard() {
           )}
         </div>
 
-        <div className="rounded-lg border border-border bg-white p-5 shadow-2xs">
+        <div className="rounded-lg border border-border bg-card p-5 shadow-2xs">
           <h2 className="mb-4 border-b border-border pb-3 text-sm font-bold tracking-tight text-foreground">
             {t("doctor_upcoming")}
           </h2>
@@ -215,7 +215,7 @@ export function DoctorBoard() {
                 return (
                   <div
                     key={appointment.id}
-                    className="flex items-center justify-between rounded-md border border-border/50 bg-[#F8FAFC] p-2.5 transition-colors hover:bg-muted/50"
+                    className="flex items-center justify-between rounded-md border border-border/50 bg-muted-bg/50 p-2.5 transition-colors hover:bg-muted/50"
                   >
                     <div>
                       <span className="text-xs font-semibold text-foreground">{name}</span>

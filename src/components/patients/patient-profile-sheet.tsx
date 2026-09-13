@@ -53,7 +53,7 @@ export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileS
             {patient.firstName[0]}{patient.lastName[0]}
           </div>
           <div className="mb-2">
-            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 shadow-xs">
+            <span className={patient.status === "Active" ? "inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-success-bg text-success-text border border-success/30 shadow-xs" : "inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-muted-bg text-muted-foreground border border-border shadow-xs"}>
               {statusLabel(patient.status)}
             </span>
           </div>
@@ -64,7 +64,7 @@ export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileS
             {patient.firstName} {patient.lastName}
           </h2>
           <p className="text-sm font-medium text-muted-foreground mt-1 flex flex-wrap items-center gap-2">
-            <span className="font-mono text-xs bg-muted px-2 py-0.5 rounded-md text-foreground">
+            <span className="font-mono text-xs bg-muted-bg px-2 py-0.5 rounded-md text-foreground">
               {t("profile_mrn")}: {patient.mrn}
             </span>
             <span>•</span>
@@ -76,24 +76,24 @@ export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileS
 
         <div className="mt-6 space-y-6">
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-muted/50 p-3 rounded-lg border border-border flex flex-col items-center justify-center text-center">
+            <div className="bg-muted-bg p-3 rounded-lg border border-border flex flex-col items-center justify-center text-center">
               <Droplet className="w-5 h-5 text-primary mb-1" />
               <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">{t("profile_bloodType")}</span>
               <span className="text-sm font-bold text-foreground">{patient.bloodType}</span>
             </div>
-            <div className="bg-red-50/50 dark:bg-red-950/20 p-3 rounded-lg border border-red-200/50 dark:border-red-800/30 flex flex-col items-center justify-center text-center">
+            <div className="bg-critical-bg p-3 rounded-lg border border-critical/30 flex flex-col items-center justify-center text-center">
               <AlertCircle className="w-5 h-5 text-destructive mb-1" />
-              <span className="text-[10px] uppercase font-semibold text-destructive/80 tracking-wider">{t("profile_allergies")}</span>
-              <span className="text-sm font-bold text-destructive truncate w-full" title={patient.allergies}>
+              <span className="text-[10px] uppercase font-semibold text-critical-text tracking-wider">{t("profile_allergies")}</span>
+              <span className="text-sm font-bold text-critical-text truncate w-full" title={patient.allergies}>
                 {patient.allergies.length > 15 ? patient.allergies.substring(0, 15) + '...' : patient.allergies}
               </span>
             </div>
-            <div className="bg-emerald-50/50 dark:bg-emerald-950/20 p-3 rounded-lg border border-emerald-200/50 dark:border-emerald-800/30 flex flex-col items-center justify-center text-center">
-              <Activity className="w-5 h-5 text-emerald-600 dark:text-emerald-400 mb-1" />
-              <span className="text-[10px] uppercase font-semibold text-emerald-600/80 dark:text-emerald-400/80 tracking-wider">{t("profile_status")}</span>
-              <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">{statusLabel(patient.status)}</span>
+            <div className="bg-success-bg p-3 rounded-lg border border-success/30 flex flex-col items-center justify-center text-center">
+              <Activity className="w-5 h-5 text-success-text mb-1" />
+              <span className="text-[10px] uppercase font-semibold text-success-text tracking-wider">{t("profile_status")}</span>
+              <span className="text-sm font-bold text-success-text">{statusLabel(patient.status)}</span>
             </div>
-            <div className="bg-muted/50 p-3 rounded-lg border border-border flex flex-col items-center justify-center text-center">
+            <div className="bg-muted-bg p-3 rounded-lg border border-border flex flex-col items-center justify-center text-center">
               <Calendar className="w-5 h-5 text-primary mb-1" />
               <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">{t("profile_lastVisit")}</span>
               <span className="text-sm font-bold text-foreground">{patient.lastVisit ? new Date(patient.lastVisit).toLocaleDateString() : t("profile_na")}</span>
@@ -112,7 +112,7 @@ export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileS
             <div className="bg-card border border-border rounded-lg p-1 shadow-xs">
               <div className="flex flex-col">
                 <div className="flex items-center gap-3 p-3 hover:bg-muted/50 rounded-md transition-colors">
-                  <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center text-muted-foreground shrink-0">
+                  <div className="w-8 h-8 rounded-md bg-muted-bg flex items-center justify-center text-muted-foreground shrink-0">
                     <Phone className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -121,7 +121,7 @@ export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileS
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 hover:bg-muted/50 rounded-md transition-colors">
-                  <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center text-muted-foreground shrink-0">
+                  <div className="w-8 h-8 rounded-md bg-muted-bg flex items-center justify-center text-muted-foreground shrink-0">
                     <Mail className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -130,7 +130,7 @@ export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileS
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 hover:bg-muted/50 rounded-md transition-colors">
-                  <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center text-muted-foreground shrink-0">
+                  <div className="w-8 h-8 rounded-md bg-muted-bg flex items-center justify-center text-muted-foreground shrink-0">
                     <MapPin className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">

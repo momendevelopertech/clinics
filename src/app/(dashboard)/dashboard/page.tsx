@@ -10,7 +10,7 @@ import {
   Eye,
   HeartPulse,
   Users,
-} from "lucide-react";;
+} from "lucide-react";
 import Link from "next/link";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -211,11 +211,11 @@ export default function DashboardPage() {
   };
 
   const colorMap = {
-    cyan: "bg-cyan-50 text-cyan-800 border border-cyan-200",
-    emerald: "bg-emerald-50 text-emerald-800 border border-emerald-200",
-    violet: "bg-purple-50 text-purple-800 border border-purple-200",
-    amber: "bg-amber-50 text-amber-800 border border-amber-200",
-    red: "bg-red-50 text-red-700 border border-red-200",
+    cyan: "bg-primary/10 text-primary border border-primary/25",
+    emerald: "bg-success-bg text-success-text border border-success/30",
+    violet: "bg-secondary text-secondary-foreground border border-border",
+    amber: "bg-warning-bg text-warning-text border border-warning/30",
+    red: "bg-critical-bg text-critical-text border border-critical/30",
   };
 
   if (isDoctor) return <DoctorBoard />;
@@ -230,7 +230,7 @@ export default function DashboardPage() {
     >
       <motion.section
         variants={itemVariants}
-        className="relative overflow-hidden rounded-lg border border-border bg-white p-6 shadow-2xs sm:p-8"
+        className="relative overflow-hidden rounded-lg border border-border bg-card p-6 shadow-2xs sm:p-8"
       >
         <div className="relative z-10 grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
           <div>
@@ -272,7 +272,7 @@ export default function DashboardPage() {
             ].map((item) => (
               <div
                 key={item.label}
-                className="rounded-lg border border-border bg-[#F8FAFC] p-3.5"
+                className="rounded-lg border border-border bg-muted-bg p-3.5"
               >
                 <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   {item.label}
@@ -290,7 +290,7 @@ export default function DashboardPage() {
           <motion.div
             variants={itemVariants}
             key={stat.name}
-            className="group relative overflow-hidden rounded-lg border border-border bg-white p-5 shadow-2xs transition hover:border-primary/40"
+            className="group relative overflow-hidden rounded-lg border border-border bg-card p-5 shadow-2xs transition hover:border-primary/40"
           >
             <div className="flex items-start justify-between">
               <div>
@@ -320,7 +320,7 @@ export default function DashboardPage() {
         <div className="lg:col-span-2">
           <motion.div
             variants={itemVariants}
-            className="rounded-lg border border-border bg-white p-5 shadow-2xs"
+            className="rounded-lg border border-border bg-card p-5 shadow-2xs"
           >
             <div className="mb-4 flex items-center justify-between border-b border-border pb-3">
               <h2 className="text-sm font-bold tracking-tight text-foreground">
@@ -342,7 +342,7 @@ export default function DashboardPage() {
               {activityItems.map((activity, index) => (
                 <div
                   key={`${activity.title}-${index}`}
-                  className="flex cursor-default items-center gap-3 rounded-md border border-border/50 bg-[#F8FAFC] p-3 transition-colors hover:bg-muted/50"
+                  className="flex cursor-default items-center gap-3 rounded-md border border-border/50 bg-muted-bg p-3 transition-colors hover:bg-muted/50"
                 >
                   <div className={cn("grid size-8 shrink-0 place-content-center rounded-md", colorMap[activity.color])}>
                     <activity.icon className="h-4 w-4" strokeWidth={2} />
@@ -363,7 +363,7 @@ export default function DashboardPage() {
         <div className="space-y-6">
           <motion.div
             variants={itemVariants}
-            className="rounded-lg border border-border bg-white p-5 shadow-2xs"
+            className="rounded-lg border border-border bg-card p-5 shadow-2xs"
           >
             <h2 className="mb-4 border-b border-border pb-3 text-sm font-bold tracking-tight text-foreground">
               {t("dash_quickStats")}
@@ -384,9 +384,9 @@ export default function DashboardPage() {
                       transition={{ duration: 0.8, delay: 0.2 + index * 0.1 }}
                       className={cn(
                         "h-full rounded-full",
-                        quickStat.color === "cyan" && "bg-cyan-600",
-                        quickStat.color === "amber" && "bg-amber-600",
-                        quickStat.color === "emerald" && "bg-emerald-600",
+                        quickStat.color === "cyan" && "bg-primary",
+                        quickStat.color === "amber" && "bg-warning",
+                        quickStat.color === "emerald" && "bg-success",
                       )}
                     />
                   </div>
@@ -397,7 +397,7 @@ export default function DashboardPage() {
 
           <motion.div
             variants={itemVariants}
-            className="rounded-lg border border-border bg-white p-5 shadow-2xs"
+            className="rounded-lg border border-border bg-card p-5 shadow-2xs"
           >
             <h2 className="mb-4 border-b border-border pb-3 text-sm font-bold tracking-tight text-foreground">
               {t("dash_upcomingAppointments")}
@@ -413,7 +413,7 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={appointment.id}
-                      className="flex items-center justify-between rounded-md border border-border/50 bg-[#F8FAFC] p-2.5 transition-colors hover:bg-muted/50"
+                      className="flex items-center justify-between rounded-md border border-border/50 bg-muted-bg p-2.5 transition-colors hover:bg-muted/50"
                     >
                       <div>
                         <span className="text-xs font-semibold text-foreground">{name}</span>
@@ -425,12 +425,12 @@ export default function DashboardPage() {
                         className={cn(
                           "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize border",
                           appointment.status?.toLowerCase() === "confirmed" &&
-                            "bg-emerald-50 text-emerald-800 border-emerald-200",
+                            "bg-success-bg text-success-text border-success/30",
                           (appointment.status?.toLowerCase() === "scheduled" ||
                             appointment.status?.toLowerCase() === "in waiting room") &&
-                            "bg-cyan-50 text-cyan-800 border-cyan-200",
+                            "bg-primary/10 text-primary border-primary/25",
                           appointment.status?.toLowerCase() === "pending" &&
-                            "bg-amber-50 text-amber-800 border-amber-200",
+                            "bg-warning-bg text-warning-text border-warning/30",
                           !appointment.status && "bg-muted text-muted-foreground border-border",
                         )}
                       >
@@ -451,9 +451,9 @@ export default function DashboardPage() {
 
       <motion.div
         variants={itemVariants}
-        className="overflow-hidden rounded-lg border border-border bg-white shadow-2xs"
+        className="overflow-hidden rounded-lg border border-border bg-card shadow-2xs"
       >
-        <div className="flex items-center justify-between border-b border-border bg-[#F8FAFC] p-4 sm:px-6">
+        <div className="flex items-center justify-between border-b border-border bg-muted-bg p-4 sm:px-6">
           <h2 className="text-sm font-bold tracking-tight text-foreground">
             {t("dash_recentPatients")}
           </h2>
@@ -462,7 +462,7 @@ export default function DashboardPage() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="border-b border-border bg-[#F8FAFC] text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               <tr>
                 <th className="px-4 py-3">{t("dash_name")}</th>
                 <th className="px-4 py-3">{t("dash_idMrn")}</th>
@@ -485,7 +485,7 @@ export default function DashboardPage() {
                     {new Date(patient.lastVisit).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3">
-                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-800">
+                    <span className="rounded-full border border-success/30 bg-success-bg px-2 py-0.5 text-[10px] font-semibold text-success-text">
                       {patient.status?.toLowerCase() === "active" && t("patients_active")}
                       {patient.status?.toLowerCase() === "inactive" && t("patients_inactive")}
                       {patient.status?.toLowerCase() === "archived" && t("patients_archived")}

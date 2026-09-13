@@ -114,7 +114,7 @@ export function FullScreenCalendar({
       <div className="flex flex-col space-y-4 p-4 md:flex-row md:items-center md:justify-between md:space-y-0 lg:flex-none">
         <div className="flex flex-auto">
           <div className="flex items-center gap-4">
-            <div className="hidden w-20 flex-col items-center justify-center rounded-lg border border-border bg-muted/50 p-0.5 md:flex shadow-xs">
+            <div className="hidden w-20 flex-col items-center justify-center rounded-lg border border-border bg-muted-bg p-0.5 md:flex shadow-xs">
               <h1 className="p-1 text-xs uppercase font-medium text-muted-foreground">
                 {format(today, "MMM")}
               </h1>
@@ -171,7 +171,7 @@ export function FullScreenCalendar({
       {/* Calendar Grid */}
       <div className="lg:flex lg:flex-auto lg:flex-col">
         {/* Week Days Header */}
-        <div className="grid grid-cols-7 border-y border-x border-border text-center text-xs font-semibold leading-6 text-muted-foreground bg-muted/30">
+        <div className="grid grid-cols-7 border-y border-x border-border text-center text-xs font-semibold leading-6 text-muted-foreground bg-muted-bg">
           <div className="border-r border-border py-2.5">{t("availability_sun")}</div>
           <div className="border-r border-border py-2.5">{t("availability_mon")}</div>
           <div className="border-r border-border py-2.5">{t("availability_tue")}</div>
@@ -196,9 +196,9 @@ export function FullScreenCalendar({
                     !isEqual(day, selectedDay) &&
                       !isToday(day) &&
                       !isSameMonth(day, firstDayCurrentMonth) &&
-                      "bg-muted/20 text-muted-foreground",
-                    "relative flex min-h-[100px] flex-col border-b border-r border-border transition-colors hover:bg-muted/40 focus-visible:z-10 cursor-pointer",
-                    !isEqual(day, selectedDay) && "hover:bg-muted/30"
+                      "bg-muted-bg/30 text-muted-foreground",
+                    "relative flex min-h-[100px] flex-col border-b border-r border-border transition-colors hover:bg-muted-bg/70 focus-visible:z-10 cursor-pointer",
+                    !isEqual(day, selectedDay) && "hover:bg-muted-bg/50"
                   )}
                 >
                   <header className="flex items-center justify-between p-2.5">
@@ -291,7 +291,7 @@ export function FullScreenCalendar({
                       !isSameMonth(day, firstDayCurrentMonth) &&
                       "text-muted-foreground",
                     (isEqual(day, selectedDay) || isToday(day)) && "font-semibold",
-                    "flex h-14 flex-col border-b border-r border-border px-2 py-2 transition-colors hover:bg-muted focus-visible:z-10 rounded-none"
+                    "flex h-14 flex-col border-b border-r border-border px-2 py-2 transition-colors hover:bg-muted-bg focus-visible:z-10 rounded-none"
                   )}
                 >
                   <time

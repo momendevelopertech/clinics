@@ -323,12 +323,12 @@ export default async function PatientTimelinePage({
           </Link>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
-          <span className="rounded-full bg-muted px-3 py-1 font-medium text-muted-foreground">
+          <span className="rounded-full bg-muted-bg px-3 py-1 font-medium text-muted-foreground">
             {t["timeline_attendance"]}: {attendance.completed} · {attendance.noShows}{" "}
             {t["timeline_noShow"]} · {attendance.lateCancels} {t["timeline_lateCancels"]}
           </span>
           {attendance.flagged && (
-            <span className="rounded-full bg-red-50 px-3 py-1 font-semibold text-red-700 dark:bg-red-950/40 dark:text-red-400">
+            <span className="rounded-full bg-critical-bg text-critical-text border border-critical/30 px-3 py-1 font-semibold">
               {t["timeline_policyFlag"]}
             </span>
           )}
@@ -359,7 +359,7 @@ export default async function PatientTimelinePage({
                     <p className="truncate text-sm font-semibold text-foreground">
                       {event.title}
                     </p>
-                    <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                    <span className="rounded-full bg-muted-bg px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
                       {eventLabel(event)}
                     </span>
                   </div>

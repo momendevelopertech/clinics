@@ -94,10 +94,10 @@ export default function QueuePage() {
           <Phone className="h-4 w-4" />{t("queue_callNext")}
         </Button>
       </div>
-      {error ? <p className="text-xs font-semibold text-red-600">{error}</p> : null}
+      {error ? <p className="text-xs font-semibold text-destructive">{error}</p> : null}
       <div className="space-y-3">
         {queue.map((item) => (
-          <div key={item.id} className="flex items-center justify-between gap-3 rounded-lg border border-border bg-white p-4 shadow-2xs">
+          <div key={item.id} className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-4 shadow-2xs">
             <div>
               <p className="text-xs font-semibold text-foreground">{item.patient.firstName} {item.patient.lastName}</p>
               <p className="mt-0.5 text-xs text-muted-foreground">{item.patient.mrn ?? ""} · {item.provider.name ?? ""}</p>
@@ -107,7 +107,7 @@ export default function QueuePage() {
                     <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" disabled={acting} onClick={() => runAction("call-next", item.id)}>
                       <Phone className="mr-1 h-3.5 w-3.5" />{t("queue_callNext")}
                     </Button>
-                    <Button size="sm" variant="ghost" className="h-7 px-2.5 text-xs text-red-600 hover:text-red-700 hover:bg-red-50" disabled={acting} onClick={() => runAction("no-show", item.id)}>
+                    <Button size="sm" variant="ghost" className="h-7 px-2.5 text-xs text-destructive hover:text-destructive hover:bg-destructive/10" disabled={acting} onClick={() => runAction("no-show", item.id)}>
                       <Ban className="mr-1 h-3.5 w-3.5" />{t("queue_noShow")}
                     </Button>
                   </>

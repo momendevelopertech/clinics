@@ -31,9 +31,9 @@ const SEVERITY_KEYS: Array<{ value: string; label: string }> = [
 ];
 
 const SEVERITY_COLORS: Record<string, string> = {
-  mild: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/30",
-  moderate: "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200/50 dark:border-amber-800/30",
-  severe: "bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400 border border-red-200/50 dark:border-red-800/30",
+  mild: "bg-success-bg text-success-text border border-success/30",
+  moderate: "bg-warning-bg text-warning-text border border-warning/30",
+  severe: "bg-critical-bg text-critical-text border border-critical/30",
 };
 
 export function PatientAllergiesCard({
@@ -111,13 +111,13 @@ export function PatientAllergiesCard({
           <AlertTriangle className="h-4 w-4 text-destructive" />
           {t["allergy_title"]}
         </h2>
-        <span className="ml-auto rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+        <span className="ml-auto rounded-full bg-muted-bg px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
           {allergies.length}
         </span>
       </header>
 
       {allergies.length === 0 ? (
-        <p className="mt-3 rounded-md bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+        <p className="mt-3 rounded-md bg-muted-bg px-3 py-2 text-sm text-muted-foreground">
           {t["allergy_empty"]}
         </p>
       ) : (
@@ -125,13 +125,13 @@ export function PatientAllergiesCard({
           {allergies.map((allergy) => (
             <li
               key={allergy.id}
-              className="flex items-center justify-between gap-2 rounded-md bg-muted/40 px-3 py-2"
+              className="flex items-center justify-between gap-2 rounded-md bg-muted-bg/50 px-3 py-2"
             >
               <div className="min-w-0">
                 <span className="text-sm font-semibold text-foreground">{allergy.allergen}</span>
                 {allergy.severity ? (
                   <span
-                    className={`ml-2 inline-block rounded-md px-2 py-0.5 text-[10px] font-semibold ${SEVERITY_COLORS[allergy.severity] ?? "bg-muted text-muted-foreground"}`}
+                    className={`ml-2 inline-block rounded-md px-2 py-0.5 text-[10px] font-semibold ${SEVERITY_COLORS[allergy.severity] ?? "bg-muted-bg text-muted-foreground"}`}
                   >
                     {t[SEVERITY_KEYS.find((s) => s.value === allergy.severity)?.label as keyof Dictionary] ?? allergy.severity}
                   </span>
@@ -155,7 +155,7 @@ export function PatientAllergiesCard({
       )}
 
       {severe ? (
-        <p className="mt-3 flex items-center gap-2 rounded-md border border-red-200/60 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 dark:border-red-800/40 dark:bg-red-950/30 dark:text-red-400">
+        <p className="mt-3 flex items-center gap-2 rounded-md border border-critical/30 bg-critical-bg px-3 py-2 text-xs font-medium text-critical-text">
           <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
           {t["allergy_conflictTitle"]}
         </p>

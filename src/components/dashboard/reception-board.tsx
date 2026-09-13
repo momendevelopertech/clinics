@@ -68,10 +68,10 @@ export function ReceptionBoard() {
   ];
 
   const accent = {
-    cyan: "bg-cyan-50 text-cyan-800 border border-cyan-200",
-    violet: "bg-purple-50 text-purple-800 border border-purple-200",
-    emerald: "bg-emerald-50 text-emerald-800 border border-emerald-200",
-    red: "bg-red-50 text-red-700 border border-red-200",
+    cyan: "bg-primary/10 text-primary border border-primary/20",
+    violet: "bg-accent-blue-bg text-accent-blue-text border border-accent-blue/30",
+    emerald: "bg-success-bg text-success-text border border-success/30",
+    red: "bg-critical-bg text-critical-text border border-critical/30",
   };
 
   return (
@@ -83,7 +83,7 @@ export function ReceptionBoard() {
       <motion.section
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-lg border border-border bg-white p-6 shadow-2xs sm:p-8"
+        className="relative overflow-hidden rounded-lg border border-border bg-card p-6 shadow-2xs sm:p-8"
       >
         <div className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-primary/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
           <ClipboardCheck className="h-3.5 w-3.5" />
@@ -98,7 +98,7 @@ export function ReceptionBoard() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="flex items-start justify-between rounded-lg border border-border bg-white p-5 shadow-2xs"
+            className="flex items-start justify-between rounded-lg border border-border bg-card p-5 shadow-2xs"
           >
             <div>
               <p className="text-xs font-semibold text-muted-foreground">{stat.label}</p>
@@ -113,8 +113,8 @@ export function ReceptionBoard() {
         ))}
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-border bg-white shadow-2xs">
-        <div className="flex items-center justify-between border-b border-border bg-[#F8FAFC] p-4 sm:px-6">
+      <div className="overflow-hidden rounded-lg border border-border bg-card shadow-2xs">
+        <div className="flex items-center justify-between border-b border-border bg-muted-bg p-4 sm:px-6">
           <h2 className="text-sm font-bold tracking-tight text-foreground">
             {t("reception_todayQueue")}
           </h2>
@@ -130,7 +130,7 @@ export function ReceptionBoard() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px] text-left text-xs">
-              <thead className="border-b border-border bg-[#F8FAFC] text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3">{t("doctor_time")}</th>
                   <th className="px-4 py-3">{t("doctor_patient")}</th>
@@ -159,7 +159,7 @@ export function ReceptionBoard() {
                         {appointment.provider ?? "—"}
                       </td>
                       <td className="px-4 py-3 capitalize">
-                        <span className="rounded-full border border-border bg-[#F8FAFC] px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                        <span className="rounded-full border border-border bg-muted-bg px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
                           {appointment.status ?? "—"}
                         </span>
                       </td>
@@ -187,7 +187,7 @@ export function ReceptionBoard() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="h-7 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                              className="h-7 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
                               disabled={busy === appointment.id}
                               onClick={() => void runAction(appointment.id, "no-show")}
                             >

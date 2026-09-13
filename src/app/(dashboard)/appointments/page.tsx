@@ -339,8 +339,8 @@ function AppointmentsPageContent() {
         />
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-border bg-white shadow-2xs flex-1 flex flex-col">
-         <div className="p-4 sm:px-6 border-b border-border bg-[#F8FAFC] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="overflow-hidden rounded-lg border border-border bg-card shadow-2xs flex-1 flex flex-col">
+         <div className="p-4 sm:px-6 border-b border-border bg-muted-bg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
              <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                <div className="flex items-center gap-2 text-sm font-bold text-foreground">
                  <CalendarIcon className="w-4 h-4 text-primary" />
@@ -353,7 +353,7 @@ function AppointmentsPageContent() {
                <Input
                   type="search"
                   placeholder={t("appts_searchPlaceholder")}
-                  className="h-9 w-full sm:max-w-sm rounded-md bg-white text-xs border-input"
+                  className="h-9 w-full sm:max-w-sm rounded-md bg-card text-xs border-input"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value)
@@ -369,7 +369,7 @@ function AppointmentsPageContent() {
                       setPage(1)
                     }}
                   >
-                    <SelectTrigger className="w-[180px] h-9 rounded-md bg-white text-xs border-input" aria-label={t("appts_allProviders")}>
+                    <SelectTrigger className="w-[180px] h-9 rounded-md bg-card text-xs border-input" aria-label={t("appts_allProviders")}>
                       <Filter className="w-3.5 h-3.5 mr-1.5" />
                       <SelectValue />
                     </SelectTrigger>
@@ -383,7 +383,7 @@ function AppointmentsPageContent() {
                     </SelectContent>
                   </Select>
                  <FeatureTip tipId="appointments-views">
-                 <div className="bg-muted/80 rounded-md p-1 flex gap-1" role="tablist" aria-label={t("appts_viewMode")}>
+                 <div className="bg-muted-bg rounded-md p-1 flex gap-1" role="tablist" aria-label={t("appts_viewMode")}>
                      <button
                        role="tab"
                        aria-selected={view === "list"}
@@ -391,7 +391,7 @@ function AppointmentsPageContent() {
                        className={cn(
                          "px-2.5 py-1 rounded-sm text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer",
                          view === "list"
-                           ? "bg-white shadow-2xs text-foreground font-bold"
+                           ? "bg-card shadow-2xs text-foreground font-bold"
                            : "text-muted-foreground hover:text-foreground"
                        )}
                      >
@@ -405,7 +405,7 @@ function AppointmentsPageContent() {
                        className={cn(
                          "px-2.5 py-1 rounded-sm text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer",
                          view === "day"
-                           ? "bg-white shadow-2xs text-foreground font-bold"
+                           ? "bg-card shadow-2xs text-foreground font-bold"
                            : "text-muted-foreground hover:text-foreground"
                          )}
                        >
@@ -419,7 +419,7 @@ function AppointmentsPageContent() {
                        className={cn(
                          "px-2.5 py-1 rounded-sm text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer",
                          view === "calendar"
-                           ? "bg-white shadow-2xs text-foreground font-bold"
+                           ? "bg-card shadow-2xs text-foreground font-bold"
                            : "text-muted-foreground hover:text-foreground"
                        )}
                      >
@@ -452,14 +452,14 @@ function AppointmentsPageContent() {
                 const patient = patients.find((p) => p.id === apt.patientId)
                 const patientName = patient ? `${patient.firstName} ${patient.lastName}` : t("appts_unknownPatient")
                 return (
-                  <div key={apt.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md border border-border bg-[#F8FAFC] p-3 text-xs transition-colors hover:bg-muted/40">
+                  <div key={apt.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md border border-border bg-muted-bg/50 p-3 text-xs transition-colors hover:bg-muted/40">
                     <span className="font-mono font-bold text-foreground">{apt.time}</span>
                     <span className="font-semibold text-foreground">{patientName}</span>
                     <span className="text-muted-foreground">{apptTypeLabel(apt.type)} · {apt.provider}</span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold border border-border bg-white text-muted-foreground">{statusLabel(apt.status)}</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold border border-border bg-card text-muted-foreground">{statusLabel(apt.status)}</span>
                     <span className="ms-auto flex items-center gap-3">
                       <Button variant="link" className="text-primary hover:underline p-0 h-auto text-xs font-semibold" onClick={() => setEditAptId(apt.id)}><Pencil className="mr-1 h-3.5 w-3.5" />{t("appts_edit")}</Button>
-                      <Button variant="link" className="text-muted-foreground hover:text-red-600 p-0 h-auto text-xs font-medium" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}><Ban className="mr-1 h-3.5 w-3.5" />{t("appts_cancel")}</Button>{isTelehealthAppointment(apt.type) ? (<TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />) : null}
+                      <Button variant="link" className="text-muted-foreground hover:text-destructive p-0 h-auto text-xs font-medium" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}><Ban className="mr-1 h-3.5 w-3.5" />{t("appts_cancel")}</Button>{isTelehealthAppointment(apt.type) ? (<TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />) : null}
                     </span>
                   </div>
                 )
@@ -470,7 +470,7 @@ function AppointmentsPageContent() {
           ) : (
           <div className="p-0 overflow-x-auto flex-1">
               <table className="w-full text-left text-xs">
-                  <thead className="border-b border-border bg-[#F8FAFC] text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       <tr>
                           <th className="px-4 py-3">{t("appts_colTime")}</th>
                           <th className="px-4 py-3">{t("appts_colPatient")}</th>
@@ -493,7 +493,7 @@ function AppointmentsPageContent() {
                                       <Clock className="w-3 h-3 mr-1" /> {apt.duration}
                                   </div>
                                   {apt.tokenNumber ? (
-                                    <span className="mt-1 inline-flex items-center gap-1 rounded-full border border-purple-200 bg-purple-50 px-2 py-0.5 text-[10px] font-bold text-purple-800">
+                                    <span className="mt-1 inline-flex items-center gap-1 rounded-full border border-accent-blue/30 bg-accent-blue-bg px-2 py-0.5 text-[10px] font-bold text-accent-blue-text">
                                       {apt.isWalkIn ? t("appts_walkIn") : t("appts_queue")} · {apt.tokenNumber}
                                     </span>
                                   ) : null}
@@ -504,12 +504,12 @@ function AppointmentsPageContent() {
                                <td className="px-4 py-3">
                                   <span className={cn(
                                     "px-2 py-0.5 rounded-full text-[10px] font-semibold border",
-                                    statusKey === "confirmed" && "bg-emerald-50 text-emerald-800 border-emerald-200",
-                                    (statusKey === "arrived" || statusKey === "in waiting room" || statusKey === "in_progress") && "bg-amber-50 text-amber-800 border-amber-200",
-                                    (statusKey === "scheduled" || statusKey === "pending") && "bg-cyan-50 text-cyan-800 border-cyan-200",
-                                    statusKey === "cancelled" && "bg-red-50 text-red-700 border-red-200",
-                                    statusKey === "completed" && "bg-emerald-50 text-emerald-800 border-emerald-200",
-                                    !statusKey && "bg-muted text-muted-foreground border-border"
+                                    statusKey === "confirmed" && "bg-success-bg text-success-text border-success/30",
+                                    (statusKey === "arrived" || statusKey === "in waiting room" || statusKey === "in_progress") && "bg-warning-bg text-warning-text border-warning/30",
+                                    (statusKey === "scheduled" || statusKey === "pending") && "bg-primary/10 text-primary border-primary/20",
+                                    statusKey === "cancelled" && "bg-critical-bg text-critical-text border-critical/30",
+                                    statusKey === "completed" && "bg-success-bg text-success-text border-success/30",
+                                    !statusKey && "bg-muted-bg text-muted-foreground border-border"
                                   )}>
                                       {statusLabel(apt.status)}
                                   </span>
@@ -523,10 +523,10 @@ function AppointmentsPageContent() {
                                     >
                                       <Pencil className="mr-1 h-3.5 w-3.5" />{t("appts_edit")}
                                     </Button>
-                                    <Button variant="link" className="text-muted-foreground hover:text-red-600 p-0 h-auto text-xs font-medium" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}><Ban className="mr-1 h-3.5 w-3.5" />{t("appts_cancel")}</Button>
+                                    <Button variant="link" className="text-muted-foreground hover:text-destructive p-0 h-auto text-xs font-medium" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}><Ban className="mr-1 h-3.5 w-3.5" />{t("appts_cancel")}</Button>
                                     {!apt.isWalkIn && (apt.status ?? "").toLowerCase() !== "cancelled" ? (
                                       <FeatureTip tipId="appointments-walkin">
-                                      <Button variant="link" className="text-purple-700 hover:underline p-0 h-auto text-xs font-semibold" onClick={() => {
+                                      <Button variant="link" className="text-primary hover:underline p-0 h-auto text-xs font-semibold" onClick={() => {
                                         updateAppointment(apt.id, {
                                           status: "In Waiting Room",
                                           isWalkIn: true,
@@ -537,7 +537,7 @@ function AppointmentsPageContent() {
                                     ) : null}
                                     {isTelehealthAppointment(apt.type) ? (
                                       <span className="inline-flex items-center gap-1.5">
-                                        <span className="rounded-full bg-cyan-50 border border-cyan-200 px-2 py-0.5 text-[10px] font-bold text-cyan-800">{t("tele_badge")}</span>
+                                        <span className="rounded-full bg-primary/10 border border-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary">{t("tele_badge")}</span>
                                         <TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />
                                       </span>
                                     ) : null}

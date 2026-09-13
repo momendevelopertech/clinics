@@ -82,12 +82,12 @@ function PatientsPageContent() {
         <AddPatientDialog onSuccess={refetchPatients} />
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-border bg-white shadow-2xs flex-1 flex flex-col">
-         <div className="p-4 sm:px-6 border-b border-border bg-[#F8FAFC] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="overflow-hidden rounded-lg border border-border bg-card shadow-2xs flex-1 flex flex-col">
+         <div className="p-4 sm:px-6 border-b border-border bg-muted-bg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
              <Input
                 type="search"
                 placeholder={t("patients_searchPlaceholder")}
-                className="h-9 w-full sm:max-w-sm rounded-md bg-white text-xs border-input"
+                className="h-9 w-full sm:max-w-sm rounded-md bg-card text-xs border-input"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value)
@@ -118,7 +118,7 @@ function PatientsPageContent() {
          </div>
          <div className="p-0 overflow-x-auto">
              <table className="w-full text-left text-xs">
-                 <thead className="border-b border-border bg-[#F8FAFC] text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                 <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                      <tr>
                          <th className="px-4 py-3">{t("patients_colPatient")}</th>
                          <th className="px-4 py-3">{t("patients_colMrn")}</th>
@@ -147,7 +147,7 @@ function PatientsPageContent() {
                              </td>
                              <td className="px-4 py-3 font-mono text-muted-foreground">{patient.mrn}</td>
                              <td className="px-4 py-3">
-                                 <span className="px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full text-[10px] font-semibold">
+                                 <span className={patient.status === "Active" ? "px-2 py-0.5 bg-success-bg text-success-text border border-success/30 rounded-full text-[10px] font-semibold" : "px-2 py-0.5 bg-muted-bg text-muted-foreground border border-border rounded-full text-[10px] font-semibold"}>
                                      {statusLabel(patient.status)}
                                  </span>
                              </td>

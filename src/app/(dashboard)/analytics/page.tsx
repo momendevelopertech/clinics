@@ -79,7 +79,7 @@ export default function AnalyticsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
           >
-            <Card className="rounded-lg border border-border bg-white shadow-2xs">
+            <Card className="rounded-lg border border-border bg-card shadow-2xs">
               <CardHeader className="p-5 pb-2">
                 <CardTitle className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
                   <c.icon className="w-4 h-4 text-primary" />
@@ -94,8 +94,8 @@ export default function AnalyticsPage() {
         ))}
       </div>
 
-      <Card className="rounded-lg border border-border bg-white shadow-2xs">
-        <CardHeader className="p-5 border-b border-border bg-[#F8FAFC]">
+      <Card className="rounded-lg border border-border bg-card shadow-2xs">
+        <CardHeader className="p-5 border-b border-border bg-muted-bg">
           <CardTitle className="flex items-center gap-2 text-base font-bold text-foreground">
             <BarChart3 className="w-5 h-5 text-primary" />
             {t("analytics_operationalMetrics")}
@@ -131,7 +131,7 @@ function Metric({
   icon?: typeof BarChart3;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-[#F8FAFC] p-4 transition-colors hover:bg-muted/40">
+    <div className="rounded-lg border border-border bg-muted-bg p-4 transition-colors hover:bg-muted/40">
       <div className="flex items-center justify-between">
         <Icon className="h-4 w-4 text-primary" />
       </div>
