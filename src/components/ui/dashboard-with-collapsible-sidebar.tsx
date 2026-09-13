@@ -294,13 +294,13 @@ function CollapsibleSidebar({
     <>
     <aside
       className={cn(
-        "sticky top-0 hidden h-screen shrink-0 border-r border-border bg-white flex-col justify-between overflow-y-auto md:flex transition-all duration-200 z-30",
+        "sticky top-0 hidden h-screen shrink-0 border-r border-border bg-sidebar text-sidebar-foreground flex-col justify-between overflow-y-auto md:flex transition-all duration-200 z-30",
         open ? "w-70" : "w-20",
       )}
     >
       <div className="flex flex-col min-h-0 flex-1">
         {/* Brand Logo & Identity */}
-        <div className="h-16 px-4 flex items-center justify-between border-b border-border bg-white">
+        <div className="h-16 px-4 flex items-center justify-between border-b border-border bg-sidebar">
           <Link
             href="/dashboard"
             className="flex items-center gap-3 transition-opacity hover:opacity-90"
@@ -327,9 +327,9 @@ function CollapsibleSidebar({
         </div>
 
         {/* Branch / Daily Visits Pill */}
-        <div className="p-3 border-b border-border bg-[#F8FAFC]">
+        <div className="p-3 border-b border-border bg-muted-bg">
           {open ? (
-            <div className="p-2.5 rounded-md border border-border bg-white flex items-center justify-between gap-2 shadow-xs">
+            <div className="p-2.5 rounded-md border border-border bg-card flex items-center justify-between gap-2 shadow-xs">
               <div className="flex items-center gap-2 overflow-hidden">
                 <span className="grid size-7 shrink-0 place-content-center rounded-sm bg-primary/10 text-primary">
                   <Building2 className="h-4 w-4" />
@@ -347,7 +347,7 @@ function CollapsibleSidebar({
             </div>
           ) : (
             <div className="flex justify-center">
-              <span className="rounded-[4px] bg-primary-container px-1.5 py-0.5 font-mono text-[11px] font-semibold text-[#065F46]" title={`${t("shell_todayVisits")}: ${todayVisits}`}>
+              <span className="rounded-[4px] bg-primary/15 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-primary" title={`${t("shell_todayVisits")}: ${todayVisits}`}>
                 {todayVisits}
               </span>
             </div>
@@ -374,7 +374,7 @@ function CollapsibleSidebar({
       </div>
 
       {/* Telemetry Footer & Collapse Button */}
-      <div className="border-t border-border p-3 bg-[#F8FAFC] space-y-2">
+      <div className="border-t border-border p-3 bg-muted-bg space-y-2">
         {open ? (
           <div className="flex items-center justify-between text-[11px] text-muted-foreground px-1">
             <div className="flex items-center gap-1.5">
@@ -391,7 +391,7 @@ function CollapsibleSidebar({
           onClick={() => setOpen(!open)}
           aria-label={t("header_collapse")}
           title={t("header_collapse")}
-          className="w-full h-8 justify-center rounded-md border border-border bg-white text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="w-full h-8 justify-center rounded-md border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
         >
           <ChevronRight className={cn("h-4 w-4 transition-transform", open ? "rotate-180" : "")} />
           {open ? <span className="ml-1.5 text-xs font-medium">{t("header_collapse")}</span> : null}
@@ -399,8 +399,8 @@ function CollapsibleSidebar({
       </div>
     </aside>
     <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
-      <SheetContent side="left" className="overflow-y-auto p-0 md:hidden bg-white w-72">
-        <div className="h-16 px-4 flex items-center gap-3 border-b border-border bg-white">
+      <SheetContent side="left" className="overflow-y-auto p-0 md:hidden bg-sidebar text-sidebar-foreground w-72">
+        <div className="h-16 px-4 flex items-center gap-3 border-b border-border bg-sidebar">
           <div className="grid size-9 shrink-0 place-content-center rounded-md bg-primary text-primary-foreground shadow-xs">
             <Activity className="h-5 w-5" />
           </div>
@@ -695,14 +695,14 @@ function DashboardHeader({
   };
 
   return (
-    <header className="sticky top-0 z-20 border-b border-border bg-white px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-20 border-b border-border bg-card px-4 sm:px-6 lg:px-8">
       <div className="flex h-16 items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
           <Button
             variant="ghost"
             size="icon-sm"
             onClick={onMenuClick}
-            className="h-9 w-9 rounded-md border border-border bg-white text-muted-foreground hover:bg-muted hover:text-foreground md:hidden"
+            className="h-9 w-9 rounded-md border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground md:hidden"
             aria-label={t("header_toggleNav")}
           >
             <Menu className="h-4 w-4" />
@@ -722,7 +722,7 @@ function DashboardHeader({
           <div className="relative hidden md:block">
             <FeatureTip tipId="shell-search">
               <form onSubmit={handleSearchSubmit}>
-                <label className="flex w-[20rem] lg:w-[26rem] items-center gap-2.5 rounded-md border border-border bg-[#F8FAFC] px-3 py-2 text-xs text-muted-foreground focus-within:border-primary focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20 transition-all shadow-2xs">
+                <label className="flex w-[20rem] lg:w-[26rem] items-center gap-2.5 rounded-md border border-border bg-muted-bg px-3 py-2 text-xs text-muted-foreground focus-within:border-primary focus-within:bg-card focus-within:ring-2 focus-within:ring-primary/20 transition-all shadow-2xs">
                   <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
                   <input
                     value={searchQuery}
@@ -740,7 +740,7 @@ function DashboardHeader({
             </FeatureTip>
 
             {isSearchFocused && searchResults.length > 0 ? (
-              <div className="absolute left-0 top-[calc(100%+0.5rem)] z-30 w-full rounded-lg border border-border bg-white p-1.5 shadow-lg">
+              <div className="absolute left-0 top-[calc(100%+0.5rem)] z-30 w-full rounded-lg border border-border bg-popover p-1.5 shadow-lg">
                 {searchResults.map((result) => (
                   <button
                     key={result.id}
@@ -771,7 +771,7 @@ function DashboardHeader({
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative h-9 w-9 rounded-md border border-border bg-white text-muted-foreground hover:bg-muted hover:text-foreground"
+                className="relative h-9 w-9 rounded-md border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
                 aria-label={t("header_notifications")}
               >
                 <Bell className="h-4 w-4" />
@@ -782,7 +782,7 @@ function DashboardHeader({
                 ) : null}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80 rounded-lg border border-border bg-white p-1 shadow-lg">
+            <DropdownMenuContent align="end" className="w-80 rounded-lg border border-border bg-popover text-popover-foreground p-1 shadow-lg">
               <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold">{t("header_notifications")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {notifications.length === 0 ? (
@@ -824,7 +824,7 @@ function DashboardHeader({
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="h-9 w-9 rounded-md border border-border bg-white text-muted-foreground hover:bg-muted hover:text-foreground"
+              className="h-9 w-9 rounded-md border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
               aria-label={theme === "dark" ? t("shell_themeLight") : t("shell_themeDark")}
             >
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -835,7 +835,7 @@ function DashboardHeader({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="h-9 rounded-md border border-border bg-white px-2 text-left hover:bg-muted transition-colors flex items-center gap-2"
+                className="h-9 rounded-md border border-border bg-card px-2 text-left hover:bg-muted transition-colors flex items-center gap-2"
               >
                 <div className="grid size-6 place-content-center rounded-full bg-primary text-primary-foreground font-semibold text-[11px]">
                   <User className="h-3.5 w-3.5" />
@@ -846,7 +846,7 @@ function DashboardHeader({
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 rounded-lg border border-border bg-white p-1 shadow-lg">
+            <DropdownMenuContent align="end" className="w-56 rounded-lg border border-border bg-popover text-popover-foreground p-1 shadow-lg">
               <DropdownMenuLabel className="px-3 py-1.5 text-xs font-semibold">{t("header_account")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild className="rounded-md text-xs cursor-pointer">
@@ -860,7 +860,7 @@ function DashboardHeader({
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                className="rounded-md text-xs text-red-600 focus:bg-red-50 focus:text-red-700 cursor-pointer"
+                className="rounded-md text-xs text-destructive focus:bg-critical-bg focus:text-critical-text cursor-pointer"
                 disabled={isLoggingOut}
                 onSelect={() => {
                   void handleLogout();

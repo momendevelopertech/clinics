@@ -30,7 +30,7 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
         <Button
           variant="ghost"
           size={compact ? "icon" : "sm"}
-          className={`gap-2 rounded-md border border-border bg-white text-sm font-medium text-foreground hover:bg-muted ${
+          className={`gap-2 rounded-md border border-border bg-card text-sm font-medium text-foreground hover:bg-muted ${
             compact ? "h-9 w-9" : "h-9 px-3"
           }`}
           aria-label={t("lang_label")}
@@ -41,7 +41,7 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
           ) : null}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-44 rounded-lg border border-border bg-white p-1 shadow-lg">
+      <DropdownMenuContent align="end" className="w-44 rounded-lg border border-border bg-popover text-popover-foreground p-1 shadow-lg">
         <DropdownMenuLabel className="px-3 py-1.5 text-xs font-semibold">{t("lang_label")}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={() => setLocale("en")} className="rounded-md text-xs cursor-pointer">
