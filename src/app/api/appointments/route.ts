@@ -476,5 +476,3 @@ export async function PATCH(request: Request) {
     );
   }
 }
-
-export const ACTIVE_APPOINTMENT_STATUSES = ACTIVE_STATUSES;
