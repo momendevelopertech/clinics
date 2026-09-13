@@ -68,8 +68,8 @@ export function MergePatientsDialog({ patient, patients, onSuccess }: MergePatie
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="link" className="p-0 h-auto text-sm font-medium text-amber-600 hover:text-amber-700">
-          <Combine />{t("patients_merge")}
+        <Button variant="ghost" size="sm" className="h-7 px-2 text-xs font-medium text-amber-700 hover:text-amber-800 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-950/40">
+          <Combine className="mr-1 h-3.5 w-3.5" />{t("patients_merge")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -94,12 +94,12 @@ export function MergePatientsDialog({ patient, patients, onSuccess }: MergePatie
             </SelectContent>
           </Select>
         </div>
-        <DialogFooter>
+        <DialogFooter className="gap-2">
           <Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>
-            <X />{t("common_cancel")}
+            <X className="mr-1.5 h-4 w-4" />{t("common_cancel")}
           </Button>
           <Button onClick={handleMerge} disabled={!survivorId || saving}>
-            <Check />{saving ? t("patients_mergeMerging") : t("patients_mergeConfirm")}
+            <Check className="mr-1.5 h-4 w-4" />{saving ? t("patients_mergeMerging") : t("patients_mergeConfirm")}
           </Button>
         </DialogFooter>
       </DialogContent>

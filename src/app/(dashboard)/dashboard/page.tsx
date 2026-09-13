@@ -211,11 +211,11 @@ export default function DashboardPage() {
   };
 
   const colorMap = {
-    cyan: "bg-cyan-500/12 text-cyan-700 dark:text-cyan-300",
-    emerald: "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300",
-    violet: "bg-violet-500/12 text-violet-700 dark:text-violet-300",
-    amber: "bg-amber-500/12 text-amber-700 dark:text-amber-300",
-    red: "bg-red-500/12 text-red-700 dark:text-red-300",
+    cyan: "bg-cyan-50 text-cyan-800 border border-cyan-200",
+    emerald: "bg-emerald-50 text-emerald-800 border border-emerald-200",
+    violet: "bg-purple-50 text-purple-800 border border-purple-200",
+    amber: "bg-amber-50 text-amber-800 border border-amber-200",
+    red: "bg-red-50 text-red-700 border border-red-200",
   };
 
   if (isDoctor) return <DoctorBoard />;
@@ -223,25 +223,25 @@ export default function DashboardPage() {
 
   return (
     <motion.div
-      className="flex w-full flex-col gap-8 pb-6"
+      className="flex w-full flex-col gap-6 pb-6"
       variants={containerVariants}
       initial="hidden"
       animate="show"
     >
       <motion.section
         variants={itemVariants}
-        className="hero-glow surface-panel relative overflow-hidden rounded-[34px] border border-white/60 px-6 py-7 dark:border-white/6 sm:px-8"
+        className="relative overflow-hidden rounded-lg border border-border bg-white p-6 shadow-2xs sm:p-8"
       >
         <div className="relative z-10 grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-primary dark:border-white/8 dark:bg-white/[0.04]">
+            <div className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-primary/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
               <HeartPulse className="h-3.5 w-3.5" />
               {t("dash_dailyCareboard")}
             </div>
-            <h2 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.05em] text-foreground sm:text-5xl">
+            <h1 className="mt-4 max-w-3xl text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               {t("dash_heroTitle")}
-            </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
+            </h1>
+            <p className="mt-3 max-w-2xl text-xs leading-relaxed text-muted-foreground sm:text-sm">
               {t("dash_heroBody")}
             </p>
           </div>
@@ -272,13 +272,13 @@ export default function DashboardPage() {
             ].map((item) => (
               <div
                 key={item.label}
-                className="rounded-[24px] border border-white/60 bg-white/72 p-4 dark:border-white/8 dark:bg-white/[0.04]"
+                className="rounded-lg border border-border bg-[#F8FAFC] p-3.5"
               >
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   {item.label}
                 </p>
-                <p className="mt-2 text-lg font-semibold text-foreground">{item.value}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{item.copy}</p>
+                <p className="mt-1.5 text-base font-bold text-foreground">{item.value}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{item.copy}</p>
               </div>
             ))}
           </div>
@@ -290,36 +290,26 @@ export default function DashboardPage() {
           <motion.div
             variants={itemVariants}
             key={stat.name}
-            className="surface-panel group relative overflow-hidden rounded-[28px] border border-white/60 p-6 dark:border-white/6"
+            className="group relative overflow-hidden rounded-lg border border-border bg-white p-5 shadow-2xs transition hover:border-primary/40"
           >
-            <div
-              className={cn(
-                "pointer-events-none absolute inset-0 rounded-[28px] opacity-0 transition-opacity group-hover:opacity-100",
-                stat.color === "cyan" && "bg-linear-to-br from-cyan-500/14 to-transparent",
-                stat.color === "emerald" && "bg-linear-to-br from-emerald-500/14 to-transparent",
-                stat.color === "violet" && "bg-linear-to-br from-violet-500/14 to-transparent",
-                stat.color === "amber" && "bg-linear-to-br from-amber-500/14 to-transparent",
-              )}
-            />
-
-            <div className="relative flex items-start justify-between">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{stat.name}</p>
-                <h3 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-foreground">
+                <p className="text-xs font-semibold text-muted-foreground">{stat.name}</p>
+                <h3 className="mt-2 text-2xl font-bold tracking-tight text-foreground">
                   {stat.value}
                 </h3>
               </div>
               <div
                 className={cn(
-                  "rounded-[18px] p-3 transition-transform duration-300 group-hover:rotate-3 group-hover:scale-110",
+                  "rounded-md p-2.5 transition-transform duration-200 group-hover:scale-105",
                   colorMap[stat.color as keyof typeof colorMap],
                 )}
               >
-                <stat.icon className="h-5 w-5" strokeWidth={2} />
+                <stat.icon className="h-4 w-4" strokeWidth={2} />
               </div>
             </div>
 
-            <div className="relative mt-4 flex items-center text-sm text-muted-foreground">
+            <div className="mt-3 flex items-center text-xs text-muted-foreground">
               {stat.detail}
             </div>
           </motion.div>
@@ -330,40 +320,40 @@ export default function DashboardPage() {
         <div className="lg:col-span-2">
           <motion.div
             variants={itemVariants}
-            className="surface-panel rounded-[30px] border border-white/60 p-6 dark:border-white/6"
+            className="rounded-lg border border-border bg-white p-5 shadow-2xs"
           >
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-lg font-semibold tracking-[-0.03em] text-foreground">
+            <div className="mb-4 flex items-center justify-between border-b border-border pb-3">
+              <h2 className="text-sm font-bold tracking-tight text-foreground">
                 {t("dash_recentActivity")}
               </h2>
               <Button
                 variant="link"
-                className="h-auto p-0 text-sm font-medium text-primary no-underline hover:no-underline"
+                className="h-auto p-0 text-xs font-semibold text-primary hover:underline"
                 asChild
               >
                 <Link href="/patients" className="inline-flex items-center gap-1">
                   {t("common_view_all")}
-                  <ArrowRight className="h-3.5 w-3.5" />
+                  <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
                 </Link>
               </Button>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               {activityItems.map((activity, index) => (
                 <div
                   key={`${activity.title}-${index}`}
-                  className="flex cursor-default items-center gap-4 rounded-[22px] p-3 transition-colors hover:bg-white/65 dark:hover:bg-white/[0.04]"
+                  className="flex cursor-default items-center gap-3 rounded-md border border-border/50 bg-[#F8FAFC] p-3 transition-colors hover:bg-muted/50"
                 >
-                  <div className={cn("shrink-0 rounded-[16px] p-2.5", colorMap[activity.color])}>
+                  <div className={cn("grid size-8 shrink-0 place-content-center rounded-md", colorMap[activity.color])}>
                     <activity.icon className="h-4 w-4" strokeWidth={2} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-foreground">
+                    <p className="truncate text-xs font-semibold text-foreground">
                       {activity.title}
                     </p>
                     <p className="truncate text-xs text-muted-foreground">{activity.desc}</p>
                   </div>
-                  <span className="shrink-0 text-xs text-muted-foreground">{activity.time}</span>
+                  <span className="shrink-0 text-[11px] font-mono text-muted-foreground">{activity.time}</span>
                 </div>
               ))}
             </div>
@@ -373,30 +363,30 @@ export default function DashboardPage() {
         <div className="space-y-6">
           <motion.div
             variants={itemVariants}
-            className="surface-panel rounded-[30px] border border-white/60 p-6 dark:border-white/6"
+            className="rounded-lg border border-border bg-white p-5 shadow-2xs"
           >
-            <h2 className="mb-4 text-lg font-semibold tracking-[-0.03em] text-foreground">
+            <h2 className="mb-4 border-b border-border pb-3 text-sm font-bold tracking-tight text-foreground">
               {t("dash_quickStats")}
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-3.5">
               {quickStats.map((quickStat, index) => (
                 <div key={quickStat.label}>
-                  <div className="mb-1.5 flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">{quickStat.label}</span>
-                    <span className="text-sm font-semibold text-foreground">
+                  <div className="mb-1 flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">{quickStat.label}</span>
+                    <span className="text-xs font-bold text-foreground">
                       {quickStat.value}
                     </span>
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min(quickStat.pct, 100)}%` }}
                       transition={{ duration: 0.8, delay: 0.2 + index * 0.1 }}
                       className={cn(
                         "h-full rounded-full",
-                        quickStat.color === "cyan" && "bg-cyan-500",
-                        quickStat.color === "amber" && "bg-amber-500",
-                        quickStat.color === "emerald" && "bg-emerald-500",
+                        quickStat.color === "cyan" && "bg-cyan-600",
+                        quickStat.color === "amber" && "bg-amber-600",
+                        quickStat.color === "emerald" && "bg-emerald-600",
                       )}
                     />
                   </div>
@@ -407,14 +397,14 @@ export default function DashboardPage() {
 
           <motion.div
             variants={itemVariants}
-            className="surface-panel rounded-[30px] border border-white/60 p-6 dark:border-white/6"
+            className="rounded-lg border border-border bg-white p-5 shadow-2xs"
           >
-            <h2 className="mb-4 text-lg font-semibold tracking-[-0.03em] text-foreground">
+            <h2 className="mb-4 border-b border-border pb-3 text-sm font-bold tracking-tight text-foreground">
               {t("dash_upcomingAppointments")}
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {upcomingAppointments.length === 0 ? (
-                <p className="text-sm text-muted-foreground">{t("dash_noUpcoming")}</p>
+                <p className="py-4 text-center text-xs text-muted-foreground">{t("dash_noUpcoming")}</p>
               ) : (
                 upcomingAppointments.map((appointment) => {
                   const patient = patients.find((entry) => entry.id === appointment.patientId);
@@ -423,25 +413,25 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={appointment.id}
-                      className="flex items-center justify-between rounded-[22px] px-3 py-3 transition-colors hover:bg-white/65 dark:hover:bg-white/[0.04]"
+                      className="flex items-center justify-between rounded-md border border-border/50 bg-[#F8FAFC] p-2.5 transition-colors hover:bg-muted/50"
                     >
                       <div>
-                        <span className="text-sm font-medium text-foreground">{name}</span>
-                        <p className="text-xs text-muted-foreground">
+                        <span className="text-xs font-semibold text-foreground">{name}</span>
+                        <p className="text-[11px] text-muted-foreground">
                           {appointment.date} · {appointment.time} · {appointment.type}
                         </p>
                       </div>
                       <span
                         className={cn(
-                          "shrink-0 rounded-full px-2.5 py-1 text-xs font-medium capitalize",
+                          "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize border",
                           appointment.status?.toLowerCase() === "confirmed" &&
-                            "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300",
+                            "bg-emerald-50 text-emerald-800 border-emerald-200",
                           (appointment.status?.toLowerCase() === "scheduled" ||
                             appointment.status?.toLowerCase() === "in waiting room") &&
-                            "bg-cyan-500/12 text-cyan-700 dark:text-cyan-300",
+                            "bg-cyan-50 text-cyan-800 border-cyan-200",
                           appointment.status?.toLowerCase() === "pending" &&
-                            "bg-amber-500/12 text-amber-700 dark:text-amber-300",
-                          !appointment.status && "bg-muted text-muted-foreground",
+                            "bg-amber-50 text-amber-800 border-amber-200",
+                          !appointment.status && "bg-muted text-muted-foreground border-border",
                         )}
                       >
                         {appointment.status?.toLowerCase() === "confirmed" && t("appts_statusConfirmed")}
@@ -461,41 +451,41 @@ export default function DashboardPage() {
 
       <motion.div
         variants={itemVariants}
-        className="surface-panel overflow-hidden rounded-[32px] border border-white/60 dark:border-white/6"
+        className="overflow-hidden rounded-lg border border-border bg-white shadow-2xs"
       >
-        <div className="flex items-center justify-between border-b border-white/60 bg-white/40 p-6 dark:border-white/6 dark:bg-white/[0.02]">
-          <h2 className="text-lg font-semibold tracking-[-0.03em] text-foreground">
+        <div className="flex items-center justify-between border-b border-border bg-[#F8FAFC] p-4 sm:px-6">
+          <h2 className="text-sm font-bold tracking-tight text-foreground">
             {t("dash_recentPatients")}
           </h2>
           <AddPatientDialog onSuccess={refetchPatients} />
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-white/32 text-muted-foreground dark:bg-white/[0.015]">
+          <table className="w-full text-left text-xs">
+            <thead className="border-b border-border bg-[#F8FAFC] text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               <tr>
-                <th className="px-6 py-4">{t("dash_name")}</th>
-                <th className="px-6 py-4">{t("dash_idMrn")}</th>
-                <th className="px-6 py-4">{t("dash_lastVisit")}</th>
-                <th className="px-6 py-4">{t("common_status")}</th>
-                <th className="px-6 py-4">{t("common_actions")}</th>
+                <th className="px-4 py-3">{t("dash_name")}</th>
+                <th className="px-4 py-3">{t("dash_idMrn")}</th>
+                <th className="px-4 py-3">{t("dash_lastVisit")}</th>
+                <th className="px-4 py-3">{t("common_status")}</th>
+                <th className="px-4 py-3">{t("common_actions")}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/60 text-foreground dark:divide-white/6">
+            <tbody className="divide-y divide-border text-foreground">
               {patients.slice(0, 5).map((patient: Patient) => (
                 <tr
                   key={patient.id}
-                  className="group transition-colors hover:bg-white/45 dark:hover:bg-white/[0.03]"
+                  className="transition-colors hover:bg-muted/40"
                 >
-                  <td className="px-6 py-4 font-medium">
+                  <td className="px-4 py-3 font-semibold">
                     {patient.firstName} {patient.lastName}
                   </td>
-                  <td className="px-6 py-4 text-muted-foreground">{patient.mrn}</td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-3 font-mono text-muted-foreground">{patient.mrn}</td>
+                  <td className="px-4 py-3 text-muted-foreground">
                     {new Date(patient.lastVisit).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4">
-                    <span className="rounded-full border border-emerald-500/20 bg-emerald-500/12 px-2.5 py-1 text-xs font-semibold tracking-wide text-emerald-700 dark:text-emerald-300">
+                  <td className="px-4 py-3">
+                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-800">
                       {patient.status?.toLowerCase() === "active" && t("patients_active")}
                       {patient.status?.toLowerCase() === "inactive" && t("patients_inactive")}
                       {patient.status?.toLowerCase() === "archived" && t("patients_archived")}
@@ -506,14 +496,14 @@ export default function DashboardPage() {
                         patient.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-3">
                     <Sheet>
                       <SheetTrigger asChild>
                         <Button
                           variant="link"
-                          className="h-auto p-0 font-semibold text-primary transition-transform hover:no-underline group-hover:translate-x-1"
+                          className="h-auto p-0 text-xs font-semibold text-primary hover:underline"
                         >
-                          <Eye />{t("dash_viewProfile")}
+                          <Eye className="mr-1 h-3.5 w-3.5" />{t("dash_viewProfile")}
                         </Button>
                       </SheetTrigger>
                       <PatientProfileSheet patient={patient} />

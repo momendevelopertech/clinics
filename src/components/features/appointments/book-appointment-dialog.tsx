@@ -148,16 +148,7 @@ export function BookAppointmentDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger ?? (
-          <Button
-            className={cn(
-              "relative overflow-hidden bg-gradient-to-r from-violet-600 via-indigo-600 to-violet-600",
-              "hover:from-violet-700 hover:via-indigo-700 hover:to-violet-700",
-              "text-white shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30",
-              "transition-all duration-300 hover:-translate-y-0.5",
-              "border-0"
-            )}
-          >
-            <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <Button>
             <CalendarDays className="w-4 h-4 mr-2" />
             {t("book_title")}
           </Button>
@@ -166,67 +157,50 @@ export function BookAppointmentDialog({
       <DialogContent
         className={cn(
           "sm:max-w-[440px] p-0 gap-0 overflow-hidden max-h-[90vh] overflow-y-auto",
-          "border-0 shadow-2xl shadow-neutral-900/10 dark:shadow-neutral-950/50",
-          "bg-white dark:bg-neutral-950",
-          "ring-1 ring-neutral-200/80 dark:ring-neutral-800/80"
+          "border border-border shadow-lg",
+          "bg-card text-card-foreground rounded-lg"
         )}
       >
         <div className="relative">
-          {/* Premium gradient header */}
-          <div
-            className={cn(
-              "absolute inset-0 h-32 -z-10",
-              "bg-gradient-to-br from-violet-500/10 via-indigo-500/5 to-transparent dark:from-violet-600/20 dark:via-indigo-600/10"
-            )}
-          />
-          <DialogHeader className="px-6 pt-6 pb-4">
-            <DialogTitle className="text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-border bg-muted/20">
+            <DialogTitle className="text-xl font-bold tracking-tight text-foreground">
               {t("book_title")}
             </DialogTitle>
-            <DialogDescription className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
+            <DialogDescription className="text-sm text-muted-foreground mt-0.5">
               {t("book_desc")}
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="px-6 pb-6 space-y-5">
+            <div className="px-6 py-5 space-y-4">
               <AnimatePresence mode="wait">
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="space-y-5"
+                  className="space-y-4"
                 >
                   {/* Patient */}
                   <div className="space-y-2">
                     <Label
                       htmlFor="patientId"
-                      className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-2"
+                      className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2"
                     >
-                      <User className="w-3.5 h-3.5 text-violet-500" />
+                      <User className="w-3.5 h-3.5 text-primary" />
                       {t("book_patient")}
                     </Label>
                     <Select
                       onValueChange={(v) => form.setValue("patientId", v)}
                       value={selectedPatientId}
                     >
-                      <SelectTrigger
-                        className={cn(
-                          "w-full h-11 rounded-[5px] border-neutral-200 dark:border-neutral-800",
-                          "bg-white dark:bg-neutral-900/50",
-                          "hover:border-violet-300 dark:hover:border-violet-700/50",
-                          "focus-visible:ring-violet-500/30 focus-visible:border-violet-400",
-                          "transition-colors duration-200"
-                        )}
-                      >
+                      <SelectTrigger className="w-full h-9">
                         <SelectValue placeholder={t("book_selectPatient")} />
                       </SelectTrigger>
-                      <SelectContent className="rounded-[5px] border-neutral-200 dark:border-neutral-800 shadow-xl">
+                      <SelectContent>
                         {patients.map((p) => (
                           <SelectItem
                             key={p.id}
                             value={p.id}
-                            className="rounded-[5px] focus:bg-violet-50 dark:focus:bg-violet-950/30"
                           >
                             {p.firstName} {p.lastName}
                           </SelectItem>
@@ -234,7 +208,7 @@ export function BookAppointmentDialog({
                       </SelectContent>
                     </Select>
                     {form.formState.errors.patientId && (
-                      <p className="text-xs text-red-600 dark:text-red-400">
+                      <p className="text-xs text-destructive">
                         {form.formState.errors.patientId.message}
                       </p>
                     )}
@@ -244,31 +218,23 @@ export function BookAppointmentDialog({
                   <div className="space-y-2">
                     <Label
                       htmlFor="provider"
-                      className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-2"
+                      className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2"
                     >
-                      <Stethoscope className="w-3.5 h-3.5 text-violet-500" />
+                      <Stethoscope className="w-3.5 h-3.5 text-primary" />
                       {t("appts_provider")}
                     </Label>
                     <Select
                       onValueChange={(v) => form.setValue("provider", v)}
                       value={selectedProvider}
                     >
-                      <SelectTrigger
-                        className={cn(
-                          "w-full h-11 rounded-[5px] border-neutral-200 dark:border-neutral-800",
-                          "bg-white dark:bg-neutral-900/50",
-                          "hover:border-violet-300 dark:hover:border-violet-700/50",
-                          "focus-visible:ring-violet-500/30"
-                        )}
-                      >
+                      <SelectTrigger className="w-full h-9">
                         <SelectValue placeholder={t("book_selectProvider")} />
                       </SelectTrigger>
-                      <SelectContent className="rounded-[5px] shadow-xl">
+                      <SelectContent>
                         {providers.map((p) => (
                           <SelectItem
                             key={p.id}
                             value={p.id}
-                            className="rounded-[5px] focus:bg-violet-50 dark:focus:bg-violet-950/30"
                           >
                             {p.name}
                           </SelectItem>
@@ -276,7 +242,7 @@ export function BookAppointmentDialog({
                       </SelectContent>
                     </Select>
                     {form.formState.errors.provider && (
-                      <p className="text-xs text-red-600 dark:text-red-400">
+                      <p className="text-xs text-destructive">
                         {form.formState.errors.provider.message}
                       </p>
                     )}
@@ -287,9 +253,9 @@ export function BookAppointmentDialog({
                     <div className="space-y-2">
                       <Label
                         htmlFor="date"
-                        className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-2"
+                        className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2"
                       >
-                        <Calendar className="w-3.5 h-3.5 text-violet-500" />
+                        <Calendar className="w-3.5 h-3.5 text-primary" />
                         {t("appts_date")}
                       </Label>
                       <div className="relative">
@@ -297,19 +263,11 @@ export function BookAppointmentDialog({
                           id="date"
                           type="date"
                           {...form.register("date")}
-                          className={cn(
-                            "h-11 rounded-[5px] pl-4 pr-10",
-                            "border-neutral-200 dark:border-neutral-800",
-                            "focus-visible:ring-violet-500/30 focus-visible:border-violet-400"
-                          )}
-                        />
-                        <Calendar
-                          className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"
-                          strokeWidth={2}
+                          className="h-9 pr-8"
                         />
                       </div>
                       {form.formState.errors.date && (
-                        <p className="text-xs text-red-600 dark:text-red-400">
+                        <p className="text-xs text-destructive">
                           {form.formState.errors.date.message}
                         </p>
                       )}
@@ -317,9 +275,9 @@ export function BookAppointmentDialog({
                     <div className="space-y-2">
                       <Label
                         htmlFor="time"
-                        className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 flex items-center gap-2"
+                        className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2"
                       >
-                        <Clock className="w-3.5 h-3.5 text-violet-500" />
+                        <Clock className="w-3.5 h-3.5 text-primary" />
                         {t("appts_time")}
                       </Label>
                       <div className="relative">
@@ -327,19 +285,11 @@ export function BookAppointmentDialog({
                           id="time"
                           type="time"
                           {...form.register("time")}
-                          className={cn(
-                            "h-11 rounded-[5px] pl-4 pr-10",
-                            "border-neutral-200 dark:border-neutral-800",
-                            "focus-visible:ring-violet-500/30 focus-visible:border-violet-400"
-                          )}
-                        />
-                        <Clock
-                          className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"
-                          strokeWidth={2}
+                          className="h-9 pr-8"
                         />
                       </div>
                       {form.formState.errors.time && (
-                        <p className="text-xs text-red-600 dark:text-red-400">
+                        <p className="text-xs text-destructive">
                           {form.formState.errors.time.message}
                         </p>
                       )}
@@ -350,7 +300,7 @@ export function BookAppointmentDialog({
                   <div className="space-y-2">
                     <Label
                       htmlFor="type"
-                      className="text-sm font-semibold text-neutral-700 dark:text-neutral-300"
+                      className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
                     >
                       {t("book_type")}
                     </Label>
@@ -358,22 +308,14 @@ export function BookAppointmentDialog({
                       onValueChange={(v) => form.setValue("type", v)}
                       value={selectedType}
                     >
-                      <SelectTrigger
-                        className={cn(
-                          "w-full h-11 rounded-[5px] border-neutral-200 dark:border-neutral-800",
-                          "bg-white dark:bg-neutral-900/50",
-                          "hover:border-violet-300 dark:hover:border-violet-700/50",
-                          "focus-visible:ring-violet-500/30"
-                        )}
-                      >
+                      <SelectTrigger className="w-full h-9">
                         <SelectValue placeholder={t("book_selectType")} />
                       </SelectTrigger>
-                      <SelectContent className="rounded-[5px] shadow-xl">
+                      <SelectContent>
                         {APPOINTMENT_TYPES.map((typeOpt) => (
                           <SelectItem
                             key={typeOpt.value}
                             value={typeOpt.value}
-                            className="rounded-[5px] focus:bg-violet-50 dark:focus:bg-violet-950/30"
                           >
                             {apptTypeLabel(typeOpt.value)}
                           </SelectItem>
@@ -381,7 +323,7 @@ export function BookAppointmentDialog({
                       </SelectContent>
                     </Select>
                     {form.formState.errors.type && (
-                      <p className="text-xs text-red-600 dark:text-red-400">
+                      <p className="text-xs text-destructive">
                         {form.formState.errors.type.message}
                       </p>
                     )}
@@ -390,37 +332,19 @@ export function BookAppointmentDialog({
               </AnimatePresence>
             </div>
 
-            <DialogFooter
-              className={cn(
-                "px-6 py-4 gap-3",
-                "border-t border-neutral-100 dark:border-neutral-800/80",
-                "bg-neutral-50/50 dark:bg-neutral-900/30"
-              )}
-            >
+            <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20 gap-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setOpen(false)}
-                className={cn(
-                  "rounded-[5px] border-neutral-200 dark:border-neutral-700",
-                  "hover:bg-neutral-100 dark:hover:bg-neutral-800"
-                )}
               >
-                <X />{t("common_cancel")}
+                <X className="mr-1.5 h-4 w-4" />{t("common_cancel")}
               </Button>
               <Button
                 type="submit"
                 disabled={form.formState.isSubmitting}
-                className={cn(
-                  "rounded-[5px] px-6",
-                  "bg-gradient-to-r from-violet-600 via-indigo-600 to-violet-600",
-                  "hover:from-violet-700 hover:via-indigo-700 hover:to-violet-700",
-                  "text-white shadow-lg shadow-violet-500/25",
-                  "hover:shadow-xl hover:shadow-violet-500/30",
-                  "transition-all duration-300 active:scale-[0.98]"
-                )}
               >
-                <CalendarPlus />{form.formState.isSubmitting ? t("book_booking") : t("book_book")}
+                <CalendarPlus className="mr-1.5 h-4 w-4" />{form.formState.isSubmitting ? t("book_booking") : t("book_book")}
               </Button>
             </DialogFooter>
           </form>

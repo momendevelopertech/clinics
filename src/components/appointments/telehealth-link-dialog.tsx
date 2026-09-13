@@ -62,30 +62,31 @@ export function TelehealthLinkDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="link" className="text-teal-600 hover:text-teal-700 p-0 h-auto">
-          <Video />{currentUrl ? t("tele_link") : t("tele_setLink")}
+        <Button variant="link" className="text-primary hover:underline p-0 h-auto text-xs font-semibold">
+          <Video className="mr-1 h-3.5 w-3.5" />{currentUrl ? t("tele_link") : t("tele_setLink")}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md rounded-lg">
         <DialogHeader>
-          <DialogTitle>{t("tele_setLink")}</DialogTitle>
-          <DialogDescription>{t("tele_desc")}</DialogDescription>
+          <DialogTitle className="text-base font-bold text-foreground">{t("tele_setLink")}</DialogTitle>
+          <DialogDescription className="text-xs text-muted-foreground">{t("tele_desc")}</DialogDescription>
         </DialogHeader>
-        <div className="gap-2 flex flex-col">
-          <Label>{t("tele_link")}</Label>
+        <div className="gap-2 flex flex-col py-2">
+          <Label className="text-xs font-semibold">{t("tele_link")}</Label>
           <Input
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder={t("tele_linkPlaceholder")}
             dir="ltr"
+            className="h-9 text-xs"
           />
         </div>
         <div className="flex justify-end gap-2 mt-4">
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>
-            <X />{t("common_cancel")}
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={saving} className="h-9 text-xs">
+            <X className="mr-1 h-3.5 w-3.5" />{t("common_cancel")}
           </Button>
-          <Button onClick={handleSave} disabled={saving}>
-            <Save />{t("common_save")}
+          <Button onClick={handleSave} disabled={saving} className="h-9 bg-primary hover:bg-[#115E59] text-white text-xs shadow-2xs">
+            <Save className="mr-1 h-3.5 w-3.5" />{t("common_save")}
           </Button>
         </div>
       </DialogContent>

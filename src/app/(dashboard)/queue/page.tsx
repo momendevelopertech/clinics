@@ -87,34 +87,34 @@ export default function QueuePage() {
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">{t("queue_title")}</h1>
-          <p className="text-sm text-muted-foreground">{t("queue_subtitle")}</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("queue_title")}</h1>
+          <p className="text-xs text-muted-foreground">{t("queue_subtitle")}</p>
         </div>
-        <Button onClick={() => runAction("call-next")} disabled={acting}>
-          <Phone />{t("queue_callNext")}
+        <Button onClick={() => runAction("call-next")} disabled={acting} className="h-9 gap-2 text-xs font-semibold shadow-2xs">
+          <Phone className="h-4 w-4" />{t("queue_callNext")}
         </Button>
       </div>
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? <p className="text-xs font-semibold text-red-600">{error}</p> : null}
       <div className="space-y-3">
         {queue.map((item) => (
-          <div key={item.id} className="flex items-center justify-between gap-3 rounded-xl border bg-white p-4 dark:bg-neutral-900">
+          <div key={item.id} className="flex items-center justify-between gap-3 rounded-lg border border-border bg-white p-4 shadow-2xs">
             <div>
-              <p className="font-medium">{item.patient.firstName} {item.patient.lastName}</p>
-              <p className="text-xs text-muted-foreground">{item.patient.mrn ?? ""} · {item.provider.name ?? ""}</p>
-              <div className="mt-2 flex gap-2">
+              <p className="text-xs font-semibold text-foreground">{item.patient.firstName} {item.patient.lastName}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">{item.patient.mrn ?? ""} · {item.provider.name ?? ""}</p>
+              <div className="mt-2.5 flex gap-2">
                 {item.status === "arrived" ? (
                   <>
-                    <Button size="sm" variant="outline" disabled={acting} onClick={() => runAction("call-next", item.id)}>
-                      <Phone />{t("queue_callNext")}
+                    <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" disabled={acting} onClick={() => runAction("call-next", item.id)}>
+                      <Phone className="mr-1 h-3.5 w-3.5" />{t("queue_callNext")}
                     </Button>
-                    <Button size="sm" variant="ghost" className="text-red-600" disabled={acting} onClick={() => runAction("no-show", item.id)}>
-                      <Ban />{t("queue_noShow")}
+                    <Button size="sm" variant="ghost" className="h-7 px-2.5 text-xs text-red-600 hover:text-red-700 hover:bg-red-50" disabled={acting} onClick={() => runAction("no-show", item.id)}>
+                      <Ban className="mr-1 h-3.5 w-3.5" />{t("queue_noShow")}
                     </Button>
                   </>
                 ) : null}
                 {item.status === "in_progress" ? (
-                  <Button size="sm" variant="outline" disabled={acting} onClick={() => runAction("complete", item.id)}>
-                    <Check />{t("queue_complete")}
+                  <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" disabled={acting} onClick={() => runAction("complete", item.id)}>
+                    <Check className="mr-1 h-3.5 w-3.5" />{t("queue_complete")}
                   </Button>
                 ) : null}
               </div>
@@ -122,14 +122,14 @@ export default function QueuePage() {
             <div className="text-right">
               <FeatureTip tipId="queue-token">
                 <span>
-                  <p className="font-mono font-bold">{item.tokenNumber ?? "—"}</p>
-                  <p className="text-xs text-muted-foreground">{item.room?.name ?? t("queue_unassigned")}</p>
+                  <p className="font-mono text-base font-bold text-foreground">{item.tokenNumber ?? "—"}</p>
+                  <p className="text-[11px] text-muted-foreground">{item.room?.name ?? t("queue_unassigned")}</p>
                 </span>
               </FeatureTip>
             </div>
           </div>
         ))}
-        {!queue.length && !error ? <p className="text-sm text-muted-foreground">{t("queue_empty")}</p> : null}
+        {!queue.length && !error ? <p className="py-8 text-center text-xs text-muted-foreground">{t("queue_empty")}</p> : null}
       </div>
     </div>
   );

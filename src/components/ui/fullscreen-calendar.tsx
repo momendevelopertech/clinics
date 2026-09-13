@@ -114,16 +114,16 @@ export function FullScreenCalendar({
       <div className="flex flex-col space-y-4 p-4 md:flex-row md:items-center md:justify-between md:space-y-0 lg:flex-none">
         <div className="flex flex-auto">
           <div className="flex items-center gap-4">
-            <div className="hidden w-20 flex-col items-center justify-center rounded-[5px] border bg-muted/50 p-0.5 md:flex shadow-sm">
-              <h1 className="p-1 text-xs uppercase text-muted-foreground">
+            <div className="hidden w-20 flex-col items-center justify-center rounded-lg border border-border bg-muted/50 p-0.5 md:flex shadow-xs">
+              <h1 className="p-1 text-xs uppercase font-medium text-muted-foreground">
                 {format(today, "MMM")}
               </h1>
-              <div className="flex w-full items-center justify-center rounded-[5px] border bg-background p-0.5 text-lg font-bold transition-colors">
+              <div className="flex w-full items-center justify-center rounded-md border border-border bg-card p-0.5 text-lg font-bold transition-colors">
                 <span>{format(today, "d")}</span>
               </div>
             </div>
             <div className="flex flex-col">
-              <h2 className="text-lg font-semibold text-foreground">
+              <h2 className="text-lg font-bold tracking-tight text-foreground">
                 {format(firstDayCurrentMonth, "MMMM, yyyy")}
               </h2>
               <p className="text-sm text-muted-foreground">
@@ -135,10 +135,10 @@ export function FullScreenCalendar({
         </div>
 
         <div className="flex flex-col items-center gap-4 md:flex-row md:gap-6">
-          <div className="inline-flex w-full -space-x-px rounded-[5px] shadow-sm shadow-black/5 md:w-auto rtl:space-x-reverse">
+          <div className="inline-flex w-full -space-x-px rounded-md shadow-xs md:w-auto rtl:space-x-reverse">
             <Button
               onClick={previousMonth}
-              className="rounded-none rounded-s-[5px] shadow-none first:rounded-s-[5px] last:rounded-e-[5px] focus-visible:z-10"
+              className="rounded-none rounded-s-md shadow-none first:rounded-s-md last:rounded-e-md focus-visible:z-10"
               variant="outline"
               size="icon"
               aria-label={t("calendar_prevMonth")}
@@ -147,14 +147,14 @@ export function FullScreenCalendar({
             </Button>
             <Button
               onClick={goToToday}
-              className="w-full rounded-none shadow-none first:rounded-s-[5px] last:rounded-e-[5px] focus-visible:z-10 md:w-auto"
+              className="w-full rounded-none shadow-none first:rounded-s-md last:rounded-e-md focus-visible:z-10 md:w-auto"
               variant="outline"
             >
               {t("calendar_today")}
             </Button>
             <Button
               onClick={nextMonth}
-              className="rounded-none rounded-e-[5px] shadow-none first:rounded-s-[5px] last:rounded-e-[5px] focus-visible:z-10"
+              className="rounded-none rounded-e-md shadow-none first:rounded-s-md last:rounded-e-md focus-visible:z-10"
               variant="outline"
               size="icon"
               aria-label={t("calendar_nextMonth")}
@@ -171,20 +171,20 @@ export function FullScreenCalendar({
       {/* Calendar Grid */}
       <div className="lg:flex lg:flex-auto lg:flex-col">
         {/* Week Days Header */}
-        <div className="grid grid-cols-7 border-y border-x text-center text-xs font-semibold leading-6 text-muted-foreground">
-          <div className="border-r py-2.5">{t("availability_sun")}</div>
-          <div className="border-r py-2.5">{t("availability_mon")}</div>
-          <div className="border-r py-2.5">{t("availability_tue")}</div>
-          <div className="border-r py-2.5">{t("availability_wed")}</div>
-          <div className="border-r py-2.5">{t("availability_thu")}</div>
-          <div className="border-r py-2.5">{t("availability_fri")}</div>
+        <div className="grid grid-cols-7 border-y border-x border-border text-center text-xs font-semibold leading-6 text-muted-foreground bg-muted/30">
+          <div className="border-r border-border py-2.5">{t("availability_sun")}</div>
+          <div className="border-r border-border py-2.5">{t("availability_mon")}</div>
+          <div className="border-r border-border py-2.5">{t("availability_tue")}</div>
+          <div className="border-r border-border py-2.5">{t("availability_wed")}</div>
+          <div className="border-r border-border py-2.5">{t("availability_thu")}</div>
+          <div className="border-r border-border py-2.5">{t("availability_fri")}</div>
           <div className="py-2.5">{t("availability_sat")}</div>
         </div>
 
         {/* Calendar Days */}
         <div className="flex text-xs leading-6 lg:flex-auto">
           {/* Desktop: full month grid with event cards */}
-          <div className="hidden w-full border-x lg:grid lg:grid-cols-7 lg:grid-rows-6">
+          <div className="hidden w-full border-x border-border lg:grid lg:grid-cols-7 lg:grid-rows-6">
             {days.map((day) => {
               const dayData = data.filter((d) => isSameDay(d.day, day));
 
@@ -196,9 +196,9 @@ export function FullScreenCalendar({
                     !isEqual(day, selectedDay) &&
                       !isToday(day) &&
                       !isSameMonth(day, firstDayCurrentMonth) &&
-                      "bg-accent/30 text-muted-foreground",
-                    "relative flex min-h-[100px] flex-col border-b border-r transition-colors hover:bg-muted/50 focus-visible:z-10 cursor-pointer",
-                    !isEqual(day, selectedDay) && "hover:bg-accent/50"
+                      "bg-muted/20 text-muted-foreground",
+                    "relative flex min-h-[100px] flex-col border-b border-r border-border transition-colors hover:bg-muted/40 focus-visible:z-10 cursor-pointer",
+                    !isEqual(day, selectedDay) && "hover:bg-muted/30"
                   )}
                 >
                   <header className="flex items-center justify-between p-2.5">
@@ -225,7 +225,7 @@ export function FullScreenCalendar({
                           !isToday(day) &&
                           "bg-primary text-primary-foreground",
                         (isEqual(day, selectedDay) || isToday(day)) && "font-semibold",
-                        "flex h-7 w-7 items-center justify-center rounded-[5px] text-xs transition-colors hover:border hover:border-border"
+                        "flex h-7 w-7 items-center justify-center rounded-md text-xs transition-colors hover:border hover:border-border"
                       )}
                     >
                       <time dateTime={format(day, "yyyy-MM-dd")}>
@@ -244,12 +244,12 @@ export function FullScreenCalendar({
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if (calEv) {
-                                  onEventClick?.(calEv);
+                                   onEventClick?.(calEv);
                                 }
                               }}
-                              className="flex flex-col items-start gap-1 rounded-[5px] border bg-muted/50 p-2 text-xs leading-tight transition-all hover:bg-muted hover:border-primary/30 cursor-pointer"
+                              className="flex flex-col items-start gap-1 rounded-md border border-border bg-card p-2 text-xs leading-tight transition-all hover:border-primary/40 hover:shadow-xs cursor-pointer"
                             >
-                              <p className="font-medium leading-none line-clamp-1">
+                              <p className="font-semibold leading-none line-clamp-1 text-foreground">
                                 {ev.name}
                               </p>
                               <p className="leading-none text-muted-foreground">
@@ -272,7 +272,7 @@ export function FullScreenCalendar({
           </div>
 
           {/* Mobile: compact grid */}
-          <div className="isolate grid w-full grid-cols-7 grid-rows-6 border-x lg:hidden">
+          <div className="isolate grid w-full grid-cols-7 grid-rows-6 border-x border-border lg:hidden">
             {days.map((day) => {
               const dayData = data.filter((d) => isSameDay(d.day, day));
               return (
@@ -291,13 +291,13 @@ export function FullScreenCalendar({
                       !isSameMonth(day, firstDayCurrentMonth) &&
                       "text-muted-foreground",
                     (isEqual(day, selectedDay) || isToday(day)) && "font-semibold",
-                    "flex h-14 flex-col border-b border-r px-2 py-2 transition-colors hover:bg-muted focus-visible:z-10 rounded-none"
+                    "flex h-14 flex-col border-b border-r border-border px-2 py-2 transition-colors hover:bg-muted focus-visible:z-10 rounded-none"
                   )}
                 >
                   <time
                     dateTime={format(day, "yyyy-MM-dd")}
                     className={cn(
-                      "ml-auto flex size-6 items-center justify-center rounded-[5px]",
+                      "ml-auto flex size-6 items-center justify-center rounded-md",
                       isEqual(day, selectedDay) &&
                         isToday(day) &&
                         "bg-primary text-primary-foreground",

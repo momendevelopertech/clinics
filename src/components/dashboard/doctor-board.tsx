@@ -75,16 +75,16 @@ export function DoctorBoard() {
 
   const statusChip = (status?: string | null) =>
     cn(
-      "shrink-0 rounded-full px-2.5 py-1 text-xs font-medium capitalize",
-      status?.toLowerCase() === "confirmed" && "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300",
+      "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize border",
+      status?.toLowerCase() === "confirmed" && "bg-emerald-50 text-emerald-800 border-emerald-200",
       (status?.toLowerCase() === "scheduled" ||
         status?.toLowerCase() === "in waiting room" ||
         status?.toLowerCase() === "in_waiting_room") &&
-        "bg-cyan-500/12 text-cyan-700 dark:text-cyan-300",
+        "bg-cyan-50 text-cyan-800 border-cyan-200",
       (status?.toLowerCase() === "arrived" || status?.toLowerCase() === "in progress") &&
-        "bg-violet-500/12 text-violet-700 dark:text-violet-300",
-      status?.toLowerCase() === "completed" && "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300",
-      ACTIVE.has(status?.toLowerCase() ?? "") ? "" : "bg-muted text-muted-foreground",
+        "bg-purple-50 text-purple-800 border-purple-200",
+      status?.toLowerCase() === "completed" && "bg-emerald-50 text-emerald-800 border-emerald-200",
+      ACTIVE.has(status?.toLowerCase() ?? "") ? "" : "bg-muted text-muted-foreground border-border",
     );
 
   const stats = [
@@ -109,9 +109,9 @@ export function DoctorBoard() {
   ];
 
   const accent = {
-    emerald: "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300",
-    cyan: "bg-cyan-500/12 text-cyan-700 dark:text-cyan-300",
-    violet: "bg-violet-500/12 text-violet-700 dark:text-violet-300",
+    emerald: "bg-emerald-50 text-emerald-800 border border-emerald-200",
+    cyan: "bg-cyan-50 text-cyan-800 border border-cyan-200",
+    violet: "bg-purple-50 text-purple-800 border border-purple-200",
   };
 
   return (
@@ -123,51 +123,51 @@ export function DoctorBoard() {
       <motion.section
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="hero-glow surface-panel relative overflow-hidden rounded-[34px] border border-white/60 px-6 py-7 dark:border-white/6 sm:px-8"
+        className="relative overflow-hidden rounded-lg border border-border bg-white p-6 shadow-2xs sm:p-8"
       >
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-primary dark:border-white/8 dark:bg-white/[0.04]">
+        <div className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-primary/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
           <Stethoscope className="h-3.5 w-3.5" />
           {t("doctor_boardTitle")}
         </div>
-        <h2 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-foreground sm:text-4xl">
+        <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           {t("doctor_boardSubtitle")}
-        </h2>
+        </h1>
       </motion.section>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="surface-panel flex items-start justify-between rounded-[28px] border border-white/60 p-6 dark:border-white/6"
+            className="flex items-start justify-between rounded-lg border border-border bg-white p-5 shadow-2xs"
           >
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-              <h3 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-foreground">
+              <p className="text-xs font-semibold text-muted-foreground">{stat.label}</p>
+              <h3 className="mt-2 text-2xl font-bold tracking-tight text-foreground">
                 {stat.value}
               </h3>
             </div>
-            <div className={cn("rounded-[18px] p-3", accent[stat.color as keyof typeof accent])}>
-              <stat.icon className="h-5 w-5" strokeWidth={2} />
+            <div className={cn("rounded-md p-2.5", accent[stat.color as keyof typeof accent])}>
+              <stat.icon className="h-4 w-4" strokeWidth={2} />
             </div>
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="surface-panel rounded-[30px] border border-white/60 p-6 dark:border-white/6 lg:col-span-2">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold tracking-[-0.03em] text-foreground">
+        <div className="rounded-lg border border-border bg-white p-5 shadow-2xs lg:col-span-2">
+          <div className="mb-4 flex items-center justify-between border-b border-border pb-3">
+            <h2 className="text-sm font-bold tracking-tight text-foreground">
               {t("doctor_todaySchedule")}
             </h2>
             <Link
               href="/queue"
-              className="text-sm font-medium text-primary hover:underline"
+              className="text-xs font-semibold text-primary hover:underline"
             >
               {t("common_view_all")}
             </Link>
           </div>
           {myAppointmentsToday.length === 0 ? (
-            <p className="py-6 text-sm text-muted-foreground">{t("doctor_noAppointments")}</p>
+            <p className="py-6 text-center text-xs text-muted-foreground">{t("doctor_noAppointments")}</p>
           ) : (
             <div className="space-y-2">
               {myAppointmentsToday.map((appointment) => {
@@ -182,14 +182,14 @@ export function DoctorBoard() {
                 return (
                   <div
                     key={appointment.id}
-                    className="flex items-center gap-4 rounded-[22px] px-4 py-3 transition-colors hover:bg-white/65 dark:hover:bg-white/[0.04]"
+                    className="flex items-center gap-3 rounded-md border border-border/50 bg-[#F8FAFC] px-3.5 py-2.5 transition-colors hover:bg-muted/50"
                   >
-                    <span className="w-16 shrink-0 text-sm font-semibold tabular-nums text-foreground ltr-on-rtl">
+                    <span className="w-16 shrink-0 font-mono text-xs font-bold tabular-nums text-foreground ltr-on-rtl">
                       {time}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-foreground">{name}</p>
-                      <p className="truncate text-xs text-muted-foreground">{appointment.type}</p>
+                      <p className="truncate text-xs font-semibold text-foreground">{name}</p>
+                      <p className="truncate text-[11px] text-muted-foreground">{appointment.type}</p>
                     </div>
                     <span className={statusChip(appointment.status)}>
                       {appointment.status ?? "—"}
@@ -201,25 +201,25 @@ export function DoctorBoard() {
           )}
         </div>
 
-        <div className="surface-panel rounded-[30px] border border-white/60 p-6 dark:border-white/6">
-          <h2 className="mb-4 text-lg font-semibold tracking-[-0.03em] text-foreground">
+        <div className="rounded-lg border border-border bg-white p-5 shadow-2xs">
+          <h2 className="mb-4 border-b border-border pb-3 text-sm font-bold tracking-tight text-foreground">
             {t("doctor_upcoming")}
           </h2>
           {upcoming.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t("doctor_noAppointments")}</p>
+            <p className="py-6 text-center text-xs text-muted-foreground">{t("doctor_noAppointments")}</p>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {upcoming.map((appointment) => {
                 const patient = patients.find((p) => p.id === appointment.patientId);
                 const name = patient ? `${patient.firstName} ${patient.lastName}` : "—";
                 return (
                   <div
                     key={appointment.id}
-                    className="flex items-center justify-between rounded-[22px] px-3 py-3 transition-colors hover:bg-white/65 dark:hover:bg-white/[0.04]"
+                    className="flex items-center justify-between rounded-md border border-border/50 bg-[#F8FAFC] p-2.5 transition-colors hover:bg-muted/50"
                   >
                     <div>
-                      <span className="text-sm font-medium text-foreground">{name}</span>
-                      <p className="text-xs text-muted-foreground">
+                      <span className="text-xs font-semibold text-foreground">{name}</span>
+                      <p className="text-[11px] text-muted-foreground">
                         {appointment.date} · {appointment.time}
                       </p>
                     </div>

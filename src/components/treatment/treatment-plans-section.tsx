@@ -152,15 +152,16 @@ export function TreatmentPlansSection({
 
   if (plans.length === 0) {
     return (
-      <div className="rounded-[20px] border border-white/55 bg-white/60 p-4 dark:border-white/6 dark:bg-white/[0.03]">
-        <p className="text-sm font-medium">{t["tp_title"]}</p>
+      <div className="rounded-lg border border-border bg-card p-4 shadow-xs">
+        <p className="text-sm font-semibold text-foreground">{t["tp_title"]}</p>
         <div className="mt-2 flex gap-2">
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder={String(t["tp_newPlaceholder"])}
+            className="h-9"
           />
-          <Button size="sm" onClick={createPlan} disabled={!title.trim()}>
+          <Button size="sm" onClick={createPlan} disabled={!title.trim()} className="h-9">
             {t["tp_create"]}
           </Button>
         </div>
@@ -169,24 +170,25 @@ export function TreatmentPlansSection({
   }
 
   return (
-    <div className="rounded-[20px] border border-white/55 bg-white/60 p-4 dark:border-white/6 dark:bg-white/[0.03]">
-      <p className="text-sm font-medium">{t["tp_title"]}</p>
+    <div className="rounded-lg border border-border bg-card p-4 shadow-xs">
+      <p className="text-sm font-semibold text-foreground">{t["tp_title"]}</p>
       <div className="mt-2 flex gap-2">
         <Input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder={String(t["tp_newPlaceholder"])}
+          className="h-9"
         />
-        <Button size="sm" onClick={createPlan} disabled={!title.trim()}>
+        <Button size="sm" onClick={createPlan} disabled={!title.trim()} className="h-9">
           {t["tp_create"]}
         </Button>
       </div>
       <div className="mt-3 space-y-2">
         {plans.map((plan) => (
-          <div key={plan.id} className="rounded-[14px] border p-3">
+          <div key={plan.id} className="rounded-md border border-border bg-muted/20 p-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm font-medium">
-                {plan.title} · {plan.status}
+              <p className="text-sm font-semibold text-foreground">
+                {plan.title} · <span className="text-xs font-normal text-muted-foreground uppercase">{plan.status}</span>
               </p>
               <div className="flex gap-2">
                 {plan.status === "draft" ? (
@@ -208,18 +210,18 @@ export function TreatmentPlansSection({
               </div>
             </div>
             {openPlan === plan.id ? (
-              <div className="mt-2 space-y-1">
+              <div className="mt-3 space-y-2 border-t border-border pt-3">
                 {plan.steps.map((s) => (
-                  <div key={s.id} className="flex items-center justify-between gap-2 text-sm">
+                  <div key={s.id} className="flex items-center justify-between gap-2 text-sm text-foreground bg-card p-2 rounded-md border border-border">
                     <span>
-                      [{s.status}] {s.title} <span className="text-xs text-muted-foreground">({s.kind})</span>
+                      <strong className="font-semibold text-xs uppercase text-primary">[{s.status}]</strong> {s.title} <span className="text-xs text-muted-foreground">({s.kind})</span>
                     </span>
                     {s.status === "pending" ? (
                       <span className="flex gap-2">
-                        <Button size="sm" variant="ghost" onClick={() => moveStep(plan.id, s.id, "done")}>
+                        <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => moveStep(plan.id, s.id, "done")}>
                           {t["tp_done"]}
                         </Button>
-                        <Button size="sm" variant="ghost" onClick={() => moveStep(plan.id, s.id, "skipped")}>
+                        <Button size="sm" variant="ghost" className="h-7 text-xs text-muted-foreground" onClick={() => moveStep(plan.id, s.id, "skipped")}>
                           {t["tp_skip"]}
                         </Button>
                       </span>
@@ -228,7 +230,7 @@ export function TreatmentPlansSection({
                 ))}
                 <div className="flex gap-2 pt-1">
                   <Select value={stepKind} onValueChange={setStepKind}>
-                    <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="w-36 h-9"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {STEP_KINDS.map((k) => (
                         <SelectItem key={k} value={k}>{k}</SelectItem>
@@ -239,8 +241,9 @@ export function TreatmentPlansSection({
                     value={stepTitle}
                     onChange={(e) => setStepTitle(e.target.value)}
                     placeholder={String(t["tp_stepPlaceholder"])}
+                    className="h-9"
                   />
-                  <Button size="sm" onClick={() => addStep(plan.id)} disabled={!stepTitle.trim()}>
+                  <Button size="sm" onClick={() => addStep(plan.id)} disabled={!stepTitle.trim()} className="h-9">
                     {t["tp_addStep"]}
                   </Button>
                 </div>
