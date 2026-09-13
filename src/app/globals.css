@@ -48,6 +48,9 @@
   --color-critical: var(--color-critical);
   --color-critical-bg: var(--color-critical-bg);
   --color-critical-text: var(--color-critical-text);
+  --color-accent-blue: var(--color-accent-blue);
+  --color-accent-blue-bg: var(--color-accent-blue-bg);
+  --color-accent-blue-text: var(--color-accent-blue-text);
   --color-muted-bg: var(--color-muted-bg);
   --color-muted-text: var(--color-muted-text);
   --radius-sm: 0.25rem;
@@ -78,6 +81,8 @@
   /* Secondary — Slate + Accent Blue */
   --color-secondary: #1E293B;
   --color-accent-blue: #3B82F6;
+  --color-accent-blue-bg: #EFF6FF;
+  --color-accent-blue-text: #1D4ED8;
 
   /* Semantic Clinical Status Tokens */
   --color-success: #10B981;
@@ -174,6 +179,9 @@
   --color-critical: #F87171;
   --color-critical-bg: oklch(0.28 0.06 24.41 / 30%);
   --color-critical-text: #FECACA;
+  --color-accent-blue: #60A5FA;
+  --color-accent-blue-bg: oklch(0.28 0.05 250 / 30%);
+  --color-accent-blue-text: #93C5FD;
   --color-muted-bg: oklch(0.25 0.013 236.16);
   --color-muted-text: oklch(0.72 0.02 228.17);
 }
