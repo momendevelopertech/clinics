@@ -57,10 +57,11 @@
   --color-text-primary: #0F172A;    /* Primary typography */
   --color-text-muted: #64748B;      /* Secondary typography and captions */
 
-  /* Primary — Clinical Teal */
-  --color-primary: #0D9488;
-  --color-primary-hover: #0F766E;
-  --color-primary-active: #115E59;
+  /* Primary — Clinical Teal (Calibrated for WCAG AA >= 4.5:1 against #FFFFFF) */
+  --color-primary: #0F766E;         /* 5.52:1 contrast with white text */
+  --color-primary-hover: #115E59;   /* 7.30:1 contrast (AAA) */
+  --color-primary-active: #134E4A;  /* 9.40:1 contrast (AAA) */
+  --color-primary-accent: #0D9488;  /* Focus rings, non-text badges, and icons */
   --color-primary-container: #ECFDF5;
 
   /* Secondary — Slate + Accent Blue */
@@ -93,7 +94,7 @@
   --card-foreground: #0F172A;
   --popover: #FFFFFF;
   --popover-foreground: #0F172A;
-  --primary: #0D9488;
+  --primary: #0F766E;
   --primary-foreground: #FFFFFF;
   --secondary: #F1F5F9;
   --secondary-foreground: #1E293B;
@@ -106,17 +107,17 @@
   --border: #E2E8F0;
   --input: #CBD5E1;
   --ring: #0D9488;
-  --chart-1: #0D9488;
+  --chart-1: #0F766E;
   --chart-2: #3B82F6;
   --chart-3: #10B981;
   --chart-4: #F59E0B;
   --chart-5: #6366F1;
   --sidebar: #FFFFFF;
   --sidebar-foreground: #0F172A;
-  --sidebar-primary: #0D9488;
+  --sidebar-primary: #0F766E;
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #ECFDF5;
-  --sidebar-accent-foreground: #0D9488;
+  --sidebar-accent-foreground: #0F766E;
   --sidebar-border: #E2E8F0;
   --sidebar-ring: #0D9488;
 }
