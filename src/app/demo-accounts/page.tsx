@@ -18,7 +18,7 @@ type CardProps = {
 
 function AccountCard({ t, name, city, password, notes, children }: CardProps) {
   return (
-    <section className="overflow-hidden rounded-xl border border-border bg-white shadow-2xs">
+    <section className="overflow-hidden rounded-lg border border-border bg-white shadow-2xs">
       <div className="border-b border-border bg-[#F8FAFC] p-5">
         <h2 className="text-lg font-bold text-foreground">{name}</h2>
         <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">

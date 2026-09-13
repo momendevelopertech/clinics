@@ -71,7 +71,7 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-8 sm:px-6">
-      <div className="w-full max-w-md rounded-xl border border-border bg-white p-8 text-center shadow-xl">
+      <div className="w-full max-w-md rounded-lg border border-border bg-white p-8 text-center shadow-xl">
         {state === "verifying" || state === "pending" ? (
           <>
             <div className="mx-auto grid size-12 place-content-center rounded-full bg-primary/10 text-primary">
@@ -88,7 +88,7 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
                 <button
                   onClick={() => void handleResend()}
                   disabled={resending}
-                  className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary hover:bg-[#115E59] px-5 text-xs font-semibold text-white transition-colors shadow-2xs disabled:opacity-60 cursor-pointer"
+                  className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary hover:bg-[#115E59] px-5 text-xs font-semibold text-white transition-colors shadow-2xs disabled:opacity-60 cursor-pointer"
                 >
                   <MailCheck className="h-4 w-4" />
                   {resending ? "..." : t["verify_resend"]}
@@ -119,7 +119,7 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
             <div className="mt-6">
               <Link
                 href="/login"
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary hover:bg-[#115E59] px-5 text-xs font-semibold text-white transition-colors shadow-2xs"
+                className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary hover:bg-[#115E59] px-5 text-xs font-semibold text-white transition-colors shadow-2xs"
               >
                 {t["auth_backToLogin"]}
               </Link>
@@ -139,7 +139,7 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
               <button
                 onClick={() => void handleResend()}
                 disabled={resending}
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary hover:bg-[#115E59] px-5 text-xs font-semibold text-white transition-colors shadow-2xs disabled:opacity-60 cursor-pointer"
+                className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary hover:bg-[#115E59] px-5 text-xs font-semibold text-white transition-colors shadow-2xs disabled:opacity-60 cursor-pointer"
               >
                 {resending ? "..." : t["verify_resend"]}
               </button>

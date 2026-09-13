@@ -57,7 +57,7 @@ export function ResetPasswordForm({
   if (state === "success") {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-8 sm:px-6">
-        <div className="w-full max-w-md rounded-xl border border-border bg-white p-8 text-center shadow-xl">
+        <div className="w-full max-w-md rounded-lg border border-border bg-white p-8 text-center shadow-xl">
           <div className="mx-auto grid size-12 place-content-center rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600">
             <CheckCircle2 className="h-6 w-6" />
           </div>
@@ -65,7 +65,7 @@ export function ResetPasswordForm({
           <div className="mt-6">
             <Link
               href="/login"
-              className="inline-flex h-10 items-center justify-center rounded-md bg-primary hover:bg-[#115E59] px-5 text-xs font-semibold text-white transition-colors shadow-2xs"
+              className="inline-flex h-9 items-center justify-center rounded-md bg-primary hover:bg-[#115E59] px-5 text-xs font-semibold text-white transition-colors shadow-2xs"
             >
               {t["auth_backToLogin"]}
             </Link>
@@ -78,7 +78,7 @@ export function ResetPasswordForm({
   if (state === "invalid") {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-8 sm:px-6">
-        <div className="w-full max-w-md rounded-xl border border-border bg-white p-8 text-center shadow-xl">
+        <div className="w-full max-w-md rounded-lg border border-border bg-white p-8 text-center shadow-xl">
           <div className="mx-auto grid size-12 place-content-center rounded-full bg-red-50 border border-red-200 text-red-600">
             <XCircle className="h-6 w-6" />
           </div>
@@ -86,7 +86,7 @@ export function ResetPasswordForm({
           <div className="mt-6">
             <Link
               href="/forgot-password"
-              className="inline-flex h-10 items-center justify-center rounded-md bg-primary hover:bg-[#115E59] px-5 text-xs font-semibold text-white transition-colors shadow-2xs"
+              className="inline-flex h-9 items-center justify-center rounded-md bg-primary hover:bg-[#115E59] px-5 text-xs font-semibold text-white transition-colors shadow-2xs"
             >
               {t["forgot_title"]}
             </Link>
@@ -98,7 +98,7 @@ export function ResetPasswordForm({
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-8 sm:px-6">
-      <div className="w-full max-w-md rounded-xl border border-border bg-white p-8 shadow-xl">
+      <div className="w-full max-w-md rounded-lg border border-border bg-white p-8 shadow-xl">
         <div className="space-y-1.5 text-center sm:text-left">
           <div className="grid size-10 place-content-center rounded-md bg-primary/10 text-primary">
             <KeyRound className="h-5 w-5" />
@@ -118,7 +118,7 @@ export function ResetPasswordForm({
               autoComplete="new-password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="h-10 w-full rounded-md border border-input bg-white px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+              className="h-9 w-full rounded-md border border-input bg-white px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
             />
           </label>
 
@@ -133,7 +133,7 @@ export function ResetPasswordForm({
               autoComplete="new-password"
               value={confirm}
               onChange={(event) => setConfirm(event.target.value)}
-              className="h-10 w-full rounded-md border border-input bg-white px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+              className="h-9 w-full rounded-md border border-input bg-white px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
             />
           </label>
 
@@ -144,7 +144,7 @@ export function ResetPasswordForm({
           ) : null}
 
           <button
-            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary hover:bg-[#115E59] px-4 text-xs font-semibold text-white transition-colors shadow-2xs disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-primary hover:bg-[#115E59] px-4 text-xs font-semibold text-white transition-colors shadow-2xs disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
             disabled={state === "submitting"}
             type="submit"
           >

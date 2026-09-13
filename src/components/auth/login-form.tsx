@@ -42,8 +42,8 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-8 sm:px-6 lg:px-8">
-      <div className="grid w-full max-w-5xl overflow-hidden rounded-xl border border-border bg-white shadow-xl lg:grid-cols-[1fr_1fr]">
-        <section className="relative hidden min-h-[600px] flex-col justify-between border-r border-border bg-gradient-to-br from-[#0A4D5C] via-[#0F766E] to-[#134E4A] p-8 text-white lg:flex">
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-lg border border-border bg-white shadow-xl lg:grid-cols-[1fr_1fr]">
+        <section className="relative hidden min-h-[600px] flex-col justify-between border-r border-border bg-[#0F766E] p-8 text-white lg:flex">
           <div>
             <div className="flex items-center justify-between">
               <div className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-white/90">
@@ -117,7 +117,7 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
                 </span>
                 <input
                   autoComplete="email"
-                  className="h-10 w-full rounded-md border border-input bg-white px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                  className="h-9 w-full rounded-md border border-input bg-white px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                   name="email"
                   onChange={(event) => setEmail(event.target.value)}
                   type="email"
@@ -138,7 +138,7 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
                 </span>
                 <input
                   autoComplete="current-password"
-                  className="h-10 w-full rounded-md border border-input bg-white px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                  className="h-9 w-full rounded-md border border-input bg-white px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                   name="password"
                   onChange={(event) => setPassword(event.target.value)}
                   type="password"
@@ -164,7 +164,7 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
                     </span>
                     <input
                       autoComplete="one-time-code"
-                      className="h-10 w-full rounded-md border border-input bg-white px-3 text-center font-mono text-base tracking-widest outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      className="h-9 w-full rounded-md border border-input bg-white px-3 text-center font-mono text-base tracking-widest outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                       name="totpToken"
                       inputMode="numeric"
                       onChange={(event) => setTotpToken(event.target.value)}
@@ -179,7 +179,7 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
               ) : null}
 
               <button
-                className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary hover:bg-[#115E59] px-4 text-sm font-semibold text-white transition-colors shadow-2xs disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-primary hover:bg-[#115E59] px-4 text-xs font-semibold text-white transition-colors shadow-2xs disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
                 disabled={isSubmitting}
                 type="submit"
               >

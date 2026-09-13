@@ -127,7 +127,7 @@ export default function SecurityPage() {
         <p className="text-xs text-muted-foreground mt-0.5">{t("sec_subtitle")}</p>
       </div>
 
-      <Card className="rounded-xl border border-border bg-white shadow-2xs">
+      <Card className="rounded-lg border border-border bg-white shadow-2xs">
         <CardHeader className="p-5 border-b border-border bg-[#F8FAFC]">
           <CardTitle className="flex items-center justify-between text-base font-bold text-foreground">
             <span>{t("sec_2fa")}</span>
@@ -171,7 +171,7 @@ export default function SecurityPage() {
                   inputMode="numeric"
                   autoComplete="one-time-code"
                   placeholder="123456"
-                  className="h-10 text-center font-mono text-base tracking-widest"
+                  className="h-9 text-center font-mono text-base tracking-widest"
                 />
               </div>
               <div>
@@ -205,7 +205,7 @@ export default function SecurityPage() {
                   inputMode="numeric"
                   autoComplete="one-time-code"
                   placeholder="123456"
-                  className="h-10 text-center font-mono text-base tracking-widest"
+                  className="h-9 text-center font-mono text-base tracking-widest"
                 />
               </div>
               <div>
@@ -219,7 +219,7 @@ export default function SecurityPage() {
         </CardContent>
       </Card>
 
-      <Card className="rounded-xl border border-border bg-white shadow-2xs">
+      <Card className="rounded-lg border border-border bg-white shadow-2xs">
         <CardHeader className="p-5 border-b border-border bg-[#F8FAFC]">
           <CardTitle className="text-base font-bold text-foreground">{t("sec_export")}</CardTitle>
         </CardHeader>
