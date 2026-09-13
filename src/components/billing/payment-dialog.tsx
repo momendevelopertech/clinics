@@ -5,7 +5,7 @@ import {
   CreditCard,
   Plus,
   X,
-} from "lucide-react";;
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -140,8 +140,8 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2">
-          <Plus className="w-4 h-4" /> {t("pay_processPayment")}
+        <Button className="h-9 gap-1.5 text-xs font-semibold shadow-2xs">
+          <Plus className="w-3.5 h-3.5" /> {t("pay_processPayment")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
@@ -152,9 +152,9 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="gap-2 flex flex-col">
-            <Label htmlFor="invoice">{t("pay_invoiceLabel")}</Label>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 py-2">
+          <div className="gap-1.5 flex flex-col">
+            <Label htmlFor="invoice" className="text-xs font-semibold">{t("pay_invoiceLabel")}</Label>
             <Select
               value={formData.invoiceId}
               onValueChange={(value) => {
@@ -165,10 +165,10 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
                 });
               }}
             >
-              <SelectTrigger id="invoice">
+              <SelectTrigger id="invoice" className="h-9 text-xs">
                 <SelectValue placeholder={t("pay_selectInvoice")} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="text-xs">
                 {invoices.map((invoice) => (
                   <SelectItem key={invoice.id} value={invoice.id}>
                     {invoice.invoiceNumber} - $
@@ -182,9 +182,9 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
             </Select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="gap-2 flex flex-col">
-              <Label htmlFor="amount">{t("pay_amountLabel")}</Label>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="gap-1.5 flex flex-col">
+              <Label htmlFor="amount" className="text-xs font-semibold">{t("pay_amountLabel")}</Label>
               <Input
                 id="amount"
                 type="number"
@@ -196,21 +196,22 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
                   setFormData({ ...formData, amount: e.target.value })
                 }
                 required
+                className="h-9 text-xs"
               />
             </div>
 
-            <div className="gap-2 flex flex-col">
-              <Label htmlFor="currency">{t("pay_currencyLabel")}</Label>
+            <div className="gap-1.5 flex flex-col">
+              <Label htmlFor="currency" className="text-xs font-semibold">{t("pay_currencyLabel")}</Label>
               <Select
                 value={formData.currency}
                 onValueChange={(value) =>
                   setFormData({ ...formData, currency: value })
                 }
               >
-                <SelectTrigger id="currency">
+                <SelectTrigger id="currency" className="h-9 text-xs">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="text-xs">
                   <SelectItem value="usd">USD</SelectItem>
                   <SelectItem value="eur">EUR</SelectItem>
                   <SelectItem value="gbp">GBP</SelectItem>
@@ -220,18 +221,18 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
             </div>
           </div>
 
-          <div className="gap-2 flex flex-col">
-            <Label htmlFor="method">{t("pay_methodLabel")}</Label>
+          <div className="gap-1.5 flex flex-col">
+            <Label htmlFor="method" className="text-xs font-semibold">{t("pay_methodLabel")}</Label>
             <Select
               value={formData.method}
               onValueChange={(value) =>
                 setFormData({ ...formData, method: value })
               }
             >
-              <SelectTrigger id="method">
+              <SelectTrigger id="method" className="h-9 text-xs">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="text-xs">
                 <SelectItem value="card">{t("pay_method_card")}</SelectItem>
                 <SelectItem value="online">{t("pay_method_online")}</SelectItem>
                 <SelectItem value="cash">{t("pay_method_cash")}</SelectItem>
@@ -242,8 +243,8 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
             </Select>
           </div>
 
-          <div className="gap-2 flex flex-col">
-            <Label htmlFor="description">{t("pay_descriptionLabel")}</Label>
+          <div className="gap-1.5 flex flex-col">
+            <Label htmlFor="description" className="text-xs font-semibold">{t("pay_descriptionLabel")}</Label>
             <Input
               id="description"
               placeholder={t("pay_paymentNote")}
@@ -251,31 +252,33 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
+              className="h-9 text-xs"
             />
           </div>
 
           {!isManual ? (
-            <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
-              <p className="font-medium mb-1">{t("pay_secureStripe")}</p>
-              <p>{t("pay_secureStripeDesc")}</p>
+            <div className="bg-primary/10 border border-primary/20 rounded-md p-3 text-xs text-primary">
+              <p className="font-semibold mb-0.5">{t("pay_secureStripe")}</p>
+              <p className="text-[11px] text-muted-foreground">{t("pay_secureStripeDesc")}</p>
             </div>
           ) : null}
 
-          <div className="flex gap-2 justify-end">
+          <div className="flex gap-2 justify-end pt-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
               disabled={loading}
+              className="h-9 text-xs"
             >
-              <X />{t("common_cancel")}
+              <X className="mr-1 h-3.5 w-3.5" />{t("common_cancel")}
             </Button>
             <Button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2"
+              className="h-9 text-xs"
             >
-              <CreditCard className="w-4 h-4" />
+              <CreditCard className="w-3.5 h-3.5 mr-1" />
               {loading ? t("pay_processing") : isManual ? t("pay_recordPayment") : t("pay_createPayment")}
             </Button>
           </div>

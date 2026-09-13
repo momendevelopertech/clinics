@@ -4,7 +4,7 @@ import * as React from "react";
 import {
   Plus,
   X,
-} from "lucide-react";;
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -91,8 +91,8 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2">
-          <Plus className="w-4 h-4" /> Add Item
+        <Button className="h-9 gap-1.5 text-xs font-semibold shadow-2xs">
+          <Plus className="w-3.5 h-3.5" /> Add Item
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
@@ -103,9 +103,9 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="gap-2 flex flex-col">
-            <Label htmlFor="item-name">Name *</Label>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 py-2">
+          <div className="gap-1.5 flex flex-col">
+            <Label htmlFor="item-name" className="text-xs font-semibold">Name *</Label>
             <Input
               id="item-name"
               value={formData.name}
@@ -113,12 +113,13 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
                 setFormData({ ...formData, name: e.target.value })
               }
               placeholder="Paracetamol 500mg"
+              className="h-9 text-xs"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="gap-2 flex flex-col">
-              <Label htmlFor="item-sku">SKU</Label>
+            <div className="gap-1.5 flex flex-col">
+              <Label htmlFor="item-sku" className="text-xs font-semibold">SKU</Label>
               <Input
                 id="item-sku"
                 value={formData.sku}
@@ -126,10 +127,11 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
                   setFormData({ ...formData, sku: e.target.value })
                 }
                 placeholder="SKU-001"
+                className="h-9 text-xs"
               />
             </div>
-            <div className="gap-2 flex flex-col">
-              <Label htmlFor="item-category">Category</Label>
+            <div className="gap-1.5 flex flex-col">
+              <Label htmlFor="item-category" className="text-xs font-semibold">Category</Label>
               <Input
                 id="item-category"
                 value={formData.category}
@@ -137,13 +139,14 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
                   setFormData({ ...formData, category: e.target.value })
                 }
                 placeholder="Medication"
+                className="h-9 text-xs"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
-            <div className="gap-2 flex flex-col">
-              <Label htmlFor="item-quantity">Quantity</Label>
+            <div className="gap-1.5 flex flex-col">
+              <Label htmlFor="item-quantity" className="text-xs font-semibold">Quantity</Label>
               <Input
                 id="item-quantity"
                 type="number"
@@ -152,10 +155,11 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, quantity: e.target.value })
                 }
+                className="h-9 text-xs"
               />
             </div>
-            <div className="gap-2 flex flex-col">
-              <Label htmlFor="item-unit">Unit</Label>
+            <div className="gap-1.5 flex flex-col">
+              <Label htmlFor="item-unit" className="text-xs font-semibold">Unit</Label>
               <Input
                 id="item-unit"
                 value={formData.unit}
@@ -163,10 +167,11 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
                   setFormData({ ...formData, unit: e.target.value })
                 }
                 placeholder="each"
+                className="h-9 text-xs"
               />
             </div>
-            <div className="gap-2 flex flex-col">
-              <Label htmlFor="item-reorder">Reorder Level</Label>
+            <div className="gap-1.5 flex flex-col">
+              <Label htmlFor="item-reorder" className="text-xs font-semibold">Reorder Level</Label>
               <Input
                 id="item-reorder"
                 type="number"
@@ -175,13 +180,14 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, reorderLevel: e.target.value })
                 }
+                className="h-9 text-xs"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="gap-2 flex flex-col">
-              <Label htmlFor="item-expiry">Expiry date</Label>
+            <div className="gap-1.5 flex flex-col">
+              <Label htmlFor="item-expiry" className="text-xs font-semibold">Expiry date</Label>
               <Input
                 id="item-expiry"
                 type="date"
@@ -189,10 +195,11 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, expiryDate: e.target.value })
                 }
+                className="h-9 text-xs"
               />
             </div>
-            <div className="gap-2 flex flex-col">
-              <Label htmlFor="item-batch">Batch number</Label>
+            <div className="gap-1.5 flex flex-col">
+              <Label htmlFor="item-batch" className="text-xs font-semibold">Batch number</Label>
               <Input
                 id="item-batch"
                 value={formData.batchNumber}
@@ -200,21 +207,23 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
                   setFormData({ ...formData, batchNumber: e.target.value })
                 }
                 placeholder="B-001"
+                className="h-9 text-xs"
               />
             </div>
           </div>
 
-          <div className="flex gap-2 justify-end">
+          <div className="flex gap-2 justify-end pt-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
               disabled={loading}
+              className="h-9 text-xs"
             >
-              <X />Cancel
+              <X className="mr-1 h-3.5 w-3.5" />Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
-              <Plus />{loading ? "Adding..." : "Add Item"}
+            <Button type="submit" disabled={loading} className="h-9 text-xs font-semibold">
+              <Plus className="mr-1 h-3.5 w-3.5" />{loading ? "Adding..." : "Add Item"}
             </Button>
           </div>
         </form>

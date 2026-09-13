@@ -92,8 +92,8 @@ export default function InventoryPage() {
 
   if (forbidden) {
     return (
-      <div className="flex flex-col gap-8 w-full">
-        <h1 className="text-2xl font-bold tracking-tight">{t("inv_title")}</h1>
+      <div className="flex flex-col gap-6 w-full">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("inv_title")}</h1>
         <PermissionDenied
           title={t("inv_forbiddenTitle") ?? "You don't have permission"}
           description={t("inv_forbidden") ?? "Your role can't view the inventory module."}
@@ -104,132 +104,137 @@ export default function InventoryPage() {
 
   return (
     <motion.div
-      className="flex flex-col gap-8 w-full"
+      className="flex flex-col gap-6 w-full pb-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">{t("inv_title")}</h1>
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("inv_title")}</h1>
+          <p className="text-xs text-muted-foreground">{t("inv_items")}</p>
+        </div>
         <AddItemDialog onSuccess={loadItems} />
       </div>
 
       {expiredItems.length > 0 && (
-        <Card className="border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20">
-          <CardContent className="flex items-center gap-3 pt-6">
-            <AlertTriangle className="w-5 h-5 text-red-600" />
-            <span className="font-medium">
+        <div className="rounded-lg border border-critical/30 bg-critical-bg p-4 shadow-2xs">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="w-5 h-5 text-critical-text shrink-0" />
+            <span className="text-xs font-semibold text-critical-text">
               {t("inv_expired").replace("{n}", String(expiredItems.length))} {expiredItems.map((i) => i.name).join(", ")}
             </span>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {expiringItems.length > 0 && (
-        <Card className="border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20">
-          <CardContent className="flex items-center gap-3 pt-6">
-            <AlertTriangle className="w-5 h-5 text-amber-600" />
-            <span className="font-medium">
+        <div className="rounded-lg border border-warning/30 bg-warning-bg p-4 shadow-2xs">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="w-5 h-5 text-warning-text shrink-0" />
+            <span className="text-xs font-semibold text-warning-text">
               {t("inv_expiringSoon").replace("{n}", String(expiringItems.length))} {expiringItems.map((i) => i.name).join(", ")}
             </span>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {lowStock.length > 0 && (
         <FeatureTip tipId="inventory-reorder">
-          <Card className="border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20">
-            <CardContent className="flex items-center gap-3 pt-6">
-              <AlertTriangle className="w-5 h-5 text-amber-600" />
-              <span className="font-medium">
+          <div className="rounded-lg border border-warning/30 bg-warning-bg p-4 shadow-2xs">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="w-5 h-5 text-warning-text shrink-0" />
+              <span className="text-xs font-semibold text-warning-text">
                 {t("inv_lowStock").replace("{n}", String(lowStock.length))} {lowStock.map((i) => i.name).join(", ")}
               </span>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </FeatureTip>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Package className="w-5 h-5" />
-            {t("inv_items")}
-          </CardTitle>
-          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-            <Input
-              type="search"
-              placeholder={t("inv_search")}
-              className="w-full sm:max-w-sm"
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setPage(1);
-              }}
-            />
-            <Select
-              value={categoryFilter}
-              onValueChange={(value) => {
-                setCategoryFilter(value);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder={t("inv_filterCategory")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("common_all")}</SelectItem>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+      <Card className="rounded-lg border border-border bg-card shadow-2xs">
+        <CardHeader className="p-5 border-b border-border bg-muted-bg">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-base font-bold text-foreground">
+              <Package className="w-4 h-4 text-primary" />
+              {t("inv_items")}
+            </CardTitle>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-stretch sm:items-center">
+              <Input
+                type="search"
+                placeholder={t("inv_search")}
+                className="h-9 w-full sm:w-64 bg-card text-xs border-input"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setPage(1);
+                }}
+              />
+              <Select
+                value={categoryFilter}
+                onValueChange={(value) => {
+                  setCategoryFilter(value);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="h-9 w-full sm:w-44 bg-card text-xs border-input">
+                  <SelectValue placeholder={t("inv_filterCategory")} />
+                </SelectTrigger>
+                <SelectContent className="text-xs">
+                  <SelectItem value="all">{t("common_all")}</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           {loading ? (
-            <div className="p-8 text-center text-neutral-500">{t("common_loading")}</div>
+            <div className="p-8 text-center text-xs text-muted-foreground">{t("common_loading")}</div>
           ) : items.length === 0 ? (
-            <div className="p-8 text-center text-neutral-500 border rounded-[5px]">
+            <div className="p-8 text-center text-xs text-muted-foreground">
               {t("inv_empty")}
             </div>
           ) : (
-            <div className="rounded-[5px] border overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-neutral-50 dark:bg-neutral-800/50">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-left">
+                <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium">{t("inv_colName")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("inv_colSku")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("inv_colCategory")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("inv_colQty")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("inv_colExpiry")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("inv_colBatch")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("inv_colReorder")}</th>
+                    <th className="px-4 py-3">{t("inv_colName")}</th>
+                    <th className="px-4 py-3">{t("inv_colSku")}</th>
+                    <th className="px-4 py-3">{t("inv_colCategory")}</th>
+                    <th className="px-4 py-3">{t("inv_colQty")}</th>
+                    <th className="px-4 py-3">{t("inv_colExpiry")}</th>
+                    <th className="px-4 py-3">{t("inv_colBatch")}</th>
+                    <th className="px-4 py-3">{t("inv_colReorder")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y">
+                <tbody className="divide-y divide-border text-foreground">
                   {pagedItems.map((item) => (
-                    <tr key={item.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
-                      <td className="px-4 py-3 font-medium">{item.name}</td>
-                      <td className="px-4 py-3 text-neutral-500">{item.sku ?? "—"}</td>
-                      <td className="px-4 py-3">{item.category ?? "—"}</td>
+                    <tr key={item.id} className="transition-colors hover:bg-muted/40">
+                      <td className="px-4 py-3 font-semibold text-foreground">{item.name}</td>
+                      <td className="px-4 py-3 font-mono text-muted-foreground">{item.sku ?? "—"}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{item.category ?? "—"}</td>
                       <td className="px-4 py-3">
-                        <span className={item.reorderLevel != null && item.quantity <= item.reorderLevel ? "text-amber-600 font-medium" : ""}>
+                        <span className={item.reorderLevel != null && item.quantity <= item.reorderLevel ? "text-warning-text font-bold" : "font-mono font-medium"}>
                           {item.quantity} {item.unit ?? ""}
                         </span>
                       </td>
                       <td className="px-4 py-3">
                         {item.expiryDate ? (
-                          <span className={alerts.expired.includes(item.id) ? "text-red-600 font-medium" : alerts.expiringSoon.includes(item.id) ? "text-amber-600 font-medium" : ""}>
+                          <span className={alerts.expired.includes(item.id) ? "text-critical-text font-bold" : alerts.expiringSoon.includes(item.id) ? "text-warning-text font-bold" : "text-muted-foreground"}>
                             {new Date(item.expiryDate).toLocaleDateString()}
                           </span>
                         ) : (
                           "—"
                         )}
                       </td>
-                      <td className="px-4 py-3 text-neutral-500">{item.batchNumber ?? "—"}</td>
-                      <td className="px-4 py-3">{item.reorderLevel ?? "—"}</td>
+                      <td className="px-4 py-3 font-mono text-muted-foreground">{item.batchNumber ?? "—"}</td>
+                      <td className="px-4 py-3 font-mono text-muted-foreground">{item.reorderLevel ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>

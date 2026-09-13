@@ -124,8 +124,8 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="link" className="p-0 h-auto text-sm font-medium text-indigo-600">
-          <Wallet />{t("billing_installments")}
+        <Button variant="link" className="p-0 h-auto text-xs font-semibold text-primary hover:underline">
+          <Wallet className="w-3.5 h-3.5 mr-1" />{t("billing_installments")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-lg">
@@ -135,28 +135,28 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
         </DialogHeader>
 
         {loading ? (
-          <p className="text-sm text-neutral-500">{t("common_loading")}</p>
+          <p className="text-xs text-muted-foreground py-4 text-center">{t("common_loading")}</p>
         ) : plans.length === 0 ? (
-          <p className="text-sm text-neutral-500">{t("inst_noPlans")}</p>
+          <p className="text-xs text-muted-foreground py-4 text-center">{t("inst_noPlans")}</p>
         ) : (
-          <div className="flex flex-col gap-4 max-h-64 overflow-y-auto">
+          <div className="flex flex-col gap-3 max-h-64 overflow-y-auto py-1">
             {plans.map((plan) => (
-              <div key={plan.id} className="rounded border p-3">
-                <div className="flex items-center justify-between text-sm font-medium">
-                  <span>
+              <div key={plan.id} className="rounded-lg border border-border bg-card p-3 shadow-2xs">
+                <div className="flex items-center justify-between text-xs font-semibold">
+                  <span className={plan.status === "active" ? "text-success-text font-bold" : "text-muted-foreground"}>
                     {plan.status === "active" ? t("inst_active") : plan.status === "completed" ? t("inst_completed") : t("inst_cancelled")}
                   </span>
-                  <span className="text-neutral-500">{Number(plan.totalAmount).toFixed(2)}</span>
+                  <span className="font-mono text-foreground">${Number(plan.totalAmount).toFixed(2)}</span>
                 </div>
-                <div className="mt-2 flex flex-col gap-1">
+                <div className="mt-2.5 flex flex-col gap-1.5">
                   {plan.installments.map((due) => (
-                    <div key={due.id} className="flex items-center justify-between text-sm">
-                      <span>
-                        {new Date(due.dueDate).toLocaleDateString()} · {Number(due.amount).toFixed(2)} · {dueLabel(due.status)}
+                    <div key={due.id} className="flex items-center justify-between text-xs rounded-md bg-muted-bg/50 px-2.5 py-1.5">
+                      <span className="text-muted-foreground">
+                        {new Date(due.dueDate).toLocaleDateString()} · <span className="font-mono font-semibold text-foreground">${Number(due.amount).toFixed(2)}</span> · <span className={due.status === "paid" ? "text-success-text font-medium" : due.status === "overdue" ? "text-critical-text font-medium" : "text-muted-foreground"}>{dueLabel(due.status)}</span>
                       </span>
                       {plan.status === "active" && (due.status === "pending" || due.status === "overdue") ? (
-                        <Button size="sm" variant="outline" onClick={() => handlePay(plan.id, due.id)}>
-                          <CreditCard />{t("inst_pay")}
+                        <Button size="sm" variant="outline" className="h-6 px-2 text-[11px]" onClick={() => handlePay(plan.id, due.id)}>
+                          <CreditCard className="w-3 h-3 mr-1" />{t("inst_pay")}
                         </Button>
                       ) : null}
                     </div>
@@ -167,30 +167,30 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-3 border-t pt-4">
-          <div className="gap-2 flex flex-col">
-            <Label>{t("inst_count")}</Label>
-            <Input type="number" min="2" max="24" value={count} onChange={(e) => setCount(e.target.value)} />
+        <div className="grid grid-cols-2 gap-3 border-t border-border pt-4">
+          <div className="gap-1.5 flex flex-col">
+            <Label className="text-xs font-semibold">{t("inst_count")}</Label>
+            <Input type="number" min="2" max="24" value={count} onChange={(e) => setCount(e.target.value)} className="h-9 text-xs" />
           </div>
-          <div className="gap-2 flex flex-col">
-            <Label>{t("inst_firstDue")}</Label>
-            <Input type="date" value={firstDue} onChange={(e) => setFirstDue(e.target.value)} />
+          <div className="gap-1.5 flex flex-col">
+            <Label className="text-xs font-semibold">{t("inst_firstDue")}</Label>
+            <Input type="date" value={firstDue} onChange={(e) => setFirstDue(e.target.value)} className="h-9 text-xs" />
           </div>
-          <div className="gap-2 flex flex-col">
-            <Label>{t("inst_frequency")}</Label>
+          <div className="gap-1.5 flex flex-col">
+            <Label className="text-xs font-semibold">{t("inst_frequency")}</Label>
             <Select value={frequency} onValueChange={setFrequency}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
+              <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent className="text-xs">
                 <SelectItem value="monthly">{t("inst_monthly")}</SelectItem>
                 <SelectItem value="weekly">{t("inst_weekly")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div className="gap-2 flex flex-col">
-            <Label>{t("inst_method")}</Label>
+          <div className="gap-1.5 flex flex-col">
+            <Label className="text-xs font-semibold">{t("inst_method")}</Label>
             <Select value={method} onValueChange={setMethod}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
+              <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent className="text-xs">
                 <SelectItem value="cash">{t("pay_method_cash")}</SelectItem>
                 <SelectItem value="transfer">{t("pay_method_transfer")}</SelectItem>
                 <SelectItem value="check">{t("pay_method_check")}</SelectItem>
@@ -198,8 +198,8 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
               </SelectContent>
             </Select>
           </div>
-          <div className="gap-2 flex flex-col col-span-2">
-            <Label>{t("inst_downPayment")}</Label>
+          <div className="gap-1.5 flex flex-col col-span-2">
+            <Label className="text-xs font-semibold">{t("inst_downPayment")}</Label>
             <Input
               type="number"
               min="0"
@@ -207,11 +207,12 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
               value={downPayment}
               onChange={(e) => setDownPayment(e.target.value)}
               placeholder="0.00"
+              className="h-9 text-xs"
             />
           </div>
         </div>
-        <div className="flex justify-end">
-          <Button onClick={handleCreate}><Plus />{t("inst_create")}</Button>
+        <div className="flex justify-end pt-2">
+          <Button onClick={handleCreate} className="h-9 text-xs font-semibold"><Plus className="w-3.5 h-3.5 mr-1" />{t("inst_create")}</Button>
         </div>
       </DialogContent>
     </Dialog>

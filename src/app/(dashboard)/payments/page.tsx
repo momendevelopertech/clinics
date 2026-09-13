@@ -7,7 +7,7 @@ import {
   Download,
   Filter as FilterIcon,
   Undo2,
-} from "lucide-react";;
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -137,15 +137,15 @@ export default function PaymentsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
-        return "bg-green-100 text-green-800";
+        return "bg-success-bg text-success-text border border-success/30";
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-warning-bg text-warning-text border border-warning/30";
       case "failed":
-        return "bg-red-100 text-red-800";
+        return "bg-critical-bg text-critical-text border border-critical/30";
       case "refunded":
-        return "bg-blue-100 text-blue-800";
+        return "bg-accent-blue-bg text-accent-blue-text border border-accent-blue/30";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted-bg text-muted-foreground border border-border";
     }
   };
 
@@ -210,11 +210,11 @@ export default function PaymentsPage() {
     return (
       <div className="flex flex-col gap-6 w-full h-full">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
-            <CreditCard className="w-6 h-6 inline mr-2" />
+          <h2 className="text-2xl font-bold tracking-tight text-foreground mb-1">
+            <CreditCard className="w-6 h-6 inline mr-2 text-primary" />
             {t("pay_title")}
           </h2>
-          <p className="text-sm text-neutral-500">{t("pay_subtitle")}</p>
+          <p className="text-xs text-muted-foreground">{t("pay_subtitle")}</p>
         </div>
         <PermissionDenied
           title={t("pay_forbiddenTitle") ?? "You don't have permission"}
@@ -225,18 +225,18 @@ export default function PaymentsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 w-full h-full">
+    <div className="flex flex-col gap-6 w-full h-full pb-6">
       <UpgradePrompt moduleKey="payments" />
       {stripe && !stripe.configured ? (
         <FeatureNotConfiguredBanner feature="stripe" missingEnvVars={stripe.missing} />
       ) : null}
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
-            <CreditCard className="w-6 h-6 inline mr-2" />
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">
+            <CreditCard className="w-6 h-6 inline mr-2 text-primary" />
             {t("pay_title")}
           </h2>
-          <p className="text-sm text-neutral-500">
+          <p className="text-xs text-muted-foreground">
             {t("pay_subtitle")}
           </p>
         </div>
@@ -244,35 +244,50 @@ export default function PaymentsPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-neutral-900 border rounded-[5px] p-4 shadow-sm">
-          <p className="text-sm text-neutral-500 mb-1">{t("pay_totalRevenue")}</p>
-          <p className="text-2xl font-bold text-green-600">
-            ${totalRevenue.toFixed(2)}
-          </p>
-          <p className="text-xs text-neutral-500 mt-2">{t("pay_completedPayments")}</p>
+        <div className="rounded-lg border border-border bg-card p-5 shadow-2xs">
+          <p className="text-xs font-semibold text-muted-foreground mb-1">{t("pay_totalRevenue")}</p>
+          <div className="flex items-center gap-2 mt-2">
+            <div className="rounded-md bg-success-bg p-2 text-success-text border border-success/30">
+              <DollarSign className="w-4 h-4" />
+            </div>
+            <p className="text-2xl font-bold tracking-tight text-foreground font-mono">
+              ${totalRevenue.toFixed(2)}
+            </p>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-2">{t("pay_completedPayments")}</p>
         </div>
 
-        <div className="bg-white dark:bg-neutral-900 border rounded-[5px] p-4 shadow-sm">
-          <p className="text-sm text-neutral-500 mb-1">{t("pay_pendingAmount")}</p>
-          <p className="text-2xl font-bold text-yellow-600">
-            ${pendingAmount.toFixed(2)}
-          </p>
-          <p className="text-xs text-neutral-500 mt-2">{t("pay_awaitingPayment")}</p>
+        <div className="rounded-lg border border-border bg-card p-5 shadow-2xs">
+          <p className="text-xs font-semibold text-muted-foreground mb-1">{t("pay_pendingAmount")}</p>
+          <div className="flex items-center gap-2 mt-2">
+            <div className="rounded-md bg-warning-bg p-2 text-warning-text border border-warning/30">
+              <DollarSign className="w-4 h-4" />
+            </div>
+            <p className="text-2xl font-bold tracking-tight text-foreground font-mono">
+              ${pendingAmount.toFixed(2)}
+            </p>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-2">{t("pay_awaitingPayment")}</p>
         </div>
 
-        <div className="bg-white dark:bg-neutral-900 border rounded-[5px] p-4 shadow-sm">
-          <p className="text-sm text-neutral-500 mb-1">{t("pay_totalTransactions")}</p>
-          <p className="text-2xl font-bold text-blue-600">{payments.length}</p>
-          <p className="text-xs text-neutral-500 mt-2">{t("pay_allPayments")}</p>
+        <div className="rounded-lg border border-border bg-card p-5 shadow-2xs">
+          <p className="text-xs font-semibold text-muted-foreground mb-1">{t("pay_totalTransactions")}</p>
+          <div className="flex items-center gap-2 mt-2">
+            <div className="rounded-md bg-primary/10 p-2 text-primary border border-primary/20">
+              <CreditCard className="w-4 h-4" />
+            </div>
+            <p className="text-2xl font-bold tracking-tight text-foreground font-mono">{payments.length}</p>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-2">{t("pay_allPayments")}</p>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-neutral-900 border rounded-[5px] flex-1 shadow-sm flex flex-col pt-2">
-        <div className="px-6 py-4 border-b flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="rounded-lg border border-border bg-card shadow-2xs flex-1 flex flex-col overflow-hidden">
+        <div className="px-6 py-4 border-b border-border bg-muted-bg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <Input
             type="search"
             placeholder={t("pay_search")}
-            className="w-full sm:max-w-sm"
+            className="h-9 w-full sm:max-w-sm bg-card text-xs border-input"
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -287,12 +302,12 @@ export default function PaymentsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex items-center gap-2"
+                      className="h-9 px-3 text-xs font-semibold flex items-center gap-2"
                     >
-                      <FilterIcon className="w-4 h-4" /> {t("common_status")}
+                      <FilterIcon className="w-3.5 h-3.5" /> {t("common_status")}
                     </Button>
                   </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="w-48 text-xs">
                 <DropdownMenuLabel>{t("pay_filterByStatus")}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
@@ -348,9 +363,9 @@ export default function PaymentsPage() {
               variant="outline"
               size="sm"
               onClick={handleExport}
-              className="flex items-center gap-2"
+              className="h-9 px-3 text-xs font-semibold flex items-center gap-2"
             >
-              <Download className="w-4 h-4" /> {t("pay_export")}
+              <Download className="w-3.5 h-3.5" /> {t("pay_export")}
             </Button>
           </div>
         </div>
@@ -358,74 +373,68 @@ export default function PaymentsPage() {
         <div className="p-0 overflow-x-auto flex-1">
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <p className="text-neutral-500">{t("pay_loading")}</p>
+              <p className="text-xs text-muted-foreground">{t("pay_loading")}</p>
             </div>
           ) : filteredPayments.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-center">
-              <DollarSign className="w-12 h-12 text-neutral-300 mb-4" />
-              <p className="text-neutral-600">{t("pay_empty")}</p>
+              <DollarSign className="w-12 h-12 text-muted-foreground/40 mb-4" />
+              <p className="text-xs text-muted-foreground">{t("pay_empty")}</p>
             </div>
           ) : (
-            <table className="w-full text-sm text-left">
-              <thead className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 font-medium">
+            <table className="w-full text-xs text-left">
+              <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 <tr>
-                  <th className="px-6 py-4 border-b">{t("pay_colInvoice")}</th>
-                  <th className="px-6 py-4 border-b">{t("pay_colPatient")}</th>
-                  <th className="px-6 py-4 border-b">{t("pay_colAmount")}</th>
-                  <th className="px-6 py-4 border-b">{t("pay_colMethod")}</th>
-                  <th className="px-6 py-4 border-b">{t("common_status")}</th>
-                  <th className="px-6 py-4 border-b hidden md:table-cell">
+                  <th className="px-6 py-3.5">{t("pay_colInvoice")}</th>
+                  <th className="px-6 py-3.5">{t("pay_colPatient")}</th>
+                  <th className="px-6 py-3.5">{t("pay_colAmount")}</th>
+                  <th className="px-6 py-3.5">{t("pay_colMethod")}</th>
+                  <th className="px-6 py-3.5">{t("common_status")}</th>
+                  <th className="px-6 py-3.5 hidden md:table-cell">
                     {t("pay_colDate")}
                   </th>
-                  <th className="px-6 py-4 border-b">{t("common_actions")}</th>
+                  <th className="px-6 py-3.5">{t("common_actions")}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
+              <tbody className="divide-y divide-border text-foreground">
                 {pagedPayments.map((payment) => (
                   <tr
                     key={payment.id}
-                    className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition"
+                    className="hover:bg-muted/40 transition-colors"
                   >
-                    <td className="px-6 py-4">
-                      <p className="font-mono font-medium text-sm">
-                        {payment.invoiceNumber}
-                      </p>
+                    <td className="px-6 py-3.5 font-mono font-bold">
+                      {payment.invoiceNumber}
                     </td>
-                    <td className="px-6 py-4">
-                      <p className="font-medium">{payment.patientName}</p>
+                    <td className="px-6 py-3.5 font-semibold">
+                      {payment.patientName}
                     </td>
-                    <td className="px-6 py-4">
-                      <p className="font-medium">
-                        {new Intl.NumberFormat("en-US", {
-                          style: "currency",
-                          currency: payment.currency,
-                        }).format(toAmount(payment.amount))}
-                      </p>
+                    <td className="px-6 py-3.5 font-mono font-bold">
+                      {new Intl.NumberFormat("en-US", {
+                        style: "currency",
+                        currency: payment.currency,
+                      }).format(toAmount(payment.amount))}
                     </td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                        {methodLabel(payment.paymentMethod)}
-                      </p>
+                    <td className="px-6 py-3.5 text-muted-foreground">
+                      {methodLabel(payment.paymentMethod)}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-3.5">
                       <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(payment.status)}`}
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${getStatusColor(payment.status)}`}
                       >
                         {statusLabel(payment.status)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 hidden md:table-cell">
+                    <td className="px-6 py-3.5 hidden md:table-cell text-muted-foreground">
                       {new Date(payment.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-3.5">
                       {payment.status === "completed" ? (
                         <Button
                           variant="link"
                           size="sm"
-                          className={`p-0 h-auto text-sm font-medium ${refundArmed === payment.id ? "text-red-700" : "text-red-600 hover:text-red-700"}`}
+                          className="p-0 h-auto text-xs font-semibold text-destructive hover:underline"
                           onClick={() => handleRefund(payment)}
                         >
-                          <Undo2 className="h-3.5 w-3.5" />{refundArmed === payment.id
+                          <Undo2 className="h-3.5 w-3.5 mr-1" />{refundArmed === payment.id
                             ? t("pay_refundConfirm").replace(
                                 "{amount}",
                                 `${toAmount(payment.amount).toFixed(2)} ${payment.currency.toUpperCase()}`,

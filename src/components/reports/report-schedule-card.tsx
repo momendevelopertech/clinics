@@ -16,6 +16,7 @@ import { logClientError } from "@/lib/client-logger";
 import { FeatureNotConfiguredBanner } from "@/components/ui/feature-not-configured-banner";
 import { useFeatureConfig } from "@/hooks/use-feature-config";
 import type { Dictionary } from "@/lib/i18n/locale";
+import { CalendarClock, Trash2, Plus } from "lucide-react";
 
 interface Schedule {
   id: string;
@@ -83,11 +84,14 @@ export function ReportScheduleCard({ t }: { t: Dictionary }) {
   };
 
   return (
-    <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
-      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-        {t["reports_schedTitle"]}
-      </p>
-      <p className="mt-1 text-sm text-muted-foreground">{t["reports_schedDesc"]}</p>
+    <div className="rounded-lg border border-border bg-card p-6 shadow-2xs">
+      <div className="flex items-center gap-2">
+        <CalendarClock className="w-4 h-4 text-primary" />
+        <h3 className="text-sm font-bold tracking-tight text-foreground">
+          {t["reports_schedTitle"]}
+        </h3>
+      </div>
+      <p className="mt-1 text-xs text-muted-foreground">{t["reports_schedDesc"]}</p>
       {email && !email.configured ? (
         <div className="mt-4">
           <FeatureNotConfiguredBanner
@@ -99,32 +103,34 @@ export function ReportScheduleCard({ t }: { t: Dictionary }) {
       ) : null}
       <div className="mt-4 space-y-2">
         {schedules.map((s) => (
-          <div key={s.id} className="flex items-center justify-between gap-3 text-sm">
-            <span>
+          <div key={s.id} className="flex items-center justify-between gap-3 text-xs rounded-md bg-muted-bg/50 px-3 py-2 border border-border/50">
+            <span className="text-foreground font-medium">
               {t["reports_schedMonthly"]} · {t["reports_schedDay"]} {s.dayOfMonth} ·{" "}
-              {s.lastSentAt
-                ? `${t["reports_schedLastSent"]} ${new Date(s.lastSentAt).toLocaleDateString()}`
-                : t["reports_schedNever"]}
+              <span className="text-muted-foreground">
+                {s.lastSentAt
+                  ? `${t["reports_schedLastSent"]} ${new Date(s.lastSentAt).toLocaleDateString()}`
+                  : t["reports_schedNever"]}
+              </span>
             </span>
-            <Button size="sm" variant="ghost" className="text-red-600" onClick={() => remove(s.id)}>
-              {t["common_delete"]}
+            <Button size="sm" variant="ghost" className="h-7 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => remove(s.id)}>
+              <Trash2 className="w-3.5 h-3.5 mr-1" />{t["common_delete"]}
             </Button>
           </div>
         ))}
         {schedules.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t["reports_schedEmpty"]}</p>
+          <p className="text-xs text-muted-foreground py-2">{t["reports_schedEmpty"]}</p>
         ) : null}
       </div>
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        <div className="gap-2 flex flex-col">
-          <Label>{t["reports_schedDay"]}</Label>
-          <Input type="number" min="1" max="28" value={day} onChange={(e) => setDay(e.target.value)} />
+      <div className="mt-4 grid gap-3 sm:grid-cols-3 border-t border-border pt-4">
+        <div className="gap-1.5 flex flex-col">
+          <Label className="text-xs font-semibold">{t["reports_schedDay"]}</Label>
+          <Input type="number" min="1" max="28" value={day} onChange={(e) => setDay(e.target.value)} className="h-9 text-xs" />
         </div>
-        <div className="gap-2 flex flex-col">
-          <Label>{t["reports_schedRecipient"]}</Label>
+        <div className="gap-1.5 flex flex-col">
+          <Label className="text-xs font-semibold">{t["reports_schedRecipient"]}</Label>
           <Select value={recipient} onValueChange={setRecipient}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
+            <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
+            <SelectContent className="text-xs">
               {staff.map((s) => (
                 <SelectItem key={s.id} value={s.id}>{s.name ?? s.email}</SelectItem>
               ))}
@@ -132,7 +138,9 @@ export function ReportScheduleCard({ t }: { t: Dictionary }) {
           </Select>
         </div>
         <div className="flex items-end">
-          <Button onClick={create} disabled={!recipient}>{t["reports_schedCreate"]}</Button>
+          <Button onClick={create} disabled={!recipient} className="h-9 w-full text-xs font-semibold shadow-2xs gap-1.5">
+            <Plus className="w-3.5 h-3.5" />{t["reports_schedCreate"]}
+          </Button>
         </div>
       </div>
     </div>
