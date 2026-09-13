@@ -1,4 +1,5 @@
 "use client";
+import { Download, Send } from "lucide-react";
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -112,7 +113,7 @@ export function LabOrdersSection({ onChanged }: { onChanged?: () => void }) {
           <span className="flex gap-2">
             {!o.transmittedAt && (o.status === "ordered" || o.status === "collected") ? (
               <Button size="sm" variant="outline" onClick={() => transmit(o.id)}>
-                {t("lab_transmit")}
+                <Send />{t("lab_transmit")}
               </Button>
             ) : null}
             {o.status !== "reviewed" && o.status !== "cancelled" ? (
@@ -121,7 +122,7 @@ export function LabOrdersSection({ onChanged }: { onChanged?: () => void }) {
                 onOpenChange={(open) => setIngestId(open ? o.id : "")}
               >
                 <DialogTrigger asChild>
-                  <Button size="sm" variant="outline">{t("lab_ingest")}</Button>
+                  <Button size="sm" variant="outline"><Download />{t("lab_ingest")}</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
@@ -149,7 +150,7 @@ export function LabOrdersSection({ onChanged }: { onChanged?: () => void }) {
                       </div>
                     </div>
                     <div className="flex justify-end">
-                      <Button size="sm" onClick={ingest}>{t("lab_ingest")}</Button>
+                      <Button size="sm" onClick={ingest}><Download />{t("lab_ingest")}</Button>
                     </div>
                   </div>
                 </DialogContent>

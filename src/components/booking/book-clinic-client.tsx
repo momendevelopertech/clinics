@@ -1,4 +1,5 @@
 "use client";
+import { CalendarPlus, Clock } from "lucide-react";
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
@@ -167,7 +168,7 @@ export function BookClinicClient({ orgSlug }: { orgSlug: string }) {
                   variant={selected === s.start ? "default" : "outline"}
                   onClick={() => setSelected(s.start)}
                 >
-                  {formatSlot(s.start, lang)}
+                  <Clock />{formatSlot(s.start, lang)}
                 </Button>
               ))}
             </div>
@@ -180,7 +181,7 @@ export function BookClinicClient({ orgSlug }: { orgSlug: string }) {
           disabled={!selected || booking}
           onClick={confirm}
         >
-          {t("portal_confirmBooking")}
+          <CalendarPlus />{t("portal_confirmBooking")}
         </Button>
       </div>
     </main>

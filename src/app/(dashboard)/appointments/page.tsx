@@ -2,7 +2,18 @@
 
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
-import { Calendar as CalendarIcon, Clock, Filter, List, CalendarDays } from "lucide-react"
+import {
+  Ban,
+  Calendar as CalendarIcon,
+  CalendarDays,
+  Clock,
+  Filter,
+  List,
+  Pencil,
+  Save,
+  UserPlus,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -152,8 +163,8 @@ function EditAppointmentDialog({
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onCancel}>{t("common_cancel")}</Button>
-            <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white">{t("appts_saveChanges")}</Button>
+            <Button type="button" variant="outline" onClick={onCancel}><X />{t("common_cancel")}</Button>
+            <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white"><Save />{t("appts_saveChanges")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -447,8 +458,8 @@ function AppointmentsPageContent() {
                    <span className="text-sm text-neutral-500">{apptTypeLabel(apt.type)} · {apt.provider}</span>
                    <span className="px-2 py-1 rounded-[5px] text-xs font-medium bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">{statusLabel(apt.status)}</span>
                    <span className="ms-auto flex gap-3">
-                     <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0 h-auto" onClick={() => setEditAptId(apt.id)}>{t("appts_edit")}</Button>
-                     <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}>{t("appts_cancel")}</Button>{isTelehealthAppointment(apt.type) ? (<TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />) : null}
+                     <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0 h-auto" onClick={() => setEditAptId(apt.id)}><Pencil />{t("appts_edit")}</Button>
+                     <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}><Ban />{t("appts_cancel")}</Button>{isTelehealthAppointment(apt.type) ? (<TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />) : null}
                    </span>
                  </div>
                )
@@ -508,9 +519,9 @@ function AppointmentsPageContent() {
                                    className="text-indigo-600 hover:text-indigo-700 p-0 h-auto mr-3"
                                    onClick={() => setEditAptId(apt.id)}
                                  >
-                                   {t("appts_edit")}
+                                   <Pencil />{t("appts_edit")}
                                  </Button>
-                                 <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}>{t("appts_cancel")}</Button>
+                                 <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}><Ban />{t("appts_cancel")}</Button>
 {!apt.isWalkIn && (apt.status ?? "").toLowerCase() !== "cancelled" ? (
                                     <FeatureTip tipId="appointments-walkin">
                                     <Button variant="link" className="text-violet-600 hover:text-violet-700 p-0 h-auto" onClick={() => {
@@ -519,7 +530,7 @@ function AppointmentsPageContent() {
                                         isWalkIn: true,
                                       });
                                       toast.success(t("appts_markedWalkIn"));
-                                    }}>{t("appts_walkIn")}</Button>
+                                    }}><UserPlus />{t("appts_walkIn")}</Button>
                                     </FeatureTip>
                                   ) : null}
                                   {isTelehealthAppointment(apt.type) ? (

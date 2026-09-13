@@ -2,7 +2,15 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { KeyRound, Webhook as WebhookIcon } from "lucide-react";
+import {
+  Ban,
+  Copy,
+  KeyRound,
+  Plus,
+  Power,
+  Trash2,
+  Webhook as WebhookIcon,
+} from "lucide-react";;
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -202,7 +210,7 @@ export default function IntegrationsPage() {
               onChange={(e) => setKeyName(e.target.value)}
             />
             <Button disabled={keyName.trim().length < 2} onClick={() => void createKey()}>
-              {t("common_add")}
+              <Plus />{t("common_add")}
             </Button>
           </div>
           {freshKey ? (
@@ -220,7 +228,7 @@ export default function IntegrationsPage() {
                   toast.success(t("common_success"));
                 }}
               >
-                {t("int_copy")}
+                <Copy />{t("int_copy")}
               </Button>
             </div>
           ) : null}
@@ -259,7 +267,7 @@ export default function IntegrationsPage() {
                       <td className="px-4 py-3">
                         {k.active ? (
                           <Button variant="ghost" size="sm" className="text-red-600" onClick={() => void revokeKey(k.id)}>
-                            {t("int_revoke")}
+                            <Ban />{t("int_revoke")}
                           </Button>
                         ) : (
                           <span className="text-xs text-muted-foreground">—</span>
@@ -321,7 +329,7 @@ export default function IntegrationsPage() {
             </div>
             <div>
               <Button disabled={!hookUrl.trim() || hookEvents.length === 0} onClick={() => void createWebhook()}>
-                {t("common_add")}
+                <Plus />{t("common_add")}
               </Button>
             </div>
           </div>
@@ -358,10 +366,10 @@ export default function IntegrationsPage() {
                       <td className="px-4 py-3">
                         <div className="flex gap-2">
                           <Button variant="ghost" size="sm" onClick={() => void toggleWebhook(h)}>
-                            {h.active ? t("int_pause") : t("int_resume")}
+                            <Power />{h.active ? t("int_pause") : t("int_resume")}
                           </Button>
                           <Button variant="ghost" size="sm" className="text-red-600" onClick={() => void deleteWebhook(h.id)}>
-                            {t("common_delete")}
+                            <Trash2 />{t("common_delete")}
                           </Button>
                         </div>
                       </td>

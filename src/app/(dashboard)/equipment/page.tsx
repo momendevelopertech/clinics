@@ -2,7 +2,11 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { Wrench } from "lucide-react";
+import {
+  Eye,
+  Plus,
+  Wrench,
+} from "lucide-react";;
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -285,7 +289,7 @@ export default function EquipmentPage() {
                           size="sm"
                           onClick={() => setSelectedId(selectedId === item.id ? null : item.id)}
                         >
-                          {t("eq_viewLog")}
+                          <Eye />{t("eq_viewLog")}
                         </Button>
                       </td>
                     </tr>
@@ -359,7 +363,7 @@ export default function EquipmentPage() {
             </div>
             <div>
               <Button disabled={!form.name.trim()} onClick={() => void createEquipment()}>
-                {t("common_add")}
+                <Plus />{t("common_add")}
               </Button>
             </div>
           </CardContent>

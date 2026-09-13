@@ -3,7 +3,11 @@
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { Filter as FilterIcon, Download } from "lucide-react"
+import {
+  Download,
+  Eye,
+  Filter as FilterIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -157,7 +161,7 @@ function PatientsPageContent() {
                                  <div className="flex items-center gap-3">
                                    <Sheet>
                                      <SheetTrigger asChild>
-                                       <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0 h-auto">{t("patients_manage")}</Button>
+                                       <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0 h-auto"><Eye />{t("patients_manage")}</Button>
                                      </SheetTrigger>
                                      <PatientProfileSheet patient={patient} onStatusChange={refetchPatients} />
                                    </Sheet>

@@ -18,7 +18,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus } from "lucide-react";
+import {
+  Plus,
+  Send,
+  X,
+} from "lucide-react";;
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -234,10 +238,10 @@ export function AddCommunicationDialog({
 
         <div className="flex gap-2 justify-end mt-6">
           <Button variant="outline" onClick={() => setOpen(false)}>
-            {t("common_cancel")}
+            <X />{t("common_cancel")}
           </Button>
           <Button onClick={handleSubmit} disabled={loading}>
-            {loading ? t("comm_sending") : t("comm_send")}
+            <Send />{loading ? t("comm_sending") : t("comm_send")}
           </Button>
         </div>
       </DialogContent>

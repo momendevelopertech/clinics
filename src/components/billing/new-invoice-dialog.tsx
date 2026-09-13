@@ -1,7 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Plus } from "lucide-react";
+import {
+  FileText,
+  Plus,
+  X,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -232,10 +236,10 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              Cancel
+              <X />Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create Invoice"}
+              <FileText />{loading ? "Creating..." : "Create Invoice"}
             </Button>
           </div>
         </form>

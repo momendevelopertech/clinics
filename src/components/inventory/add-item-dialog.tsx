@@ -1,7 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { Plus } from "lucide-react";
+import {
+  Plus,
+  X,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -208,10 +211,10 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              Cancel
+              <X />Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Adding..." : "Add Item"}
+              <Plus />{loading ? "Adding..." : "Add Item"}
             </Button>
           </div>
         </form>

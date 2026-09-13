@@ -1,4 +1,5 @@
 "use client";
+import { FileText, X } from "lucide-react";
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -155,7 +156,7 @@ export function GenerateDocumentDialog({ onSuccess }: { onSuccess?: () => void }
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">{t("doc_generate")}</Button>
+        <Button variant="outline"><FileText />{t("doc_generate")}</Button>
       </DialogTrigger>
       <DialogContent className="max-w-lg">
         <DialogHeader>
@@ -227,10 +228,10 @@ export function GenerateDocumentDialog({ onSuccess }: { onSuccess?: () => void }
         </div>
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>
-            {t("common_cancel")}
+            <X />{t("common_cancel")}
           </Button>
           <Button onClick={handleGenerate} disabled={!templateId || !patientId || saving}>
-            {saving ? t("doc_genGenerating") : t("doc_genCreate")}
+            <FileText />{saving ? t("doc_genGenerating") : t("doc_genCreate")}
           </Button>
         </div>
       </DialogContent>

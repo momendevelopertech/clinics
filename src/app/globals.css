@@ -123,6 +123,14 @@
   html {
     @apply scroll-smooth;
   }
+  /* Every clickable button shows the pointer cursor (incl. disabled state). */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
   * {
     @apply border-border outline-ring/50;
   }

@@ -2,7 +2,13 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { ShieldCheck } from "lucide-react";
+import {
+  Check,
+  FileText,
+  Plus,
+  Search,
+  ShieldCheck,
+} from "lucide-react";;
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -253,7 +259,7 @@ export default function InsurancePage() {
                 setPage(1);
               }}
             >
-              {t(`ins_tab_${key}`)}
+              {key === "policies" ? <ShieldCheck className="h-4 w-4" /> : <FileText className="h-4 w-4" />}{t(`ins_tab_${key}`)}
             </Button>
           ))}
         </div>
@@ -358,7 +364,7 @@ export default function InsurancePage() {
                           disabled={checkingId === p.id}
                           onClick={() => void checkEligibility(p.id)}
                         >
-                          {t("ins_checkEligibility")}
+                          <Search />{t("ins_checkEligibility")}
                         </Button>
                       </td>
                     </tr>
@@ -429,7 +435,7 @@ export default function InsurancePage() {
                                 />
                               ) : null}
                               <Button size="sm" disabled={!advancing[c.id]} onClick={() => void advanceClaim(c)}>
-                                {t("common_confirm")}
+                                <Check />{t("common_confirm")}
                               </Button>
                             </div>
                           ) : (
@@ -511,7 +517,7 @@ export default function InsurancePage() {
                 disabled={!policyForm.patientId || !policyForm.provider.trim() || !policyForm.policyNumber.trim()}
                 onClick={() => void createPolicy()}
               >
-                {t("common_add")}
+                <Plus />{t("common_add")}
               </Button>
             </div>
           </CardContent>
@@ -564,7 +570,7 @@ export default function InsurancePage() {
                 disabled={!claimForm.patientId || !(Number(claimForm.amountClaimed) > 0)}
                 onClick={() => void fileClaim()}
               >
-                {t("common_add")}
+                <Plus />{t("common_add")}
               </Button>
             </div>
           </CardContent>

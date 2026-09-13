@@ -1,7 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { ClipboardPlus } from "lucide-react";
+import {
+  ClipboardPlus,
+  Plus,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -66,7 +69,7 @@ export function AddLabOrderDialog({ onSuccess }: { onSuccess: () => void }) {
           </div>
           <div className="flex flex-col gap-2"><Label>{t("labs_testName")}</Label><Input value={form.testName} onChange={(event) => setForm({ ...form, testName: event.target.value })} /></div>
           <div className="flex flex-col gap-2"><Label>{t("labs_indication")}</Label><Input value={form.indication} onChange={(event) => setForm({ ...form, indication: event.target.value })} /></div>
-          <Button type="submit" disabled={loading}>{loading ? t("labs_ordering") : t("labs_addOrder")}</Button>
+          <Button type="submit" disabled={loading}><Plus />{loading ? t("labs_ordering") : t("labs_addOrder")}</Button>
         </form>
       </DialogContent>
     </Dialog>

@@ -3,11 +3,14 @@
 import * as React from "react";
 import Link from "next/link";
 import {
+  Check,
   ClipboardList,
   Filter as FilterIcon,
   Pill,
   Printer,
-} from "lucide-react";
+  Trash2,
+  X,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -291,7 +294,7 @@ export default function PrescriptionsPage() {
                               size="sm"
                               onClick={() => void setStatus(rx.id, "completed")}
                             >
-                              {t("rx_complete")}
+                              <Check />{t("rx_complete")}
                             </Button>
                             <Button
                               variant="outline"
@@ -299,7 +302,7 @@ export default function PrescriptionsPage() {
                               className="text-red-600"
                               onClick={() => void setStatus(rx.id, "cancelled")}
                             >
-                              {t("rx_cancel")}
+                              <X />{t("rx_cancel")}
                             </Button>
                           </>
                         ) : rx.status === "cancelled" ? (
@@ -309,7 +312,7 @@ export default function PrescriptionsPage() {
                             className="text-red-600"
                             onClick={() => void handleDelete(rx.id)}
                           >
-                            {t("common_delete")}
+                            <Trash2 />{t("common_delete")}
                           </Button>
                         ) : null}
                       </div>

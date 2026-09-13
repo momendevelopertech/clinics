@@ -4,15 +4,18 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  User,
-  Mail,
-  Phone,
-  Calendar,
-  MapPin,
-  Heart,
   AlertCircle,
+  Calendar,
+  Heart,
+  Mail,
+  MapPin,
+  Phone,
+  Plus,
+  Save,
   Stethoscope,
-} from "lucide-react";
+  User,
+  X,
+} from "lucide-react";;;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,7 +36,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus } from "lucide-react";
+;
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -403,10 +406,10 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
 
             <DialogFooter className="px-6 py-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 rounded-b-[5px]">
               <Button type="button" variant="outline" onClick={() => setOpen(false)} className="rounded-[5px]">
-                {t("appts_cancel")}
+                <X />{t("appts_cancel")}
               </Button>
               <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-[5px]">
-                {t("addPatient_save")}
+                <Save />{t("addPatient_save")}
               </Button>
             </DialogFooter>
           </form>

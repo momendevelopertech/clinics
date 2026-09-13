@@ -1,7 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { Plus } from "lucide-react";
+import {
+  Plus,
+  X,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -258,10 +261,10 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              {t("common_cancel")}
+              <X />{t("common_cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? t("labs_adding") : t("labs_addTitle")}
+              <Plus />{loading ? t("labs_adding") : t("labs_addTitle")}
             </Button>
           </div>
         </form>

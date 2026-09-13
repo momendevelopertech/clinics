@@ -1,4 +1,5 @@
 "use client";
+import { Check, Combine, X } from "lucide-react";
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -68,7 +69,7 @@ export function MergePatientsDialog({ patient, patients, onSuccess }: MergePatie
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="link" className="p-0 h-auto text-sm font-medium text-amber-600 hover:text-amber-700">
-          {t("patients_merge")}
+          <Combine />{t("patients_merge")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -95,10 +96,10 @@ export function MergePatientsDialog({ patient, patients, onSuccess }: MergePatie
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>
-            {t("common_cancel")}
+            <X />{t("common_cancel")}
           </Button>
           <Button onClick={handleMerge} disabled={!survivorId || saving}>
-            {saving ? t("patients_mergeMerging") : t("patients_mergeConfirm")}
+            <Check />{saving ? t("patients_mergeMerging") : t("patients_mergeConfirm")}
           </Button>
         </DialogFooter>
       </DialogContent>

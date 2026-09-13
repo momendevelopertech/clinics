@@ -1,4 +1,5 @@
 "use client";
+import { CreditCard, Plus, Wallet } from "lucide-react";
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -124,7 +125,7 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="link" className="p-0 h-auto text-sm font-medium text-indigo-600">
-          {t("billing_installments")}
+          <Wallet />{t("billing_installments")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-lg">
@@ -155,7 +156,7 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
                       </span>
                       {plan.status === "active" && (due.status === "pending" || due.status === "overdue") ? (
                         <Button size="sm" variant="outline" onClick={() => handlePay(plan.id, due.id)}>
-                          {t("inst_pay")}
+                          <CreditCard />{t("inst_pay")}
                         </Button>
                       ) : null}
                     </div>
@@ -210,7 +211,7 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
           </div>
         </div>
         <div className="flex justify-end">
-          <Button onClick={handleCreate}>{t("inst_create")}</Button>
+          <Button onClick={handleCreate}><Plus />{t("inst_create")}</Button>
         </div>
       </DialogContent>
     </Dialog>

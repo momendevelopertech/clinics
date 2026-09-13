@@ -454,7 +454,7 @@ export function PlansManager({ t }: { t: Dictionary }) {
               onClick={() => setEditing(null)}
               className="rounded-[12px] border border-white/60 bg-white/60 px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground dark:border-white/8 dark:bg-white/[0.03]"
             >
-              {t["common_cancel"]}
+              <X className="h-4 w-4" />{t["common_cancel"]}
             </button>
             <button
               onClick={() => void saveForm()}

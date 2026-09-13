@@ -1,4 +1,5 @@
 "use client";
+import { Save, Video, X } from "lucide-react";
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -62,7 +63,7 @@ export function TelehealthLinkDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="link" className="text-teal-600 hover:text-teal-700 p-0 h-auto">
-          {currentUrl ? t("tele_link") : t("tele_setLink")}
+          <Video />{currentUrl ? t("tele_link") : t("tele_setLink")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -81,10 +82,10 @@ export function TelehealthLinkDialog({
         </div>
         <div className="flex justify-end gap-2 mt-4">
           <Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>
-            {t("common_cancel")}
+            <X />{t("common_cancel")}
           </Button>
           <Button onClick={handleSave} disabled={saving}>
-            {t("common_save")}
+            <Save />{t("common_save")}
           </Button>
         </div>
       </DialogContent>

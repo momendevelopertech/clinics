@@ -1,4 +1,5 @@
 "use client";
+import { CheckCheck, FileText, Plus, Save, Trash2 } from "lucide-react";
 
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -167,7 +168,7 @@ export function EncountersWorkspace() {
             </select>
           </div>
           </FeatureTip>
-          <Button onClick={() => void startEncounter().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_startError")))}>{t("enc_start")}</Button>
+          <Button onClick={() => void startEncounter().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_startError")))}><Plus />{t("enc_start")}</Button>
         </CardContent>
       </Card>
       <Card>
@@ -177,7 +178,7 @@ export function EncountersWorkspace() {
             <div key={encounter.id} className="rounded-lg border p-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div><p className="font-medium">{encounter.patient.firstName} {encounter.patient.lastName}</p><p className="text-xs text-muted-foreground">{encounter.encounterType ?? "office_visit"} · {encounter.status}</p></div>
-                {encounter.status === "in_progress" ? <Button size="sm" onClick={() => void complete(encounter.id).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_completeError")))}>{t("enc_complete")}</Button> : null}
+                {encounter.status === "in_progress" ? <Button size="sm" onClick={() => void complete(encounter.id).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_completeError")))}><CheckCheck />{t("enc_complete")}</Button> : null}
               </div>
               {encounter.notes.map((entry) => <p key={entry.id} className="mt-3 whitespace-pre-wrap text-sm text-muted-foreground">{entry.text ?? entry.assessment}</p>)}
               {encounter.status === "in_progress" ? (
@@ -194,7 +195,7 @@ export function EncountersWorkspace() {
                     <div className="grid gap-1"><Label>{t("enc_soapAssessment")}</Label><Textarea value={selectedId === encounter.id ? soap.assessment : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, assessment: event.target.value }); }} placeholder={t("enc_soapAssessment")} /></div>
                     <div className="grid gap-1"><Label>{t("enc_soapPlan")}</Label><Textarea value={selectedId === encounter.id ? soap.plan : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, plan: event.target.value }); }} placeholder={t("enc_soapPlan")} /></div>
                   </div>
-                  <div><Button variant="outline" onClick={() => void addSoapNote().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_noteError")))}>{t("enc_addNote")}</Button></div>
+                  <div><Button variant="outline" onClick={() => void addSoapNote().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_noteError")))}><FileText />{t("enc_addNote")}</Button></div>
                   <AiAssistCard encounterId={encounter.id} soap={soap} setSoap={setSoap} />
                   <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed p-3">
                     <div><p className="text-sm font-semibold">{t("rx_cardTitle")}</p><p className="text-xs text-muted-foreground">{t("rx_cardDesc")}</p></div>
@@ -218,7 +219,7 @@ export function EncountersWorkspace() {
         {templates.map((tpl) => (
           <div key={tpl.id} className="flex items-center justify-between gap-3 rounded-lg border p-3">
           <div><p className="text-sm font-medium">{tpl.name}</p><p className="text-xs text-muted-foreground">{tpl.specialty ?? t("enc_tplGeneral")}</p></div>
-          <Button size="sm" variant="ghost" className="text-red-600" onClick={() => void deleteTemplate(tpl.id).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_tplDeleteError")))}>{t("common_delete")}</Button>
+          <Button size="sm" variant="ghost" className="text-red-600" onClick={() => void deleteTemplate(tpl.id).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_tplDeleteError")))}><Trash2 />{t("common_delete")}</Button>
           </div>
         ))}
         {!templates.length ? <p className="text-sm text-muted-foreground">{t("enc_tplEmpty")}</p> : null}
@@ -226,7 +227,7 @@ export function EncountersWorkspace() {
           <div className="grid gap-1"><Label>{t("enc_tplName")}</Label><Textarea value={tplName} onChange={(event) => setTplName(event.target.value)} placeholder={t("enc_tplName")} /></div>
           <div className="grid gap-1"><Label>{t("enc_tplSpecialty")}</Label><Textarea value={tplSpecialty} onChange={(event) => setTplSpecialty(event.target.value)} placeholder={t("enc_tplSpecialty")} /></div>
         </div>
-        <div><Button variant="outline" onClick={() => void saveTemplate().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_tplSaveError")))}>{t("enc_tplSave")}</Button></div>
+        <div><Button variant="outline" onClick={() => void saveTemplate().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_tplSaveError")))}><Save />{t("enc_tplSave")}</Button></div>
         <p className="text-xs text-muted-foreground">{t("enc_tplSaveHint")}</p>
         </CardContent>
       </Card>

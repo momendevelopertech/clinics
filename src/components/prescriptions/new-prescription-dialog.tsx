@@ -1,7 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Plus, Trash2, X, Copy, Bookmark } from "lucide-react";
+import {
+  Bookmark,
+  Copy,
+  Plus,
+  Save,
+  Trash2,
+  X,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -618,10 +625,10 @@ export function NewPrescriptionDialog({
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              {t("common_cancel")}
+              <X />{t("common_cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? t("common_loading") : t("rx_save")}
+              <Save />{loading ? t("common_loading") : t("rx_save")}
             </Button>
           </div>
         </form>
@@ -666,7 +673,7 @@ export function NewPrescriptionDialog({
               onClick={saveTemplate}
               disabled={savingTemplate || !templateName.trim()}
             >
-              {savingTemplate ? t("common_loading") : t("rx_save_template")}
+              <Save />{savingTemplate ? t("common_loading") : t("rx_save_template")}
             </Button>
           </div>
         </DialogContent>

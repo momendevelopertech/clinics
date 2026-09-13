@@ -7,9 +7,10 @@ import {
   ArrowRight,
   Bell,
   Calendar,
+  Eye,
   HeartPulse,
   Users,
-} from "lucide-react";
+} from "lucide-react";;
 import Link from "next/link";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -512,7 +513,7 @@ export default function DashboardPage() {
                           variant="link"
                           className="h-auto p-0 font-semibold text-primary transition-transform hover:no-underline group-hover:translate-x-1"
                         >
-                          {t("dash_viewProfile")}
+                          <Eye />{t("dash_viewProfile")}
                         </Button>
                       </SheetTrigger>
                       <PatientProfileSheet patient={patient} />

@@ -11,7 +11,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Zap, Radio } from "lucide-react";
+import {
+  Radio,
+  Send,
+  Zap,
+} from "lucide-react";;
 import { AddCampaignDialog } from "@/components/communications/add-campaign-dialog";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { FilterBar } from "@/components/ui/filter-bar";
@@ -288,7 +292,7 @@ export default function CampaignsPage() {
                           }}
                           className="rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100"
                         >
-                          Launch
+                          <Send className="h-3.5 w-3.5" />Launch
                         </button>
                       ) : null}
                     </div>

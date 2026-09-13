@@ -1,7 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Repeat2 } from "lucide-react";
+import {
+  RefreshCw,
+  Repeat2,
+  X,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import {
@@ -198,10 +202,10 @@ export function RecurringAppointmentDialog({
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              Cancel
+              <X />Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Setting..." : "Set Recurrence"}
+              <RefreshCw />{loading ? "Setting..." : "Set Recurrence"}
             </Button>
           </div>
         </form>

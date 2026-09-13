@@ -6,12 +6,19 @@ import { useRouter } from "next/navigation";
 import {
   Activity,
   Calendar,
+  CalendarDays,
+  Check,
+  CreditCard,
+  Eye,
   FileText,
   Heart,
   LogOut,
   MessageSquare,
+  Pencil,
   Star,
-} from "lucide-react";
+  Video,
+  X,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -384,7 +391,7 @@ export default function PatientPortalPage() {
                 disabled
                 title={t("portal_comingSoon")}
               >
-                {t("portal_updateProfile")}
+                <Pencil />{t("portal_updateProfile")}
               </Button>
             </CardContent>
           </Card>
@@ -512,7 +519,7 @@ export default function PatientPortalPage() {
                             disabled={workingId === apt.id}
                             onClick={() => cancelAppointment(apt.id)}
                           >
-                            {t("portal_cancelAppointment")}
+                            <X />{t("portal_cancelAppointment")}
                           </Button>
                           <Button
                             variant="outline"
@@ -525,7 +532,7 @@ export default function PatientPortalPage() {
                               setRescheduleDate("");
                             }}
                           >
-                            {t("portal_reschedule")}
+                            <CalendarDays />{t("portal_reschedule")}
                           </Button>
                           {shouldShowJoinLink({
                             appointmentType: apt.type,
@@ -534,7 +541,7 @@ export default function PatientPortalPage() {
                             status: apt.status,
                           }) && apt.telehealthUrl ? (
                             <a href={apt.telehealthUrl} target="_blank" rel="noopener noreferrer">
-                              <Button size="sm">{t("tele_join")}</Button>
+                              <Button size="sm"><Video />{t("tele_join")}</Button>
                             </a>
                           ) : null}
                         </div>
@@ -575,7 +582,7 @@ export default function PatientPortalPage() {
                             disabled={!rescheduleSlot || workingId === apt.id}
                             onClick={() => confirmReschedule(apt.id)}
                           >
-                            {t("portal_confirmBooking")}
+                            <Check />{t("portal_confirmBooking")}
                           </Button>
                         </div>
                       )}
@@ -593,7 +600,7 @@ export default function PatientPortalPage() {
               className="w-full mt-4"
               onClick={() => scrollToSection("portal-appointments")}
             >
-              {t("portal_viewAllAppointments")}
+              <Eye />{t("portal_viewAllAppointments")}
             </Button>
           </CardContent>
         </Card>
@@ -640,7 +647,7 @@ export default function PatientPortalPage() {
                       className="mt-2"
                       onClick={() => submitRating(visit.id)}
                     >
-                      {t("portal_rateSubmit")}
+                      <Star />{t("portal_rateSubmit")}
                     </Button>
                   </div>
                 ))}
@@ -696,7 +703,7 @@ export default function PatientPortalPage() {
               className="w-full mt-4"
               onClick={() => scrollToSection("portal-lab-results")}
             >
-              {t("portal_viewAllResults")}
+              <Eye />{t("portal_viewAllResults")}
             </Button>
           </CardContent>
         </Card>
@@ -770,7 +777,7 @@ export default function PatientPortalPage() {
                             disabled={workingId === `pay-${inv.id}`}
                             onClick={() => payInvoice(inv.id)}
                           >
-                            {t("portal_payNow")}
+                            <CreditCard />{t("portal_payNow")}
                           </Button>
                         )}
                       </div>
@@ -811,7 +818,7 @@ export default function PatientPortalPage() {
                           disabled={workingId === `consent-${c.type}`}
                           onClick={() => signConsent(c.type, true)}
                         >
-                          {t("portal_accept")}
+                          <Check />{t("portal_accept")}
                         </Button>
                         <Button
                           size="sm"
@@ -819,7 +826,7 @@ export default function PatientPortalPage() {
                           disabled={workingId === `consent-${c.type}`}
                           onClick={() => signConsent(c.type, false)}
                         >
-                          {t("portal_decline")}
+                          <X />{t("portal_decline")}
                         </Button>
                       </div>
                     </div>

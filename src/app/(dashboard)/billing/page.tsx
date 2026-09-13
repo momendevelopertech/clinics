@@ -2,7 +2,12 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { DollarSign, FileText } from "lucide-react";
+import {
+  DollarSign,
+  FileText,
+  Plus,
+  Trash2,
+} from "lucide-react";;
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -359,7 +364,7 @@ export default function BillingPage() {
               <Input value={expForm.notes} onChange={(e) => setExpForm({ ...expForm, notes: e.target.value })} />
             </div>
             <div className="flex items-end">
-              <Button onClick={handleAddExpense}>{t("exp_add")}</Button>
+              <Button onClick={handleAddExpense}><Plus />{t("exp_add")}</Button>
             </div>
           </div>
           {expenses.length === 0 ? (
@@ -376,7 +381,7 @@ export default function BillingPage() {
                       <td className="px-4 py-2 text-neutral-500">{e.notes ?? "—"}</td>
                       <td className="px-4 py-2 text-right">
                         <Button variant="ghost" size="sm" className="text-red-600" onClick={() => handleDeleteExpense(e.id)}>
-                          {t("exp_delete")}
+                          <Trash2 />{t("exp_delete")}
                         </Button>
                       </td>
                     </tr>

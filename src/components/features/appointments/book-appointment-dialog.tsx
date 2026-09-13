@@ -7,11 +7,13 @@ import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar,
-  Clock,
-  User,
-  Stethoscope,
   CalendarDays,
-} from "lucide-react";
+  CalendarPlus,
+  Clock,
+  Stethoscope,
+  User,
+  X,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -404,7 +406,7 @@ export function BookAppointmentDialog({
                   "hover:bg-neutral-100 dark:hover:bg-neutral-800"
                 )}
               >
-                {t("common_cancel")}
+                <X />{t("common_cancel")}
               </Button>
               <Button
                 type="submit"
@@ -418,7 +420,7 @@ export function BookAppointmentDialog({
                   "transition-all duration-300 active:scale-[0.98]"
                 )}
               >
-                {form.formState.isSubmitting ? t("book_booking") : t("book_book")}
+                <CalendarPlus />{form.formState.isSubmitting ? t("book_booking") : t("book_book")}
               </Button>
             </DialogFooter>
           </form>

@@ -17,7 +17,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus } from "lucide-react";
+import {
+  Plus,
+  X,
+} from "lucide-react";;
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -141,10 +144,10 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
 
         <div className="flex gap-2 justify-end mt-6">
           <Button variant="outline" onClick={() => setOpen(false)}>
-            {t("common_cancel")}
+            <X />{t("common_cancel")}
           </Button>
           <Button onClick={handleSubmit} disabled={loading}>
-            {loading ? t("camp_creating") : t("camp_create")}
+            <Plus />{loading ? t("camp_creating") : t("camp_create")}
           </Button>
         </div>
       </DialogContent>

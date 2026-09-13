@@ -1,7 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Upload, Plus } from "lucide-react";
+import {
+  Plus,
+  Upload,
+  X,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -257,10 +261,10 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              {t("common_cancel")}
+              <X />{t("common_cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? t("doc_uploading") : t("doc_uploadTrigger")}
+              <Upload />{loading ? t("doc_uploading") : t("doc_uploadTrigger")}
             </Button>
           </div>
         </form>

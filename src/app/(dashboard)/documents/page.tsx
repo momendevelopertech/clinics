@@ -1,7 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { FileText, Filter as FilterIcon, Download, Upload } from "lucide-react";
+import {
+  Download,
+  Eye,
+  FileText,
+  Filter as FilterIcon,
+  Upload,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -338,7 +344,7 @@ export default function DocumentsPage() {
                           rel="noopener noreferrer"
                         >
                           <Button variant="ghost" size="sm">
-                            {t("common_view")}
+                            <Eye />{t("common_view")}
                           </Button>
                         </a>
                       ) : (

@@ -1,4 +1,5 @@
 "use client";
+import { Ban, Check, Phone } from "lucide-react";
 
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -90,7 +91,7 @@ export default function QueuePage() {
           <p className="text-sm text-muted-foreground">{t("queue_subtitle")}</p>
         </div>
         <Button onClick={() => runAction("call-next")} disabled={acting}>
-          {t("queue_callNext")}
+          <Phone />{t("queue_callNext")}
         </Button>
       </div>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
@@ -104,16 +105,16 @@ export default function QueuePage() {
                 {item.status === "arrived" ? (
                   <>
                     <Button size="sm" variant="outline" disabled={acting} onClick={() => runAction("call-next", item.id)}>
-                      {t("queue_callNext")}
+                      <Phone />{t("queue_callNext")}
                     </Button>
                     <Button size="sm" variant="ghost" className="text-red-600" disabled={acting} onClick={() => runAction("no-show", item.id)}>
-                      {t("queue_noShow")}
+                      <Ban />{t("queue_noShow")}
                     </Button>
                   </>
                 ) : null}
                 {item.status === "in_progress" ? (
                   <Button size="sm" variant="outline" disabled={acting} onClick={() => runAction("complete", item.id)}>
-                    {t("queue_complete")}
+                    <Check />{t("queue_complete")}
                   </Button>
                 ) : null}
               </div>

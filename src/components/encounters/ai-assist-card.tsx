@@ -1,4 +1,5 @@
 "use client";
+import { FileText, MessageCircle } from "lucide-react";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -130,7 +131,7 @@ export function AiAssistCard({ encounterId, soap, setSoap }: AiAssistCardProps) 
                   disabled={thinking !== "idle" || !transcript.trim()}
                   onClick={() => void runScribe()}
                 >
-                  {thinking === "scribe" ? t("common_loading") : t("ai_scribe")}
+                  <MessageCircle />{thinking === "scribe" ? t("common_loading") : t("ai_scribe")}
                 </Button>
                 <Button
                   size="sm"
@@ -138,7 +139,7 @@ export function AiAssistCard({ encounterId, soap, setSoap }: AiAssistCardProps) 
                   disabled={thinking !== "idle"}
                   onClick={() => void runSummary()}
                 >
-                  {thinking === "summary" ? t("common_loading") : t("ai_summary")}
+                  <FileText />{thinking === "summary" ? t("common_loading") : t("ai_summary")}
                 </Button>
               </div>
               {notice ? <p className="text-xs text-amber-600">{notice}</p> : null}

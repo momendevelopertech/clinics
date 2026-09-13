@@ -3,10 +3,11 @@
 import * as React from "react";
 import {
   CreditCard,
-  Filter as FilterIcon,
-  Download,
   DollarSign,
-} from "lucide-react";
+  Download,
+  Filter as FilterIcon,
+  Undo2,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -424,7 +425,7 @@ export default function PaymentsPage() {
                           className={`p-0 h-auto text-sm font-medium ${refundArmed === payment.id ? "text-red-700" : "text-red-600 hover:text-red-700"}`}
                           onClick={() => handleRefund(payment)}
                         >
-                          {refundArmed === payment.id
+                          <Undo2 className="h-3.5 w-3.5" />{refundArmed === payment.id
                             ? t("pay_refundConfirm").replace(
                                 "{amount}",
                                 `${toAmount(payment.amount).toFixed(2)} ${payment.currency.toUpperCase()}`,

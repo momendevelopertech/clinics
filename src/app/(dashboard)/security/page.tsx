@@ -5,7 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ShieldCheck } from "lucide-react";
+import {
+  Check,
+  Download,
+  Power,
+  ShieldCheck,
+} from "lucide-react";;
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -141,7 +146,7 @@ export default function SecurityPage() {
           {enabled === false && !qr ? (
             <div>
               <Button onClick={startSetup} disabled={busy}>
-                {t("sec_start")}
+                <ShieldCheck />{t("sec_start")}
               </Button>
             </div>
           ) : null}
@@ -163,7 +168,7 @@ export default function SecurityPage() {
               </div>
               <div>
                 <Button onClick={verifyEnable} disabled={busy || !code.trim()}>
-                  {t("sec_verifyEnable")}
+                  <Check />{t("sec_verifyEnable")}
                 </Button>
               </div>
             </div>
@@ -195,7 +200,7 @@ export default function SecurityPage() {
               </div>
               <div>
                 <Button variant="destructive" onClick={disable} disabled={busy || !code.trim()}>
-                  {t("sec_disable")}
+                  <Power />{t("sec_disable")}
                 </Button>
               </div>
             </div>
@@ -211,7 +216,7 @@ export default function SecurityPage() {
           <p className="text-sm text-neutral-500">{t("sec_exportDesc")}</p>
           <div>
             <Button variant="outline" onClick={downloadBackup} disabled={exporting}>
-              {t("sec_exportBtn")}
+              <Download />{t("sec_exportBtn")}
             </Button>
           </div>
         </CardContent>

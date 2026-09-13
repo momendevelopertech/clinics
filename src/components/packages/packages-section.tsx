@@ -1,4 +1,5 @@
 "use client";
+import { Check, Plus, UserPlus } from "lucide-react";
 
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -135,7 +136,7 @@ export function PackagesSection() {
         </div>
         <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="sm">{t("pkg_assign")}</Button>
+            <Button variant="outline" size="sm"><UserPlus />{t("pkg_assign")}</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
@@ -170,7 +171,7 @@ export function PackagesSection() {
               </div>
               <div className="flex justify-end">
                 <Button onClick={handleAssign} disabled={!assignPkg || !assignPatient}>
-                  {t("pkg_assign")}
+                  <UserPlus />{t("pkg_assign")}
                 </Button>
               </div>
             </div>
@@ -193,7 +194,7 @@ export function PackagesSection() {
         </div>
         <div className="flex items-end">
           <Button onClick={handleCreate} disabled={!form.name.trim() || !form.price}>
-            {t("pkg_create")}
+            <Plus />{t("pkg_create")}
           </Button>
         </div>
       </div>
@@ -218,7 +219,7 @@ export function PackagesSection() {
             </span>
             {b.status === "active" && b.sessionsTotal - b.sessionsUsed > 0 ? (
               <Button size="sm" variant="outline" onClick={() => handleConsume(b.id)}>
-                {t("pkg_consume")}
+                <Check />{t("pkg_consume")}
               </Button>
             ) : null}
           </div>

@@ -1,7 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { CreditCard, Plus } from "lucide-react";
+import {
+  CreditCard,
+  Plus,
+  X,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -264,7 +268,7 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              {t("common_cancel")}
+              <X />{t("common_cancel")}
             </Button>
             <Button
               type="submit"

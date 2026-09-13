@@ -3,10 +3,11 @@
 import * as React from "react";
 import {
   Beaker,
-  Filter as FilterIcon,
   Download,
+  Eye,
+  Filter as FilterIcon,
   TrendingUp,
-} from "lucide-react";
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -380,7 +381,7 @@ export default function LabResultsPage() {
                                 : undefined
                             }
                           >
-                            {t("labs_viewReport")}
+                            <Eye />{t("labs_viewReport")}
                           </Button>
                         </a>
                       ) : (

@@ -1,7 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Plus } from "lucide-react";
+import {
+  Plus,
+  UserPlus,
+  X,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -166,10 +170,10 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              {t("common_cancel")}
+              <X />{t("common_cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? t("wl_adding") : t("wl_addTrigger")}
+              <UserPlus />{loading ? t("wl_adding") : t("wl_addTrigger")}
             </Button>
           </div>
         </form>

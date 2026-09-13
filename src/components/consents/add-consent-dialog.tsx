@@ -1,7 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Plus } from "lucide-react";
+import {
+  Plus,
+  Save,
+  X,
+} from "lucide-react";;
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -232,10 +236,10 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              {t("common_cancel")}
+              <X />{t("common_cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? t("consent_recording") : t("consent_newTrigger")}
+              <Save />{loading ? t("consent_recording") : t("consent_newTrigger")}
             </Button>
           </div>
         </form>

@@ -1,4 +1,5 @@
 "use client";
+import { Eye, Plus } from "lucide-react";
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -120,14 +121,14 @@ export function IntakeFormsManager() {
     <div className="space-y-4">
       <div className="flex gap-2">
         <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("intake_formName")} />
-        <Button onClick={createForm} disabled={!name.trim()}>{t("intake_createForm")}</Button>
+        <Button onClick={createForm} disabled={!name.trim()}><Plus />{t("intake_createForm")}</Button>
       </div>
       {forms.map((form) => (
         <div key={form.id} className="rounded border p-3 space-y-2">
           <div className="flex items-center justify-between">
             <p className="font-medium text-sm">{form.name}</p>
             <Button size="sm" variant="outline" onClick={() => viewResponses(form.id)}>
-              {t("intake_viewResponses")}
+              <Eye />{t("intake_viewResponses")}
             </Button>
           </div>
           {form.fields.map((f) => (

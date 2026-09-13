@@ -1,4 +1,5 @@
 "use client";
+import { CalendarPlus, X } from "lucide-react";
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -84,7 +85,7 @@ export function BookFromWaitlistDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="link" className="p-0 h-auto text-sm font-medium text-indigo-600">
-          {t("wl_book")}
+          <CalendarPlus />{t("wl_book")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -117,10 +118,10 @@ export function BookFromWaitlistDialog({
         </div>
         <div className="flex justify-end gap-2 mt-4">
           <Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>
-            {t("common_cancel")}
+            <X />{t("common_cancel")}
           </Button>
           <Button onClick={handleBook} disabled={!providerId || !date || !time || saving}>
-            {t("wl_book")}
+            <CalendarPlus />{t("wl_book")}
           </Button>
         </div>
       </DialogContent>

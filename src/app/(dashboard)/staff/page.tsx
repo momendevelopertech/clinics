@@ -19,7 +19,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Users } from "lucide-react";
+import {
+  CalendarPlus,
+  Check,
+  Trash2,
+  UserPlus,
+  Users,
+} from "lucide-react";;
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -191,7 +197,7 @@ export default function StaffPage() {
         </div>
         <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline">{t("staff_assignRole")}</Button>
+            <Button variant="outline"><UserPlus />{t("staff_assignRole")}</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
@@ -224,7 +230,7 @@ export default function StaffPage() {
               </div>
               <div className="flex justify-end">
                 <Button onClick={handleAssign} disabled={!assignUser || !assignRole}>
-                  {t("staff_assign")}
+                  <Check />{t("staff_assign")}
                 </Button>
               </div>
             </div>
@@ -295,7 +301,7 @@ export default function StaffPage() {
                       {sh.note ? ` · ${sh.note}` : ""}
                     </span>
                     <Button size="sm" variant="ghost" className="text-red-600" onClick={() => handleDeleteShift(sh.id)}>
-                      {t("common_delete")}
+                      <Trash2 />{t("common_delete")}
                     </Button>
                   </div>
                 ))}
@@ -333,7 +339,7 @@ export default function StaffPage() {
                 </Select>
               </div>
               <div className="flex items-end">
-                <Button onClick={handleAddShift}>{t("staff_addShift")}</Button>
+                <Button onClick={handleAddShift}><CalendarPlus />{t("staff_addShift")}</Button>
               </div>
             </div>
           </CardContent>
