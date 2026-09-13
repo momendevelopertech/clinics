@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#f8f9ff;}body{overscroll-behavior:none;font-family:'IBM Plex Sans Arabic',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container-lowest":"#ffffff","primary-container":"#008378","on-surface-variant":"#3d4947","on-tertiary-container":"#fefcff","on-secondary":"#ffffff","on-primary-fixed":"#00201d","error-container":"#ffdad6","inverse-surface":"#213145","surface-container":"#e5eeff","tertiary-fixed-dim":"#adc6ff","secondary":"#545f73","on-tertiary-fixed":"#001a42","on-secondary-container":"#586377","primary-fixed":"#89f5e7","error":"#ba1a1a","on-primary-fixed-variant":"#005049","secondary-fixed-dim":"#bcc7de","tertiary":"#0058be","inverse-on-surface":"#eaf1ff","surface-container-highest":"#d3e4fe","inverse-primary":"#6bd8cb","surface-tint":"#006a61","surface-dim":"#cbdbf5","on-secondary-fixed":"#111c2d","on-tertiary":"#ffffff","secondary-container":"#d5e0f8","surface-variant":"#d3e4fe","tertiary-container":"#2170e4","on-error":"#ffffff","secondary-fixed":"#d8e3fb","tertiary-fixed":"#d8e2ff","on-background":"#0b1c30","outline-variant":"#bcc9c6","background":"#f8f9ff","on-surface":"#0b1c30","surface-container-high":"#dce9ff","surface":"#f8f9ff","primary":"#00685f","outline":"#6d7a77","on-primary-container":"#f4fffc","surface-container-low":"#eff4ff","primary-fixed-dim":"#6bd8cb","on-primary":"#ffffff","on-secondary-fixed-variant":"#3c475a","on-tertiary-fixed-variant":"#004395","on-error-container":"#93000a","surface-bright":"#f8f9ff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-sm":"0.5rem","space-xl":"2rem","space-xs":"0.25rem","space-lg":"1.5rem","space-2xs":"0.125rem","space-2xl":"3rem","subnav-width":"15rem","sidebar-width":"17.5rem","space-base":"1rem","gutter":"1rem","space-md":"0.75rem"},"fontFamily":{"body-lg":["IBM Plex Sans Arabic","IBM Plex Sans"],"headline-xl-mobile":["IBM Plex Sans Arabic","IBM Plex Sans"],"mono-metric":["JetBrains Mono"],"headline-lg":["IBM Plex Sans Arabic","IBM Plex Sans"],"mono-code":["JetBrains Mono"],"label-md":["IBM Plex Sans Arabic","IBM Plex Sans"],"body-md":["IBM Plex Sans Arabic","IBM Plex Sans"],"label-sm":["IBM Plex Sans Arabic","IBM Plex Sans"],"headline-xl":["IBM Plex Sans Arabic","IBM Plex Sans"],"body-sm":["IBM Plex Sans Arabic","IBM Plex Sans"],"headline-sm":["IBM Plex Sans Arabic","IBM Plex Sans"]},"fontSize":{"body-lg":["15px",{"lineHeight":"22px","letterSpacing":"0em","fontWeight":"400"}],"headline-xl-mobile":["22px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"mono-metric":["13px",{"lineHeight":"16px","letterSpacing":"0em","fontWeight":"500"}],"headline-lg":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"mono-code":["11px",{"lineHeight":"14px","letterSpacing":"0.02em","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.025em","fontWeight":"600"}],"headline-xl":["28px",{"lineHeight":"36px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"400"}],"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"600"}]}}}}</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.03)] pt-safe"><div class="h-20 px-4 flex items-center justify-between gap-3"><div class="flex items-center gap-3 min-w-0"><img alt="Brand logo. - Primary color: #0d9488
+- Font: ibmPlexSans
+- Mode: light
+- Roundness: rounded-sm
+" class="h-8 w-auto object-contain shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1UWqmh1VUKLrHVYUqgHVYiHDUSuXjk5E0Ye9Q4lT54dQPmDAn9E7rmF_QGWfCIZJNfWPbunOASJyuIMNd76tNngZvhB11FuriJdV2kEItTwJfqLsO0PzmyZUBOD6DrlBtGgzbRxcBXhRrV0Zig1Y3EW_zLf7xpRkufAljm30qY93yRJuwbLtlwR7OBhApUw3cWyazHFYy9qruImfdqnIk0rGC7noaktUCRpAmTgkLzav1vjICWY7b8p2UYC"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-1.5"><span class="font-headline-sm text-headline-sm text-on-surface truncate">عيادات ClinicOS</span><span class="px-1.5 py-0.5 rounded-full bg-primary-container/10 text-primary font-mono-code text-mono-code leading-none">2027</span></div><button class="flex items-center gap-1 text-on-surface-variant hover:text-primary transition-colors text-right"><span class="font-label-sm text-label-sm truncate max-w-[140px]">فرع الرياض التخصصي</span><span class="material-symbols-outlined text-[14px]">keyboard_arrow_down</span></button></div></div><div class="flex items-center gap-2 shrink-0"><a class="h-10 px-2.5 rounded-full bg-error-container/70 text-on-error-container hover:bg-error-container flex items-center gap-1.5 transition-all" href="tel:997"><span class="material-symbols-outlined text-[18px] text-error">emergency</span><span class="font-label-sm text-label-sm font-semibold">طوارئ</span></a><button class="relative w-10 h-10 rounded-full bg-surface-container-low hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2 left-2 w-2.5 h-2.5 rounded-full bg-error ring-2 ring-surface-container-lowest"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-20 pb-24 bg-surface"><div class="flex flex-col w-full space-y-4 px-4 pb-8">
+<!-- 1. Patient Welcome Header & Digital Health Card -->
+<section class="w-full bg-surface-container-lowest rounded-full p-4 shadow-sm flex flex-col gap-3 relative overflow-hidden">
+<!-- Subtle Teal Glow Gradient Background -->
+<div class="absolute -left-12 -top-12 w-36 h-36 rounded-full bg-primary-fixed-dim/20 blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between gap-3 relative z-10">
+<div class="flex items-center gap-3 min-w-0">
+<div class="relative w-13 h-13 rounded-full bg-surface-container flex items-center justify-center shrink-0">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">عف</span>
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-primary ring-2 ring-surface-container-lowest flex items-center justify-center">
+<span class="material-symbols-outlined text-surface-container-lowest text-[10px]">check</span>
+</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-secondary">صباح الخير والمحبة</span>
+<span class="material-symbols-outlined text-primary text-[14px]">verified</span>
+</div>
+<h1 class="font-headline-sm text-headline-sm text-on-surface truncate font-bold">عبد العزيز بن فهد</h1>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="font-mono-code text-mono-code text-secondary px-1.5 py-0.5 rounded-lg bg-surface-container-low">MRN: 44910</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-label-sm text-label-sm text-secondary">38 سنة</span>
+</div>
+</div>
+</div>
+<!-- Quick Digital QR Access Pill Button -->
+<button class="shrink-0 flex flex-col items-center justify-center bg-surface-container-low hover:bg-surface-container p-2.5 rounded-xl transition-all active:scale-95 group" id="openQrBtn">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">qr_code_2</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold mt-1">الهوية الطبية</span>
+</button>
+</div>
+<!-- Insurance Coverage Micro-Strip -->
+<div class="flex items-center justify-between bg-surface-container-low rounded-xl px-3 py-2 text-on-surface-variant">
+<div class="flex items-center gap-2 min-w-0">
+<div class="w-6 h-6 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[15px]">health_and_safety</span>
+</div>
+<div class="flex items-center gap-1.5 truncate">
+<span class="font-label-sm text-label-sm font-semibold text-on-surface">بوبا العربية</span>
+<span class="font-label-sm text-label-sm text-secondary">• الفئة الذهبية</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<span class="inline-flex items-center px-2 py-0.5 rounded-lg bg-surface-container-highest text-primary font-mono-code text-mono-code font-bold">نسبة التحمل: 0%</span>
+</div>
+</div>
+</section>
+<!-- 2. Active Live Smart Queue Card (The Heartbeat of the Patient Visit) -->
+<section class="w-full bg-surface-container-lowest rounded-full p-4 shadow-sm relative overflow-hidden">
+<!-- Visual accent top bar -->
+<div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-primary to-primary-container"></div>
+<!-- Header info of appointment -->
+<div class="flex items-start justify-between gap-3 pt-1 mb-3">
+<div>
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-primary-fixed-dim/30 text-on-primary-fixed-variant font-label-sm text-label-sm font-semibold mb-1">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+<span>موعدك الحي المباشر اليوم</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">عيادة الباطنة وأمراض القلب</h2>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">د. أحمد المنصوري • استشاري أول</p>
+</div>
+<div class="text-left shrink-0">
+<div class="font-headline-sm text-headline-sm text-primary font-bold font-mono-metric" dir="ltr">10:30 AM</div>
+<div class="font-label-sm text-label-sm text-secondary">اليوم، 14 مارس</div>
+</div>
+</div>
+<!-- Smart Queue Telemetry Pod -->
+<div class="bg-surface-container-low rounded-xl p-3.5 flex flex-col gap-3">
+<div class="grid grid-cols-3 gap-2 divide-x divide-x-reverse divide-surface-container">
+<!-- Queue Ticket -->
+<div class="flex flex-col items-center justify-center py-1">
+<span class="font-label-sm text-label-sm text-secondary">رقم الدور</span>
+<span class="font-headline-xl text-headline-xl text-primary font-bold font-mono-metric tracking-tight">#14</span>
+<span class="font-label-sm text-label-sm text-primary-container font-semibold">تذكرتك</span>
+</div>
+<!-- Waiting ahead -->
+<div class="flex flex-col items-center justify-center py-1">
+<span class="font-label-sm text-label-sm text-secondary">أمامك الآن</span>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold font-mono-metric">2</span>
+<span class="font-label-sm text-label-sm text-secondary">مرضى</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary">في صالة 3B</span>
+</div>
+<!-- Dynamic countdown -->
+<div class="flex flex-col items-center justify-center py-1">
+<span class="font-label-sm text-label-sm text-secondary">وقت تقريبي</span>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-xl text-headline-xl text-primary-container font-bold font-mono-metric" id="queueTimeCounter">08</span>
+<span class="font-label-sm text-label-sm text-secondary">دقائق</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-semibold">تقدير ذكي</span>
+</div>
+</div>
+<!-- Live Progression Timeline Bar -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-2.5 flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-on-surface">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-label-sm text-label-sm font-semibold text-primary">تم تسجيل وتأكيد الحضور الذاتي</span>
+</div>
+<span class="font-mono-code text-mono-code text-secondary" dir="ltr">10:14 AM</span>
+</div>
+<!-- Segmented Mini Tracker Bar -->
+<div class="grid grid-cols-4 gap-1 w-full h-1.5 rounded-full overflow-hidden bg-surface-container">
+<div class="bg-primary-container h-full rounded-full"></div>
+<div class="bg-primary-container h-full rounded-full"></div>
+<div class="bg-primary-fixed-dim h-full rounded-full animate-pulse"></div>
+<div class="bg-surface-container-high h-full rounded-full"></div>
+</div>
+<div class="flex justify-between items-center font-label-sm text-label-sm text-secondary pt-0.5">
+<span>تم الحضور</span>
+<span class="text-primary font-semibold">المريض الحالي داخل العيادة</span>
+<span>دورك التالي</span>
+</div>
+</div>
+<!-- Room Navigation & Actions -->
+<div class="flex items-center gap-2 pt-1">
+<button class="flex-1 h-9 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">near_me</span>
+<span>إرشادات عيادة 302 (الدور 3)</span>
+</button>
+<button class="h-9 px-3 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold flex items-center justify-center gap-1 transition-colors" id="showPassModal">
+<span class="material-symbols-outlined text-[18px] text-primary">confirmation_number</span>
+<span>تذكرتي</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 3. Quick Action Grid -->
+<section class="w-full">
+<div class="flex items-center justify-between mb-2.5 px-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">خدماتك السريعة</h2>
+<span class="font-label-sm text-label-sm text-secondary">Clinics Portal</span>
+</div>
+<div class="grid grid-cols-2 gap-2.5">
+<!-- Book Appointment -->
+<a class="bg-surface-container-lowest p-3 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between group active:scale-[0.98]" href="#">
+<div class="flex items-start justify-between mb-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low text-primary flex items-center justify-center group-hover:bg-primary-container group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[22px]">calendar_month</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-secondary group-hover:text-primary transition-colors">arrow_back</span>
+</div>
+<div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold block">حجز جديد</span>
+<span class="font-label-sm text-label-sm text-secondary mt-0.5 block">عيادات، فحص دوري، لقاحات</span>
+</div>
+</a>
+<!-- Prescriptions -->
+<a class="bg-surface-container-lowest p-3 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between group active:scale-[0.98] relative overflow-hidden" href="#">
+<div class="flex items-start justify-between mb-3">
+<div class="w-10 h-10 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[22px]">prescriptions</span>
+</div>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold">جاهز للصرف</span>
+</div>
+<div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold block">الأدوية والوصفات</span>
+<span class="font-label-sm text-label-sm text-secondary mt-0.5 block">إعادة الصرف والتوصيل</span>
+</div>
+</a>
+<!-- Lab & Radiology -->
+<a class="bg-surface-container-lowest p-3 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between group active:scale-[0.98]" href="#">
+<div class="flex items-start justify-between mb-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low text-tertiary flex items-center justify-center group-hover:bg-tertiary-container group-hover:text-on-tertiary-container transition-colors">
+<span class="material-symbols-outlined text-[22px]">science</span>
+</div>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm font-bold">تقرير معتمد</span>
+</div>
+<div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold block">التحاليل والأشعة</span>
+<span class="font-label-sm text-label-sm text-secondary mt-0.5 block">نتائج الفحوصات الأخيرة</span>
+</div>
+</a>
+<!-- Instant Telehealth Consultation -->
+<a class="bg-surface-container-lowest p-3 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between group active:scale-[0.98]" href="#">
+<div class="flex items-start justify-between mb-3">
+<div class="w-10 h-10 rounded-xl bg-primary-container/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[22px]">video_call</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-ping"></span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">متاح الآن</span>
+</div>
+</div>
+<div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold block">طبيب فوري عن بعد</span>
+<span class="font-label-sm text-label-sm text-secondary mt-0.5 block">استشارة عامة خلال 3 دقائق</span>
+</div>
+</a>
+</div>
+</section>
+<!-- 4. Chronic Care & Vitals Monitor Summary -->
+<section class="w-full bg-surface-container-lowest rounded-full p-4 shadow-sm flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[19px]">vital_signs</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">مؤشراتي الحيوية وخطة الرعاية</h2>
+<span class="font-label-sm text-label-sm text-secondary">المزامنة مع أجهزة الفحص الذكية</span>
+</div>
+</div>
+<a class="font-label-sm text-label-sm text-primary font-semibold hover:underline" href="#">السجل كامل</a>
+</div>
+<!-- Vitals Micro Metrics Pair -->
+<div class="grid grid-cols-2 gap-2.5">
+<!-- Blood Pressure -->
+<div class="bg-surface-container-low rounded-xl p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary">ضغط الدم الشرياني</span>
+<span class="material-symbols-outlined text-[18px] text-primary">monitor_heart</span>
+</div>
+<div class="my-2">
+<div class="flex items-baseline gap-1" dir="ltr">
+<span class="font-headline-xl-mobile text-headline-xl-mobile text-on-surface font-bold font-mono-metric">124/80</span>
+<span class="font-mono-code text-mono-code text-secondary">mmHg</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">طبيعي ومستقر</span>
+</div>
+</div>
+<!-- HbA1c Glycated Hemoglobin -->
+<div class="bg-surface-container-low rounded-xl p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary">السكر التراكمي (HbA1c)</span>
+<span class="material-symbols-outlined text-[18px] text-tertiary">bloodtype</span>
+</div>
+<div class="my-2">
+<div class="flex items-baseline gap-1" dir="ltr">
+<span class="font-headline-xl-mobile text-headline-xl-mobile text-on-surface font-bold font-mono-metric">7.1</span>
+<span class="font-mono-code text-mono-code text-secondary">%</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">ضمن الهدف العلاجي</span>
+</div>
+</div>
+</div>
+<!-- Doctor's Scheduled Laboratory Milestone -->
+<div class="bg-surface-container-lowest rounded-xl p-3 flex items-center justify-between">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[18px]">event_repeat</span>
+</div>
+<div class="truncate">
+<span class="font-label-sm text-label-sm font-semibold text-on-surface block truncate">إعادة فحص وظائف الكلى الدورية</span>
+<span class="font-label-sm text-label-sm text-secondary">موصى به من قِبل الطبيب بعد 4 أسابيع</span>
+</div>
+</div>
+<button class="shrink-0 font-label-sm text-label-sm text-primary bg-surface-container-low px-2.5 py-1.5 rounded-lg hover:bg-surface-container font-semibold">
+        تذكيري
+      </button>
+</div>
+</section>
+<!-- 5. Active Medications & Quick Refill -->
+<section class="w-full bg-surface-container-lowest rounded-full p-4 shadow-sm flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[19px]">medication</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">الأدوية المجدولة النشطة</h2>
+<span class="font-label-sm text-label-sm text-secondary">خطة العلاج الحالية</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm font-mono-code text-secondary">1 من 3 أدوية</span>
+</div>
+<!-- Active Medicine Card -->
+<div class="bg-surface-container-low rounded-xl p-3 flex flex-col gap-2.5">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-10 h-10 rounded-xl bg-surface-container-lowest text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px]">pill</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold truncate">Empagliflozin</span>
+<span class="font-mono-code text-mono-code text-primary bg-surface-container px-1 rounded">10mg</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary truncate">حبة واحدة يومياً بعد وجبة الإفطار</p>
+</div>
+</div>
+<div class="shrink-0 text-left">
+<span class="inline-flex items-center px-2 py-0.5 rounded-lg bg-surface-container-highest text-on-surface font-label-sm text-label-sm font-semibold">
+            الجرعة القادمة: بعد ساعتين
+          </span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">local_pharmacy</span>
+<span>متبقي 12 حبة في العبوة</span>
+</div>
+<button class="h-8 px-3 rounded-lg bg-surface-container hover:bg-primary hover:text-on-primary text-on-surface font-label-sm text-label-sm font-semibold flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+<span>طلب إعادة صرف (Refill)</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 6. Doctor's Clinical Note & Instant Clinic Support -->
+<section class="w-full bg-surface-container-lowest rounded-full p-4 shadow-sm flex flex-col gap-3">
+<!-- Clinical Direct Instruction -->
+<div class="flex items-start gap-3 bg-surface-container-low rounded-xl p-3">
+<div class="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[19px]">stethoscope</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center justify-between mb-0.5">
+<span class="font-label-md text-label-md text-on-surface font-bold">توجيه علاجي من د. أحمد المنصوري</span>
+<span class="font-label-sm text-label-sm text-secondary">أمس</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          "يرجى الالتزام بشرب 2 إلى 2.5 لتر ماء يومياً، مع تدوين قراءات ضغط الدم الصباحية والمسائية لإحضارها في جلسة المراجعة القادمة."
+        </p>
+</div>
+</div>
+<!-- Clinic Quick Assistance Action Pill -->
+<div class="flex items-center justify-between bg-surface-container-low rounded-xl p-3">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">support_agent</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-on-surface font-bold">مكتب التنسيق والرعاية المباشرة</h3>
+<p class="font-label-sm text-label-sm text-secondary">مساعدك الصحي متاح للرد على أي استفسار</p>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<a class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-colors" href="https://wa.me/966500000000" target="_blank" title="واتساب العيادة">
+<span class="material-symbols-outlined text-[18px]">chat</span>
+</a>
+<a class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-colors" href="tel:920000000" title="اتصال بالعيادة">
+<span class="material-symbols-outlined text-[18px]">call</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Quick Pop-over Modal for Digital Health Card QR (Hidden by default, interactive) -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-200 hidden opacity-0" id="qrModal">
+<div class="bg-surface-container-lowest w-full max-w-xs rounded-full p-5 shadow-xl flex flex-col items-center text-center relative transform transition-transform scale-95 duration-200" id="qrModalContent">
+<button class="absolute top-4 left-4 w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-secondary hover:text-on-surface" id="closeQrBtn">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+<div class="w-12 h-12 rounded-full bg-primary-container/10 text-primary flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-[28px]">qr_code_scanner</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-1">الهوية الطبية للخدمة الذاتية</h3>
+<p class="font-body-sm text-body-sm text-secondary mb-4">مرّر هذا الرمز على أجهزة الاستقبال الذكية أو شاشات الممرضين لتسجيل الوصول التلقائي</p>
+<!-- Dynamic QR SVG Representation -->
+<div class="p-3 bg-surface-container-lowest rounded-xl shadow-inner mb-3">
+<svg class="w-44 h-44 text-on-surface" fill="currentColor" viewbox="0 0 100 100">
+<!-- Outer Corners & Simulated Medical QR blocks -->
+<rect fill="#00685f" height="26" rx="4" width="26" x="5" y="5"></rect>
+<rect fill="#ffffff" height="18" rx="2" width="18" x="9" y="9"></rect>
+<rect fill="#00685f" height="10" rx="1" width="10" x="13" y="13"></rect>
+<rect fill="#00685f" height="26" rx="4" width="26" x="69" y="5"></rect>
+<rect fill="#ffffff" height="18" rx="2" width="18" x="73" y="9"></rect>
+<rect fill="#00685f" height="10" rx="1" width="10" x="77" y="13"></rect>
+<rect fill="#00685f" height="26" rx="4" width="26" x="5" y="69"></rect>
+<rect fill="#ffffff" height="18" rx="2" width="18" x="9" y="73"></rect>
+<rect fill="#00685f" height="10" rx="1" width="10" x="13" y="77"></rect>
+<!-- Center Identity Cross -->
+<rect fill="#00685f" height="16" rx="2" width="8" x="46" y="42"></rect>
+<rect fill="#00685f" height="8" rx="2" width="16" x="42" y="46"></rect>
+<!-- Matrix Noise Dots -->
+<rect fill="#213145" height="6" rx="1" width="6" x="36" y="8"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="48" y="8"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="56" y="14"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="36" y="24"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="52" y="24"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="8" y="38"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="18" y="46"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="8" y="54"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="74" y="38"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="84" y="46"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="66" y="54"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="36" y="68"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="48" y="76"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="60" y="84"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="76" y="74"></rect>
+<rect fill="#213145" height="6" rx="1" width="6" x="84" y="84"></rect>
+</svg>
+</div>
+<span class="font-mono-code text-mono-code text-on-surface font-semibold">MRN-44910-KSA-2027</span>
+<span class="font-label-sm text-label-sm text-secondary mt-0.5">صالح للاستخدام الفوري بمرافق ClinicOS</span>
+</div>
+</div>
+</div>
+<script>
+  (function initPortalMicroInteractions() {
+    // 1. Digital QR Modal Logic
+    const qrModal = document.getElementById('qrModal');
+    const qrModalContent = document.getElementById('qrModalContent');
+    const openQrBtn = document.getElementById('openQrBtn');
+    const closeQrBtn = document.getElementById('closeQrBtn');
+    const showPassModal = document.getElementById('showPassModal');
+
+    function showModal() {
+      if (!qrModal) return;
+      qrModal.classList.remove('hidden');
+      setTimeout(() => {
+        qrModal.classList.remove('opacity-0');
+        qrModalContent.classList.remove('scale-95');
+        qrModalContent.classList.add('scale-100');
+      }, 10);
+    }
+
+    function hideModal() {
+      if (!qrModal) return;
+      qrModal.classList.add('opacity-0');
+      qrModalContent.classList.remove('scale-100');
+      qrModalContent.classList.add('scale-95');
+      setTimeout(() => {
+        qrModal.classList.add('hidden');
+      }, 200);
+    }
+
+    if (openQrBtn) openQrBtn.addEventListener('click', showModal);
+    if (showPassModal) showPassModal.addEventListener('click', showModal);
+    if (closeQrBtn) closeQrBtn.addEventListener('click', hideModal);
+
+    if (qrModal) {
+      qrModal.addEventListener('click', (e) => {
+        if (e.target === qrModal) hideModal();
+      });
+    }
+
+    // 2. Queue dynamic countdown simulator for delight
+    const queueCounter = document.getElementById('queueTimeCounter');
+    let minutesLeft = 8;
+    if (queueCounter) {
+      setInterval(() => {
+        if (minutesLeft > 1) {
+          minutesLeft -= 1;
+          queueCounter.textContent = minutesLeft < 10 ? '0' + minutesLeft : minutesLeft;
+        }
+      }, 60000); // decrement each minute realistically
+    }
+  })();
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-semibold"><div class="flex justify-around items-center h-16 px-2"><a aria-current="page" class="flex flex-col items-center justify-center gap-1 flex-1 py-1 transition-all min-w-0 text-primary font-semibold" data-path="home-hub" href="#"><span class="material-symbols-outlined text-[22px]">dashboard</span><span class="font-label-sm text-label-sm truncate w-full text-center">الرئيسية</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-all min-w-0" data-path="appointments-queue" href="#"><span class="material-symbols-outlined text-[22px]">calendar_clock</span><span class="font-label-sm text-label-sm truncate w-full text-center">مواعيدي</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-all min-w-0" data-path="medical-records" href="#"><span class="material-symbols-outlined text-[22px]">clinical_notes</span><span class="font-label-sm text-label-sm truncate w-full text-center">ملفي الطبي</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-all min-w-0" data-path="telehealth-consultations" href="#"><span class="material-symbols-outlined text-[22px]">video_chat</span><span class="font-label-sm text-label-sm truncate w-full text-center">الاستشارات</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-all min-w-0" data-path="patient-profile" href="#"><span class="material-symbols-outlined text-[22px]">manage_accounts</span><span class="font-label-sm text-label-sm truncate w-full text-center">حسابي</span></a></div></nav></body></html>

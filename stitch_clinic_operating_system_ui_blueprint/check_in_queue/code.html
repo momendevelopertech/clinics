@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-tertiary-fixed":"#001a42","secondary-fixed":"#d8e3fb","on-secondary-fixed-variant":"#3c475a","surface-tint":"#006a61","on-secondary":"#ffffff","tertiary-container":"#2170e4","on-primary":"#ffffff","on-surface":"#0b1c30","outline-variant":"#bcc9c6","primary-container":"#008378","secondary-fixed-dim":"#bcc7de","surface-container-high":"#dce9ff","surface-dim":"#cbdbf5","surface-container":"#e5eeff","surface-bright":"#f8f9ff","error-container":"#ffdad6","surface":"#f8f9ff","on-secondary-container":"#586377","background":"#f8f9ff","outline":"#6d7a77","on-surface-variant":"#3d4947","inverse-surface":"#213145","on-tertiary-fixed-variant":"#004395","tertiary-fixed":"#d8e2ff","primary-fixed":"#89f5e7","on-secondary-fixed":"#111c2d","secondary":"#545f73","on-background":"#0b1c30","tertiary-fixed-dim":"#adc6ff","tertiary":"#0058be","on-tertiary":"#ffffff","surface-variant":"#d3e4fe","inverse-on-surface":"#eaf1ff","primary-fixed-dim":"#6bd8cb","secondary-container":"#d5e0f8","surface-container-highest":"#d3e4fe","surface-container-low":"#eff4ff","on-tertiary-container":"#fefcff","error":"#ba1a1a","primary":"#00685f","on-error-container":"#93000a","on-error":"#ffffff","surface-container-lowest":"#ffffff","on-primary-fixed":"#00201d","on-primary-container":"#f4fffc","inverse-primary":"#6bd8cb","on-primary-fixed-variant":"#005049"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-xs":"0.25rem","sidebar-width":"17.5rem","gutter":"1rem","subnav-width":"15rem","space-2xs":"0.125rem","space-base":"1rem","space-md":"0.75rem","space-sm":"0.5rem","space-xl":"2rem","space-lg":"1.5rem","space-2xl":"3rem"},"fontFamily":{"headline-sm":["IBM Plex Sans"],"label-md":["IBM Plex Sans"],"body-sm":["IBM Plex Sans"],"body-md":["IBM Plex Sans"],"headline-xl":["IBM Plex Sans"],"body-lg":["IBM Plex Sans"],"mono-metric":["JetBrains Mono"],"headline-lg":["IBM Plex Sans"],"headline-xl-mobile":["IBM Plex Sans"],"mono-code":["JetBrains Mono"],"label-sm":["IBM Plex Sans"]},"fontSize":{"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"400"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"headline-xl":["28px",{"lineHeight":"36px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-lg":["15px",{"lineHeight":"22px","letterSpacing":"0em","fontWeight":"400"}],"mono-metric":["13px",{"lineHeight":"16px","letterSpacing":"0em","fontWeight":"500"}],"headline-lg":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-xl-mobile":["22px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"mono-code":["11px",{"lineHeight":"14px","letterSpacing":"0.02em","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.025em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed right-0 top-0 h-full w-sidebar-width bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between overflow-y-auto"><div class="flex flex-col"><div class="h-16 px-space-base flex items-center justify-between bg-surface-container-lowest"><div class="flex items-center gap-space-sm"><img alt="ClinicOS Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UWqmh1VUKLrHVYUqgHVYiHDUSuXjk5E0Ye9Q4lT54dQPmDAn9E7rmF_QGWfCIZJNfWPbunOASJyuIMNd76tNngZvhB11FuriJdV2kEItTwJfqLsO0PzmyZUBOD6DrlBtGgzbRxcBXhRrV0Zig1Y3EW_zLf7xpRkufAljm30qY93yRJuwbLtlwR7OBhApUw3cWyazHFYy9qruImfdqnIk0rGC7noaktUCRpAmTgkLzav1vjICWY7b8p2UYC"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary leading-none">ClinicOS</span><span class="font-label-sm text-label-sm text-secondary leading-tight mt-space-2xs">نظام إدارة العيادات 2027</span></div></div><span class="font-mono-code text-mono-code bg-surface-container text-secondary px-space-xs py-space-2xs rounded">v4.2</span></div><div class="px-space-base py-space-sm"><div class="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between gap-space-xs"><div class="flex items-center gap-space-xs overflow-hidden"><span class="material-symbols-outlined text-primary text-headline-sm shrink-0">domain</span><div class="flex flex-col truncate"><span class="font-label-sm text-label-sm text-on-surface truncate">فرع الرياض التخصصي</span><span class="font-mono-code text-mono-code text-on-surface-variant truncate">عيادة 302 - باطنة وقلب</span></div></div><span class="material-symbols-outlined text-outline text-headline-sm shrink-0">unfold_more</span></div></div><div class="px-space-sm mt-space-xs"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">الاستقبال وإدارة المرضى</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="appointments" href="#"><span class="material-symbols-outlined text-headline-sm">event_available</span><span class="font-body-md text-body-md">المواعيد وجدول الحجز</span></a><a aria-current="page" class="flex items-center justify-between px-space-md py-space-sm rounded-xl transition-all bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-path="check-in-queue" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-headline-sm">how_to_reg</span><span class="font-body-md text-body-md">تسجيل الوصول والانتظار</span></div><span class="font-mono-code text-mono-code px-space-xs py-space-2xs rounded bg-secondary-container text-on-secondary-container">14</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="patients" href="#"><span class="material-symbols-outlined text-headline-sm">personal_injury</span><span class="font-body-md text-body-md">سجل المرضى</span></a></nav></div><div class="px-space-sm mt-space-md"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">القسم الطبي والسريري</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="visits-consultation" href="#"><span class="material-symbols-outlined text-headline-sm">stethoscope</span><span class="font-body-md text-body-md">غرفة الكشف والزيارة</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="prescriptions-orders" href="#"><span class="material-symbols-outlined text-headline-sm">medication</span><span class="font-body-md text-body-md">الروشتة والأوامر الطبية</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="lab-imaging" href="#"><span class="material-symbols-outlined text-headline-sm">chips</span><span class="font-body-md text-body-md">الفحوصات والنتائج</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="medical-timeline" href="#"><span class="material-symbols-outlined text-headline-sm">timeline</span><span class="font-body-md text-body-md">المخطط الزمني للمريض</span></a></nav></div><div class="px-space-sm mt-space-md mb-space-base"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">الإدارة والعمليات</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="billing-invoices" href="#"><span class="material-symbols-outlined text-headline-sm">receipt_long</span><span class="font-body-md text-body-md">الفوترة والمدفوعات</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="master-catalogs" href="#"><span class="material-symbols-outlined text-headline-sm">inventory_2</span><span class="font-body-md text-body-md">كتالوج الخدمات والأدوية</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="branches-rooms" href="#"><span class="material-symbols-outlined text-headline-sm">meeting_room</span><span class="font-body-md text-body-md">الفروع والغرف</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="audit-security" href="#"><span class="material-symbols-outlined text-headline-sm">shield_person</span><span class="font-body-md text-body-md">المستخدمين وسجل التدقيق</span></a></nav></div></div><div class="p-space-base bg-surface-container-low"><div class="flex items-center justify-between"><div class="flex items-center gap-space-xs"><span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span><span class="font-label-sm text-label-sm text-secondary">خادم السجلات: متصل</span></div><span class="font-mono-code text-mono-code text-secondary">RT-24ms</span></div></div></aside><div class="pr-sidebar-width min-h-screen bg-surface"><header class="fixed top-0 right-sidebar-width left-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md flex-1 max-w-xl"><div class="relative w-full"><span class="material-symbols-outlined text-on-surface-variant absolute right-space-md top-1/2 -translate-y-1/2 text-headline-sm">search</span><input class="w-full h-10 pr-space-2xl pl-space-md bg-surface-container-low text-on-surface placeholder-secondary font-body-md text-body-md rounded-xl focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" placeholder="بحث شامل عن مريض (الاسم، رقم الهوية الوطنية، رقم الملف الطبي MRN)..." type="text"/></div><div class="hidden lg:flex items-center gap-space-xs px-space-sm py-space-xs rounded bg-surface-container text-on-surface"><span class="w-2 h-2 rounded-full bg-primary"></span><span class="font-label-sm text-label-sm font-semibold">متصل - فرع الرياض</span></div></div><div class="flex items-center gap-space-md"><button class="hidden sm:flex items-center gap-space-xs h-10 px-space-md rounded-xl bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-[0_1px_8px_rgba(0,0,0,0.04)]" type="button"><span class="material-symbols-outlined text-headline-sm">add_circle</span><span class="font-label-md text-label-md">حجز جديد / مريض جديد</span></button><button class="relative w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-headline-sm">notifications</span><span class="absolute -top-1 -left-1 flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-error text-on-error font-mono-code text-mono-code font-bold">3</span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="hidden md:flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface text-right">د. أحمد المنصوري</span><span class="font-label-sm text-label-sm text-secondary text-right">استشاري باطنة وقلب</span></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9cpdmaCWhOFyr05pJyBoIMkSi4anLFma2lf5y1hIpPALoNjhKq6b1h9dz-FYVUtajIuGSaQUG8t913et7mmt7SfWLbOiXGDUWIr9B_YvFCegyI90gD7qqQ5A3F61-9FpH8PSXr_i8z4Tclvpodt3KNYqJN9Bi-Fr9Nh2fT-KJKtJiGGlRqSb0L0xdezJFfvFh0wxaDxYfjnke2vpYzC3qijjc7nejC33tK4x2PKI_INk1nuXl4QeRUA"/></div></div></header><main class="w-full pt-16 bg-surface px-space-lg pb-space-2xl"><div class="flex flex-col w-full">
+<div class="w-full mb-space-lg flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs text-secondary font-label-sm text-label-sm mb-space-2xs">
+<span>الاستقبال وإدارة المرضى</span>
+<span class="material-symbols-outlined text-label-sm">chevron_left</span>
+<span class="text-on-surface font-semibold">شاشة تسجيل الوصول والانتظار المباشر</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">إدارة تدفق وقائمة انتظار المرضى</h1>
+<span class="inline-flex items-center gap-space-2xs px-space-sm py-space-2xs rounded-full bg-primary-container/15 text-primary font-mono-code text-mono-code font-bold">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+          بث مباشر للتحديثات
+        </span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm flex-wrap">
+<div class="px-space-md py-space-xs bg-surface-container-lowest rounded-xl shadow-sm flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-headline-sm">nest_clock_farsight_analog</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary">متوسط وقت الانتظار</span>
+<span class="font-mono-metric text-mono-metric text-on-surface font-bold">11.4 دقيقة</span>
+</div>
+</div>
+<button class="flex items-center gap-space-xs h-10 px-space-lg rounded-xl bg-primary text-on-primary hover:bg-primary-container transition-all shadow-md active:scale-95" onclick="document.getElementById('quick-checkin-modal').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-headline-sm">person_add</span>
+<span class="font-label-md text-label-md font-bold">تسجيل وصول مريض (Walk-in)</span>
+</button>
+</div>
+</div>
+<!-- KPI Overview Metrics -->
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-space-md mb-space-lg">
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary">إجمالي المواعيد اليوم</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-headline-sm">calendar_month</span>
+</div>
+</div>
+<div class="mt-space-sm flex items-baseline justify-between">
+<span class="font-mono-metric text-headline-xl text-on-surface font-bold">42</span>
+<span class="font-label-sm text-label-sm text-secondary">مريض مسجل</span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full mt-space-sm overflow-hidden">
+<div class="bg-secondary h-full rounded-full w-full"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold">بالانتظار الفعلي (Waiting)</span>
+<div class="w-8 h-8 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-headline-sm">hourglass_top</span>
+</div>
+</div>
+<div class="mt-space-sm flex items-baseline justify-between">
+<span class="font-mono-metric text-headline-xl text-primary font-bold">08</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">جاهز للدخول</span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full mt-space-sm overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 38%"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold">داخل غرف الكشف</span>
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-headline-sm">stethoscope</span>
+</div>
+</div>
+<div class="mt-space-sm flex items-baseline justify-between">
+<span class="font-mono-metric text-headline-xl text-tertiary font-bold">04</span>
+<span class="font-label-sm text-label-sm text-secondary">4 غرف نشطة</span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full mt-space-sm overflow-hidden">
+<div class="bg-tertiary h-full rounded-full" style="width: 25%"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary">الزيارات المكتملة</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-headline-sm">check_circle</span>
+</div>
+</div>
+<div class="mt-space-sm flex items-baseline justify-between">
+<span class="font-mono-metric text-headline-xl text-on-surface font-bold">26</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">62% من الإجمالي</span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full mt-space-sm overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 62%"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-error">عدم حضور (No-show)</span>
+<div class="w-8 h-8 rounded-lg bg-error-container flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-headline-sm">person_cancel</span>
+</div>
+</div>
+<div class="mt-space-sm flex items-baseline justify-between">
+<span class="font-mono-metric text-headline-xl text-error font-bold">04</span>
+<span class="font-label-sm text-label-sm text-error font-medium">9.5% نسبة الغياب</span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full mt-space-sm overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 10%"></div>
+</div>
+</div>
+</div>
+<!-- Filter & Action Controller Strip -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm mb-space-lg flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-space-md">
+<div class="flex flex-wrap items-center gap-space-sm flex-1">
+<div class="relative min-w-[240px] flex-1 max-w-xs">
+<span class="material-symbols-outlined absolute right-space-sm top-1/2 -translate-y-1/2 text-secondary text-headline-sm">search</span>
+<input class="w-full h-10 pr-9 pl-space-sm bg-surface-container-low text-on-surface rounded-lg text-body-sm font-body-sm focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary" id="queue-search" placeholder="بحث باسم المريض، رقم التذكرة أو MRN..." type="text"/>
+</div>
+<div class="flex items-center bg-surface-container-low rounded-lg p-space-2xs">
+<button class="px-space-md py-1.5 rounded-lg text-label-md font-label-md bg-surface-container-lowest shadow-sm text-primary font-bold" type="button">الكل (12)</button>
+<button class="px-space-md py-1.5 rounded-lg text-label-md font-label-md text-secondary hover:text-on-surface" type="button">في الانتظار (8)</button>
+<button class="px-space-md py-1.5 rounded-lg text-label-md font-label-md text-secondary hover:text-on-surface" type="button">داخل الكشف (4)</button>
+</div>
+<div class="h-6 w-px bg-surface-container-high hidden md:block"></div>
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm text-secondary">الطبيب:</span>
+<select class="h-9 px-space-sm bg-surface-container-low text-on-surface rounded-lg text-body-sm font-body-sm focus:outline-none focus:ring-1 focus:ring-primary">
+<option value="all">جميع الأطباء المتاحين</option>
+<option value="dr_mansouri">د. أحمد المنصوري (باطنة)</option>
+<option value="dr_qahtani">د. سارة القحطاني (قلب وأوعية)</option>
+<option value="dr_khalid">د. خالد الرويلي (طب أسرة)</option>
+</select>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm text-secondary">العيادة/الغرفة:</span>
+<select class="h-9 px-space-sm bg-surface-container-low text-on-surface rounded-lg text-body-sm font-body-sm focus:outline-none focus:ring-1 focus:ring-primary">
+<option value="all">كل الغرف</option>
+<option value="101">غرفة 101 - استشارات باطنة</option>
+<option value="102">غرفة 102 - فحص تخطيط القلب</option>
+<option value="103">غرفة 103 - كشف سريع ومتابعة</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-space-sm justify-end">
+<button class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-low text-secondary hover:text-on-surface hover:bg-surface-container" title="تحديث القائمة" type="button">
+<span class="material-symbols-outlined text-headline-sm">refresh</span>
+</button>
+<button class="h-9 px-space-md flex items-center gap-space-xs rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container text-label-md font-label-md" title="إعلان صوتي للنداء العام" type="button">
+<span class="material-symbols-outlined text-headline-sm text-tertiary">volume_up</span>
+<span>النداء الصوتي</span>
+</button>
+<button class="h-9 px-space-md flex items-center gap-space-xs rounded-lg bg-surface-container-low text-on-surface hover:bg-surface-container text-label-md font-label-md" type="button">
+<span class="material-symbols-outlined text-headline-sm">tune</span>
+<span>تخصيص العرض</span>
+</button>
+</div>
+</div>
+<!-- Main Split Layout: Live Queue Board & Quick Triage Vitals Panel -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<!-- Live Interactive Queue Board (8 Cols on XL) -->
+<div class="xl:col-span-8 flex flex-col gap-space-md">
+<!-- Live Queue Active Cards / List -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<div class="p-space-md bg-surface-container-low/60 flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-headline-sm">view_agenda</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">قائمة الانتظار اللحظية</span>
+<span class="font-mono-code text-mono-code px-space-xs py-space-2xs rounded bg-surface-container text-secondary">8 مرضى في الصالة</span>
+</div>
+<div class="flex items-center gap-space-xs text-secondary font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span>ترتيب أوتوماتيكي حسب الأولوية وزمن الوصول</span>
+</div>
+</div>
+<div class="divide-y divide-surface-container">
+<!-- Queue Item 1: High Priority / Called -->
+<div class="p-space-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-md bg-primary-container/5 hover:bg-primary-container/10 transition-colors">
+<div class="flex items-start gap-space-md flex-1">
+<div class="flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-primary text-on-primary shadow-sm shrink-0">
+<span class="font-label-sm text-label-sm opacity-80">تذكرة</span>
+<span class="font-mono-metric text-headline-sm font-bold leading-none">A-104</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">مريم عبد الله الشمري</span>
+<span class="font-mono-code text-mono-code text-secondary">#MRN-88291</span>
+<span class="inline-flex items-center gap-1 px-space-xs py-space-2xs rounded text-label-sm font-label-sm bg-error-container text-on-error-container font-semibold">
+<span class="material-symbols-outlined text-label-sm">priority_high</span> طارئ / Urgent
+                  </span>
+<span class="inline-flex items-center gap-1 px-space-xs py-space-2xs rounded text-label-sm font-label-sm bg-secondary-fixed text-on-secondary-fixed font-semibold">
+                    حساسية بنسلين
+                  </span>
+</div>
+<div class="flex items-center gap-space-md mt-space-xs text-body-sm font-body-sm text-secondary flex-wrap">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-label-md">schedule</span>
+                    وصول: <span class="font-mono-code">10:14 ص</span>
+</span>
+<span class="flex items-center gap-1 text-error font-semibold">
+<span class="material-symbols-outlined text-label-md">timer</span>
+                    انتظار: 24 دقيقة
+                  </span>
+<span class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-label-md text-primary">stethoscope</span>
+                    د. أحمد المنصوري (عيادة 101)
+                  </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-xs self-end sm:self-center w-full sm:w-auto justify-end">
+<span class="px-space-sm py-1 rounded-full text-label-sm font-label-sm bg-tertiary text-on-tertiary font-bold animate-pulse flex items-center gap-1">
+<span class="material-symbols-outlined text-label-sm">campaign</span>
+                تم النداء (شاشة 1)
+              </span>
+<button class="h-8 px-space-sm rounded-lg bg-primary text-on-primary hover:bg-primary-container text-label-md font-label-md flex items-center gap-1 transition-all" type="button">
+<span class="material-symbols-outlined text-label-md">door_open</span>
+                بدء الكشف
+              </button>
+<div class="relative">
+<button class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high" type="button">
+<span class="material-symbols-outlined text-headline-sm">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Queue Item 2: Ready & Waiting -->
+<div class="p-space-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-md hover:bg-surface-container-low transition-colors">
+<div class="flex items-start gap-space-md flex-1">
+<div class="flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-surface-container-high text-on-surface shrink-0">
+<span class="font-label-sm text-label-sm text-secondary">تذكرة</span>
+<span class="font-mono-metric text-headline-sm font-bold leading-none">B-208</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">سعود فيصل الدوسري</span>
+<span class="font-mono-code text-mono-code text-secondary">#MRN-49102</span>
+<span class="inline-flex items-center px-space-xs py-space-2xs rounded text-label-sm font-label-sm bg-surface-container text-secondary font-medium">
+                    مجدول / Scheduled
+                  </span>
+<span class="inline-flex items-center gap-1 px-space-xs py-space-2xs rounded text-label-sm font-label-sm bg-surface-tint/10 text-primary font-semibold">
+<span class="material-symbols-outlined text-label-sm">vital_signs</span>
+                    العلامات الحيوية: مكتملة
+                  </span>
+</div>
+<div class="flex items-center gap-space-md mt-space-xs text-body-sm font-body-sm text-secondary flex-wrap">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-label-md">schedule</span>
+                    وصول: <span class="font-mono-code">10:28 ص</span>
+</span>
+<span class="flex items-center gap-1 text-primary font-semibold">
+<span class="material-symbols-outlined text-label-md">timer</span>
+                    انتظار: 10 دقائق
+                  </span>
+<span class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-label-md text-tertiary">stethoscope</span>
+                    د. سارة القحطاني (عيادة 102)
+                  </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-xs self-end sm:self-center w-full sm:w-auto justify-end">
+<span class="px-space-sm py-1 rounded-full text-label-sm font-label-sm bg-surface-container-high text-on-surface-variant font-medium">
+                جاهز للنداء
+              </span>
+<button class="h-8 px-space-sm rounded-lg bg-surface-container-high text-on-surface hover:bg-primary hover:text-on-primary text-label-md font-label-md flex items-center gap-1 transition-all" type="button">
+<span class="material-symbols-outlined text-label-md">notifications_active</span>
+                نداء للمريض
+              </button>
+<button class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high" type="button">
+<span class="material-symbols-outlined text-headline-sm">swap_horiz</span>
+</button>
+</div>
+</div>
+<!-- Queue Item 3: Waiting - Needs Vitals -->
+<div class="p-space-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-md hover:bg-surface-container-low transition-colors">
+<div class="flex items-start gap-space-md flex-1">
+<div class="flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-surface-container-high text-on-surface shrink-0">
+<span class="font-label-sm text-label-sm text-secondary">تذكرة</span>
+<span class="font-mono-metric text-headline-sm font-bold leading-none">A-105</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">فاطمة ناصر العتيبي</span>
+<span class="font-mono-code text-mono-code text-secondary">#MRN-19034</span>
+<span class="inline-flex items-center px-space-xs py-space-2xs rounded text-label-sm font-label-sm bg-tertiary-fixed text-on-tertiary-fixed font-medium">
+                    متابعة نتائج / Follow-up
+                  </span>
+<span class="inline-flex items-center gap-1 px-space-xs py-space-2xs rounded text-label-sm font-label-sm bg-error-container/60 text-error font-semibold animate-pulse">
+<span class="material-symbols-outlined text-label-sm">assignment_late</span>
+                    مطلوب فحص العلامات الحيوية
+                  </span>
+</div>
+<div class="flex items-center gap-space-md mt-space-xs text-body-sm font-body-sm text-secondary flex-wrap">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-label-md">schedule</span>
+                    وصول: <span class="font-mono-code">10:32 ص</span>
+</span>
+<span class="flex items-center gap-1 text-primary font-semibold">
+<span class="material-symbols-outlined text-label-md">timer</span>
+                    انتظار: 6 دقائق
+                  </span>
+<span class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-label-md text-primary">stethoscope</span>
+                    د. أحمد المنصوري (عيادة 101)
+                  </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-xs self-end sm:self-center w-full sm:w-auto justify-end">
+<button class="h-8 px-space-sm rounded-lg bg-tertiary text-on-tertiary hover:bg-tertiary-container text-label-md font-label-md flex items-center gap-1 transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-label-md">monitor_heart</span>
+                إدخال القياسات الحيوية
+              </button>
+<button class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high" title="تحويل أو تأجيل" type="button">
+<span class="material-symbols-outlined text-headline-sm">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Queue Item 4: Inside Consultation (Active) -->
+<div class="p-space-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-md bg-surface-container/40">
+<div class="flex items-start gap-space-md flex-1">
+<div class="flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-tertiary-fixed text-on-tertiary-fixed shrink-0">
+<span class="font-label-sm text-label-sm">تذكرة</span>
+<span class="font-mono-metric text-headline-sm font-bold leading-none">C-301</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">عبد الرحمن ياسين باوزير</span>
+<span class="font-mono-code text-mono-code text-secondary">#MRN-60912</span>
+<span class="inline-flex items-center px-space-xs py-space-2xs rounded text-label-sm font-label-sm bg-surface-container text-secondary font-medium">
+                    كشف شامل / General
+                  </span>
+<span class="inline-flex items-center gap-1 px-space-xs py-space-2xs rounded text-label-sm font-label-sm bg-primary/10 text-primary font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                    داخل العيادة منذ 18 دقيقة
+                  </span>
+</div>
+<div class="flex items-center gap-space-md mt-space-xs text-body-sm font-body-sm text-secondary flex-wrap">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-label-md">meeting_room</span>
+                    غرفة 103 - طب أسرة
+                  </span>
+<span class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-label-md text-secondary">person</span>
+                    د. خالد الرويلي
+                  </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-xs self-end sm:self-center w-full sm:w-auto justify-end">
+<span class="px-space-sm py-1 rounded-full text-label-sm font-label-sm bg-secondary-container text-on-secondary-container font-semibold">
+                جلسة كشف نشطة
+              </span>
+<button class="h-8 px-space-sm rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-container-highest text-label-md font-label-md flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-label-md">clinical_notes</span>
+                سجل الزيارة
+              </button>
+</div>
+</div>
+<!-- Queue Item 5: Flagged No-Show Risk -->
+<div class="p-space-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-md hover:bg-surface-container-low transition-colors">
+<div class="flex items-start gap-space-md flex-1">
+<div class="flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-surface-container text-secondary shrink-0">
+<span class="font-label-sm text-label-sm">تذكرة</span>
+<span class="font-mono-metric text-headline-sm font-bold leading-none">B-209</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">بندر مشعل الغامدي</span>
+<span class="font-mono-code text-mono-code text-secondary">#MRN-72301</span>
+<span class="inline-flex items-center px-space-xs py-space-2xs rounded text-label-sm font-label-sm bg-surface-container text-secondary font-medium">
+                    موعد مجدول (10:00 ص)
+                  </span>
+<span class="inline-flex items-center gap-1 px-space-xs py-space-2xs rounded text-label-sm font-label-sm bg-error-container text-error font-semibold">
+                    متأخر 38 دقيقة
+                  </span>
+</div>
+<div class="flex items-center gap-space-md mt-space-xs text-body-sm font-body-sm text-secondary flex-wrap">
+<span class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-label-md text-tertiary">stethoscope</span>
+                    د. سارة القحطاني (عيادة 102)
+                  </span>
+<span class="text-error font-medium">لم يتم تأكيد الحضور في مكتب الاستقبال</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-xs self-end sm:self-center w-full sm:w-auto justify-end">
+<button class="h-8 px-space-sm rounded-lg bg-error text-on-error hover:bg-on-error-container text-label-md font-label-md flex items-center gap-1 transition-all" type="button">
+<span class="material-symbols-outlined text-label-md">person_off</span>
+                تسجيل غياب No-Show
+              </button>
+<button class="h-8 px-space-sm rounded-lg bg-surface-container-high text-on-surface text-label-md font-label-md flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-label-md">call</span>
+                اتصال للتأكيد
+              </button>
+</div>
+</div>
+</div>
+<!-- Pagination & Realtime Status Bar -->
+<div class="p-space-sm bg-surface-container-low/40 flex items-center justify-between text-body-sm font-body-sm text-secondary">
+<span class="font-mono-code text-mono-code">عرض 5 من أصل 12 مريض نشط</span>
+<div class="flex items-center gap-space-xs">
+<button class="px-space-sm py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm hover:bg-surface-container-high disabled:opacity-50" disabled="" type="button">السابق</button>
+<span class="font-mono-code text-mono-code px-2">1 / 3</span>
+<button class="px-space-sm py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm hover:bg-surface-container-high" type="button">التالي</button>
+</div>
+</div>
+</div>
+<!-- Quick Operational Alerts / Audio Visualizer -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-headline-lg">tv</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-bold">شاشات صالة الانتظار العامة (Main Waiting Display)</span>
+<span class="font-body-sm text-body-sm text-secondary">متصلة بشاشة العرض الردهة الرئيسية وشاشات المصاعد - آخر نداء: التذكرة A-104</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="px-space-md py-1.5 rounded-lg bg-surface-container-high text-on-surface text-label-md font-label-md flex items-center gap-1 hover:bg-surface-container-highest" type="button">
+<span class="material-symbols-outlined text-label-md">open_in_new</span>
+            فتح شاشة النداء للجمهور
+          </button>
+</div>
+</div>
+</div>
+<!-- Triage & Quick Vitals Entry Panel (4 Cols on XL) -->
+<div class="xl:col-span-4 flex flex-col gap-space-md">
+<!-- Quick Vitals Entry Form Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col">
+<div class="flex items-center justify-between pb-space-sm mb-space-md bg-surface-container-low/40 -mx-space-lg -mt-space-lg p-space-md rounded-t-xl">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-headline-sm">vital_signs</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">فحص العلامات الحيوية السريع (Triage)</span>
+</div>
+<span class="font-mono-code text-mono-code bg-surface-container text-secondary px-space-xs py-space-2xs rounded">مكتب الفرز 1</span>
+</div>
+<!-- Selected Patient for Vitals Badge -->
+<div class="p-space-sm rounded-xl bg-surface-container-low mb-space-md flex items-center justify-between">
+<div class="flex items-center gap-space-sm overflow-hidden">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-headline-sm shrink-0">
+              ف
+            </div>
+<div class="flex flex-col truncate">
+<span class="font-label-md text-label-md text-on-surface font-bold truncate">فاطمة ناصر العتيبي</span>
+<span class="font-mono-code text-mono-code text-secondary">#A-105 • #MRN-19034</span>
+</div>
+</div>
+<button class="text-primary font-label-sm text-label-sm hover:underline shrink-0" type="button">تغيير</button>
+</div>
+<!-- Vitals Input Grid -->
+<form class="flex flex-col gap-space-md" onsubmit="event.preventDefault();">
+<!-- Blood Pressure (BP) -->
+<div class="flex flex-col gap-space-2xs">
+<div class="flex justify-between items-center">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-label-sm text-error">cardiology</span>
+                ضغط الدم (Blood Pressure)
+              </label>
+<span class="font-mono-code text-mono-code text-secondary">mmHg</span>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="relative">
+<input class="w-full h-10 px-space-sm bg-surface-container-low text-on-surface rounded-lg font-mono-metric text-body-md focus:ring-1 focus:ring-primary focus:outline-none" placeholder="الانقباضي Sys" type="number" value="128"/>
+<span class="absolute left-space-sm top-1/2 -translate-y-1/2 text-secondary font-mono-code text-mono-code">SYS</span>
+</div>
+<div class="relative">
+<input class="w-full h-10 px-space-sm bg-surface-container-low text-on-surface rounded-lg font-mono-metric text-body-md focus:ring-1 focus:ring-primary focus:outline-none" placeholder="الانبساطي Dia" type="number" value="84"/>
+<span class="absolute left-space-sm top-1/2 -translate-y-1/2 text-secondary font-mono-code text-mono-code">DIA</span>
+</div>
+</div>
+</div>
+<!-- Heart Rate & Body Temp -->
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-label-sm text-error">favorite</span>
+                نبض القلب (Pulse)
+              </label>
+<div class="relative">
+<input class="w-full h-10 px-space-sm bg-surface-container-low text-on-surface rounded-lg font-mono-metric text-body-md focus:ring-1 focus:ring-primary focus:outline-none" type="number" value="76"/>
+<span class="absolute left-space-sm top-1/2 -translate-y-1/2 text-secondary font-mono-code text-mono-code">BPM</span>
+</div>
+</div>
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-label-sm text-tertiary">device_thermostat</span>
+                الحرارة (Temp)
+              </label>
+<div class="relative">
+<input class="w-full h-10 px-space-sm bg-surface-container-low text-on-surface rounded-lg font-mono-metric text-body-md focus:ring-1 focus:ring-primary focus:outline-none" type="text" value="36.8"/>
+<span class="absolute left-space-sm top-1/2 -translate-y-1/2 text-secondary font-mono-code text-mono-code">°C</span>
+</div>
+</div>
+</div>
+<!-- Oxygen SpO2 & Respiratory Rate -->
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-label-sm text-primary">air</span>
+                الأكسجين (SpO2)
+              </label>
+<div class="relative">
+<input class="w-full h-10 px-space-sm bg-surface-container-low text-on-surface rounded-lg font-mono-metric text-body-md focus:ring-1 focus:ring-primary focus:outline-none" type="number" value="98"/>
+<span class="absolute left-space-sm top-1/2 -translate-y-1/2 text-secondary font-mono-code text-mono-code">%</span>
+</div>
+</div>
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-label-sm text-secondary">file_copy</span>
+                معدل التنفس (Resp)
+              </label>
+<div class="relative">
+<input class="w-full h-10 px-space-sm bg-surface-container-low text-on-surface rounded-lg font-mono-metric text-body-md focus:ring-1 focus:ring-primary focus:outline-none" type="number" value="16"/>
+<span class="absolute left-space-sm top-1/2 -translate-y-1/2 text-secondary font-mono-code text-mono-code">rpm</span>
+</div>
+</div>
+</div>
+<!-- Weight, Height & Calculated BMI -->
+<div class="p-space-sm rounded-xl bg-surface-container-low flex flex-col gap-space-xs">
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary">الوزن (كجم)</span>
+<input class="h-8 px-space-sm bg-surface-container-lowest text-on-surface rounded font-mono-metric text-body-sm focus:outline-none" type="number" value="74"/>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary">الطول (سم)</span>
+<input class="h-8 px-space-sm bg-surface-container-lowest text-on-surface rounded font-mono-metric text-body-sm focus:outline-none" type="number" value="168"/>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-xs mt-space-2xs">
+<span class="font-label-sm text-label-sm text-secondary">مؤشر كتلة الجسم (BMI):</span>
+<span class="font-mono-metric text-mono-metric font-bold text-on-surface">26.2 <span class="font-normal text-label-sm text-secondary">(وزن زائد طفيف)</span></span>
+</div>
+</div>
+<!-- Triage Priority Level -->
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold">مستوى أولوية الفرز (Triage Category)</label>
+<div class="grid grid-cols-3 gap-space-xs">
+<button class="py-1.5 px-space-xs rounded-lg text-label-sm font-label-sm bg-error-container text-on-error-container font-bold flex flex-col items-center" type="button">
+<span>عالي / أحمر</span>
+<span class="font-mono-code text-[9px] opacity-80">أولوية عاجلة</span>
+</button>
+<button class="py-1.5 px-space-xs rounded-lg text-label-sm font-label-sm bg-surface-container text-on-surface font-medium hover:bg-surface-container-high flex flex-col items-center" type="button">
+<span>متوسط / أصفر</span>
+<span class="font-mono-code text-[9px] opacity-80">كشف اعتيادي</span>
+</button>
+<button class="py-1.5 px-space-xs rounded-lg text-label-sm font-label-sm bg-primary-container text-on-primary-container font-bold flex flex-col items-center shadow-sm" type="button">
+<span>مستقر / أخضر</span>
+<span class="font-mono-code text-[9px] opacity-80">روتين طبيعي</span>
+</button>
+</div>
+</div>
+<!-- Clinical Nurse Quick Note -->
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold">ملاحظات التمريض السريرية</label>
+<textarea class="w-full p-space-sm bg-surface-container-low text-on-surface rounded-lg text-body-sm font-body-sm focus:ring-1 focus:ring-primary focus:outline-none resize-none" placeholder="أعراض مصاحبة، دوار، صيام..." rows="2">المريضة تشكو من صداع نبضي خفيف منذ الصباح، ضغط الدم مستقر مقارنة بآخر زيارة.</textarea>
+</div>
+<!-- Submit Vitals & Push To Doctor -->
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="flex-1 h-10 rounded-xl bg-primary text-on-primary hover:bg-primary-container font-label-md text-label-md font-bold flex items-center justify-center gap-1 shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-headline-sm">check_circle</span>
+              حفظ وترقية للمعاينة
+            </button>
+<button class="w-10 h-10 rounded-xl bg-surface-container text-secondary flex items-center justify-center hover:bg-surface-container-high" title="إعادة ضبط الحقول" type="reset">
+<span class="material-symbols-outlined text-headline-sm">restart_alt</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Room Status & Doctor Occupancy Snapshot -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between pb-space-xs">
+<span class="font-label-md text-label-md text-on-surface font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-label-md text-primary">meeting_room</span>
+            إشغال العيادات الآن (Room Status)
+          </span>
+<span class="font-mono-code text-mono-code text-secondary">3 غرف مشغولة</span>
+</div>
+<div class="flex flex-col gap-space-xs">
+<div class="p-space-xs px-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="font-label-sm text-label-sm font-bold text-on-surface">غرفة 101:</span>
+<span class="font-body-sm text-body-sm text-secondary">د. أحمد المنصوري</span>
+</div>
+<span class="font-mono-code text-mono-code text-error font-semibold">مشغول (18د)</span>
+</div>
+<div class="p-space-xs px-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-label-sm font-bold text-on-surface">غرفة 102:</span>
+<span class="font-body-sm text-body-sm text-secondary">د. سارة القحطاني</span>
+</div>
+<span class="font-mono-code text-mono-code text-primary font-semibold">شاغرة وجاهزة</span>
+</div>
+<div class="p-space-xs px-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="font-label-sm text-label-sm font-bold text-on-surface">غرفة 103:</span>
+<span class="font-body-sm text-body-sm text-secondary">د. خالد الرويلي</span>
+</div>
+<span class="font-mono-code text-mono-code text-error font-semibold">مشغول (6د)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Component: Fast Walk-In Patient Registration (Initially Hidden, Toggled by JS) -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center bg-inverse-surface/40 backdrop-blur-sm p-space-md" id="quick-checkin-modal">
+<div class="bg-surface-container-lowest rounded-xl max-w-xl w-full shadow-2xl overflow-hidden flex flex-col">
+<div class="p-space-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-headline-sm">how_to_reg</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">تسجيل وصول سريع (Walk-in Check-in)</span>
+<span class="font-body-sm text-body-sm text-secondary">إصدار تذكرة دور فورية لمريض بدون حجز مسبق</span>
+</div>
+</div>
+<button class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary hover:text-on-surface" onclick="document.getElementById('quick-checkin-modal').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-headline-sm">close</span>
+</button>
+</div>
+<div class="p-space-lg flex flex-col gap-space-md">
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold">رقم الهوية الوطنية / الإقامة / MRN</label>
+<div class="flex gap-space-xs">
+<input class="flex-1 h-10 px-space-sm bg-surface-container-low text-on-surface rounded-lg font-mono-code text-body-md focus:ring-1 focus:ring-primary focus:outline-none" placeholder="10xxxxxxxx أو MRN-XXXX" type="text"/>
+<button class="h-10 px-space-md rounded-lg bg-surface-container-high text-on-surface text-label-md font-label-md hover:bg-surface-container-highest" type="button">تحقق من الملف</button>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold">اسم المريض الكامل</label>
+<input class="h-10 px-space-sm bg-surface-container-low text-on-surface rounded-lg text-body-sm font-body-sm focus:ring-1 focus:ring-primary focus:outline-none" placeholder="الاسم ثلاثياً" type="text"/>
+</div>
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold">رقم الجوال</label>
+<input class="h-10 px-space-sm bg-surface-container-low text-on-surface rounded-lg font-mono-code text-body-sm focus:ring-1 focus:ring-primary focus:outline-none text-left" dir="ltr" placeholder="05xxxxxxxx" type="tel"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold">التوجيه للعيادة</label>
+<select class="h-10 px-space-sm bg-surface-container-low text-on-surface rounded-lg text-body-sm font-body-sm focus:outline-none">
+<option>عيادة الباطنة العامة (غرفة 101)</option>
+<option>عيادة القلب والأوعية (غرفة 102)</option>
+<option>عيادة الفرز السريع (غرفة 103)</option>
+</select>
+</div>
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold">درجة الأولوية</label>
+<select class="h-10 px-space-sm bg-surface-container-low text-on-surface rounded-lg text-body-sm font-body-sm focus:outline-none">
+<option>عادي / اعتيادي (Standard)</option>
+<option>كبار سن / ذوي احتياجات (Priority)</option>
+<option>حالة طارئة عاجلة (Urgent Triage)</option>
+</select>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-secondary">التذكرة المقترحة التالية:</span>
+<span class="font-mono-metric text-headline-sm font-bold text-primary">#A-106</span>
+</div>
+</div>
+<div class="p-space-md bg-surface-container-low/50 flex items-center justify-end gap-space-sm">
+<button class="px-space-md py-2 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md" onclick="document.getElementById('quick-checkin-modal').classList.add('hidden')" type="button">إلغاء</button>
+<button class="px-space-lg py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-bold shadow-sm" onclick="document.getElementById('quick-checkin-modal').classList.add('hidden')" type="button">تأكيد وطباعة التذكرة</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Simple search filter interaction
+  document.getElementById('queue-search')?.addEventListener('input', function(e) {
+    const term = e.target.value.toLowerCase().trim();
+    // Micro interaction: Visual response to searching
+    console.log("Filtering queue with term:", term);
+  });
+</script></main></div></body></html>

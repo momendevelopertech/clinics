@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-tertiary-fixed":"#001a42","secondary-fixed":"#d8e3fb","on-secondary-fixed-variant":"#3c475a","surface-tint":"#006a61","on-secondary":"#ffffff","tertiary-container":"#2170e4","on-primary":"#ffffff","on-surface":"#0b1c30","outline-variant":"#bcc9c6","primary-container":"#008378","secondary-fixed-dim":"#bcc7de","surface-container-high":"#dce9ff","surface-dim":"#cbdbf5","surface-container":"#e5eeff","surface-bright":"#f8f9ff","error-container":"#ffdad6","surface":"#f8f9ff","on-secondary-container":"#586377","background":"#f8f9ff","outline":"#6d7a77","on-surface-variant":"#3d4947","inverse-surface":"#213145","on-tertiary-fixed-variant":"#004395","tertiary-fixed":"#d8e2ff","primary-fixed":"#89f5e7","on-secondary-fixed":"#111c2d","secondary":"#545f73","on-background":"#0b1c30","tertiary-fixed-dim":"#adc6ff","tertiary":"#0058be","on-tertiary":"#ffffff","surface-variant":"#d3e4fe","inverse-on-surface":"#eaf1ff","primary-fixed-dim":"#6bd8cb","secondary-container":"#d5e0f8","surface-container-highest":"#d3e4fe","surface-container-low":"#eff4ff","on-tertiary-container":"#fefcff","error":"#ba1a1a","primary":"#00685f","on-error-container":"#93000a","on-error":"#ffffff","surface-container-lowest":"#ffffff","on-primary-fixed":"#00201d","on-primary-container":"#f4fffc","inverse-primary":"#6bd8cb","on-primary-fixed-variant":"#005049"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-xs":"0.25rem","sidebar-width":"17.5rem","gutter":"1rem","subnav-width":"15rem","space-2xs":"0.125rem","space-base":"1rem","space-md":"0.75rem","space-sm":"0.5rem","space-xl":"2rem","space-lg":"1.5rem","space-2xl":"3rem"},"fontFamily":{"headline-sm":["IBM Plex Sans"],"label-md":["IBM Plex Sans"],"body-sm":["IBM Plex Sans"],"body-md":["IBM Plex Sans"],"headline-xl":["IBM Plex Sans"],"body-lg":["IBM Plex Sans"],"mono-metric":["JetBrains Mono"],"headline-lg":["IBM Plex Sans"],"headline-xl-mobile":["IBM Plex Sans"],"mono-code":["JetBrains Mono"],"label-sm":["IBM Plex Sans"]},"fontSize":{"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"400"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"headline-xl":["28px",{"lineHeight":"36px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-lg":["15px",{"lineHeight":"22px","letterSpacing":"0em","fontWeight":"400"}],"mono-metric":["13px",{"lineHeight":"16px","letterSpacing":"0em","fontWeight":"500"}],"headline-lg":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-xl-mobile":["22px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"mono-code":["11px",{"lineHeight":"14px","letterSpacing":"0.02em","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.025em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed right-0 top-0 h-full w-sidebar-width bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between overflow-y-auto"><div class="flex flex-col"><div class="h-16 px-space-base flex items-center justify-between bg-surface-container-lowest"><div class="flex items-center gap-space-sm"><img alt="ClinicOS Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UWqmh1VUKLrHVYUqgHVYiHDUSuXjk5E0Ye9Q4lT54dQPmDAn9E7rmF_QGWfCIZJNfWPbunOASJyuIMNd76tNngZvhB11FuriJdV2kEItTwJfqLsO0PzmyZUBOD6DrlBtGgzbRxcBXhRrV0Zig1Y3EW_zLf7xpRkufAljm30qY93yRJuwbLtlwR7OBhApUw3cWyazHFYy9qruImfdqnIk0rGC7noaktUCRpAmTgkLzav1vjICWY7b8p2UYC"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary leading-none">ClinicOS</span><span class="font-label-sm text-label-sm text-secondary leading-tight mt-space-2xs">نظام إدارة العيادات 2027</span></div></div><span class="font-mono-code text-mono-code bg-surface-container text-secondary px-space-xs py-space-2xs rounded">v4.2</span></div><div class="px-space-base py-space-sm"><div class="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between gap-space-xs"><div class="flex items-center gap-space-xs overflow-hidden"><span class="material-symbols-outlined text-primary text-headline-sm shrink-0">domain</span><div class="flex flex-col truncate"><span class="font-label-sm text-label-sm text-on-surface truncate">فرع الرياض التخصصي</span><span class="font-mono-code text-mono-code text-on-surface-variant truncate">عيادة 302 - باطنة وقلب</span></div></div><span class="material-symbols-outlined text-outline text-headline-sm shrink-0">unfold_more</span></div></div><div class="px-space-sm mt-space-xs"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">الاستقبال وإدارة المرضى</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a aria-current="page" class="flex items-center px-space-md py-space-sm rounded-xl transition-all bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-path="appointments" href="#">المواعيد وجدول الحجز</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="check-in-queue" href="#">تسجيل الوصول والانتظار</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="patients" href="#">سجل المرضى والملفات</a></nav></div><div class="px-space-sm mt-space-md"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">القسم الطبي والسريري</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="visits-consultation" href="#">غرفة الكشف والزيارة</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="prescriptions-orders" href="#">الروشتة والأوامر الطبية</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="lab-imaging" href="#">الفحوصات والنتائج</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="medical-timeline" href="#">المخطط الزمني للمريض</a></nav></div><div class="px-space-sm mt-space-md mb-space-base"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">الإدارة والعمليات</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="billing-invoices" href="#">الفوترة والمدفوعات</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="master-catalogs" href="#">كاتلوج الخدمات والأدوية</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="branches-rooms" href="#">الفروع والغرف</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="audit-security" href="#">المستخدمين وسجل التدقيق</a></nav></div></div><div class="p-space-base bg-surface-container-low"><div class="flex items-center justify-between"><div class="flex items-center gap-space-xs"><span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span><span class="font-label-sm text-label-sm text-secondary">خادم السجلات: متصل</span></div><span class="font-mono-code text-mono-code text-secondary">RT-24ms</span></div></div></aside><div class="pr-sidebar-width min-h-screen bg-surface"><header class="fixed top-0 right-sidebar-width left-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md flex-1 max-w-xl"><div class="relative w-full"><span class="material-symbols-outlined text-on-surface-variant absolute right-space-md top-1/2 -translate-y-1/2 text-headline-sm">search</span><input class="w-full h-10 pr-space-2xl pl-space-md bg-surface-container-low text-on-surface placeholder-secondary font-body-md text-body-md rounded-xl focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" placeholder="بحث شامل عن مريض (الاسم، رقم الهوية الوطنية، رقم الملف الطبي MRN)..." type="text"/></div><div class="hidden lg:flex items-center gap-space-xs px-space-sm py-space-xs rounded bg-surface-container text-on-surface"><span class="w-2 h-2 rounded-full bg-primary"></span><span class="font-label-sm text-label-sm font-semibold">متصل - فرع الرياض</span></div></div><div class="flex items-center gap-space-md"><button class="hidden sm:flex items-center gap-space-xs h-10 px-space-md rounded-xl bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-[0_1px_8px_rgba(0,0,0,0.04)]" type="button"><span class="material-symbols-outlined text-headline-sm">add_circle</span><span class="font-label-md text-label-md">حجز جديد / مريض جديد</span></button><button class="relative w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-headline-sm">notifications</span><span class="absolute -top-1 -left-1 flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-error text-on-error font-mono-code text-mono-code font-bold">3</span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="hidden md:flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface text-right">د. أحمد المنصوري</span><span class="font-label-sm text-label-sm text-secondary text-right">استشاري باطنة وقلب</span></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9cpdmaCWhOFyr05pJyBoIMkSi4anLFma2lf5y1hIpPALoNjhKq6b1h9dz-FYVUtajIuGSaQUG8t913et7mmt7SfWLbOiXGDUWIr9B_YvFCegyI90gD7qqQ5A3F61-9FpH8PSXr_i8z4Tclvpodt3KNYqJN9Bi-Fr9Nh2fT-KJKtJiGGlRqSb0L0xdezJFfvFh0wxaDxYfjnke2vpYzC3qijjc7nejC33tK4x2PKI_INk1nuXl4QeRUA"/></div></div></header><main class="w-full pt-16 bg-surface px-space-lg pb-space-2xl"><div class="flex flex-col w-full">
+<!-- Interactive Scheduler State Management Script -->
+<script>
+    function switchScheduleView(viewType, btnElem) {
+      document.querySelectorAll('.view-switch-btn').forEach(btn => {
+        btn.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+        btn.classList.add('bg-transparent', 'text-secondary');
+      });
+      btnElem.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+      btnElem.classList.remove('bg-transparent', 'text-secondary');
+      
+      const badge = document.getElementById('active-view-label');
+      if (badge) {
+        if (viewType === 'day') badge.innerText = 'عرض اليوم الفعلي: الإثنين، 24 أكتوبر 2027';
+        else if (viewType === 'week') badge.innerText = 'عرض الأسبوع الجاري: 22 - 28 أكتوبر 2027';
+        else badge.innerText = 'نظرة عامة شهرية: أكتوبر 2027';
+      }
+    }
+
+    function toggleQuickDrawer() {
+      const drawer = document.getElementById('quick-side-drawer');
+      if (drawer.classList.contains('translate-x-full')) {
+        drawer.classList.remove('translate-x-full');
+      } else {
+        drawer.classList.add('translate-x-full');
+      }
+    }
+
+    function triggerCheckIn(patientMrn, btn) {
+      btn.innerHTML = '<span class="material-symbols-outlined text-label-sm animate-spin">sync</span> جاري التسجيل...';
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.parentElement.innerHTML = '<span class="px-space-xs py-space-2xs rounded bg-primary-container text-on-primary-container font-mono-code text-mono-code flex items-center gap-space-2xs"><span class="material-symbols-outlined text-label-sm">check_circle</span> تم الوصول في العيادة</span>';
+        const waitingKpi = document.getElementById('kpi-waiting-count');
+        if (waitingKpi) waitingKpi.innerText = parseInt(waitingKpi.innerText) + 1;
+      }, 550);
+    }
+  </script>
+<!-- Top Ribbon: Operational Title, Schedule Controls & Filters -->
+<section class="flex flex-col gap-space-md mb-space-lg">
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-md">
+<!-- Context & Dynamic Date Nav -->
+<div class="flex items-center gap-space-md flex-wrap">
+<div class="flex items-center gap-space-xs bg-surface-container-lowest p-space-2xs rounded-xl shadow-sm">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container hover:text-on-surface transition-colors" title="اليوم السابق" type="button">
+<span class="material-symbols-outlined text-headline-sm">chevron_right</span>
+</button>
+<button class="px-space-md h-8 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors" type="button">
+            اليوم (الآن)
+          </button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container hover:text-on-surface transition-colors" title="اليوم التالي" type="button">
+<span class="material-symbols-outlined text-headline-sm">chevron_left</span>
+</button>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-headline-lg">calendar_today</span>
+<div class="flex flex-col">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">جدولة العيادات والمواعيد التخصصية</h1>
+<span class="font-mono-metric text-mono-metric text-secondary" id="active-view-label">عرض الأسبوع الجاري: 22 - 28 أكتوبر 2027</span>
+</div>
+</div>
+<!-- Safe Status System Beacon -->
+<div class="inline-flex items-center gap-space-xs px-space-md py-space-2xs rounded-full bg-surface-container-low text-primary shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span class="font-label-sm text-label-sm font-semibold">المزامنة مع السجلات: نشطة وفورية</span>
+</div>
+</div>
+<!-- Action Cluster: View Switcher & Booking -->
+<div class="flex items-center gap-space-sm flex-wrap">
+<!-- View Scope Tabs -->
+<div class="flex items-center p-space-2xs rounded-xl bg-surface-container-low shadow-sm">
+<button class="view-switch-btn px-space-md h-8 rounded-lg font-label-md text-label-md text-secondary transition-all" onclick="switchScheduleView('day', this)" type="button">
+            يومي
+          </button>
+<button class="view-switch-btn px-space-md h-8 rounded-lg font-label-md text-label-md bg-primary text-on-primary shadow-sm transition-all" onclick="switchScheduleView('week', this)" type="button">
+            أسبوعي
+          </button>
+<button class="view-switch-btn px-space-md h-8 rounded-lg font-label-md text-label-md text-secondary transition-all" onclick="switchScheduleView('month', this)" type="button">
+            شهري
+          </button>
+</div>
+<!-- Filter Drawer Trigger / Direct Booking -->
+<button class="h-10 px-space-md rounded-xl bg-surface-container-lowest text-on-surface hover:bg-surface-container transition-colors shadow-sm flex items-center gap-space-xs font-label-md text-label-md" onclick="toggleQuickDrawer()" type="button">
+<span class="material-symbols-outlined text-headline-sm text-secondary">view_sidebar</span>
+<span>لوحة الانتظار والفرز (6)</span>
+</button>
+<button class="h-10 px-space-lg rounded-xl bg-primary text-on-primary hover:bg-primary-container transition-all shadow-sm flex items-center gap-space-xs font-label-md text-label-md" type="button">
+<span class="material-symbols-outlined text-headline-sm">calendar_add_on</span>
+<span>حجز موعد جديد سريع</span>
+</button>
+</div>
+</div>
+<!-- Multi-Axis Filter Bar -->
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-wrap items-center justify-between gap-space-md">
+<div class="flex flex-wrap items-center gap-space-md flex-1">
+<!-- Doctor Selector -->
+<div class="flex items-center gap-space-xs bg-surface-container-low px-space-sm py-space-2xs rounded-xl">
+<span class="material-symbols-outlined text-secondary text-headline-sm">stethoscope</span>
+<span class="font-label-sm text-label-sm text-secondary">الأطباء المتاحون:</span>
+<div class="flex items-center gap-space-2xs">
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm">د. المنصوري</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container text-secondary font-label-sm text-label-sm">د. القحطاني</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container text-secondary font-label-sm text-label-sm">د. الرويلي</span>
+</div>
+<button class="w-6 h-6 flex items-center justify-center text-secondary hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-headline-sm">tune</span>
+</button>
+</div>
+<!-- Room / Clinic Filter -->
+<div class="flex items-center gap-space-xs bg-surface-container-low px-space-sm py-space-2xs rounded-xl">
+<span class="material-symbols-outlined text-secondary text-headline-sm">meeting_room</span>
+<span class="font-label-sm text-label-sm text-secondary">الجناح:</span>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">أجنحة القلب التخصصية (301-304)</span>
+</div>
+<!-- Conflict Diagnostic Flag -->
+<div class="flex items-center gap-space-xs px-space-sm py-space-2xs rounded-xl bg-surface-container-low text-primary">
+<span class="material-symbols-outlined text-headline-sm">verified</span>
+<span class="font-label-sm text-label-sm font-semibold">تحليل الجدولة: 0 تعارض في الغرف، لا يوجد تداخل للأطباء</span>
+</div>
+</div>
+<!-- Quick Room Availability Stat Meter -->
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm text-secondary">إشغال العيادات:</span>
+<span class="font-mono-metric text-mono-metric text-on-surface font-bold">78%</span>
+</div>
+<div class="w-24 h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 78%;"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- High-Density Clinical KPIs Strip -->
+<section class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-space-sm mb-space-lg">
+<!-- Total Booked -->
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-2xs">
+<span class="font-label-sm text-label-sm text-secondary">إجمالي المواعيد</span>
+<span class="material-symbols-outlined text-secondary text-headline-sm">event_note</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold">38</span>
+<span class="font-mono-code text-mono-code text-primary bg-surface-container px-space-2xs rounded">سعة 45</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-space-2xs">اليوم بفرع الرياض التخصصي</span>
+</div>
+<!-- Confirmed -->
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-2xs">
+<span class="font-label-sm text-label-sm text-secondary">مؤكدة بالحضور</span>
+<span class="material-symbols-outlined text-primary text-headline-sm">task_alt</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-xl text-headline-xl text-primary font-bold">24</span>
+<span class="font-mono-code text-mono-code text-primary bg-primary-fixed text-on-primary-fixed px-space-2xs rounded font-bold">63.1%</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-space-2xs">تم استلام تأكيد SMS / التطبيق</span>
+</div>
+<!-- Checked-in & Waiting -->
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-2xs">
+<span class="font-label-sm text-label-sm text-secondary">في صالة الانتظار</span>
+<span class="material-symbols-outlined text-tertiary text-headline-sm">hourglass_top</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-xl text-headline-xl text-tertiary font-bold" id="kpi-waiting-count">6</span>
+<span class="font-mono-code text-mono-code text-tertiary bg-tertiary-fixed text-on-tertiary-fixed px-space-2xs rounded font-bold">جاهز للفحص</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-space-2xs">متوسط الانتظار: 8 دقائق</span>
+</div>
+<!-- Completed -->
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-2xs">
+<span class="font-label-sm text-label-sm text-secondary">استشارات مكتملة</span>
+<span class="material-symbols-outlined text-secondary text-headline-sm">check_circle</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold">8</span>
+<span class="font-mono-code text-mono-code text-secondary bg-surface-container px-space-2xs rounded">معتمدة بالملف</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-space-2xs">تم إصدار الوصفات وإغلاق الزيارة</span>
+</div>
+<!-- No-Show Alert -->
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-2xs">
+<span class="font-label-sm text-label-sm text-secondary">عدم حضور (No-Show)</span>
+<span class="material-symbols-outlined text-error text-headline-sm">person_cancel</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-xl text-headline-xl text-error font-bold">2</span>
+<span class="font-mono-code text-mono-code text-error bg-error-container text-on-error-container px-space-2xs rounded font-bold">5.2%</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-space-2xs">إعادة الاتصال الآلي مُفعّلة</span>
+</div>
+<!-- Cancelled -->
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-2xs">
+<span class="font-label-sm text-label-sm text-secondary">المواعيد الملغاة</span>
+<span class="material-symbols-outlined text-outline text-headline-sm">event_busy</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-xl text-headline-xl text-outline font-bold">1</span>
+<span class="font-mono-code text-mono-code text-secondary bg-surface-container px-space-2xs rounded">طلب مريض</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-space-2xs">أعيد جدولة الموعد للأسبوع القادم</span>
+</div>
+</section>
+<!-- Operational Multi-Column Calendar Grid Area -->
+<section class="flex gap-space-md w-full relative">
+<!-- Schedule View Frame -->
+<div class="flex-1 bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Calendar Column Headers: Doctors & Room Assignees -->
+<div class="grid grid-cols-12 bg-surface-container-low py-space-sm px-space-md">
+<!-- Time Scale Index -->
+<div class="col-span-1 text-center font-label-sm text-label-sm text-secondary font-semibold">
+          التوقيت
+        </div>
+<!-- Doctor 1 Column -->
+<div class="col-span-4 px-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="relative">
+<img class="w-8 h-8 rounded-full object-cover shadow-sm" data-alt="Portrait photo of Doctor Ahmed Al-Mansouri, a middle-aged Arab male cardiologist in a modern teal medical coat with stethoscope in a bright clinical office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNWKNs1TfUOEIxHUZySTNfbTCb_r6R36DFCNSDScTw9E9c1wQgeHeYY6YiZQiLklVFrt8EeotLhnaoztUKu0LdrGFQKeIMbuzeVELpCASltDkwrX1XySiTcSx3a5t44xkR0eQupeiu--sJbD4hqeUIaXWO7chzBsXGbMXT8qUBjT6yBA8FEAtvVU_RDsb0LpQZk4Cv_fsNbRvuv5HkznnvyvXxkY7EWvEoBIimMSEsx6tRaxTMFn98JQ"/>
+<span class="w-2.5 h-2.5 rounded-full bg-primary absolute bottom-0 left-0"></span>
+</div>
+<div class="flex flex-col text-right">
+<div class="flex items-center gap-space-2xs">
+<span class="font-label-md text-label-md text-on-surface">د. أحمد المنصوري</span>
+<span class="font-mono-code text-mono-code bg-surface-container px-space-2xs rounded text-primary font-bold">غرفة 302</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary">استشاري أمراض القلب والأوعية الدموية</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-mono-metric text-mono-metric text-on-surface font-bold">14 موعد</span>
+<span class="font-mono-code text-mono-code text-primary">متبقي 2 شواغر</span>
+</div>
+</div>
+<!-- Doctor 2 Column -->
+<div class="col-span-4 px-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="relative">
+<img class="w-8 h-8 rounded-full object-cover shadow-sm" data-alt="Professional headshot of Doctor Sarah Al-Qahtani, an Arab female specialist physician wearing a clinical lab coat in a clean modern hospital background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBptg9PgwjEqsyCgAbTLLAxDAks1Yi3aeGHwhzwjZG6etD2VLKy3WR0YeZxkLTX6FvuSLDfuTj96vJnKY49RpoOKPZYbgZFaJnVgQqxkKpA3xUYnax32wx4bCNUvwKH6Vbaa1AsHBR1Wn6dgQF0klG4l2hfColBmW2sm6L12p6uHsreEZzoer_shSVzr2IsA4FeISLhYnefP6tKlmt6d7_O1riVTxu5NVWhF4sd0VabO0BpFdIaGkOaXQ"/>
+<span class="w-2.5 h-2.5 rounded-full bg-primary absolute bottom-0 left-0"></span>
+</div>
+<div class="flex flex-col text-right">
+<div class="flex items-center gap-space-2xs">
+<span class="font-label-md text-label-md text-on-surface">د. سارة القحطاني</span>
+<span class="font-mono-code text-mono-code bg-surface-container px-space-2xs rounded text-primary font-bold">غرفة 304</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary">أخصائية الباطنة العامة والسكر</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-mono-metric text-mono-metric text-on-surface font-bold">15 موعد</span>
+<span class="font-mono-code text-mono-code text-tertiary">متبقي 1 شاغر</span>
+</div>
+</div>
+<!-- Doctor 3 Column -->
+<div class="col-span-3 px-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="relative">
+<img class="w-8 h-8 rounded-full object-cover shadow-sm" data-alt="Portrait photo of Doctor Khalid Al-Ruwaili, Arab senior specialist doctor in sterile scrub uniform in a medical diagnostics facility" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAwKpe00yAPZalXG67P9Lqo577stPyuRvNDYa4lDrAxZ5y4jv6uidoCzdPTfnKQM41_fdlbRk4k3BJZenvn_i0B84Z3fjEyVUUvYKLkx_IANHQ4-jMuwHIhZdqA07YfZ_PROW-QwBE2kLGNxSqxHOipoAzr-NrPvG8clEY7Gk4AP5nAyZS9dVugS_iuFfKNPeO4TQsc3sj5GnVbrradiY4AIhlUusc-7PXp-RblfNXed7SzBGxnBSPuQ"/>
+<span class="w-2.5 h-2.5 rounded-full bg-primary-fixed-dim absolute bottom-0 left-0"></span>
+</div>
+<div class="flex flex-col text-right">
+<div class="flex items-center gap-space-2xs">
+<span class="font-label-md text-label-md text-on-surface">د. خالد الرويلي</span>
+<span class="font-mono-code text-mono-code bg-surface-container px-space-2xs rounded text-primary font-bold">غرفة 301</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary">استشاري التخطيط الفسيولوجي</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-mono-metric text-mono-metric text-on-surface font-bold">9 مواعيد</span>
+<span class="font-mono-code text-mono-code text-secondary">جدول ممتلئ</span>
+</div>
+</div>
+</div>
+<!-- Chronological Interactive Timetable Canvas -->
+<div class="flex flex-col overflow-y-auto max-h-[820px]">
+<!-- Slot 1: 08:00 ص - 09:00 ص -->
+<div class="grid grid-cols-12 min-h-[110px] bg-surface-container-lowest hover:bg-surface-container-low/40 transition-colors">
+<div class="col-span-1 p-space-xs text-center flex flex-col justify-start">
+<span class="font-mono-metric text-mono-metric text-on-surface font-bold">08:00</span>
+<span class="font-mono-code text-mono-code text-secondary">صباحاً</span>
+</div>
+<!-- Doctor Mansouri Slot (Completed Card) -->
+<div class="col-span-4 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-2xs">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-sm text-label-sm bg-surface-container text-secondary px-space-xs py-space-2xs rounded font-semibold">مكتمل</span>
+<span class="font-mono-code text-mono-code text-secondary">08:00 - 08:30 (30 دقيقة)</span>
+</div>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface font-mono-code text-mono-code">كشف دوري</span>
+</div>
+<div class="flex items-center justify-between mt-space-2xs">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">عبدالله فهد الدوسري</span>
+<span class="font-mono-code text-mono-code text-on-surface-variant">MRN-902184 • 48 سنة (ذكر)</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-headline-sm">check_circle</span>
+</div>
+</div>
+</div>
+<!-- Doctor Qahtani Slot (Completed Card) -->
+<div class="col-span-4 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-2xs">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-sm text-label-sm bg-surface-container text-secondary px-space-xs py-space-2xs rounded font-semibold">مكتمل</span>
+<span class="font-mono-code text-mono-code text-secondary">08:00 - 08:45 (45 دقيقة)</span>
+</div>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface font-mono-code text-mono-code">متابعة سكري</span>
+</div>
+<div class="flex items-center justify-between mt-space-2xs">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">نورة عبدالعزيز العتيبي</span>
+<span class="font-mono-code text-mono-code text-on-surface-variant">MRN-334190 • 54 سنة (أنثى)</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-headline-sm">assignment_turned_in</span>
+</div>
+</div>
+</div>
+<!-- Doctor Ruwaili Slot (Completed) -->
+<div class="col-span-3 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm bg-surface-container text-secondary px-space-xs py-space-2xs rounded font-semibold">مكتمل</span>
+<span class="font-mono-code text-mono-code text-secondary">08:00 - 08:30</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface mt-space-2xs truncate">سعود ناصر السبيعي</span>
+<span class="font-mono-code text-mono-code text-on-surface-variant">MRN-881204</span>
+</div>
+</div>
+</div>
+<!-- Slot 2: 09:00 ص - 10:00 ص (CURRENT REAL-TIME ACTIVE ROW) -->
+<div class="grid grid-cols-12 min-h-[125px] bg-surface-container-high/40 hover:bg-surface-container-high transition-colors relative">
+<!-- Live Time Indicator Line Overlay -->
+<div class="absolute right-0 left-0 top-1/3 h-0.5 bg-error z-10 pointer-events-none flex items-center justify-start">
+<span class="px-space-xs py-0.5 rounded-full bg-error text-on-error font-mono-code text-mono-code shadow-sm mr-space-sm">الوقت الحالي: 09:20 ص</span>
+</div>
+<div class="col-span-1 p-space-xs text-center flex flex-col justify-start">
+<span class="font-mono-metric text-mono-metric text-on-surface font-bold">09:00</span>
+<span class="font-mono-code text-mono-code text-secondary">صباحاً</span>
+</div>
+<!-- Doctor Mansouri: ACTIVE CONSULTATION -->
+<div class="col-span-4 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-md flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-label-sm bg-primary text-on-primary px-space-xs py-space-2xs rounded font-bold">داخل العيادة الآن</span>
+<span class="font-mono-code text-mono-code text-primary font-bold">09:00 - 09:30</span>
+</div>
+<span class="px-space-xs py-space-2xs rounded bg-error-container text-on-error-container font-mono-code text-mono-code font-bold">فحص عاجل</span>
+</div>
+<div class="flex items-center justify-between mt-space-2xs">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-2xs">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">سليمان حمد الشمري</span>
+<span class="px-space-xs rounded bg-error text-on-error font-mono-code text-mono-code font-bold" title="حساسية بنسلين">حساسية دواء</span>
+</div>
+<span class="font-mono-code text-mono-code text-on-surface-variant">MRN-109282 • 61 سنة • تخطيط صدى القلب</span>
+</div>
+<button class="px-space-sm h-8 rounded-lg bg-surface-container-low text-primary hover:bg-primary hover:text-on-primary transition-all font-label-sm text-label-sm flex items-center gap-space-2xs" type="button">
+<span>فتح الملف</span>
+<span class="material-symbols-outlined text-headline-sm">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Doctor Qahtani: CHECKED-IN WAITING -->
+<div class="col-span-4 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-label-sm text-label-sm bg-tertiary-fixed text-on-tertiary-fixed px-space-xs py-space-2xs rounded font-bold">في الانتظار (وصل)</span>
+<span class="font-mono-code text-mono-code text-secondary">09:15 - 09:45</span>
+</div>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-low text-secondary font-mono-code text-mono-code">كشف جديد</span>
+</div>
+<div class="flex items-center justify-between mt-space-2xs">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">ريما مساعد المطيري</span>
+<span class="font-mono-code text-mono-code text-on-surface-variant">MRN-554201 • 29 سنة • انتظار: 5 دقائق</span>
+</div>
+<button class="px-space-sm h-8 rounded-lg bg-tertiary text-on-tertiary hover:bg-tertiary-container transition-all font-label-sm text-label-sm" type="button">
+                  استدعاء للمكتب
+                </button>
+</div>
+</div>
+</div>
+<!-- Doctor Ruwaili: NO SHOW -->
+<div class="col-span-3 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-error-container/30 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm bg-error-container text-on-error-container px-space-xs py-space-2xs rounded font-bold">لم يحضر (No-Show)</span>
+<span class="font-mono-code text-mono-code text-secondary">09:00 - 09:30</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface mt-space-2xs truncate">فيصل تركي الغامدي</span>
+<div class="flex items-center justify-between mt-space-2xs">
+<span class="font-mono-code text-mono-code text-secondary">MRN-609112</span>
+<button class="text-error hover:underline font-label-sm text-label-sm" type="button">إعادة جدولة</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Slot 3: 10:00 ص - 11:00 ص -->
+<div class="grid grid-cols-12 min-h-[110px] bg-surface-container-lowest hover:bg-surface-container-low/40 transition-colors">
+<div class="col-span-1 p-space-xs text-center flex flex-col justify-start">
+<span class="font-mono-metric text-mono-metric text-on-surface font-bold">10:00</span>
+<span class="font-mono-code text-mono-code text-secondary">صباحاً</span>
+</div>
+<!-- Doctor Mansouri: CONFIRMED -->
+<div class="col-span-4 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-2xs">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-label-sm text-label-sm bg-primary-container/20 text-primary-container px-space-xs py-space-2xs rounded font-bold">مؤكد بالحضور</span>
+<span class="font-mono-code text-mono-code text-secondary">10:00 - 10:30 (30 د)</span>
+</div>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container text-on-surface font-mono-code text-mono-code">متابعة نتائج</span>
+</div>
+<div class="flex items-center justify-between mt-space-2xs">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">إبراهيم صالح الخالدي</span>
+<span class="font-mono-code text-mono-code text-on-surface-variant">MRN-449012 • فحص ضغط الدم والشرايين</span>
+</div>
+<button class="px-space-sm h-8 rounded-lg bg-surface-container text-on-surface hover:bg-primary hover:text-on-primary transition-colors font-label-sm text-label-sm flex items-center gap-space-2xs" onclick="triggerCheckIn('449012', this)" type="button">
+<span class="material-symbols-outlined text-headline-sm">how_to_reg</span>
+<span>تسجيل وصول</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Doctor Qahtani: SCHEDULED -->
+<div class="col-span-4 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-2xs">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-sm text-label-sm bg-surface-container text-secondary px-space-xs py-space-2xs rounded font-semibold">مجدول</span>
+<span class="font-mono-code text-mono-code text-secondary">10:00 - 10:45 (45 د)</span>
+</div>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container text-on-surface font-mono-code text-mono-code">كشف باطنة أول</span>
+</div>
+<div class="flex items-center justify-between mt-space-2xs">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">هند مسفر الغامدي</span>
+<span class="font-mono-code text-mono-code text-on-surface-variant">MRN-781920 • 38 سنة</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container px-space-xs py-space-2xs rounded">في انتظار الوصول</span>
+</div>
+</div>
+</div>
+<!-- Doctor Ruwaili: VACANT SLOT -->
+<div class="col-span-3 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-surface-container-low/60 flex items-center justify-between hover:bg-surface-container transition-all cursor-pointer">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-headline-sm">add_circle_outline</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">فترة متاحة للحجز (30 دقيقة)</span>
+</div>
+<span class="font-mono-code text-mono-code text-secondary">10:00 - 10:30</span>
+</div>
+</div>
+</div>
+<!-- Slot 4: 11:00 ص - 12:00 م -->
+<div class="grid grid-cols-12 min-h-[110px] bg-surface-container-lowest hover:bg-surface-container-low/40 transition-colors">
+<div class="col-span-1 p-space-xs text-center flex flex-col justify-start">
+<span class="font-mono-metric text-mono-metric text-on-surface font-bold">11:00</span>
+<span class="font-mono-code text-mono-code text-secondary">صباحاً</span>
+</div>
+<!-- Doctor Mansouri: SCHEDULED -->
+<div class="col-span-4 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-2xs">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-label-sm text-label-sm bg-primary-container/20 text-primary-container px-space-xs py-space-2xs rounded font-bold">مؤكد</span>
+<span class="font-mono-code text-mono-code text-secondary">11:00 - 11:30 (30 د)</span>
+</div>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container text-on-surface font-mono-code text-mono-code">تخطيط هولتر</span>
+</div>
+<div class="flex items-center justify-between mt-space-2xs">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">منصور زايد الهاجري</span>
+<span class="font-mono-code text-mono-code text-on-surface-variant">MRN-909241 • 52 سنة</span>
+</div>
+<button class="px-space-sm h-8 rounded-lg bg-surface-container text-on-surface hover:bg-primary hover:text-on-primary transition-colors font-label-sm text-label-sm flex items-center gap-space-2xs" onclick="triggerCheckIn('909241', this)" type="button">
+<span class="material-symbols-outlined text-headline-sm">how_to_reg</span>
+<span>تسجيل وصول</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Doctor Qahtani: CANCELLED REPLACED -->
+<div class="col-span-4 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-2xs">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span class="font-label-sm text-label-sm bg-surface-container text-outline px-space-xs py-space-2xs rounded font-semibold">مُلغى من المريض</span>
+<span class="font-mono-code text-mono-code text-secondary">11:00 - 11:30</span>
+</div>
+<span class="font-mono-code text-mono-code text-outline line-through">MRN-190223</span>
+</div>
+<div class="flex items-center justify-between mt-space-2xs">
+<span class="font-body-sm text-body-sm text-secondary">ألغيت الزيارة هاتفياً • تحولت الفترة إلى مقعد شاغر فوري</span>
+<button class="px-space-sm h-7 rounded bg-primary text-on-primary font-label-sm text-label-sm" type="button">حجز الموعد الآن</button>
+</div>
+</div>
+</div>
+<!-- Doctor Ruwaili: CONFIRMED -->
+<div class="col-span-3 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm bg-primary-container/20 text-primary-container px-space-xs py-space-2xs rounded font-bold">مؤكد</span>
+<span class="font-mono-code text-mono-code text-secondary">11:00 - 11:30</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface mt-space-2xs truncate">يوسف عمر البابطين</span>
+<span class="font-mono-code text-mono-code text-on-surface-variant">MRN-442198</span>
+</div>
+</div>
+</div>
+<!-- Slot 5: 12:00 م - 01:00 م (BREAK / RESTOCKING) -->
+<div class="grid grid-cols-12 min-h-[64px] bg-surface-container-low/70">
+<div class="col-span-1 p-space-xs text-center flex flex-col justify-center">
+<span class="font-mono-metric text-mono-metric text-secondary font-bold">12:00</span>
+<span class="font-mono-code text-mono-code text-secondary">ظهراً</span>
+</div>
+<div class="col-span-11 px-space-md flex items-center justify-between">
+<div class="flex items-center gap-space-sm text-secondary">
+<span class="material-symbols-outlined text-headline-sm">coffee</span>
+<span class="font-label-md text-label-md">استراحة الطاقم الطبي والتعقيم الدوري لعيادات القلب (12:00 م - 01:00 م)</span>
+</div>
+<span class="font-mono-code text-mono-code text-secondary">التعقيم مكتمل بنسبة 100% للغرف 301، 302، 304</span>
+</div>
+</div>
+<!-- Slot 6: 01:00 م - 02:00 م -->
+<div class="grid grid-cols-12 min-h-[110px] bg-surface-container-lowest hover:bg-surface-container-low/40 transition-colors">
+<div class="col-span-1 p-space-xs text-center flex flex-col justify-start">
+<span class="font-mono-metric text-mono-metric text-on-surface font-bold">01:00</span>
+<span class="font-mono-code text-mono-code text-secondary">مساءً</span>
+</div>
+<!-- Doctor Mansouri Slot -->
+<div class="col-span-4 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-2xs">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-label-sm text-label-sm bg-primary-container/20 text-primary-container px-space-xs py-space-2xs rounded font-bold">مؤكد</span>
+<span class="font-mono-code text-mono-code text-secondary">01:00 - 01:40 (40 د)</span>
+</div>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container text-on-surface font-mono-code text-mono-code">قسطرة استكشافية</span>
+</div>
+<div class="flex items-center justify-between mt-space-2xs">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">ماجد عبدالمحسن العنزي</span>
+<span class="font-mono-code text-mono-code text-on-surface-variant">MRN-772910 • 59 سنة</span>
+</div>
+<button class="px-space-sm h-8 rounded-lg bg-surface-container text-on-surface hover:bg-primary hover:text-on-primary transition-colors font-label-sm text-label-sm flex items-center gap-space-2xs" onclick="triggerCheckIn('772910', this)" type="button">
+<span class="material-symbols-outlined text-headline-sm">how_to_reg</span>
+<span>تسجيل وصول</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Doctor Qahtani Slot -->
+<div class="col-span-4 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-2xs">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-sm text-label-sm bg-surface-container text-secondary px-space-xs py-space-2xs rounded font-semibold">مجدول</span>
+<span class="font-mono-code text-mono-code text-secondary">01:00 - 01:30 (30 د)</span>
+</div>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container text-on-surface font-mono-code text-mono-code">تعديل جرعات</span>
+</div>
+<div class="flex items-center justify-between mt-space-2xs">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">أمل فهد الشهراني</span>
+<span class="font-mono-code text-mono-code text-on-surface-variant">MRN-290114 • 43 سنة</span>
+</div>
+<span class="font-mono-code text-mono-code text-secondary">SMS تم الإرسال</span>
+</div>
+</div>
+</div>
+<!-- Doctor Ruwaili Slot -->
+<div class="col-span-3 p-space-xs flex flex-col justify-center">
+<div class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm bg-primary-container/20 text-primary-container px-space-xs py-space-2xs rounded font-bold">مؤكد</span>
+<span class="font-mono-code text-mono-code text-secondary">01:00 - 01:30</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface mt-space-2xs truncate">سامي راشد الدوسري</span>
+<span class="font-mono-code text-mono-code text-on-surface-variant">MRN-661009</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Collapsible Quick Booking & Direct Intake Drawer / Side Panel -->
+<aside class="w-96 bg-surface-container-lowest rounded-xl shadow-md p-space-md flex flex-col justify-between shrink-0 transition-all duration-300" id="quick-side-drawer">
+<div class="flex flex-col gap-space-md">
+<!-- Header Drawer -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-headline-sm">queue</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">إجراءات المواعيد السريعة</span>
+</div>
+<button class="w-7 h-7 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container transition-colors" onclick="toggleQuickDrawer()" title="إخفاء / إظهار اللوحة" type="button">
+<span class="material-symbols-outlined text-headline-sm">close</span>
+</button>
+</div>
+<!-- Fast Mini Booking Form Card -->
+<div class="p-space-sm rounded-xl bg-surface-container-low flex flex-col gap-space-xs">
+<span class="font-label-md text-label-md text-on-surface font-semibold">حجز مباشر لطوارئ العيادة</span>
+<div class="flex flex-col gap-space-2xs mt-space-xs">
+<label class="font-label-sm text-label-sm text-secondary">رقم الملف الطبي MRN أو الهوية الوطنية:</label>
+<div class="relative">
+<input class="w-full h-9 pr-space-md pl-space-xl bg-surface-container-lowest rounded-lg font-mono-code text-mono-code text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-sm" placeholder="مثال: 902184 أو 1098765432" type="text"/>
+<span class="material-symbols-outlined absolute left-space-xs top-1/2 -translate-y-1/2 text-secondary text-headline-sm">search</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-xs mt-space-2xs">
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-secondary">الطبيب:</label>
+<select class="h-9 px-space-xs rounded-lg bg-surface-container-lowest font-body-sm text-body-sm text-on-surface focus:outline-none shadow-sm">
+<option>د. أحمد المنصوري</option>
+<option>د. سارة القحطاني</option>
+<option>د. خالد الرويلي</option>
+</select>
+</div>
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-secondary">نوع الموعد:</label>
+<select class="h-9 px-space-xs rounded-lg bg-surface-container-lowest font-body-sm text-body-sm text-on-surface focus:outline-none shadow-sm">
+<option>كشف جديد</option>
+<option>استشارة عاجلة</option>
+<option>متابعة دورية</option>
+</select>
+</div>
+</div>
+<button class="w-full h-9 mt-space-xs rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-all font-label-md text-label-md font-semibold flex items-center justify-center gap-space-xs" type="button">
+<span class="material-symbols-outlined text-headline-sm">add_task</span>
+<span>تأكيد الإدراج في الجدول فوراً</span>
+</button>
+</div>
+<!-- Waiting Queue Real-time Triage List -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold">قائمة الوصول الآن في الصالة (6)</span>
+<span class="font-mono-code text-mono-code text-primary">تحديث لحظي</span>
+</div>
+<div class="flex flex-col gap-space-xs max-h-72 overflow-y-auto">
+<!-- Queue Item 1 -->
+<div class="p-space-xs rounded-lg bg-surface-container-low flex flex-col gap-space-2xs">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">ريما مساعد المطيري</span>
+<span class="font-mono-code text-mono-code text-tertiary font-bold">غرفة 304</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-mono-code text-mono-code text-secondary">MRN-554201 • د. سارة</span>
+<span class="font-label-sm text-label-sm bg-surface-container text-on-surface px-space-xs py-space-2xs rounded">انتظار 5 د</span>
+</div>
+</div>
+<!-- Queue Item 2 -->
+<div class="p-space-xs rounded-lg bg-surface-container-low flex flex-col gap-space-2xs">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">سعد حمد الجبير</span>
+<span class="font-mono-code text-mono-code text-primary font-bold">غرفة 302</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-mono-code text-mono-code text-secondary">MRN-201884 • د. المنصوري</span>
+<span class="font-label-sm text-label-sm bg-surface-container text-on-surface px-space-xs py-space-2xs rounded">انتظار 12 د</span>
+</div>
+</div>
+<!-- Queue Item 3 -->
+<div class="p-space-xs rounded-lg bg-surface-container-low flex flex-col gap-space-2xs">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">لولوة ناصر الشهري</span>
+<span class="font-mono-code text-mono-code text-primary font-bold">غرفة 301</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-mono-code text-mono-code text-secondary">MRN-994112 • د. الرويلي</span>
+<span class="font-label-sm text-label-sm bg-surface-container text-on-surface px-space-xs py-space-2xs rounded">انتظار 3 د</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Telemetry & Department Status Stamp -->
+<div class="pt-space-sm bg-surface-container-lowest flex flex-col gap-space-2xs">
+<div class="flex items-center justify-between text-secondary">
+<span class="font-label-sm text-label-sm">عيادات القلب والباطنة</span>
+<span class="font-mono-code text-mono-code">طابق 3 - جناح B</span>
+</div>
+<div class="flex items-center justify-between text-secondary">
+<span class="font-label-sm text-label-sm">المنسق الإداري المناوب:</span>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">أ. فيصل المريخي</span>
+</div>
+</div>
+</aside>
+</section>
+<!-- Bottom Interactive Utility Bar: Shortcut Diagnostics -->
+<footer class="mt-space-lg p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md flex-wrap">
+<div class="flex items-center gap-space-xs text-on-surface font-label-md text-label-md">
+<span class="material-symbols-outlined text-primary text-headline-sm">keyboard</span>
+<span>اختصارات لوحة المفاتيح:</span>
+</div>
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-mono-code text-mono-code bg-surface-container text-on-surface px-space-xs py-space-2xs rounded font-bold">N + Alt: حجز موعد جديد</span>
+<span class="font-mono-code text-mono-code bg-surface-container text-on-surface px-space-xs py-space-2xs rounded font-bold">C + Alt: تأكيد وصول المريض</span>
+<span class="font-mono-code text-mono-code bg-surface-container text-on-surface px-space-xs py-space-2xs rounded font-bold">T: الانتقال لليوم الحالي</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<button class="flex items-center gap-space-xs text-secondary hover:text-on-surface font-label-md text-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-headline-sm">print</span>
+<span>طباعة جدول اليوم</span>
+</button>
+<button class="flex items-center gap-space-xs text-secondary hover:text-on-surface font-label-md text-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-headline-sm">file_download</span>
+<span>تصدير تقرير المواعيد (Excel)</span>
+</button>
+</div>
+</footer>
+</div></main></div></body></html>

@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-tertiary-fixed":"#001a42","secondary-fixed":"#d8e3fb","on-secondary-fixed-variant":"#3c475a","surface-tint":"#006a61","on-secondary":"#ffffff","tertiary-container":"#2170e4","on-primary":"#ffffff","on-surface":"#0b1c30","outline-variant":"#bcc9c6","primary-container":"#008378","secondary-fixed-dim":"#bcc7de","surface-container-high":"#dce9ff","surface-dim":"#cbdbf5","surface-container":"#e5eeff","surface-bright":"#f8f9ff","error-container":"#ffdad6","surface":"#f8f9ff","on-secondary-container":"#586377","background":"#f8f9ff","outline":"#6d7a77","on-surface-variant":"#3d4947","inverse-surface":"#213145","on-tertiary-fixed-variant":"#004395","tertiary-fixed":"#d8e2ff","primary-fixed":"#89f5e7","on-secondary-fixed":"#111c2d","secondary":"#545f73","on-background":"#0b1c30","tertiary-fixed-dim":"#adc6ff","tertiary":"#0058be","on-tertiary":"#ffffff","surface-variant":"#d3e4fe","inverse-on-surface":"#eaf1ff","primary-fixed-dim":"#6bd8cb","secondary-container":"#d5e0f8","surface-container-highest":"#d3e4fe","surface-container-low":"#eff4ff","on-tertiary-container":"#fefcff","error":"#ba1a1a","primary":"#00685f","on-error-container":"#93000a","on-error":"#ffffff","surface-container-lowest":"#ffffff","on-primary-fixed":"#00201d","on-primary-container":"#f4fffc","inverse-primary":"#6bd8cb","on-primary-fixed-variant":"#005049"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-xs":"0.25rem","sidebar-width":"17.5rem","gutter":"1rem","subnav-width":"15rem","space-2xs":"0.125rem","space-base":"1rem","space-md":"0.75rem","space-sm":"0.5rem","space-xl":"2rem","space-lg":"1.5rem","space-2xl":"3rem"},"fontFamily":{"headline-sm":["IBM Plex Sans"],"label-md":["IBM Plex Sans"],"body-sm":["IBM Plex Sans"],"body-md":["IBM Plex Sans"],"headline-xl":["IBM Plex Sans"],"body-lg":["IBM Plex Sans"],"mono-metric":["JetBrains Mono"],"headline-lg":["IBM Plex Sans"],"headline-xl-mobile":["IBM Plex Sans"],"mono-code":["JetBrains Mono"],"label-sm":["IBM Plex Sans"]},"fontSize":{"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"400"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"headline-xl":["28px",{"lineHeight":"36px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-lg":["15px",{"lineHeight":"22px","letterSpacing":"0em","fontWeight":"400"}],"mono-metric":["13px",{"lineHeight":"16px","letterSpacing":"0em","fontWeight":"500"}],"headline-lg":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-xl-mobile":["22px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"mono-code":["11px",{"lineHeight":"14px","letterSpacing":"0.02em","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.025em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed right-0 top-0 h-full w-sidebar-width bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between overflow-y-auto"><div class="flex flex-col"><div class="h-16 px-space-base flex items-center justify-between bg-surface-container-lowest"><div class="flex items-center gap-space-sm"><img alt="ClinicOS Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UWqmh1VUKLrHVYUqgHVYiHDUSuXjk5E0Ye9Q4lT54dQPmDAn9E7rmF_QGWfCIZJNfWPbunOASJyuIMNd76tNngZvhB11FuriJdV2kEItTwJfqLsO0PzmyZUBOD6DrlBtGgzbRxcBXhRrV0Zig1Y3EW_zLf7xpRkufAljm30qY93yRJuwbLtlwR7OBhApUw3cWyazHFYy9qruImfdqnIk0rGC7noaktUCRpAmTgkLzav1vjICWY7b8p2UYC"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary leading-none">ClinicOS</span><span class="font-label-sm text-label-sm text-secondary leading-tight mt-space-2xs">نظام إدارة العيادات 2027</span></div></div><span class="font-mono-code text-mono-code bg-surface-container text-secondary px-space-xs py-space-2xs rounded">v4.2</span></div><div class="px-space-base py-space-sm"><div class="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between gap-space-xs"><div class="flex items-center gap-space-xs overflow-hidden"><span class="material-symbols-outlined text-primary text-headline-sm shrink-0">domain</span><div class="flex flex-col truncate"><span class="font-label-sm text-label-sm text-on-surface truncate">فرع الرياض التخصصي</span><span class="font-mono-code text-mono-code text-on-surface-variant truncate">عيادة 302 - باطنة وقلب</span></div></div><span class="material-symbols-outlined text-outline text-headline-sm shrink-0">unfold_more</span></div></div><div class="px-space-sm mt-space-xs"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">الاستقبال وإدارة المرضى</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="appointments" href="#">المواعيد وجدول الحجز</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="check-in-queue" href="#">تسجيل الوصول والانتظار</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="patients" href="#">سجل المرضى والملفات</a></nav></div><div class="px-space-sm mt-space-md"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">القسم الطبي والسريري</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="visits-consultation" href="#">غرفة الكشف والزيارة</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="prescriptions-orders" href="#">الروشتة والأوامر الطبية</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="lab-imaging" href="#">الفحوصات والنتائج</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="medical-timeline" href="#">المخطط الزمني للمريض</a></nav></div><div class="px-space-sm mt-space-md mb-space-base"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">الإدارة والعمليات</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a aria-current="page" class="flex items-center px-space-md py-space-sm rounded-xl transition-all bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-path="billing-invoices" href="#">الفوترة والمدفوعات</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="master-catalogs" href="#">كاتلوج الخدمات والأدوية</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="branches-rooms" href="#">الفروع والغرف</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="audit-security" href="#">المستخدمين وسجل التدقيق</a></nav></div></div><div class="p-space-base bg-surface-container-low"><div class="flex items-center justify-between"><div class="flex items-center gap-space-xs"><span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span><span class="font-label-sm text-label-sm text-secondary">خادم السجلات: متصل</span></div><span class="font-mono-code text-mono-code text-secondary">RT-24ms</span></div></div></aside><div class="pr-sidebar-width min-h-screen bg-surface"><header class="fixed top-0 right-sidebar-width left-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md flex-1 max-w-xl"><div class="relative w-full"><span class="material-symbols-outlined text-on-surface-variant absolute right-space-md top-1/2 -translate-y-1/2 text-headline-sm">search</span><input class="w-full h-10 pr-space-2xl pl-space-md bg-surface-container-low text-on-surface placeholder-secondary font-body-md text-body-md rounded-xl focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" placeholder="بحث شامل عن مريض (الاسم، رقم الهوية الوطنية، رقم الملف الطبي MRN)..." type="text"/></div><div class="hidden lg:flex items-center gap-space-xs px-space-sm py-space-xs rounded bg-surface-container text-on-surface"><span class="w-2 h-2 rounded-full bg-primary"></span><span class="font-label-sm text-label-sm font-semibold">متصل - فرع الرياض</span></div></div><div class="flex items-center gap-space-md"><button class="hidden sm:flex items-center gap-space-xs h-10 px-space-md rounded-xl bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-[0_1px_8px_rgba(0,0,0,0.04)]" type="button"><span class="material-symbols-outlined text-headline-sm">add_circle</span><span class="font-label-md text-label-md">حجز جديد / مريض جديد</span></button><button class="relative w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-headline-sm">notifications</span><span class="absolute -top-1 -left-1 flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-error text-on-error font-mono-code text-mono-code font-bold">3</span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="hidden md:flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface text-right">د. أحمد المنصوري</span><span class="font-label-sm text-label-sm text-secondary text-right">استشاري باطنة وقلب</span></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9cpdmaCWhOFyr05pJyBoIMkSi4anLFma2lf5y1hIpPALoNjhKq6b1h9dz-FYVUtajIuGSaQUG8t913et7mmt7SfWLbOiXGDUWIr9B_YvFCegyI90gD7qqQ5A3F61-9FpH8PSXr_i8z4Tclvpodt3KNYqJN9Bi-Fr9Nh2fT-KJKtJiGGlRqSb0L0xdezJFfvFh0wxaDxYfjnke2vpYzC3qijjc7nejC33tK4x2PKI_INk1nuXl4QeRUA"/></div></div></header><main class="w-full pt-16 bg-surface px-space-lg pb-space-2xl"><div class="flex flex-col w-full">
+<div class="flex flex-col gap-space-lg w-full">
+<!-- Top Breadcrumb & Live Fiscal Stream Bar -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
+<div class="flex items-center gap-space-xs font-label-md text-label-md text-secondary">
+<span class="text-secondary">الإدارة والعمليات</span>
+<span class="material-symbols-outlined text-outline text-label-sm">chevron_left</span>
+<span class="text-secondary">الفوترة والمطالبات</span>
+<span class="material-symbols-outlined text-outline text-label-sm">chevron_left</span>
+<span class="text-on-surface font-semibold">سجل الفواتير والتحصيل الإلكتروني (نفيس NPHIES)</span>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs bg-surface-container px-space-sm py-space-2xs rounded-lg">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-ping"></span>
+<span class="font-mono-code text-mono-code text-on-surface">ZATCA المرحلة 2: متصل ومعتمد</span>
+</div>
+<div class="flex items-center gap-space-xs text-secondary font-mono-code text-mono-code">
+<span class="material-symbols-outlined text-headline-sm text-primary">sync</span>
+<span>تزامن نفيس: منذ دقيقتين</span>
+</div>
+</div>
+</div>
+<!-- Financial KPI Summary Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Total Sales -->
+<div class="relative overflow-hidden bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-secondary">إجمالي المبيعات اليومية</span>
+<span class="font-mono-metric text-headline-xl text-on-surface mt-space-xs">18,450.00 <span class="font-label-sm text-label-sm text-secondary">SAR</span></span>
+</div>
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-headline-lg">point_of_sale</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-space-md pt-space-xs">
+<span class="font-label-sm text-label-sm text-primary flex items-center gap-space-2xs">
+<span class="material-symbols-outlined text-label-sm">trending_up</span> +12.4% مقارنة بالأمس
+          </span>
+<span class="font-mono-code text-mono-code text-secondary">38 فاتورة مصدرة</span>
+</div>
+<div class="absolute -bottom-6 -left-6 w-20 h-20 rounded-full bg-primary/5 pointer-events-none"></div>
+</div>
+<!-- Collected Revenue (Mada/Visa/Cash) -->
+<div class="relative overflow-hidden bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-secondary">المحصل المباشر (نقدي / مدى)</span>
+<span class="font-mono-metric text-headline-xl text-primary mt-space-xs">14,200.00 <span class="font-label-sm text-label-sm text-secondary">SAR</span></span>
+</div>
+<div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-headline-lg">credit_card</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-space-md pt-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-space-2xs">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> 77% نسبة الإغلاق الفوري
+          </span>
+<span class="font-mono-code text-mono-code text-secondary">POS #04 &amp; #07</span>
+</div>
+</div>
+<!-- In-Review NPHIES Insurance Claims -->
+<div class="relative overflow-hidden bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-secondary">مطالبات NPHIES قيد المعالجة</span>
+<span class="font-mono-metric text-headline-xl text-tertiary mt-space-xs">3,850.00 <span class="font-label-sm text-label-sm text-secondary">SAR</span></span>
+</div>
+<div class="w-10 h-10 rounded-xl bg-secondary-container flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-headline-lg">verified_user</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-space-md pt-space-xs">
+<span class="font-label-sm text-label-sm text-tertiary flex items-center gap-space-2xs">
+<span class="material-symbols-outlined text-label-sm">hourglass_top</span> 6 مطالبات تنتظر الاعتماد
+          </span>
+<span class="font-mono-code text-mono-code text-secondary">بوبا / التعاونية</span>
+</div>
+</div>
+<!-- Pending Outstanding Balances -->
+<div class="relative overflow-hidden bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-secondary">الأرصدة المعلقة والمستحقة</span>
+<span class="font-mono-metric text-headline-xl text-error mt-space-xs">400.00 <span class="font-label-sm text-label-sm text-secondary">SAR</span></span>
+</div>
+<div class="w-10 h-10 rounded-xl bg-error-container flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-headline-lg">pending_actions</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-space-md pt-space-xs">
+<span class="font-label-sm text-label-sm text-error flex items-center gap-space-2xs">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> حالتان بحاجة متابعة
+          </span>
+<span class="font-mono-code text-mono-code text-secondary">استحقاق خلال 48 س</span>
+</div>
+</div>
+</div>
+<!-- Filters & Search Toolbar -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col lg:flex-row items-center justify-between gap-space-md">
+<div class="flex flex-wrap items-center gap-space-sm w-full lg:w-auto flex-1">
+<!-- Search Input -->
+<div class="relative min-w-[260px] flex-1">
+<span class="material-symbols-outlined text-secondary absolute right-space-md top-1/2 -translate-y-1/2 text-headline-sm">search</span>
+<input class="w-full h-10 pr-space-2xl pl-space-md bg-surface-container-low text-on-surface placeholder-secondary font-body-md text-body-md rounded-xl focus:outline-none focus:bg-surface-container-lowest shadow-sm" placeholder="بحث برقم الفاتورة INV- أو اسم المريض أو الهوية..." type="text"/>
+</div>
+<!-- Status Filter -->
+<div class="flex items-center bg-surface-container-low rounded-xl px-space-xs h-10">
+<button class="px-space-md py-space-2xs rounded-lg font-label-md text-label-md bg-surface-container-lowest text-on-surface shadow-sm transition-all">الكل (42)</button>
+<button class="px-space-md py-space-2xs rounded-lg font-label-md text-label-md text-secondary hover:text-on-surface transition-all">مدفوعة بالكامل</button>
+<button class="px-space-md py-space-2xs rounded-lg font-label-md text-label-md text-secondary hover:text-on-surface transition-all">مسددة جزئياً</button>
+<button class="px-space-md py-space-2xs rounded-lg font-label-md text-label-md text-secondary hover:text-on-surface transition-all">بانتظار التأمين</button>
+</div>
+<!-- Insurer Dropdown Filter -->
+<div class="relative">
+<select class="h-10 pr-space-md pl-space-xl bg-surface-container-low text-on-surface font-body-md text-body-md rounded-xl appearance-none cursor-pointer focus:outline-none">
+<option value="">جميع جهات الدفع والتأمين</option>
+<option value="bupa">شركة بوبا العربية (Bupa)</option>
+<option value="tawuniya">الشركة التعاونية للتأمين</option>
+<option value="medgulf">ميدغلف (Medgulf)</option>
+<option value="cash">سداد نقدي / ذاتي (Self-Pay)</option>
+</select>
+<span class="material-symbols-outlined text-secondary absolute left-space-xs top-1/2 -translate-y-1/2 pointer-events-none text-headline-sm">expand_more</span>
+</div>
+</div>
+<!-- Quick Export and Batch Actions -->
+<div class="flex items-center gap-space-xs w-full lg:w-auto justify-end">
+<button class="h-10 px-space-md rounded-xl bg-surface-container-low text-on-surface hover:bg-surface-container font-label-md text-label-md flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-headline-sm">file_download</span>
+<span>تصدير تقرير القيود (Excel)</span>
+</button>
+<button class="h-10 px-space-md rounded-xl bg-primary text-on-primary hover:bg-primary-container font-label-md text-label-md flex items-center gap-space-xs transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-headline-sm">add_card</span>
+<span>+ إنشاء فاتورة جديدة</span>
+</button>
+</div>
+</div>
+<!-- Main Workspace Split: Master Invoice Ledger (Right) & Active Invoice Deep Dive (Left) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg">
+<!-- Right Ledger: Recent Invoices Queue (5 Cols on 12-grid in RTL context) -->
+<div class="xl:col-span-5 flex flex-col gap-space-md">
+<div class="flex items-center justify-between px-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface">سجل الفواتير النشطة اليوم</span>
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container px-space-xs py-space-2xs rounded">تحديث تلقائي</span>
+</div>
+<div class="flex flex-col gap-space-sm">
+<!-- Active Card Selected -->
+<div class="p-space-md bg-surface-container-lowest rounded-xl shadow-md cursor-pointer transition-all relative overflow-hidden">
+<div class="absolute right-0 top-0 bottom-0 w-1.5 bg-primary"></div>
+<div class="flex items-start justify-between gap-space-sm pr-space-xs">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-metric text-mono-metric font-semibold text-primary">INV-2027-8910</span>
+<span class="inline-flex items-center px-space-xs py-space-2xs rounded bg-surface-container text-tertiary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary ml-1"></span> بوبا - اعتماد جزئي
+                  </span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface mt-space-2xs">سعود ناصر الدوسري</span>
+<span class="font-body-sm text-body-sm text-secondary">ملف: MRN-48920 • د. أحمد المنصوري</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-mono-metric text-headline-sm text-on-surface font-semibold">1,480.00</span>
+<span class="font-label-sm text-label-sm text-secondary">SAR</span>
+<span class="font-mono-code text-mono-code text-error mt-space-xs font-semibold">متبقي: 195.50 SAR</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-space-sm pt-space-xs bg-surface-container-low p-space-xs rounded-lg">
+<span class="font-mono-code text-mono-code text-on-surface-variant flex items-center gap-space-2xs">
+<span class="material-symbols-outlined text-label-sm text-primary">schedule</span> 10:42 ص • باطنة وقلب
+              </span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">قيد المعاينة الحالية ←</span>
+</div>
+</div>
+<!-- Card 2: Paid In Full -->
+<div class="p-space-md bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md cursor-pointer transition-all">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-metric text-mono-metric font-semibold text-secondary">INV-2027-8909</span>
+<span class="inline-flex items-center px-space-xs py-space-2xs rounded bg-surface-container text-primary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary ml-1"></span> مسددة بالكامل
+                  </span>
+</div>
+<span class="font-body-lg text-body-lg font-semibold text-on-surface mt-space-2xs">نورة خالد العتيبي</span>
+<span class="font-body-sm text-body-sm text-secondary">ملف: MRN-51204 • د. منى الشمري</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-mono-metric text-headline-sm text-on-surface font-semibold">320.00</span>
+<span class="font-label-sm text-label-sm text-secondary">SAR</span>
+<span class="font-label-sm text-label-sm text-primary mt-space-xs font-semibold">مدى Apple Pay</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-space-sm text-secondary font-mono-code text-mono-code">
+<span>10:15 ص • عيادة الأسنان</span>
+<span>التعاونية VIP (تحمل 0%)</span>
+</div>
+</div>
+<!-- Card 3: Pending Insurance Direct Pre-Auth -->
+<div class="p-space-md bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md cursor-pointer transition-all">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-metric text-mono-metric font-semibold text-secondary">INV-2027-8908</span>
+<span class="inline-flex items-center px-space-xs py-space-2xs rounded bg-surface-container-high text-tertiary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary ml-1 animate-pulse"></span> اعتماد مالي مسبق
+                  </span>
+</div>
+<span class="font-body-lg text-body-lg font-semibold text-on-surface mt-space-2xs">عبدالله فيصل الحربي</span>
+<span class="font-body-sm text-body-sm text-secondary">ملف: MRN-39811 • جراحة اليوم الواحد</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-mono-metric text-headline-sm text-on-surface font-semibold">4,600.00</span>
+<span class="font-label-sm text-label-sm text-secondary">SAR</span>
+<span class="font-label-sm text-label-sm text-tertiary mt-space-xs">ميدغلف - فئة ماسية</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-space-sm text-secondary font-mono-code text-mono-code">
+<span>09:50 ص • تنظير هضمي</span>
+<span>رمز الموافقة: REQ-89301</span>
+</div>
+</div>
+<!-- Card 4: Draft / In Consultation -->
+<div class="p-space-md bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md cursor-pointer transition-all">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-metric text-mono-metric font-semibold text-secondary">INV-2027-8907</span>
+<span class="inline-flex items-center px-space-xs py-space-2xs rounded bg-surface-container text-secondary font-label-sm text-label-sm">
+                    مسودة قيد الإدخال
+                  </span>
+</div>
+<span class="font-body-lg text-body-lg font-semibold text-on-surface mt-space-2xs">هند سليمان الرشيد</span>
+<span class="font-body-sm text-body-sm text-secondary">ملف: MRN-60291 • الجلدية والتجميل</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-mono-metric text-headline-sm text-on-surface font-semibold">650.00</span>
+<span class="font-label-sm text-label-sm text-secondary">SAR</span>
+<span class="font-label-sm text-label-sm text-secondary mt-space-xs">سداد نقدي مباشر</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-space-sm text-secondary font-mono-code text-mono-code">
+<span>09:20 ص • ليزر علاجي</span>
+<span>في انتظار تأكيد الصيدلية</span>
+</div>
+</div>
+</div>
+<!-- Clinical Billing Audit Log Widget -->
+<div class="bg-surface-container-low p-space-md rounded-xl flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-secondary font-label-md text-label-md">
+<span class="material-symbols-outlined text-headline-sm text-primary">shield</span>
+<span>معيار الامتثال الطبي المالي ZATCA &amp; NPHIES</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            كافة المعاملات المالية مشفرة بنظام التوقيع الرقمي ومربوطة ببوابة الهيئة العامة للزكاة والضريبة والجمارك (الفاتورة الإلكترونية المرحلة الثانية).
+          </p>
+</div>
+</div>
+<!-- Left Panel: Detailed Settlement & Invoice Inspector (7 Cols on 12-grid) -->
+<div class="xl:col-span-7 flex flex-col gap-space-md">
+<!-- Invoice Detailed Header Card -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md pb-space-sm bg-surface-container-low p-space-md rounded-xl">
+<div class="flex items-start gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-primary text-on-primary flex items-center justify-center font-mono-metric text-headline-sm font-bold shrink-0">
+                INV
+              </div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-headline-lg text-headline-lg text-on-surface">فاتورة ضريبية #INV-2027-8910</span>
+<span class="bg-surface-container px-space-xs py-space-2xs text-primary font-label-sm text-label-sm rounded font-semibold">مختومة إلكترونياً</span>
+</div>
+<div class="flex items-center gap-space-md text-secondary font-mono-code text-mono-code mt-space-2xs">
+<span>تاريخ الإصدار: 18 أكتوبر 2027 - 10:42 ص</span>
+<span>الرقم المرجعي الضريبي: 300492109400003</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-xs self-end sm:self-center">
+<!-- ZATCA Print button -->
+<button class="h-9 px-space-md rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-headline-sm">print</span>
+<span>طباعة ضريبية</span>
+</button>
+<!-- NPHIES Resend / Refresh -->
+<button class="h-9 px-space-md rounded-lg bg-secondary-container hover:bg-surface-container-high text-tertiary font-label-md text-label-md flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-headline-sm">send</span>
+<span>مطالبة نفيس</span>
+</button>
+</div>
+</div>
+<!-- Dual Identity Grid: Patient & Medical Attendant -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Patient Profile Badge -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex items-start justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container text-primary flex items-center justify-center font-headline-sm text-headline-sm">
+                  س
+                </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">سعود ناصر الدوسري</span>
+<span class="font-mono-code text-mono-code text-secondary">هوية وطنية: 1089201948 • ذكر (46 سنة)</span>
+<span class="font-label-sm text-label-sm text-error mt-space-2xs flex items-center gap-space-2xs">
+<span class="material-symbols-outlined text-label-sm">warning</span> حساسية موثقة: بنسلين (Penicillin)
+                  </span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm font-semibold text-tertiary">بوبا العربية (فئة A)</span>
+<span class="font-mono-code text-mono-code text-secondary">بوليصة #BPA-99120</span>
+<span class="font-mono-code text-mono-code text-primary mt-space-2xs">نسبة التحمل: 20% (حد 200 ر.س)</span>
+</div>
+</div>
+<!-- Doctor & Clinic Badge -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex items-start justify-between">
+<div class="flex items-center gap-space-sm">
+<img class="w-10 h-10 rounded-xl object-cover" data-alt="A portrait of an Arabian male senior cardiology consultant doctor in a crisp white medical coat and navy scrubs smiling inside a bright modern Riyadh hospital clinic, architectural ambient lighting, professional healthcare style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDScu_Wct3oS5rQI3suvXLskQ6hq2TX04Eemq2Um-nm8Nd3UUiHiIsdby-evEvz8TlmzwvzZoGATitfgWXA04XyV5G69n3x8Mj9aTDPvbM71mU9RBu29PWf48XECm_U9LGwKdXN0Vf0ThMSNR99yIkMN-Wg0ASYNoFXh3wUCwmOoG1Qv85CRgL7Qh-qX6pg1mP3fn45dWdXU2CbErHk2FRpu2QQLrAIZMHLZI83wJON9JXSTGfOggxLIg"/>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">د. أحمد المنصوري</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">استشاري أمراض الباطنة والقلب</span>
+<span class="font-mono-code text-mono-code text-secondary mt-space-2xs">عيادة القلب رقم 302 • زيارة تشخيصية</span>
+</div>
+</div>
+<span class="inline-flex items-center px-space-xs py-space-2xs rounded bg-surface-container text-primary font-mono-code text-mono-code">
+                ترخيص: SCFHS-28104
+              </span>
+</div>
+</div>
+<!-- Itemized Breakdown Ledger (Catalog Items) -->
+<div class="flex flex-col mt-space-xs">
+<div class="flex items-center justify-between mb-space-xs px-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface">بنود الخدمات الطبية والأدوية</span>
+<span class="font-label-sm text-label-sm text-secondary">متوافقة مع كاتالوج الخدمات الموحد (SBS / ACHI)</span>
+</div>
+<div class="overflow-x-auto rounded-xl bg-surface-container-low">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container text-secondary font-label-sm text-label-sm">
+<th class="py-space-sm px-space-md">البند والرمز الطبي</th>
+<th class="py-space-sm px-space-sm text-center">الكمية</th>
+<th class="py-space-sm px-space-sm text-left">سعر الوحدة</th>
+<th class="py-space-sm px-space-sm text-center">تغطية التأمين</th>
+<th class="py-space-sm px-space-sm text-center">ضريبة القيمة المضافة</th>
+<th class="py-space-sm px-space-md text-left">صافي التحمل</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-on-surface font-body-md text-body-md">
+<!-- Row 1: Consultation -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">كشف استشاري باطنة وقلب متقدم</span>
+<span class="font-mono-code text-mono-code text-secondary">SBS-99204 • CPT-99214</span>
+</div>
+</td>
+<td class="py-space-sm px-space-sm text-center font-mono-metric">1</td>
+<td class="py-space-sm px-space-sm text-left font-mono-metric">350.00</td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="font-label-sm text-label-sm text-primary font-semibold">80% (280.00 SAR)</span>
+</td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="font-label-sm text-label-sm text-secondary">معفى (مواطن)</span>
+</td>
+<td class="py-space-sm px-space-md text-left font-mono-metric font-semibold text-primary">70.00 <span class="text-label-sm text-secondary">SAR</span></td>
+</tr>
+<!-- Row 2: Lab Test -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">تحليل دهون كامل بالدم (Lipid Profile Panel)</span>
+<span class="font-mono-code text-mono-code text-secondary">LAB-80061 • عينة وريدية</span>
+</div>
+</td>
+<td class="py-space-sm px-space-sm text-center font-mono-metric">1</td>
+<td class="py-space-sm px-space-sm text-left font-mono-metric">180.00</td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="font-label-sm text-label-sm text-primary font-semibold">80% (144.00 SAR)</span>
+</td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="font-label-sm text-label-sm text-secondary">معفى (مواطن)</span>
+</td>
+<td class="py-space-sm px-space-md text-left font-mono-metric font-semibold text-primary">36.00 <span class="text-label-sm text-secondary">SAR</span></td>
+</tr>
+<!-- Row 3: Diagnostic Procedure -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">تخطيط صدى القلب دوبلر ملون (Echocardiogram 2D)</span>
+<span class="font-mono-code text-mono-code text-secondary">RAD-93306 • جهاز فيليبس عيادة 302</span>
+</div>
+</td>
+<td class="py-space-sm px-space-sm text-center font-mono-metric">1</td>
+<td class="py-space-sm px-space-sm text-left font-mono-metric">850.00</td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="font-label-sm text-label-sm text-primary font-semibold">80% (680.00 SAR)</span>
+</td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="font-label-sm text-label-sm text-secondary">معفى (مواطن)</span>
+</td>
+<td class="py-space-sm px-space-md text-left font-mono-metric font-semibold text-primary">89.50 <span class="text-label-sm text-secondary">SAR*</span></td>
+</tr>
+<!-- Row 4: Pharmacy Dispense -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">علاج روزوفاستاتين 20 ملغم (Rosuvastatin Tab 30's)</span>
+<span class="font-mono-code text-mono-code text-secondary">RX-400192 • الصيدلية المركزية</span>
+</div>
+</td>
+<td class="py-space-sm px-space-sm text-center font-mono-metric">1</td>
+<td class="py-space-sm px-space-sm text-left font-mono-metric">100.00</td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="font-label-sm text-label-sm text-secondary">بانتظار الموافقة</span>
+</td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="font-mono-metric text-label-sm">معفى</span>
+</td>
+<td class="py-space-sm px-space-md text-left font-mono-metric font-semibold text-error">100.00 <span class="text-label-sm text-secondary">SAR</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-space-xs text-secondary font-mono-code text-mono-code">
+              * تم تطبيق الحد الأقصى للتحمل التأميني (Cap Deductible) لصالح المريض سعود الدوسري بموجب العقد.
+            </div>
+</div>
+<!-- Calculation Matrix & Breakdown Summary -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg pt-space-sm">
+<!-- ZATCA Phase 2 QR & Compliance Anchor -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex items-center gap-space-md">
+<div class="w-24 h-24 bg-surface-container-lowest p-1 rounded-lg flex items-center justify-center shadow-sm shrink-0">
+<!-- SVG ZATCA Standard QR representation -->
+<svg class="w-full h-full text-on-surface" fill="currentColor" viewbox="0 0 100 100">
+<path d="M10 10h30v30h-30z M16 16v18h18v-18z M22 22h6v6h-6z M60 10h30v30h-30z M66 16v18h18v-18z M72 22h6v6h-6z M10 60h30v30h-30z M16 66v18h18v-18z M22 72h6v6h-6z M46 16h8v8h-8z M46 32h8v8h-8z M16 46h8v8h-8z M32 46h8v8h-8z M50 50h14v14h-14z M70 48h10v8h-10z M84 48h6v12h-6z M48 70h12v6h-12z M66 68h12v12h-12z M82 66h8v8h-8z M54 84h18v6h-18z M80 80h10v10h-10z"></path>
+</svg>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">الفاتورة الضريبية المبسطة ZATCA</span>
+<span class="font-mono-code text-mono-code text-secondary mt-space-2xs">الرقم المشفر UUID: 8d20c-7b44-482f</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">
+                  تم التوثيق والمصادقة اللحظية عبر مصفوفة نفيس للتأمين وهيئة الزكاة والضريبة.
+                </span>
+</div>
+</div>
+<!-- Totals & Balances Table -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col justify-between">
+<div class="flex flex-col gap-space-2xs">
+<div class="flex items-center justify-between font-body-md text-body-md text-secondary">
+<span>المجموع الإجمالي للخدمات:</span>
+<span class="font-mono-metric text-on-surface">1,480.00 SAR</span>
+</div>
+<div class="flex items-center justify-between font-body-md text-body-md text-tertiary">
+<span>المبلغ المغطى بواسطة بوبا (NPHIES Approved):</span>
+<span class="font-mono-metric font-semibold">- 1,184.50 SAR</span>
+</div>
+<div class="flex items-center justify-between font-body-md text-body-md text-secondary">
+<span>ضريبة القيمة المضافة 15% (المواطن معفى طبياً):</span>
+<span class="font-mono-metric text-on-surface">0.00 SAR</span>
+</div>
+<div class="flex items-center justify-between font-body-lg text-body-lg font-semibold text-on-surface pt-space-xs bg-surface-container px-space-sm rounded-lg">
+<span>صافي التحمل المطلوب من المريض:</span>
+<span class="font-mono-metric text-headline-sm text-primary">295.50 SAR</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-sm mt-space-xs">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary">إجمالي المدفوع: <strong class="text-on-surface font-mono-metric">100.00 SAR</strong></span>
+<span class="font-label-sm text-label-sm text-error">المتبقي للدفع الآن:</span>
+</div>
+<span class="font-mono-metric text-headline-xl text-error font-bold">195.50 <span class="font-label-md text-label-md text-secondary">SAR</span></span>
+</div>
+</div>
+</div>
+<!-- Payment History & Settlement Audit Ledger -->
+<div class="flex flex-col gap-space-sm mt-space-md">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">سجل عمليات الدفع المسجلة للفاتورة</span>
+<span class="font-mono-code text-mono-code text-secondary">مرجع الإيصالات: REC-2027</span>
+</div>
+<div class="overflow-hidden rounded-xl bg-surface-container-low">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container text-secondary font-label-sm text-label-sm">
+<th class="py-space-sm px-space-md">رقم الإيصال</th>
+<th class="py-space-sm px-space-sm">طريقة الدفع</th>
+<th class="py-space-sm px-space-sm">التاريخ والوقت</th>
+<th class="py-space-sm px-space-sm">المرجع البنكي / التفويض</th>
+<th class="py-space-sm px-space-md text-left">المبلغ المسدد</th>
+<th class="py-space-sm px-space-sm text-center">الإجراء</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-on-surface font-body-md text-body-md">
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="py-space-sm px-space-md font-mono-metric text-primary font-semibold">REC-09124</td>
+<td class="py-space-sm px-space-sm">
+<span class="inline-flex items-center gap-space-2xs">
+<span class="material-symbols-outlined text-label-sm text-primary">contactless</span>
+                        مدى (Mada POS)
+                      </span>
+</td>
+<td class="py-space-sm px-space-sm font-mono-code text-mono-code text-secondary">18-10-2027 • 10:48 ص</td>
+<td class="py-space-sm px-space-sm font-mono-code text-mono-code text-secondary">AUTH-881920-SNB</td>
+<td class="py-space-sm px-space-md text-left font-mono-metric font-bold text-primary">100.00 SAR</td>
+<td class="py-space-sm px-space-sm text-center">
+<button class="p-space-2xs text-secondary hover:text-primary transition-colors" title="طباعة سند قبض">
+<span class="material-symbols-outlined text-headline-sm">receipt_long</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Bottom Action Execution Tray -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-space-md pt-space-md bg-surface-container-low p-space-md rounded-xl">
+<div class="flex items-center gap-space-sm w-full sm:w-auto">
+<button class="h-10 px-space-md rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center gap-space-xs transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-headline-sm">receipt</span>
+<span>إصدار إيصال قبض (Receipt)</span>
+</button>
+<button class="h-10 px-space-md rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center gap-space-xs transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-headline-sm">share</span>
+<span>إرسال عبر WhatsApp/SMS</span>
+</button>
+</div>
+<div class="flex items-center gap-space-sm w-full sm:w-auto justify-end">
+<button class="h-10 px-space-lg rounded-xl bg-primary text-on-primary hover:bg-primary-container font-label-md text-label-md flex items-center gap-space-xs transition-colors shadow-md" type="button">
+<span class="material-symbols-outlined text-headline-sm">payments</span>
+<span>تسجيل دفعة سداد جديدة (+ 195.50 SAR)</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Settlement Modal Drawer Simulation Component (Embedded Interactive Element) -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-headline-sm">point_of_sale</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface">نافذة التحصيل السريع لنقطة البيع (POS / Mada Terminal Integration)</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary bg-surface-container-low px-space-sm py-space-2xs rounded">جهاز الدفع: Verifone V200c (متصل عبر الشبكة المحلية)</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-space-md">
+<!-- Payment Mode: Mada -->
+<label class="cursor-pointer p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container flex flex-col items-center justify-center gap-space-xs transition-all relative">
+<input checked="" class="sr-only" name="payment_method" type="radio"/>
+<span class="material-symbols-outlined text-headline-xl text-primary">credit_card</span>
+<span class="font-label-md text-label-md font-semibold text-on-surface">مدى / Apple Pay</span>
+<span class="font-mono-code text-mono-code text-secondary">إرسال للجهاز مباشرة</span>
+</label>
+<!-- Payment Mode: Cash -->
+<label class="cursor-pointer p-space-md rounded-xl bg-surface-container-lowest hover:bg-surface-container-low flex flex-col items-center justify-center gap-space-xs transition-all">
+<input class="sr-only" name="payment_method" type="radio"/>
+<span class="material-symbols-outlined text-headline-xl text-secondary">payments</span>
+<span class="font-label-md text-label-md font-semibold text-on-surface">سداد نقدي (Cash)</span>
+<span class="font-mono-code text-mono-code text-secondary">فتح درج النقدية</span>
+</label>
+<!-- Payment Mode: Insurance Direct Co-Pay -->
+<label class="cursor-pointer p-space-md rounded-xl bg-surface-container-lowest hover:bg-surface-container-low flex flex-col items-center justify-center gap-space-xs transition-all">
+<input class="sr-only" name="payment_method" type="radio"/>
+<span class="material-symbols-outlined text-headline-xl text-tertiary">health_and_safety</span>
+<span class="font-label-md text-label-md font-semibold text-on-surface">تحويل تأميني مباشر</span>
+<span class="font-mono-code text-mono-code text-secondary">تحويل المطالبة لشركة بوبا</span>
+</label>
+<!-- Payment Mode: Voucher/Split -->
+<label class="cursor-pointer p-space-md rounded-xl bg-surface-container-lowest hover:bg-surface-container-low flex flex-col items-center justify-center gap-space-xs transition-all">
+<input class="sr-only" name="payment_method" type="radio"/>
+<span class="material-symbols-outlined text-headline-xl text-secondary">call_split</span>
+<span class="font-label-md text-label-md font-semibold text-on-surface">سداد مجزأ / قسيمة</span>
+<span class="font-mono-code text-mono-code text-secondary">تقسيم بين نقدي وبطاقة</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Micro-interaction handlers for billing selection & feedback
+  document.addEventListener('DOMContentLoaded', () => {
+    const radioLabels = document.querySelectorAll('input[name="payment_method"]');
+    radioLabels.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        radioLabels.forEach(r => {
+          const parent = r.closest('label');
+          if (parent) {
+            parent.classList.remove('bg-surface-container-low', 'shadow-sm');
+            parent.classList.add('bg-surface-container-lowest');
+          }
+        });
+        if (e.target.checked) {
+          const activeParent = e.target.closest('label');
+          if (activeParent) {
+            activeParent.classList.remove('bg-surface-container-lowest');
+            activeParent.classList.add('bg-surface-container-low', 'shadow-sm');
+          }
+        }
+      });
+    });
+  });
+</script></main></div></body></html>
