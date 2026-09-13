@@ -163,6 +163,7 @@ export default function StaffPage() {
   };
 
   const handleDeleteShift = async (id: string) => {
+    if (!window.confirm(t("common_confirmDelete"))) return;
     try {
       const r = await fetch(`/api/shifts/${id}`, { method: "DELETE" });
       if (!r.ok) throw new Error("delete failed");

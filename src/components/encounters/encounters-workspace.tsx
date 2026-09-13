@@ -116,6 +116,7 @@ export function EncountersWorkspace() {
   };
 
   const deleteTemplate = async (id: string) => {
+    if (!window.confirm(t("common_confirmDelete"))) return;
     const response = await fetch(`/api/clinical-templates/${id}`, { method: "DELETE" });
     if (!response.ok) throw new Error(t("enc_tplDeleteError"));
     if (templateId === id) setTemplateId("");

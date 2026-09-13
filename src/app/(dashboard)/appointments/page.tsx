@@ -57,40 +57,39 @@ function toTimeValue(t: string): string {
   return t.replace(/\s*(AM|PM)/gi, "") || "09:00"
 }
 
-const DEFAULT_PROVIDERS = ["Dr. Jane Smith", "Dr. Robert Chen"] as const
-
 function EditAppointmentDialog({
   apt,
   patientName,
+  providerNames,
   onSave,
   onCancel,
 }: {
   apt: Appointment
   patientName: string
+  providerNames: string[]
   onSave: (data: { provider: string; date: string; time: string; status: string }) => void
   onCancel: () => void
 }) {
   const providerOptions = React.useMemo(() => {
     const current = apt.provider?.trim()
-    if (!current || DEFAULT_PROVIDERS.includes(current as (typeof DEFAULT_PROVIDERS)[number])) {
-      return [...DEFAULT_PROVIDERS]
-    }
-    return [current, ...DEFAULT_PROVIDERS]
-  }, [apt.provider])
+    const names = providerNames.map((name) => name.trim()).filter(Boolean)
+    if (current && !names.includes(current)) return [current, ...names]
+    return names.length ? names : current ? [current] : []
+  }, [apt.provider, providerNames])
 
   const { t } = useLocale()
 
-  const [provider, setProvider] = React.useState(apt.provider?.trim() || DEFAULT_PROVIDERS[0])
+  const [provider, setProvider] = React.useState(apt.provider?.trim() || providerNames[0] || "")
   const [date, setDate] = React.useState(apt.date)
   const [time, setTime] = React.useState(toTimeValue(apt.time))
   const [status, setStatus] = React.useState(toStatusValue(apt.status))
 
   React.useEffect(() => {
-    setProvider(apt.provider?.trim() || DEFAULT_PROVIDERS[0])
+    setProvider(apt.provider?.trim() || providerNames[0] || "")
     setDate(apt.date)
     setTime(toTimeValue(apt.time))
     setStatus(toStatusValue(apt.status))
-  }, [apt.id, apt.provider, apt.date, apt.time, apt.status])
+  }, [apt.id, apt.provider, apt.date, apt.time, apt.status, providerNames])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -99,7 +98,7 @@ function EditAppointmentDialog({
 
   return (
     <Dialog open onOpenChange={(open) => !open && onCancel()}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{t("appts_editTitle")}</DialogTitle>
@@ -123,7 +122,7 @@ function EditAppointmentDialog({
                 </SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="grid gap-2">
                 <Label htmlFor="edit-date">{t("appts_date")}</Label>
                 <Input id="edit-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
@@ -449,7 +448,7 @@ function AppointmentsPageContent() {
                    <span className="px-2 py-1 rounded-[5px] text-xs font-medium bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">{statusLabel(apt.status)}</span>
                    <span className="ms-auto flex gap-3">
                      <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0 h-auto" onClick={() => setEditAptId(apt.id)}>{t("appts_edit")}</Button>
-                     <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}>{t("appts_cancel")}</Button>{isTelehealthAppointment(apt.type) ? (<TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />) : null}
+                     <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}>{t("appts_cancel")}</Button>{isTelehealthAppointment(apt.type) ? (<TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />) : null}
                    </span>
                  </div>
                )
@@ -511,7 +510,7 @@ function AppointmentsPageContent() {
                                  >
                                    {t("appts_edit")}
                                  </Button>
-                                 <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}>{t("appts_cancel")}</Button>
+                                 <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}>{t("appts_cancel")}</Button>
 {!apt.isWalkIn && (apt.status ?? "").toLowerCase() !== "cancelled" ? (
                                     <FeatureTip tipId="appointments-walkin">
                                     <Button variant="link" className="text-violet-600 hover:text-violet-700 p-0 h-auto" onClick={() => {
@@ -556,6 +555,7 @@ function AppointmentsPageContent() {
             key={apt.id}
             apt={apt}
             patientName={patientName}
+            providerNames={providers.map((provider) => provider.name)}
             onSave={(data) => {
               handleEdit(apt.id, data)
               setEditAptId(null)

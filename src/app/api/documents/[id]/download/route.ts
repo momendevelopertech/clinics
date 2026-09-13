@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { prisma } from "@/lib/prisma";
-import { getCloudinaryConfigStatus } from "@/lib/cloudinary";
+import {
+  ensureCloudinaryConfigured,
+  inferResourceType,
+} from "@/lib/cloudinary";
 import { verifyDocumentDownloadToken } from "@/lib/signed-urls";
 import { createAuditLog } from "@/lib/audit";
 import { logServerError } from "@/lib/safe-logger";
@@ -37,7 +40,7 @@ export async function GET(
 
     const document = await prisma.document.findFirst({
       where: { id, organizationId: verified.orgId },
-      select: { id: true, patientId: true, storageKey: true, publicId: true, organizationId: true },
+      select: { id: true, patientId: true, storageKey: true, publicId: true, mimeType: true, organizationId: true },
     });
     if (!document) {
       return NextResponse.json({ error: "Document not found" }, { status: 404 });
@@ -45,14 +48,17 @@ export async function GET(
 
     let targetUrl = document.storageKey;
     if (document.publicId) {
-      const status = getCloudinaryConfigStatus();
-      if (!status.configured) {
+      try {
+        // Configures the SDK (api_secret) — required for sign_url to work.
+        ensureCloudinaryConfigured();
+      } catch {
         return NextResponse.json({ error: "File storage is not configured" }, { status: 503 });
       }
       targetUrl = cloudinary.url(document.publicId, {
         secure: true,
         sign_url: true,
         expires_at: Math.floor(Date.now() / 1000) + 600,
+        resource_type: inferResourceType(document.mimeType),
       });
     }
 

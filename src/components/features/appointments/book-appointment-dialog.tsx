@@ -163,7 +163,7 @@ export function BookAppointmentDialog({
       </DialogTrigger>
       <DialogContent
         className={cn(
-          "sm:max-w-[440px] p-0 gap-0 overflow-hidden",
+          "sm:max-w-[440px] p-0 gap-0 overflow-hidden max-h-[90vh] overflow-y-auto",
           "border-0 shadow-2xl shadow-neutral-900/10 dark:shadow-neutral-950/50",
           "bg-white dark:bg-neutral-950",
           "ring-1 ring-neutral-200/80 dark:ring-neutral-800/80"

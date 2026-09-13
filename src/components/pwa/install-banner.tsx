@@ -54,6 +54,7 @@ export function InstallBanner() {
           </div>
           <button
             onClick={handleDismiss}
+            aria-label="Dismiss"
             className="shrink-0 rounded-[10px] p-1 text-muted-foreground hover:bg-muted"
           >
             <X className="h-4 w-4" />

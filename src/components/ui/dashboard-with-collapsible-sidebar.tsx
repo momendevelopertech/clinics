@@ -26,6 +26,7 @@ import {
   Moon,
   Package,
   Pill,
+  Plug,
   ScrollText,
   Search,
   Settings,
@@ -40,6 +41,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import {
   DropdownMenu,
@@ -115,12 +117,15 @@ export function DashboardWithCollapsibleSidebar({
   planModules = null,
 }: DashboardWithCollapsibleSidebarProps) {
   const [open, setOpen] = useState(true);
+  // Mobile drawer state is intentionally separate: it starts closed so the
+  // drawer never pops open on first load, independent of desktop collapse.
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
     <div className="app-shell flex min-h-screen w-full text-foreground">
-      <CollapsibleSidebar open={open} setOpen={setOpen} roles={roles} isSuperAdmin={isSuperAdmin} planModules={planModules} />
+      <CollapsibleSidebar open={open} setOpen={setOpen} mobileNavOpen={mobileNavOpen} setMobileNavOpen={setMobileNavOpen} roles={roles} isSuperAdmin={isSuperAdmin} planModules={planModules} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <DashboardHeader open={open} setOpen={setOpen} orgName={orgName} />
+        <DashboardHeader onMenuClick={() => setMobileNavOpen(true)} orgName={orgName} />
         <main className="flex-1 overflow-auto px-4 pb-6 pt-4 sm:px-6 lg:px-8">
           <div className="mx-auto w-full max-w-[1440px]">{children}</div>
         </main>
@@ -132,12 +137,16 @@ export function DashboardWithCollapsibleSidebar({
 function CollapsibleSidebar({
   open,
   setOpen,
+  mobileNavOpen,
+  setMobileNavOpen,
   roles,
   isSuperAdmin,
   planModules,
 }: {
   open: boolean;
   setOpen: (value: boolean) => void;
+  mobileNavOpen: boolean;
+  setMobileNavOpen: (value: boolean) => void;
   roles: string[];
   isSuperAdmin: boolean;
   planModules?: Record<string, boolean> | null;
@@ -259,6 +268,7 @@ function CollapsibleSidebar({
       { icon: Check, label: t("super_navApprovals"), href: "/super?section=approvals" },
       { icon: Wallet, label: t("super_navBilling"), href: "/super?section=billing" },
       { icon: ScrollText, label: t("super_navAudit"), href: "/super?section=audit" },
+      { icon: Plug, label: t("super_navServices"), href: "/super?section=services" },
       { icon: Settings, label: t("super_navSettings"), href: "/super?section=settings" },
     );
   }
@@ -266,6 +276,7 @@ function CollapsibleSidebar({
   navGroups.push({ label: t("nav_system"), items: systemItems });
 
   return (
+    <>
     <aside
       className={cn(
         "surface-panel sticky top-0 hidden h-screen shrink-0 border-r border-sidebar-border/80 px-3 py-4 md:flex md:flex-col",
@@ -335,6 +346,8 @@ function CollapsibleSidebar({
         variant="ghost"
         size="sm"
         onClick={() => setOpen(!open)}
+        aria-label={t("header_collapse")}
+        title={t("header_collapse")}
         className="mt-auto h-12 justify-start rounded-[18px] border border-white/55 bg-white/50 px-2.5 hover:bg-white/80 dark:border-white/5 dark:bg-white/[0.03] dark:hover:bg-white/[0.06]"
       >
         <div className="grid size-8 place-content-center rounded-[12px] bg-primary/10 text-primary">
@@ -343,6 +356,28 @@ function CollapsibleSidebar({
         {open ? <span className="ml-2 text-sm font-medium">{t("header_collapse")}</span> : null}
       </Button>
     </aside>
+    <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
+      <SheetContent side="left" className="overflow-y-auto px-4 py-6 md:hidden">
+        <SheetHeader>
+          <SheetTitle>{t("appSubtitle")}</SheetTitle>
+        </SheetHeader>
+        <nav className="mt-4 space-y-5" onClick={() => setMobileNavOpen(false)}>
+          {navGroups.map((group) => (
+            <div key={group.label}>
+              <p className="mb-2 px-3 text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+                {group.label}
+              </p>
+              <div className="space-y-1">
+                {group.items.map((item) => (
+                  <NavLink key={item.href} item={item} open />
+                ))}
+              </div>
+            </div>
+          ))}
+        </nav>
+      </SheetContent>
+    </Sheet>
+    </>
   );
 }
 
@@ -434,12 +469,10 @@ function NavLink({
 }
 
 function DashboardHeader({
-  open,
-  setOpen,
+  onMenuClick,
   orgName,
 }: {
-  open: boolean;
-  setOpen: (value: boolean) => void;
+  onMenuClick: () => void;
   orgName?: string;
 }) {
   const router = useRouter();
@@ -630,7 +663,7 @@ function DashboardHeader({
           <Button
             variant="ghost"
             size="icon-sm"
-            onClick={() => setOpen(!open)}
+            onClick={onMenuClick}
             className="rounded-[14px] md:hidden"
             aria-label={t("header_toggleNav")}
           >

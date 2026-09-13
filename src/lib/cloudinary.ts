@@ -83,6 +83,19 @@ function dataUriFromBuffer(buffer: Buffer, mimeType: string): string {
   return `data:${mimeType};base64,${buffer.toString("base64")}`;
 }
 
+/**
+ * Resource type Cloudinary assigns at upload time (mirrors the mapping in
+ * uploadBufferToCloudinary). Needed when signing download URLs: `cloudinary.url`
+ * defaults to resource_type "image", which 404s for PDFs/docs stored as "raw".
+ */
+export function inferResourceType(
+  mimeType: string | null | undefined,
+): "image" | "raw" {
+  const mime = (mimeType ?? "").toLowerCase();
+  if (mime === "application/pdf" || mime.includes("word")) return "raw";
+  return "image";
+}
+
 export async function uploadBufferToCloudinary(params: {
   buffer: Buffer;
   mimeType: string;

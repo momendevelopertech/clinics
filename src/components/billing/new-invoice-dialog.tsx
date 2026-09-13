@@ -130,7 +130,7 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
           <Plus className="w-4 h-4 mr-2" /> New Invoice
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-h-[90vh] max-w-md overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create Invoice</DialogTitle>
           <DialogDescription>

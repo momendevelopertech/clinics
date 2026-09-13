@@ -118,6 +118,7 @@ export default async function PrescriptionPrintPage({
 
           <div className="mt-6 rounded-[16px] border border-white/60 p-5 dark:border-white/6">
             {hasItems ? (
+              <div className="overflow-x-auto print:overflow-visible">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-white/60 text-left text-xs text-muted-foreground dark:border-white/6">
@@ -143,6 +144,7 @@ export default async function PrescriptionPrintPage({
                   ))}
                 </tbody>
               </table>
+              </div>
             ) : (
               <div>
                 <p className="text-xl font-semibold">{prescription.medicationName}</p>

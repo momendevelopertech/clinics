@@ -379,7 +379,10 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
                 </div>
                 <button
                   disabled={busy !== null}
-                  onClick={() => void run(`/api/super/orgs/${orgId}/override/${override.id}`, "DELETE")}
+                  onClick={() => {
+                    if (!window.confirm(t["common_confirmAction"])) return;
+                    void run(`/api/super/orgs/${orgId}/override/${override.id}`, "DELETE");
+                  }}
                   className="grid size-8 place-content-center rounded-[10px] border border-red-200 text-red-600 hover:bg-red-50 disabled:opacity-40 dark:border-red-400/20 dark:hover:bg-red-400/10"
                   aria-label={t["plans_archive"]}
                 >

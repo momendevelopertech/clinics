@@ -172,7 +172,7 @@ export default function SecurityPage() {
           {backupCodes.length > 0 ? (
             <div className="rounded border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/20">
               <p className="text-sm font-medium mb-2">{t("sec_backupTitle")}</p>
-              <div className="grid grid-cols-2 gap-2 font-mono text-sm">
+              <div className="grid grid-cols-1 gap-2 font-mono text-sm sm:grid-cols-2">
                 {backupCodes.map((c) => (
                   <span key={c}>{c}</span>
                 ))}

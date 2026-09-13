@@ -87,6 +87,7 @@ export default function BillingPage() {
   };
 
   const handleDeleteExpense = async (id: string) => {
+    if (!window.confirm(t("common_confirmDelete"))) return;
     try {
       const response = await fetch(`/api/expenses/${id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("delete failed");

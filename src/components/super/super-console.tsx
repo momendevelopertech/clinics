@@ -19,9 +19,11 @@ import {
   X,
   LogOut,
   Lock,
+  Plug,
 } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n/locale";
 import { LanguageSwitcher } from "@/components/locale/language-switcher";
+import { PendingServicesSection } from "@/components/super/pending-services-section";
 
 type OrgRow = {
   id: string;
@@ -67,7 +69,7 @@ const FALLBACK_PLANS: PlanOption[] = [
   { code: "clinic", nameEn: "Clinic" },
   { code: "plus", nameEn: "Plus" },
 ];
-type Section = "organizations" | "approvals" | "billing" | "audit" | "settings";
+type Section = "organizations" | "approvals" | "billing" | "audit" | "settings" | "services";
 
 function formatUsage(value: number, limit: number) {
   return `${value.toLocaleString()} / ${limit >= 999_999 ? "∞" : limit.toLocaleString()}`;
@@ -81,6 +83,7 @@ export function SuperConsole({ t }: { t: Dictionary }) {
     requestedSection === "approvals" ||
     requestedSection === "billing" ||
     requestedSection === "audit" ||
+    requestedSection === "services" ||
     requestedSection === "settings"
       ? requestedSection
       : "organizations";
@@ -238,6 +241,7 @@ export function SuperConsole({ t }: { t: Dictionary }) {
     { id: "approvals", label: t["super_sectionApprovals"], icon: ClipboardCheck },
     { id: "billing", label: t["super_sectionBilling"], icon: Wallet },
     { id: "audit", label: t["super_sectionAudit"], icon: ShieldCheck },
+    { id: "services", label: t["super_sectionServices"], icon: Plug },
     { id: "settings", label: t["super_sectionSettings"], icon: Settings },
   ];
 
@@ -333,6 +337,7 @@ export function SuperConsole({ t }: { t: Dictionary }) {
               <BillingSection orgs={orgs} t={t} busyId={busyId} act={act} plans={availablePlans} />
             ) : null}
             {section === "audit" ? <AuditSection audit={audit} t={t} /> : null}
+            {section === "services" ? <PendingServicesSection t={t} /> : null}
             {section === "settings" ? (
               <SettingsSection
                 settings={settings}

@@ -84,6 +84,7 @@ function PendingChangesDialog({
   };
 
   const handleRemove = async (id: string) => {
+    if (!window.confirm("Remove this queued operation?")) return;
     await removeOperation(id);
     await loadOperations();
     await onRefresh();
@@ -91,6 +92,7 @@ function PendingChangesDialog({
   };
 
   const handleClearAll = async () => {
+    if (!window.confirm("Clear all pending operations? This cannot be undone.")) return;
     await clearAllOperations();
     await loadOperations();
     await onRefresh();
@@ -199,6 +201,8 @@ function PendingChangesDialog({
                     size="icon"
                     className="h-8 w-8 shrink-0"
                     onClick={() => handleRemove(op.id)}
+                    aria-label="Remove queued change"
+                    title="Remove queued change"
                   >
                     <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
                   </Button>

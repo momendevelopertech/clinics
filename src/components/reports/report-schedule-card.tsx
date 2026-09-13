@@ -71,6 +71,7 @@ export function ReportScheduleCard({ t }: { t: Dictionary }) {
   };
 
   const remove = async (id: string) => {
+    if (!window.confirm(t["common_confirmDelete"])) return;
     try {
       const r = await fetch(`/api/reports/schedules/${id}`, { method: "DELETE" });
       if (!r.ok) throw new Error("delete failed");

@@ -18,7 +18,6 @@ import {
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-  SearchIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -136,17 +135,6 @@ export function FullScreenCalendar({
         </div>
 
         <div className="flex flex-col items-center gap-4 md:flex-row md:gap-6">
-          <Button
-            variant="outline"
-            size="icon"
-            className="hidden lg:flex rounded-[5px]"
-            aria-label={t("calendar_search")}
-          >
-            <SearchIcon size={16} strokeWidth={2} aria-hidden="true" />
-          </Button>
-
-          <Separator orientation="vertical" className="hidden h-6 lg:block" />
-
           <div className="inline-flex w-full -space-x-px rounded-[5px] shadow-sm shadow-black/5 md:w-auto rtl:space-x-reverse">
             <Button
               onClick={previousMonth}

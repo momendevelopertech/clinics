@@ -140,6 +140,7 @@ export default function PatientPortalPage() {
   const displayedVital = latestVital ?? overviewVital;
 
   const cancelAppointment = async (id: string) => {
+    if (!window.confirm(t("common_confirmAction"))) return;
     setWorkingId(id);
     try {
       const response = await fetch(`/api/patient-portal/appointments/${id}/cancel`, {

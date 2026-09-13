@@ -88,6 +88,7 @@ export function PatientAllergiesCard({
   };
 
   const removeAllergy = async (id: string) => {
+    if (!window.confirm(t["common_confirmDelete"])) return;
     try {
       const r = await fetch(`/api/patients/${patientId}/allergies/${id}`, {
         method: "DELETE",

@@ -96,6 +96,7 @@ export default function IntegrationsPage() {
   }
 
   async function revokeKey(id: string) {
+    if (!window.confirm(t("common_confirmAction"))) return;
     try {
       const r = await fetch(`/api/api-keys/${id}/revoke`, { method: "POST" });
       if (!r.ok) throw new Error("revoke failed");
@@ -141,6 +142,7 @@ export default function IntegrationsPage() {
   }
 
   async function deleteWebhook(id: string) {
+    if (!window.confirm(t("common_confirmDelete"))) return;
     try {
       const r = await fetch(`/api/webhooks/${id}`, { method: "DELETE" });
       if (!r.ok) throw new Error("delete failed");

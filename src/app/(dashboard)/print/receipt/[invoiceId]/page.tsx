@@ -115,6 +115,7 @@ export default async function ReceiptPrintPage({
             </div>
           </div>
 
+          <div className="overflow-x-auto print:overflow-visible">
           <table className="mt-6 w-full text-sm">
             <thead>
               <tr className="border-b border-foreground/15 text-xs text-muted-foreground">
@@ -137,6 +138,7 @@ export default async function ReceiptPrintPage({
               ))}
             </tbody>
           </table>
+          </div>
 
           <div className="mt-4 space-y-1.5 text-sm">
             <div className="flex justify-between font-semibold">
