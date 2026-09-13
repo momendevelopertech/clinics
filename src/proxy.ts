@@ -152,7 +152,8 @@ export async function proxy(request: NextRequest) {
     if (
       (token.roles as string[] | undefined)?.includes("Super Admin") &&
       !pathname.startsWith("/super") &&
-      !pathname.startsWith("/api/")
+      !pathname.startsWith("/api/") &&
+      pathname !== "/roles-guide"
     ) {
       return NextResponse.redirect(new URL("/super", request.url));
     }

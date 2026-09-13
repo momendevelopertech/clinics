@@ -8,6 +8,7 @@ import { useTheme } from "next-themes";
 import {
   Activity,
   Bell,
+  BookOpen,
   Building2,
   Calendar,
   CalendarClock,
@@ -92,6 +93,7 @@ const routeTitleKeys: Array<[string, string]> = [
   ["/audit", "nav_audit"],
   ["/security", "nav_security"],
   ["/staff", "nav_staff"],
+  ["/roles-guide", "nav_rolesGuide"],
   ["/consents", "nav_consents"],
   ["/prescriptions", "nav_prescriptions"],
   ["/insurance", "nav_insurance"],
@@ -255,6 +257,7 @@ function CollapsibleSidebar({
     { icon: CalendarClock, label: t("nav_waitlist"), href: "/waitlist", roles: ["Receptionist"] as NavRole[] },
     { icon: ShieldCheck, label: t("nav_security"), href: "/security" },
     { icon: Users, label: t("nav_staff"), href: "/staff", roles: ["Owner"] as NavRole[] },
+    { icon: BookOpen, label: t("nav_rolesGuide"), href: "/roles-guide", roles: ["Owner"] as NavRole[] },
     { icon: HelpCircle, label: t("nav_help"), href: "/help" },
   ]
     .filter((item) => canAccess(item.roles as NavRole[] | undefined))
@@ -269,6 +272,7 @@ function CollapsibleSidebar({
       { icon: Wallet, label: t("super_navBilling"), href: "/super?section=billing" },
       { icon: ScrollText, label: t("super_navAudit"), href: "/super?section=audit" },
       { icon: Plug, label: t("super_navServices"), href: "/super?section=services" },
+      { icon: BookOpen, label: t("nav_rolesGuide"), href: "/roles-guide" },
       { icon: Settings, label: t("super_navSettings"), href: "/super?section=settings" },
     );
   }
