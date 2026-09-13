@@ -98,9 +98,9 @@ export default function PrescriptionsPage() {
 
   const statusChip = (status: string) => {
     const base = "px-2.5 py-0.5 rounded-md text-xs font-semibold inline-flex items-center";
-    if (status === "active") return `${base} bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/30`;
-    if (status === "completed") return `${base} bg-cyan-50 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-400 border border-cyan-200/50 dark:border-cyan-800/30`;
-    if (status === "cancelled") return `${base} bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400 border border-red-200/50 dark:border-red-800/30`;
+    if (status === "active") return `${base} bg-success-bg text-success-text border border-success/30`;
+    if (status === "completed") return `${base} bg-primary/10 text-primary border border-primary/25`;
+    if (status === "cancelled") return `${base} bg-critical-bg text-critical-text border border-critical/30`;
     return `${base} bg-muted text-muted-foreground border border-border`;
   };
 
@@ -163,7 +163,7 @@ export default function PrescriptionsPage() {
       </div>
 
       <div className="flex flex-1 flex-col rounded-lg border border-border bg-card shadow-xs">
-        <div className="flex flex-col items-start justify-between gap-4 border-b border-border px-6 py-4 bg-muted/20 sm:flex-row sm:items-center">
+        <div className="flex flex-col items-start justify-between gap-4 border-b border-border px-6 py-4 bg-muted-bg sm:flex-row sm:items-center">
           <Input
             type="search"
             placeholder={t("rx_search")}
@@ -229,7 +229,7 @@ export default function PrescriptionsPage() {
             </div>
           ) : (
             <table className="w-full text-left text-sm">
-              <thead className="bg-muted/40 font-semibold text-xs uppercase tracking-wider text-muted-foreground">
+              <thead className="bg-muted-bg font-semibold text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
                   <th className="border-b border-border px-6 py-3.5">{t("rx_colPatient")}</th>
                   <th className="border-b border-border px-6 py-3.5">{t("rx_colMedication")}</th>
@@ -245,7 +245,7 @@ export default function PrescriptionsPage() {
               </thead>
               <tbody className="divide-y divide-border text-foreground">
                 {paged.map((rx) => (
-                  <tr key={rx.id} className="transition-colors hover:bg-muted/30">
+                  <tr key={rx.id} className="transition-colors hover:bg-muted-bg/60">
                     <td className="px-6 py-4">
                       <Link
                         href={`/patients/${rx.patientId}`}

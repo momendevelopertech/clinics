@@ -196,8 +196,8 @@ function MedicationNameInput({
                   type="button"
                   className={`flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition ${
                     index === activeIndex
-                      ? "bg-neutral-100 dark:bg-neutral-800"
-                      : "hover:bg-neutral-50 dark:hover:bg-neutral-800/60"
+                      ? "bg-accent text-accent-foreground"
+                      : "hover:bg-muted/50"
                   }`}
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={() => apply(item)}
@@ -484,7 +484,7 @@ export function NewPrescriptionDialog({
                       <li key={tpl.id}>
                         <button
                           type="button"
-                          className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition hover:bg-neutral-50 dark:hover:bg-neutral-800/60"
+                          className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition hover:bg-muted/50"
                           onClick={() => applyTemplate(tpl)}
                         >
                           <span className="flex min-w-0 flex-col">
@@ -610,7 +610,7 @@ export function NewPrescriptionDialog({
           </Button>
 
           {warnings.length > 0 ? (
-            <div className="flex items-start gap-2 rounded-md border border-amber-200/60 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800/40 dark:bg-amber-950/30 dark:text-amber-300">
+            <div className="flex items-start gap-2 rounded-md border border-warning/30 bg-warning-bg p-3 text-sm text-warning-text">
               <X className="mt-0.5 h-4 w-4 shrink-0" />
               <p>
                 {t("rx_allergyWarning")}: {warnings.join(", ")}
@@ -664,7 +664,7 @@ export function NewPrescriptionDialog({
                 type="checkbox"
                 checked={templateShared}
                 onChange={(e) => setTemplateShared(e.target.checked)}
-                className="h-4 w-4 rounded border-neutral-300 accent-[var(--clinic)]"
+                className="h-4 w-4 rounded border-border-muted accent-primary"
               />
               {t("rx_template_share")}
             </label>

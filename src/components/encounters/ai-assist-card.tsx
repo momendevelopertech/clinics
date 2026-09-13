@@ -108,7 +108,7 @@ export function AiAssistCard({ encounterId, soap, setSoap }: AiAssistCardProps) 
   };
 
   return (
-    <div className="rounded-lg border border-dashed border-border p-3 bg-muted/20">
+    <div className="rounded-lg border border-dashed border-border p-3 bg-muted-bg">
       <details open className="group">
         <summary className="cursor-pointer list-none text-sm font-semibold text-foreground">
           {t("ai_title")}
@@ -143,7 +143,7 @@ export function AiAssistCard({ encounterId, soap, setSoap }: AiAssistCardProps) 
                   <FileText className="mr-1.5 h-4 w-4" />{thinking === "summary" ? t("common_loading") : t("ai_summary")}
                 </Button>
               </div>
-              {notice ? <p className="text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 p-2 rounded-md border border-amber-200/50">{notice}</p> : null}
+              {notice ? <p className="text-xs text-warning-text bg-warning-bg p-2 rounded-md border border-warning/30">{notice}</p> : null}
               {summary ? (
                 <div className="space-y-2 rounded-md border border-border bg-card p-3 text-xs shadow-xs">
                   {summary.findings.length ? (

@@ -184,8 +184,8 @@ export function EncountersWorkspace() {
                     <span>·</span>
                     <span className={`px-2 py-0.5 rounded-md font-semibold text-[11px] ${
                       encounter.status === "completed"
-                        ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400"
-                        : "bg-cyan-50 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-400"
+                        ? "bg-success-bg text-success-text"
+                        : "bg-primary/10 text-primary"
                     }`}>
                       {encounter.status}
                     </span>
@@ -193,7 +193,7 @@ export function EncountersWorkspace() {
                 </div>
                 {encounter.status === "in_progress" ? <Button size="sm" onClick={() => void complete(encounter.id).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_completeError")))}><CheckCheck className="mr-1.5 h-4 w-4" />{t("enc_complete")}</Button> : null}
               </div>
-              {encounter.notes.map((entry) => <p key={entry.id} className="mt-3 whitespace-pre-wrap text-sm text-foreground bg-muted/30 p-3 rounded-md border border-border">{entry.text ?? entry.assessment}</p>)}
+              {encounter.notes.map((entry) => <p key={entry.id} className="mt-3 whitespace-pre-wrap text-sm text-foreground bg-muted-bg p-3 rounded-md border border-border">{entry.text ?? entry.assessment}</p>)}
               {encounter.status === "in_progress" ? (
                 <div className="mt-3 flex flex-col gap-3">
                   <div className="flex flex-col gap-2 sm:flex-row">
@@ -210,7 +210,7 @@ export function EncountersWorkspace() {
                   </div>
                   <div><Button variant="outline" size="sm" onClick={() => void addSoapNote().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_noteError")))}><FileText className="mr-1.5 h-4 w-4" />{t("enc_addNote")}</Button></div>
                   <AiAssistCard encounterId={encounter.id} soap={soap} setSoap={setSoap} />
-                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-border p-3 bg-muted/20">
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-border p-3 bg-muted-bg">
                     <div><p className="text-sm font-semibold text-foreground">{t("rx_cardTitle")}</p><p className="text-xs text-muted-foreground">{t("rx_cardDesc")}</p></div>
                     <NewPrescriptionDialog
                       onSuccess={() => { /* list page refreshes itself */ }}

@@ -107,7 +107,7 @@ export function LabOrdersSection({ onChanged }: { onChanged?: () => void }) {
       </div>
       <div className="flex flex-col gap-2">
         {orders.slice(0, 20).map((o) => (
-          <div key={o.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-muted/20 px-3.5 py-2.5 text-sm">
+          <div key={o.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-muted-bg px-3.5 py-2.5 text-sm">
             <div className="flex items-center gap-2">
               <span className="font-medium text-foreground">{o.testName}</span>
               <span className="text-muted-foreground">·</span>

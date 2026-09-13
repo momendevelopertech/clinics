@@ -57,7 +57,7 @@ export default async function PrescriptionPrintPage({
       ];
 
   return (
-    <main className="min-h-screen bg-muted/30 px-4 py-8">
+    <main className="min-h-screen bg-muted-bg px-4 py-8">
       <div className="mx-auto max-w-[560px]">
         <div className="mb-4 flex items-center justify-between gap-2 print-hide">
           <Link
@@ -97,7 +97,7 @@ export default async function PrescriptionPrintPage({
             </p>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3 rounded-lg border border-border bg-muted/30 p-4 text-sm">
+          <div className="mt-6 grid grid-cols-2 gap-3 rounded-lg border border-border bg-muted-bg p-4 text-sm">
             <div>
               <p className="text-xs text-muted-foreground">{t["print_patient"]}</p>
               <p className="mt-1 font-semibold text-foreground">

@@ -139,13 +139,13 @@ export default function LabResultsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
-        return "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/30";
+        return "bg-success-bg text-success-text border border-success/30";
       case "pending":
-        return "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200/50 dark:border-amber-800/30";
+        return "bg-warning-bg text-warning-text border border-warning/30";
       case "abnormal":
-        return "bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400 border border-red-200/50 dark:border-red-800/30";
+        return "bg-critical-bg text-critical-text border border-critical/30";
       case "reviewed":
-        return "bg-cyan-50 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-400 border border-cyan-200/50 dark:border-cyan-800/30";
+        return "bg-primary/10 text-primary border border-primary/25";
       default:
         return "bg-muted text-muted-foreground border border-border";
     }
@@ -191,7 +191,7 @@ export default function LabResultsPage() {
       </div>
 
       <div className="bg-card border border-border rounded-lg flex-1 shadow-xs flex flex-col">
-        <div className="px-6 py-4 border-b border-border bg-muted/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="px-6 py-4 border-b border-border bg-muted-bg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <Input
             type="search"
             placeholder={t("labs_search")}
@@ -288,7 +288,7 @@ export default function LabResultsPage() {
             </div>
           ) : (
             <table className="w-full text-sm text-left">
-              <thead className="bg-muted/40 text-muted-foreground font-semibold text-xs uppercase tracking-wider">
+              <thead className="bg-muted-bg text-muted-foreground font-semibold text-xs uppercase tracking-wider">
                 <tr>
                   <th className="px-6 py-3.5 border-b border-border">{t("labs_colPatient")}</th>
                   <th className="px-6 py-3.5 border-b border-border">{t("labs_colTest")}</th>
@@ -306,8 +306,8 @@ export default function LabResultsPage() {
                     key={result.id}
                     className={`transition-colors ${
                       isHighlightedRow(result.status)
-                        ? "bg-red-50/60 text-red-950 hover:bg-red-100/60 dark:bg-red-950/30 dark:text-red-50 dark:hover:bg-red-950/40"
-                        : "hover:bg-muted/30"
+                        ? "bg-critical-bg/50 text-foreground hover:bg-critical-bg/80"
+                        : "hover:bg-muted-bg/60"
                     }`}
                   >
                     <td className="px-6 py-4">
@@ -336,7 +336,7 @@ export default function LabResultsPage() {
                               <p
                                 className={`text-xs ${
                                   isHighlightedRow(result.status)
-                                    ? "text-red-700 dark:text-red-300"
+                                    ? "text-critical-text font-medium"
                                     : "text-muted-foreground"
                                 }`}
                               >

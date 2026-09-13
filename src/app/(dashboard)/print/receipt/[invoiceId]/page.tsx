@@ -60,7 +60,7 @@ export default async function ReceiptPrintPage({
   ].join(", ");
 
   return (
-    <main className="min-h-screen bg-muted/30 px-4 py-8">
+    <main className="min-h-screen bg-muted-bg px-4 py-8">
       <div className="mx-auto max-w-[560px]">
         <div className="mb-4 flex items-center justify-between print-hide">
           <Link
@@ -96,7 +96,7 @@ export default async function ReceiptPrintPage({
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-between rounded-lg border border-border bg-muted/30 p-4 text-sm">
+          <div className="mt-6 flex items-center justify-between rounded-lg border border-border bg-muted-bg p-4 text-sm">
             <div>
               <p className="text-xs text-muted-foreground">{t["print_patient"]}</p>
               <p className="mt-1 font-semibold text-foreground">
@@ -145,11 +145,11 @@ export default async function ReceiptPrintPage({
               <span>{t["print_total"]}</span>
               <span className="ltr-on-rtl">{fmt(total)}</span>
             </div>
-            <div className="flex justify-between text-emerald-700 dark:text-emerald-400 font-medium">
+            <div className="flex justify-between text-success-text font-medium">
               <span>{t["print_paid"]}</span>
               <span className="ltr-on-rtl">{fmt(paid)}</span>
             </div>
-            <div className="flex justify-between text-amber-700 dark:text-amber-400 font-medium">
+            <div className="flex justify-between text-warning-text font-medium">
               <span>{t["print_balance"]}</span>
               <span className="ltr-on-rtl">{fmt(balance)}</span>
             </div>
