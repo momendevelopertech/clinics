@@ -15,7 +15,7 @@ export function DemoQuickLogin({ email, password, label }: DemoQuickLoginProps) 
 
   return (
     <button
-      className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[14px] bg-linear-to-r from-primary to-cyan-500 px-3 text-xs font-semibold text-white shadow-md shadow-cyan-500/20 transition hover:translate-y-[-1px] disabled:cursor-not-allowed disabled:opacity-70"
+      className="inline-flex h-8 items-center justify-center gap-1.5 rounded-md bg-primary hover:bg-[#115E59] px-2.5 text-xs font-semibold text-white shadow-2xs transition-colors disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
       disabled={pending}
       onClick={() => {
         setPending(true);

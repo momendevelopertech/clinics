@@ -61,18 +61,18 @@ export default function PatientLoginPage() {
   };
 
   return (
-    <main className="hero-glow flex min-h-screen items-center justify-center px-4 py-8 sm:px-6">
-      <div className="grid w-full max-w-6xl overflow-hidden rounded-[36px] border border-white/60 surface-panel lg:grid-cols-[1.05fr_0.95fr]">
-        <section className="hidden min-h-[640px] flex-col justify-between bg-[linear-gradient(155deg,rgba(10,68,92,0.96),rgba(15,123,120,0.9))] p-10 text-white lg:flex">
+    <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-xl border border-border bg-white shadow-xl lg:grid-cols-[1fr_1fr]">
+        <section className="hidden min-h-[600px] flex-col justify-between border-r border-border bg-gradient-to-br from-[#0A4D5C] via-[#0F766E] to-[#134E4A] p-8 text-white lg:flex">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-white/82">
+            <div className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-white/90">
               <Activity className="h-3.5 w-3.5" />
               {t("portal_badge")}
             </div>
-            <h1 className="mt-6 max-w-md text-5xl font-semibold leading-[1.03] tracking-[-0.05em]">
+            <h1 className="mt-8 max-w-md text-3xl font-bold leading-tight tracking-tight">
               {t("portal_heroTitle")}
             </h1>
-            <p className="mt-5 max-w-lg text-base leading-7 text-white/74">
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-white/80">
               {t("portal_heroBody")}
             </p>
           </div>
@@ -97,15 +97,15 @@ export default function PatientLoginPage() {
             ].map((item) => (
               <div
                 key={item.title}
-                className="rounded-[24px] border border-white/12 bg-white/8 p-4 backdrop-blur-sm"
+                className="rounded-lg border border-white/15 bg-white/10 p-3.5"
               >
                 <div className="flex items-start gap-3">
-                  <div className="grid size-10 shrink-0 place-content-center rounded-[16px] bg-white/14">
+                  <div className="grid size-9 shrink-0 place-content-center rounded-md bg-white/15">
                     <item.icon className="h-4 w-4" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold">{item.title}</p>
-                    <p className="mt-1 text-sm leading-6 text-white/72">{item.copy}</p>
+                    <p className="text-xs font-bold text-white">{item.title}</p>
+                    <p className="mt-0.5 text-xs leading-5 text-white/75">{item.copy}</p>
                   </div>
                 </div>
               </div>
@@ -113,28 +113,28 @@ export default function PatientLoginPage() {
           </div>
         </section>
 
-        <section className="flex min-h-[640px] items-center bg-white/74 px-5 py-8 dark:bg-slate-950/30 sm:px-10">
-          <Card className="w-full border-white/60 bg-white/70 shadow-none dark:border-white/8 dark:bg-white/[0.03]">
-            <CardHeader className="space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary">
+        <section className="flex min-h-[600px] items-center bg-white px-6 py-8 sm:px-10">
+          <Card className="w-full border-none shadow-none bg-transparent">
+            <CardHeader className="space-y-1.5 p-0 mb-6">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
                 {t("portal_signIn")}
               </p>
-              <CardTitle className="text-4xl font-semibold tracking-[-0.05em]">
+              <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
                 {t("portal_accessTitle")}
               </CardTitle>
-              <CardDescription className="text-sm leading-6">
+              <CardDescription className="text-xs leading-relaxed text-muted-foreground">
                 {t("portal_accessDesc")}
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                <div className="gap-2 flex flex-col">
-                  <Label htmlFor="email">{t("portal_email")}</Label>
+            <CardContent className="p-0">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <div className="gap-1.5 flex flex-col">
+                  <Label htmlFor="email" className="text-xs font-semibold">{t("portal_email")}</Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder={t("portal_emailPlaceholder")}
-                    className="h-12 rounded-[18px] bg-white/80 dark:bg-white/[0.04]"
+                    className="h-10 rounded-md bg-white border-input text-xs"
                     value={formData.email}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
@@ -143,12 +143,12 @@ export default function PatientLoginPage() {
                   />
                 </div>
 
-                <div className="gap-2 flex flex-col">
-                  <Label htmlFor="mrn">{t("portal_mrn")}</Label>
+                <div className="gap-1.5 flex flex-col">
+                  <Label htmlFor="mrn" className="text-xs font-semibold">{t("portal_mrn")}</Label>
                   <Input
                     id="mrn"
                     placeholder={t("portal_mrnPlaceholder")}
-                    className="h-12 rounded-[18px] bg-white/80 dark:bg-white/[0.04]"
+                    className="h-10 rounded-md bg-white border-input text-xs"
                     value={formData.mrn}
                     onChange={(e) =>
                       setFormData({ ...formData, mrn: e.target.value })
@@ -157,13 +157,13 @@ export default function PatientLoginPage() {
                   />
                 </div>
 
-                <div className="gap-2 flex flex-col">
-                  <Label htmlFor="password">{t("portal_password")}</Label>
+                <div className="gap-1.5 flex flex-col">
+                  <Label htmlFor="password" className="text-xs font-semibold">{t("portal_password")}</Label>
                   <Input
                     id="password"
                     type="password"
                     placeholder={t("portal_passwordPlaceholder")}
-                    className="h-12 rounded-[18px] bg-white/80 dark:bg-white/[0.04]"
+                    className="h-10 rounded-md bg-white border-input text-xs"
                     value={formData.password}
                     onChange={(e) =>
                       setFormData({ ...formData, password: e.target.value })
@@ -175,12 +175,12 @@ export default function PatientLoginPage() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="h-12 w-full rounded-[18px] bg-linear-to-r from-primary to-cyan-500 text-white shadow-lg shadow-cyan-500/20 hover:opacity-95"
+                  className="h-10 w-full rounded-md bg-primary hover:bg-[#115E59] text-xs font-semibold text-white shadow-2xs mt-2"
                 >
                   {loading ? t("portal_signingIn") : t("portal_openPortal")}
                 </Button>
 
-                <p className="text-center text-xs leading-5 text-muted-foreground">
+                <p className="text-center text-xs leading-relaxed text-muted-foreground mt-2">
                   {t("portal_noAccount")}
                 </p>
               </form>

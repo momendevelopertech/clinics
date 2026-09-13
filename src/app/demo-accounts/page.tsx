@@ -18,21 +18,21 @@ type CardProps = {
 
 function AccountCard({ t, name, city, password, notes, children }: CardProps) {
   return (
-    <section className="surface-panel overflow-hidden rounded-[28px] border border-white/55">
-      <div className="border-b border-border/70 bg-white/45 p-6 dark:bg-white/[0.03]">
-        <h2 className="text-xl font-semibold text-foreground">{name}</h2>
-        <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+    <section className="overflow-hidden rounded-xl border border-border bg-white shadow-2xs">
+      <div className="border-b border-border bg-[#F8FAFC] p-5">
+        <h2 className="text-lg font-bold text-foreground">{name}</h2>
+        <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           {city ? <span>{city}</span> : null}
-          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300">
+          <span className="rounded-full bg-emerald-100 border border-emerald-200 px-2 py-0.5 text-[11px] font-semibold text-emerald-800">
             {t["auth_activeTenant"]}
           </span>
         </div>
-        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-white/70 px-3 py-1 font-mono text-xs font-semibold text-foreground dark:bg-white/[0.05]">
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs">
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-white px-2.5 py-1 font-mono text-[11px] font-semibold text-foreground">
             <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
             {t["auth_passwordLabel"]}: {password}
           </span>
-          {notes ? <span className="text-xs text-muted-foreground">{notes}</span> : null}
+          {notes ? <span className="text-[11px] text-muted-foreground">{notes}</span> : null}
         </div>
       </div>
       <div className="p-4">{children}</div>
@@ -51,22 +51,22 @@ function AccountTable({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[440px] text-left text-sm rtl:text-right">
-        <thead className="text-xs uppercase tracking-wide text-muted-foreground">
+      <table className="w-full min-w-[400px] text-left text-xs rtl:text-right">
+        <thead className="bg-[#F8FAFC] text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
           <tr>
-            <th className="px-3 py-3 font-semibold">{t["auth_demoRole"]}</th>
-            <th className="px-3 py-3 font-semibold">{t["auth_staffEmail"]}</th>
-            <th className="px-3 py-3 text-right font-semibold rtl:text-left">
+            <th className="px-3 py-2.5 font-semibold">{t["auth_demoRole"]}</th>
+            <th className="px-3 py-2.5 font-semibold">{t["auth_staffEmail"]}</th>
+            <th className="px-3 py-2.5 text-right font-semibold rtl:text-left">
               <span className="sr-only">{t["auth_fastLogin"]}</span>
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-border">
           {rows.map((row) => (
-            <tr key={row.id} className="border-t border-border/60">
-              <td className="px-3 py-3 font-medium text-foreground">{row.role}</td>
-              <td className="px-3 py-3 font-mono text-xs text-muted-foreground">{row.email}</td>
-              <td className="px-3 py-3 text-right rtl:text-left">
+            <tr key={row.id} className="hover:bg-muted/50 transition-colors">
+              <td className="px-3 py-2.5 font-semibold text-foreground">{row.role}</td>
+              <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">{row.email}</td>
+              <td className="px-3 py-2.5 text-right rtl:text-left">
                 <DemoQuickLogin email={row.email} password={password} label={t["auth_fastLogin"]} />
               </td>
             </tr>
@@ -81,27 +81,27 @@ export default async function DemoAccountsPage() {
   const t = await getDictionary();
 
   return (
-    <main className="hero-glow min-h-screen px-6 py-12">
+    <main className="min-h-screen bg-[#F8FAFC] px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="flex items-center justify-between gap-4">
-          <Link href="/login" className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
+          <Link href="/login" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline">
             <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
             {t["auth_backToLogin"]}
           </Link>
-          <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-800 dark:border-cyan-400/20 dark:bg-cyan-400/10 dark:text-cyan-200">
+          <span className="rounded-full border border-cyan-200 bg-cyan-50 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-cyan-800">
             {t["auth_devOnly"]}
           </span>
         </div>
 
-        <header className="mt-12 max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary">{t["auth_demoLogins"]}</p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-foreground sm:text-5xl">
+        <header className="mt-8 max-w-3xl">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-primary">{t["auth_demoLogins"]}</p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             {t["auth_demoAccountsTitle"]}
           </h1>
-          <p className="mt-4 text-base leading-7 text-muted-foreground">{t["auth_demoAccountsSubtitle"]}</p>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t["auth_demoAccountsSubtitle"]}</p>
         </header>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-2">
+        <div className="mt-8 grid gap-6 lg:grid-cols-2">
           {DEMO_TENANTS.map((tenant) => (
             <AccountCard
               key={tenant.name}
@@ -119,11 +119,11 @@ export default async function DemoAccountsPage() {
                   email: account.email,
                 }))}
               />
-              <div className="mt-4 rounded-[18px] border border-cyan-200/70 bg-cyan-50/70 p-4 dark:border-cyan-400/20 dark:bg-cyan-400/10">
-                <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+              <div className="mt-4 rounded-lg border border-cyan-200 bg-cyan-50/60 p-3.5">
+                <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
                   <div>
-                    <p className="font-semibold text-foreground">{t["auth_demoPatient"]}</p>
-                    <p className="mt-1 font-mono text-xs text-muted-foreground">
+                    <p className="font-bold text-foreground">{t["auth_demoPatient"]}</p>
+                    <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">
                       {tenant.patient.email} / {tenant.patient.mrn} / {DEMO_PATIENT_PASSWORD}
                     </p>
                   </div>
@@ -136,10 +136,10 @@ export default async function DemoAccountsPage() {
                     />
                     <Link
                       href="/patient-login"
-                      className="inline-flex items-center gap-1.5 rounded-[14px] border border-cyan-600/40 px-3 py-2 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-100 dark:text-cyan-200 dark:hover:bg-cyan-400/10"
+                      className="inline-flex items-center gap-1.5 rounded-md border border-cyan-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-cyan-800 transition hover:bg-cyan-50"
                     >
                       {t["auth_patientPortal"]}
-                      <ExternalLink className="h-3.5 w-3.5" />
+                      <ExternalLink className="h-3 w-3" />
                     </Link>
                   </div>
                 </div>
@@ -168,18 +168,18 @@ export default async function DemoAccountsPage() {
           </div>
         </div>
 
-        <p className="mt-8 flex items-center gap-2 text-xs text-muted-foreground">
-          <KeyRound className="h-4 w-4" />
+        <p className="mt-6 flex items-center gap-2 text-xs text-muted-foreground">
+          <KeyRound className="h-3.5 w-3.5" />
           {t["auth_demoAccountsNote"]}
         </p>
 
         <Link
           href="/login"
-          className="mt-4 inline-flex items-center gap-2 rounded-[14px] bg-linear-to-r from-primary to-cyan-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+          className="mt-4 inline-flex items-center gap-2 rounded-md bg-primary hover:bg-[#115E59] px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors"
         >
           <Building2 className="h-4 w-4" />
           {t["auth_staffPortal"]}
-          <ExternalLink className="h-4 w-4" />
+          <ExternalLink className="h-3.5 w-3.5" />
         </Link>
       </div>
     </main>
