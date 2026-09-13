@@ -16,7 +16,7 @@ export function PushNotificationToggle() {
       size="icon"
       onClick={isSubscribed ? unsubscribe : subscribe}
       disabled={loading}
-      className="rounded-[16px] border border-white/55 bg-white/60 dark:border-white/6 dark:bg-white/[0.03]"
+      className="h-9 w-9 rounded-md border border-border bg-white text-muted-foreground hover:bg-muted hover:text-foreground"
       aria-label={
         isSubscribed ? "Disable notifications" : "Enable notifications"
       }

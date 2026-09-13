@@ -151,15 +151,15 @@ function PendingChangesDialog({
         <Button
           variant="ghost"
           size="sm"
-          className="relative h-9 rounded-[14px] border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300"
+          className="relative h-9 rounded-md border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100"
         >
           <Eye className="mr-1.5 h-3.5 w-3.5" />
           {count} pending
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg rounded-[24px]">
+      <DialogContent className="max-w-lg rounded-lg border border-border bg-white shadow-xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground">
             Pending Changes
             <Badge variant="secondary">{count}</Badge>
           </DialogTitle>
@@ -178,14 +178,14 @@ function PendingChangesDialog({
             {operations.map((op) => (
               <div
                 key={op.id}
-                className="flex items-center gap-3 rounded-[14px] border border-white/60 p-3 dark:border-white/6"
+                className="flex items-center gap-3 rounded-md border border-border bg-[#F8FAFC] p-3"
               >
                 {statusIcon(op.status)}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">
+                  <p className="truncate text-xs font-semibold text-foreground">
                     {op.method} {op.entityType}
                   </p>
-                  <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                  <p className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">
                     {formatTime(op.timestamp)}
                   </p>
                   {op.conflictDetails && (
@@ -199,7 +199,7 @@ function PendingChangesDialog({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 shrink-0"
+                    className="h-7 w-7 shrink-0 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
                     onClick={() => handleRemove(op.id)}
                     aria-label="Remove queued change"
                     title="Remove queued change"
@@ -212,8 +212,8 @@ function PendingChangesDialog({
           </div>
         )}
 
-        <div className="flex justify-end gap-2 border-t pt-4">
-          <Button variant="outline" size="sm" onClick={handleClearAll}>
+        <div className="flex justify-end gap-2 border-t border-border pt-4">
+          <Button variant="outline" size="sm" onClick={handleClearAll} className="rounded-md">
             Clear all
           </Button>
         </div>
