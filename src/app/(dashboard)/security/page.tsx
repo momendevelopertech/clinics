@@ -10,7 +10,7 @@ import {
   Download,
   Power,
   ShieldCheck,
-} from "lucide-react";;
+} from "lucide-react";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -127,16 +127,16 @@ export default function SecurityPage() {
         <p className="text-xs text-muted-foreground mt-0.5">{t("sec_subtitle")}</p>
       </div>
 
-      <Card className="rounded-lg border border-border bg-white shadow-2xs">
-        <CardHeader className="p-5 border-b border-border bg-[#F8FAFC]">
+      <Card className="rounded-lg border border-border bg-card shadow-2xs">
+        <CardHeader className="p-5 border-b border-border bg-muted-bg">
           <CardTitle className="flex items-center justify-between text-base font-bold text-foreground">
             <span>{t("sec_2fa")}</span>
             {enabled !== null ? (
               <span
                 className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
                   enabled
-                    ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                    : "bg-slate-100 text-slate-700 border-slate-200"
+                    ? "bg-success-bg text-success-text border-success/30"
+                    : "bg-muted text-muted-foreground border-border"
                 }`}
               >
                 {enabled ? t("sec_enabled") : t("sec_disabled")}
@@ -160,7 +160,7 @@ export default function SecurityPage() {
             <div className="flex flex-col gap-3">
               <p className="text-xs font-medium text-foreground">{t("sec_scanHint")}</p>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <div className="p-2 border border-border rounded-lg bg-white inline-block w-fit">
+              <div className="p-2 border border-border rounded-lg bg-card inline-block w-fit">
                 <img src={qr} alt="2FA QR" className="w-44 h-44 rounded-md" />
               </div>
               <div className="grid gap-1.5 max-w-xs">
@@ -171,7 +171,7 @@ export default function SecurityPage() {
                   inputMode="numeric"
                   autoComplete="one-time-code"
                   placeholder="123456"
-                  className="h-9 text-center font-mono text-base tracking-widest"
+                  className="h-9 text-center font-mono text-base tracking-widest bg-background"
                 />
               </div>
               <div>
@@ -184,11 +184,11 @@ export default function SecurityPage() {
           ) : null}
 
           {backupCodes.length > 0 ? (
-            <div className="rounded-lg border border-amber-300 bg-amber-50 p-4">
-              <p className="text-xs font-bold text-amber-900 mb-2">{t("sec_backupTitle")}</p>
-              <div className="grid grid-cols-1 gap-2 font-mono text-xs text-amber-950 sm:grid-cols-2">
+            <div className="rounded-lg border border-warning/30 bg-warning-bg p-4">
+              <p className="text-xs font-bold text-warning-text mb-2">{t("sec_backupTitle")}</p>
+              <div className="grid grid-cols-1 gap-2 font-mono text-xs text-warning-text sm:grid-cols-2">
                 {backupCodes.map((c) => (
-                  <span key={c} className="p-1.5 bg-white/80 rounded border border-amber-200 text-center">{c}</span>
+                  <span key={c} className="p-1.5 bg-card/80 rounded border border-warning/20 text-center">{c}</span>
                 ))}
               </div>
             </div>
@@ -205,7 +205,7 @@ export default function SecurityPage() {
                   inputMode="numeric"
                   autoComplete="one-time-code"
                   placeholder="123456"
-                  className="h-9 text-center font-mono text-base tracking-widest"
+                  className="h-9 text-center font-mono text-base tracking-widest bg-background"
                 />
               </div>
               <div>
@@ -219,8 +219,8 @@ export default function SecurityPage() {
         </CardContent>
       </Card>
 
-      <Card className="rounded-lg border border-border bg-white shadow-2xs">
-        <CardHeader className="p-5 border-b border-border bg-[#F8FAFC]">
+      <Card className="rounded-lg border border-border bg-card shadow-2xs">
+        <CardHeader className="p-5 border-b border-border bg-muted-bg">
           <CardTitle className="text-base font-bold text-foreground">{t("sec_export")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3 p-5">

@@ -18,17 +18,17 @@ type CardProps = {
 
 function AccountCard({ t, name, city, password, notes, children }: CardProps) {
   return (
-    <section className="overflow-hidden rounded-lg border border-border bg-white shadow-2xs">
-      <div className="border-b border-border bg-[#F8FAFC] p-5">
+    <section className="overflow-hidden rounded-lg border border-border bg-card shadow-2xs">
+      <div className="border-b border-border bg-muted-bg p-5">
         <h2 className="text-lg font-bold text-foreground">{name}</h2>
         <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           {city ? <span>{city}</span> : null}
-          <span className="rounded-full bg-emerald-100 border border-emerald-200 px-2 py-0.5 text-[11px] font-semibold text-emerald-800">
+          <span className="rounded-full bg-success-bg border border-success/30 px-2 py-0.5 text-[11px] font-semibold text-success-text">
             {t["auth_activeTenant"]}
           </span>
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs">
-          <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-white px-2.5 py-1 font-mono text-[11px] font-semibold text-foreground">
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1 font-mono text-[11px] font-semibold text-foreground">
             <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
             {t["auth_passwordLabel"]}: {password}
           </span>
@@ -52,7 +52,7 @@ function AccountTable({
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[400px] text-left text-xs rtl:text-right">
-        <thead className="bg-[#F8FAFC] text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
+        <thead className="bg-muted-bg text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
           <tr>
             <th className="px-3 py-2.5 font-semibold">{t["auth_demoRole"]}</th>
             <th className="px-3 py-2.5 font-semibold">{t["auth_staffEmail"]}</th>
@@ -81,14 +81,14 @@ export default async function DemoAccountsPage() {
   const t = await getDictionary();
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC] px-4 py-8 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="flex items-center justify-between gap-4">
           <Link href="/login" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline">
             <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
             {t["auth_backToLogin"]}
           </Link>
-          <span className="rounded-full border border-cyan-200 bg-cyan-50 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-cyan-800">
+          <span className="rounded-full border border-primary/25 bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-primary">
             {t["auth_devOnly"]}
           </span>
         </div>
@@ -119,7 +119,7 @@ export default async function DemoAccountsPage() {
                   email: account.email,
                 }))}
               />
-              <div className="mt-4 rounded-lg border border-cyan-200 bg-cyan-50/60 p-3.5">
+              <div className="mt-4 rounded-lg border border-primary/25 bg-primary/10 p-3.5">
                 <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
                   <div>
                     <p className="font-bold text-foreground">{t["auth_demoPatient"]}</p>
@@ -136,7 +136,7 @@ export default async function DemoAccountsPage() {
                     />
                     <Link
                       href="/patient-login"
-                      className="inline-flex items-center gap-1.5 rounded-md border border-cyan-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-cyan-800 transition hover:bg-cyan-50"
+                      className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-semibold text-primary transition hover:bg-muted"
                     >
                       {t["auth_patientPortal"]}
                       <ExternalLink className="h-3 w-3" />

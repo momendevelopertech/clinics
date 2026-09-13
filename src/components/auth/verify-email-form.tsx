@@ -70,8 +70,8 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-8 sm:px-6">
-      <div className="w-full max-w-md rounded-lg border border-border bg-white p-8 text-center shadow-xl">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8 sm:px-6">
+      <div className="w-full max-w-md rounded-lg border border-border bg-card p-8 text-center shadow-xl">
         {state === "verifying" || state === "pending" ? (
           <>
             <div className="mx-auto grid size-12 place-content-center rounded-full bg-primary/10 text-primary">
@@ -94,12 +94,12 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
                   {resending ? "..." : t["verify_resend"]}
                 </button>
                 {resent ? (
-                  <p className="mt-3 text-xs font-semibold text-emerald-700">
+                  <p className="mt-3 text-xs font-semibold text-success-text">
                     {t["verify_resent"]}
                   </p>
                 ) : null}
                 {resendError ? (
-                  <p className="mt-3 text-xs font-semibold text-red-600">
+                  <p className="mt-3 text-xs font-semibold text-critical-text">
                     {t["verify_resendError"]}
                   </p>
                 ) : null}
@@ -110,7 +110,7 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
 
         {state === "success" ? (
           <>
-            <div className="mx-auto grid size-12 place-content-center rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600">
+            <div className="mx-auto grid size-12 place-content-center rounded-full bg-success-bg border border-success/30 text-success-text">
               <CheckCircle2 className="h-6 w-6" />
             </div>
             <h1 className="mt-5 text-2xl font-bold tracking-tight text-foreground">
@@ -129,7 +129,7 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
 
         {state === "invalid" ? (
           <>
-            <div className="mx-auto grid size-12 place-content-center rounded-full bg-red-50 border border-red-200 text-red-600">
+            <div className="mx-auto grid size-12 place-content-center rounded-full bg-critical-bg border border-critical/30 text-critical-text">
               <XCircle className="h-6 w-6" />
             </div>
             <h1 className="mt-5 text-2xl font-bold tracking-tight text-foreground">
@@ -148,7 +148,7 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
         ) : null}
 
         {state === "error" ? (
-          <p className="text-xs font-semibold text-red-600">{t["common_error"]}</p>
+          <p className="text-xs font-semibold text-critical-text">{t["common_error"]}</p>
         ) : null}
       </div>
     </main>

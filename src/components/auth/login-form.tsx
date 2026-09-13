@@ -41,8 +41,8 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-8 sm:px-6 lg:px-8">
-      <div className="grid w-full max-w-5xl overflow-hidden rounded-lg border border-border bg-white shadow-xl lg:grid-cols-[1fr_1fr]">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8 sm:px-6 lg:px-8">
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-lg border border-border bg-card shadow-xl lg:grid-cols-[1fr_1fr]">
         <section className="relative hidden min-h-[600px] flex-col justify-between border-r border-border bg-[#0F766E] p-8 text-white lg:flex">
           <div>
             <div className="flex items-center justify-between">
@@ -96,7 +96,7 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
           </div>
         </section>
 
-        <section className="flex min-h-[600px] items-center bg-white px-6 py-8 sm:px-10">
+        <section className="flex min-h-[600px] items-center bg-card px-6 py-8 sm:px-10">
           <div className="mx-auto w-full max-w-sm">
             <div className="space-y-1.5">
               <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
@@ -117,7 +117,7 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
                 </span>
                 <input
                   autoComplete="email"
-                  className="h-9 w-full rounded-md border border-input bg-white px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                  className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                   name="email"
                   onChange={(event) => setEmail(event.target.value)}
                   type="email"
@@ -138,7 +138,7 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
                 </span>
                 <input
                   autoComplete="current-password"
-                  className="h-9 w-full rounded-md border border-input bg-white px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                  className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                   name="password"
                   onChange={(event) => setPassword(event.target.value)}
                   type="password"
@@ -148,14 +148,14 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
               </label>
 
               {authError ? (
-                <p className="rounded-md border border-red-200 bg-red-50 p-3 text-xs font-medium text-red-700">
+                <p className="rounded-md border border-critical/30 bg-critical-bg p-3 text-xs font-medium text-critical-text">
                   {authError}
                 </p>
               ) : null}
 
               {needsTwoFactor ? (
                 <>
-                  <p className="rounded-md border border-cyan-200 bg-cyan-50 p-3 text-xs font-medium text-cyan-800">
+                  <p className="rounded-md border border-primary/25 bg-primary/10 p-3 text-xs font-medium text-primary">
                     {t["auth_twoFactorRequired"]}
                   </p>
                   <label className="block space-y-1.5">
@@ -164,7 +164,7 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
                     </span>
                     <input
                       autoComplete="one-time-code"
-                      className="h-9 w-full rounded-md border border-input bg-white px-3 text-center font-mono text-base tracking-widest outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      className="h-9 w-full rounded-md border border-input bg-background px-3 text-center font-mono text-base tracking-widest outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                       name="totpToken"
                       inputMode="numeric"
                       onChange={(event) => setTotpToken(event.target.value)}
@@ -195,7 +195,7 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
               </Link>
             </div>
 
-            <div className="mt-6 rounded-lg border border-border bg-[#F8FAFC] p-3.5">
+            <div className="mt-6 rounded-lg border border-border bg-muted-bg p-3.5">
               <div className="flex items-center justify-between">
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground">
                   <KeyRound className="h-3.5 w-3.5 text-primary" />
@@ -211,7 +211,7 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
               <DemoLoginButtons />
             </div>
 
-            <div className="mt-4 grid gap-2 rounded-lg border border-border bg-[#F8FAFC] p-3 text-xs">
+            <div className="mt-4 grid gap-2 rounded-lg border border-border bg-muted-bg p-3 text-xs">
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">{t["auth_defaultRoute"]}</span>
                 <span className="font-medium text-foreground">{t["nav_dashboard"]}</span>

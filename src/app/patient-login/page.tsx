@@ -61,8 +61,8 @@ export default function PatientLoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-8 sm:px-6 lg:px-8">
-      <div className="grid w-full max-w-5xl overflow-hidden rounded-lg border border-border bg-white shadow-xl lg:grid-cols-[1fr_1fr]">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8 sm:px-6 lg:px-8">
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-lg border border-border bg-card shadow-xl lg:grid-cols-[1fr_1fr]">
         <section className="hidden min-h-[600px] flex-col justify-between border-r border-border bg-[#0F766E] p-8 text-white lg:flex">
           <div>
             <div className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-white/90">
@@ -113,7 +113,7 @@ export default function PatientLoginPage() {
           </div>
         </section>
 
-        <section className="flex min-h-[600px] items-center bg-white px-6 py-8 sm:px-10">
+        <section className="flex min-h-[600px] items-center bg-card px-6 py-8 sm:px-10">
           <Card className="w-full border-none shadow-none bg-transparent">
             <CardHeader className="space-y-1.5 p-0 mb-6">
               <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
@@ -134,7 +134,7 @@ export default function PatientLoginPage() {
                     id="email"
                     type="email"
                     placeholder={t("portal_emailPlaceholder")}
-                    className="h-9 rounded-md bg-white border-input text-xs"
+                    className="h-9 rounded-md bg-background border-input text-xs"
                     value={formData.email}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
@@ -148,7 +148,7 @@ export default function PatientLoginPage() {
                   <Input
                     id="mrn"
                     placeholder={t("portal_mrnPlaceholder")}
-                    className="h-9 rounded-md bg-white border-input text-xs"
+                    className="h-9 rounded-md bg-background border-input text-xs"
                     value={formData.mrn}
                     onChange={(e) =>
                       setFormData({ ...formData, mrn: e.target.value })
@@ -163,7 +163,7 @@ export default function PatientLoginPage() {
                     id="password"
                     type="password"
                     placeholder={t("portal_passwordPlaceholder")}
-                    className="h-9 rounded-md bg-white border-input text-xs"
+                    className="h-9 rounded-md bg-background border-input text-xs"
                     value={formData.password}
                     onChange={(e) =>
                       setFormData({ ...formData, password: e.target.value })

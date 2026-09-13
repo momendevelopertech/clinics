@@ -89,9 +89,9 @@ export function SignupForm({ t }: SignupFormProps) {
 
   if (created) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-8 sm:px-6">
-        <div className="w-full max-w-md rounded-lg border border-border bg-white p-8 text-center shadow-xl">
-          <div className="mx-auto grid size-12 place-content-center rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600">
+      <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8 sm:px-6">
+        <div className="w-full max-w-md rounded-lg border border-border bg-card p-8 text-center shadow-xl">
+          <div className="mx-auto grid size-12 place-content-center rounded-full bg-success-bg border border-success/30 text-success-text">
             <CheckCircle2 className="h-6 w-6" />
           </div>
           <h1 className="mt-5 text-2xl font-bold tracking-tight text-foreground">
@@ -115,8 +115,8 @@ export function SignupForm({ t }: SignupFormProps) {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-8 sm:px-6 lg:px-8">
-      <div className="grid w-full max-w-5xl overflow-hidden rounded-lg border border-border bg-white shadow-xl lg:grid-cols-[1fr_1fr]">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8 sm:px-6 lg:px-8">
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-lg border border-border bg-card shadow-xl lg:grid-cols-[1fr_1fr]">
         <section className="relative hidden min-h-[640px] flex-col justify-between border-r border-border bg-[#0F766E] p-8 text-white lg:flex">
           <div>
             <div className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-white/90">
@@ -155,7 +155,7 @@ export function SignupForm({ t }: SignupFormProps) {
           </div>
         </section>
 
-        <section className="flex min-h-[640px] items-center bg-white px-6 py-8 sm:px-10">
+        <section className="flex min-h-[640px] items-center bg-card px-6 py-8 sm:px-10">
           <div className="mx-auto w-full max-w-md">
             <div className="space-y-1.5">
               <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
@@ -188,7 +188,7 @@ export function SignupForm({ t }: SignupFormProps) {
                     required
                     value={form.clinicName}
                     onChange={(event) => update("clinicName", event.target.value)}
-                    className="h-9 w-full rounded-md border border-input bg-white px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                   />
                 </label>
 
@@ -200,7 +200,7 @@ export function SignupForm({ t }: SignupFormProps) {
                     required
                     value={form.ownerName}
                     onChange={(event) => update("ownerName", event.target.value)}
-                    className="h-9 w-full rounded-md border border-input bg-white px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                   />
                 </label>
 
@@ -213,7 +213,7 @@ export function SignupForm({ t }: SignupFormProps) {
                     type="email"
                     value={form.email}
                     onChange={(event) => update("email", event.target.value)}
-                    className="h-9 w-full rounded-md border border-input bg-white px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                   />
                 </label>
 
@@ -228,7 +228,7 @@ export function SignupForm({ t }: SignupFormProps) {
                     autoComplete="new-password"
                     value={form.password}
                     onChange={(event) => update("password", event.target.value)}
-                    className="h-9 w-full rounded-md border border-input bg-white px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                   />
                 </label>
 
@@ -239,7 +239,7 @@ export function SignupForm({ t }: SignupFormProps) {
                   <input
                     value={form.phone}
                     onChange={(event) => update("phone", event.target.value)}
-                    className="h-9 w-full rounded-md border border-input bg-white px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                   />
                 </label>
 
@@ -250,7 +250,7 @@ export function SignupForm({ t }: SignupFormProps) {
                   <input
                     value={form.city}
                     onChange={(event) => update("city", event.target.value)}
-                    className="h-9 w-full rounded-md border border-input bg-white px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                   />
                 </label>
 
@@ -261,13 +261,13 @@ export function SignupForm({ t }: SignupFormProps) {
                   <input
                     value={form.country}
                     onChange={(event) => update("country", event.target.value)}
-                    className="h-9 w-full rounded-md border border-input bg-white px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                   />
                 </label>
               </div>
 
               {error ? (
-                <p className="rounded-md border border-red-200 bg-red-50 p-3 text-xs font-medium text-red-700">
+                <p className="rounded-md border border-critical/30 bg-critical-bg p-3 text-xs font-medium text-critical-text">
                   {error}
                 </p>
               ) : null}
