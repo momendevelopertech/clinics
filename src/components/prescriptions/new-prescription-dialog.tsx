@@ -527,10 +527,10 @@ export function NewPrescriptionDialog({
             {lines.map((line, index) => (
               <div
                 key={index}
-                className="rounded-[16px] border border-white/60 bg-white/60 p-4 dark:border-white/6 dark:bg-white/[0.03]"
+                className="rounded-lg border border-border bg-card p-4 shadow-xs"
               >
                 <div className="mb-3 flex items-center justify-between">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     {t("rx_line")} {index + 1}
                   </p>
                   {lines.length > 1 ? (
@@ -538,7 +538,7 @@ export function NewPrescriptionDialog({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="h-7 w-7 rounded-full p-0 text-red-600"
+                      className="h-7 w-7 rounded-md p-0 text-destructive hover:text-destructive"
                       onClick={() => removeLine(index)}
                       aria-label={t("rx_removeLine")}
                     >
@@ -548,7 +548,7 @@ export function NewPrescriptionDialog({
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="flex flex-col gap-1 sm:col-span-2">
-                    <Label>{t("rx_medication")}</Label>
+                    <Label className="text-xs font-semibold">{t("rx_medication")}</Label>
                     <MedicationNameInput
                       value={line.medicationName}
                       onChange={(value) => updateLine(index, "medicationName", value)}
@@ -565,34 +565,34 @@ export function NewPrescriptionDialog({
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <Label>{t("rx_dosage")}</Label>
+                    <Label className="text-xs font-semibold">{t("rx_dosage")}</Label>
                     <Input
                       value={line.dosage}
                       onChange={(e) => updateLine(index, "dosage", e.target.value)}
                       placeholder={t("rx_dosagePlaceholder")}
-                      className="ltr-on-rtl"
+                      className="ltr-on-rtl h-9"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <Label>{t("rx_frequency")}</Label>
+                    <Label className="text-xs font-semibold">{t("rx_frequency")}</Label>
                     <Input
                       value={line.frequency}
                       onChange={(e) => updateLine(index, "frequency", e.target.value)}
                       placeholder={t("rx_frequencyPlaceholder")}
-                      className="ltr-on-rtl"
+                      className="ltr-on-rtl h-9"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <Label>{t("rx_duration")}</Label>
+                    <Label className="text-xs font-semibold">{t("rx_duration")}</Label>
                     <Input
                       value={line.duration}
                       onChange={(e) => updateLine(index, "duration", e.target.value)}
                       placeholder={t("rx_durationPlaceholder")}
-                      className="ltr-on-rtl"
+                      className="ltr-on-rtl h-9"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <Label>{t("rx_instructions")}</Label>
+                    <Label className="text-xs font-semibold">{t("rx_instructions")}</Label>
                     <Textarea
                       value={line.instructions}
                       onChange={(e) => updateLine(index, "instructions", e.target.value)}
@@ -606,11 +606,11 @@ export function NewPrescriptionDialog({
           </div>
 
           <Button type="button" variant="outline" size="sm" onClick={addLine} className="self-start">
-            <Plus className="h-4 w-4" /> {t("rx_addLine")}
+            <Plus className="mr-1.5 h-4 w-4" /> {t("rx_addLine")}
           </Button>
 
           {warnings.length > 0 ? (
-            <div className="flex items-start gap-2 rounded-[14px] border border-amber-400/50 bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-500/10 dark:text-amber-200">
+            <div className="flex items-start gap-2 rounded-md border border-amber-200/60 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800/40 dark:bg-amber-950/30 dark:text-amber-300">
               <X className="mt-0.5 h-4 w-4 shrink-0" />
               <p>
                 {t("rx_allergyWarning")}: {warnings.join(", ")}
@@ -618,17 +618,17 @@ export function NewPrescriptionDialog({
             </div>
           ) : null}
 
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 pt-2 border-t border-border">
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              <X />{t("common_cancel")}
+              <X className="mr-1.5 h-4 w-4" />{t("common_cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              <Save />{loading ? t("common_loading") : t("rx_save")}
+              <Save className="mr-1.5 h-4 w-4" />{loading ? t("common_loading") : t("rx_save")}
             </Button>
           </div>
         </form>

@@ -43,14 +43,14 @@ export function SendRxButton({
       <select
         value={channel}
         onChange={(e) => setChannel(e.target.value as "sms" | "whatsapp")}
-        className="h-8 rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground focus-visible:outline-none"
+        className="h-8 rounded-md border border-border bg-background px-2 text-xs font-medium text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         aria-label={t["rx_send"]}
       >
         <option value="whatsapp">WhatsApp</option>
         <option value="sms">SMS</option>
       </select>
-      <Button size="sm" variant="outline" onClick={() => void send()} disabled={sending}>
-        <Send className="mr-1 h-4 w-4" />
+      <Button size="sm" variant="outline" className="h-8 gap-1.5" onClick={() => void send()} disabled={sending}>
+        <Send className="h-3.5 w-3.5" />
         {t["rx_send"]}
       </Button>
     </div>

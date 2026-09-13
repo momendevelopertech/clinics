@@ -139,15 +139,15 @@ export default function LabResultsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
-        return "bg-green-100 text-green-800";
+        return "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/30";
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200/50 dark:border-amber-800/30";
       case "abnormal":
-        return "bg-red-100 text-red-800";
+        return "bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400 border border-red-200/50 dark:border-red-800/30";
       case "reviewed":
-        return "bg-blue-100 text-blue-800";
+        return "bg-cyan-50 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-400 border border-cyan-200/50 dark:border-cyan-800/30";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-muted-foreground border border-border";
     }
   };
 
@@ -157,8 +157,8 @@ export default function LabResultsPage() {
   if (forbidden) {
     return (
       <div className="flex flex-col gap-6 w-full h-full">
-        <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
-          <Beaker className="w-6 h-6 inline mr-2" />
+        <h2 className="text-2xl font-bold tracking-tight text-foreground mb-1 flex items-center">
+          <Beaker className="w-6 h-6 inline mr-2 text-primary" />
           {t("labs_title")}
         </h2>
         <PermissionDenied
@@ -173,11 +173,11 @@ export default function LabResultsPage() {
     <div className="flex flex-col gap-6 w-full h-full">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
-            <Beaker className="w-6 h-6 inline mr-2" />
+          <h2 className="text-2xl font-bold tracking-tight text-foreground mb-1 flex items-center">
+            <Beaker className="w-6 h-6 inline mr-2 text-primary" />
             {t("labs_title")}
           </h2>
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-muted-foreground">
             {t("labs_subtitle")}
           </p>
         </div>
@@ -190,12 +190,12 @@ export default function LabResultsPage() {
         </FeatureTip>
       </div>
 
-      <div className="bg-white dark:bg-neutral-900 border rounded-[5px] flex-1 shadow-sm flex flex-col pt-2">
-        <div className="px-6 py-4 border-b flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-card border border-border rounded-lg flex-1 shadow-xs flex flex-col">
+        <div className="px-6 py-4 border-b border-border bg-muted/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <Input
             type="search"
             placeholder={t("labs_search")}
-            className="w-full sm:max-w-sm"
+            className="w-full sm:max-w-sm h-9"
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -208,7 +208,7 @@ export default function LabResultsPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 h-9"
                 >
                   <FilterIcon className="w-4 h-4" /> {t("common_status")}
                 </Button>
@@ -269,7 +269,7 @@ export default function LabResultsPage() {
               variant="outline"
               size="sm"
               onClick={handleExport}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 h-9"
             >
               <Download className="w-4 h-4" /> {t("labs_export")}
             </Button>
@@ -279,65 +279,65 @@ export default function LabResultsPage() {
         <div className="p-0 overflow-x-auto flex-1">
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <p className="text-neutral-500">{t("labs_loading")}</p>
+              <p className="text-muted-foreground">{t("labs_loading")}</p>
             </div>
           ) : filteredResults.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-center">
-              <Beaker className="w-12 h-12 text-neutral-300 mb-4" />
-              <p className="text-neutral-600">{t("labs_empty")}</p>
+              <Beaker className="w-12 h-12 text-muted-foreground/40 mb-4" />
+              <p className="text-muted-foreground">{t("labs_empty")}</p>
             </div>
           ) : (
             <table className="w-full text-sm text-left">
-              <thead className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 font-medium">
+              <thead className="bg-muted/40 text-muted-foreground font-semibold text-xs uppercase tracking-wider">
                 <tr>
-                  <th className="px-6 py-4 border-b">{t("labs_colPatient")}</th>
-                  <th className="px-6 py-4 border-b">{t("labs_colTest")}</th>
-                  <th className="px-6 py-4 border-b">{t("labs_colResult")}</th>
-                  <th className="px-6 py-4 border-b">{t("labs_colStatus")}</th>
-                  <th className="px-6 py-4 border-b hidden md:table-cell">
+                  <th className="px-6 py-3.5 border-b border-border">{t("labs_colPatient")}</th>
+                  <th className="px-6 py-3.5 border-b border-border">{t("labs_colTest")}</th>
+                  <th className="px-6 py-3.5 border-b border-border">{t("labs_colResult")}</th>
+                  <th className="px-6 py-3.5 border-b border-border">{t("labs_colStatus")}</th>
+                  <th className="px-6 py-3.5 border-b border-border hidden md:table-cell">
                     {t("labs_colPerformed")}
                   </th>
-                  <th className="px-6 py-4 border-b">{t("common_actions")}</th>
+                  <th className="px-6 py-3.5 border-b border-border">{t("common_actions")}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
+              <tbody className="divide-y divide-border text-foreground">
                 {pagedResults.map((result) => (
                   <tr
                     key={result.id}
-                    className={`transition ${
+                    className={`transition-colors ${
                       isHighlightedRow(result.status)
-                        ? "bg-red-50 text-red-950 hover:bg-red-100 dark:bg-red-950/30 dark:text-red-50 dark:hover:bg-red-950/40"
-                        : "hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
+                        ? "bg-red-50/60 text-red-950 hover:bg-red-100/60 dark:bg-red-950/30 dark:text-red-50 dark:hover:bg-red-950/40"
+                        : "hover:bg-muted/30"
                     }`}
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-[5px] bg-purple-100 text-purple-700 font-bold flex justify-center items-center text-xs">
+                        <div className="w-8 h-8 rounded-md bg-primary/10 text-primary font-bold flex justify-center items-center text-xs">
                           {result.patientName
                             .split(" ")
                             .map((n) => n[0])
                             .join("")
                             .slice(0, 2)}
                         </div>
-                        <p className="font-medium">{result.patientName}</p>
+                        <p className="font-semibold text-foreground">{result.patientName}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="font-medium">{result.testName}</p>
+                      <p className="font-semibold text-foreground">{result.testName}</p>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm">
                         {result.resultValue && (
                           <>
-                            <p className="font-medium">
+                            <p className="font-semibold text-foreground">
                               {result.resultValue} {result.unit || ""}
                             </p>
                             {result.referenceRange && (
                               <p
                                 className={`text-xs ${
                                   isHighlightedRow(result.status)
-                                    ? "text-red-700 dark:text-red-200/80"
-                                    : "text-neutral-500"
+                                    ? "text-red-700 dark:text-red-300"
+                                    : "text-muted-foreground"
                                 }`}
                               >
                                 {t("labs_range")}: {result.referenceRange}
@@ -346,13 +346,13 @@ export default function LabResultsPage() {
                           </>
                         )}
                         {!result.resultValue && (
-                          <p className="text-neutral-500">-</p>
+                          <p className="text-muted-foreground">-</p>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(result.status)}`}
+                        className={`px-2.5 py-0.5 rounded-md text-xs font-semibold inline-flex items-center ${getStatusColor(result.status)}`}
                       >
                         {isAbnormal(result.status) && (
                           <TrendingUp className="w-3 h-3 inline mr-1" />
@@ -360,7 +360,7 @@ export default function LabResultsPage() {
                         {statusLabel(result.status)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 hidden md:table-cell">
+                    <td className="px-6 py-4 hidden md:table-cell text-muted-foreground">
                       {result.performedAt
                         ? new Date(result.performedAt).toLocaleDateString()
                         : "-"}
@@ -377,19 +377,19 @@ export default function LabResultsPage() {
                             size="sm"
                             className={
                               isHighlightedRow(result.status)
-                                ? "text-red-900 hover:bg-red-200/60 dark:text-red-100 dark:hover:bg-red-900/30"
-                                : undefined
+                                ? "h-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                : "h-8"
                             }
                           >
-                            <Eye />{t("labs_viewReport")}
+                            <Eye className="mr-1.5 h-4 w-4" />{t("labs_viewReport")}
                           </Button>
                         </a>
                       ) : (
                         <span
                           className={
                             isHighlightedRow(result.status)
-                              ? "text-xs text-red-700 dark:text-red-200/80"
-                              : "text-xs text-neutral-400"
+                              ? "text-xs text-destructive"
+                              : "text-xs text-muted-foreground"
                           }
                         >
                           {t("labs_noReport")}

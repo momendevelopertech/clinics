@@ -122,8 +122,8 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2">
-          <Plus className="w-4 h-4" /> {t("labs_addResult")}
+        <Button className="h-9 gap-2">
+          <Plus className="h-4 w-4" /> {t("labs_addResult")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -132,9 +132,9 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
           <DialogDescription>{t("labs_addDesc")}</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="gap-2 flex flex-col">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 pt-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="gap-1.5 flex flex-col">
               <Label htmlFor="patient">{t("labs_patientRequired")}</Label>
               <Select
                 value={formData.patientId}
@@ -155,7 +155,7 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
               </Select>
             </div>
 
-            <div className="gap-2 flex flex-col">
+            <div className="gap-1.5 flex flex-col">
               <Label htmlFor="test-name">{t("labs_testName")}</Label>
               <Input
                 id="test-name"
@@ -168,8 +168,8 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
-            <div className="gap-2 flex flex-col">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="gap-1.5 flex flex-col">
               <Label htmlFor="result-value">{t("labs_resultValue")}</Label>
               <Input
                 id="result-value"
@@ -181,7 +181,7 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
               />
             </div>
 
-            <div className="gap-2 flex flex-col">
+            <div className="gap-1.5 flex flex-col">
               <Label htmlFor="unit">{t("labs_unit")}</Label>
               <Input
                 id="unit"
@@ -193,7 +193,7 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
               />
             </div>
 
-            <div className="gap-2 flex flex-col">
+            <div className="gap-1.5 flex flex-col">
               <Label htmlFor="reference-range">{t("labs_refRange")}</Label>
               <Input
                 id="reference-range"
@@ -206,8 +206,8 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="gap-2 flex flex-col">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="gap-1.5 flex flex-col">
               <Label htmlFor="status">{t("common_status")}</Label>
               <Select
                 value={formData.status}
@@ -229,7 +229,7 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
               </Select>
             </div>
 
-            <div className="gap-2 flex flex-col">
+            <div className="gap-1.5 flex flex-col">
               <Label htmlFor="performed-at">{t("labs_performedDate")}</Label>
               <Input
                 id="performed-at"
@@ -242,7 +242,7 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
             </div>
           </div>
 
-          <div className="gap-2 flex flex-col">
+          <div className="gap-1.5 flex flex-col">
             <Label htmlFor="report-url">{t("labs_reportUrl")}</Label>
             <Input
               id="report-url"
@@ -254,17 +254,18 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
             />
           </div>
 
-          <div className="flex gap-2 justify-end">
+          <div className="flex gap-2 justify-end pt-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              <X />{t("common_cancel")}
+              {t("common_cancel")}
             </Button>
-            <Button type="submit" disabled={loading}>
-              <Plus />{loading ? t("labs_adding") : t("labs_addTitle")}
+            <Button type="submit" disabled={loading} className="gap-2">
+              <Plus className="h-4 w-4" />
+              {loading ? t("labs_adding") : t("labs_addTitle")}
             </Button>
           </div>
         </form>

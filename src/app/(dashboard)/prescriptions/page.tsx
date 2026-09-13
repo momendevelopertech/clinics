@@ -97,11 +97,11 @@ export default function PrescriptionsPage() {
   };
 
   const statusChip = (status: string) => {
-    const base = "px-2 py-1 rounded text-xs font-medium";
-    if (status === "active") return `${base} bg-emerald-100 text-emerald-800`;
-    if (status === "completed") return `${base} bg-blue-100 text-blue-800`;
-    if (status === "cancelled") return `${base} bg-red-100 text-red-800`;
-    return `${base} bg-neutral-100 text-neutral-700`;
+    const base = "px-2.5 py-0.5 rounded-md text-xs font-semibold inline-flex items-center";
+    if (status === "active") return `${base} bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/30`;
+    if (status === "completed") return `${base} bg-cyan-50 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-400 border border-cyan-200/50 dark:border-cyan-800/30`;
+    if (status === "cancelled") return `${base} bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400 border border-red-200/50 dark:border-red-800/30`;
+    return `${base} bg-muted text-muted-foreground border border-border`;
   };
 
   const setStatus = async (id: string, status: string) => {
@@ -138,7 +138,7 @@ export default function PrescriptionsPage() {
   if (forbidden) {
     return (
       <div className="flex w-full h-full flex-col gap-6">
-        <h2 className="mb-1 text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+        <h2 className="mb-1 text-2xl font-bold tracking-tight text-foreground">
           {t("rx_title")}
         </h2>
         <PermissionDenied
@@ -153,21 +153,21 @@ export default function PrescriptionsPage() {
     <div className="flex w-full flex-col gap-6">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h2 className="mb-1 text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-            <ClipboardList className="mr-2 inline h-6 w-6" />
+          <h2 className="mb-1 text-2xl font-bold tracking-tight text-foreground flex items-center">
+            <ClipboardList className="mr-2 inline h-6 w-6 text-primary" />
             {t("rx_title")}
           </h2>
-          <p className="text-sm text-neutral-500">{t("rx_subtitle")}</p>
+          <p className="text-sm text-muted-foreground">{t("rx_subtitle")}</p>
         </div>
         <NewPrescriptionDialog onSuccess={fetchPrescriptions} />
       </div>
 
-      <div className="flex flex-1 flex-col border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-        <div className="flex flex-col items-start justify-between gap-4 border-b px-6 py-4 sm:flex-row sm:items-center">
+      <div className="flex flex-1 flex-col rounded-lg border border-border bg-card shadow-xs">
+        <div className="flex flex-col items-start justify-between gap-4 border-b border-border px-6 py-4 bg-muted/20 sm:flex-row sm:items-center">
           <Input
             type="search"
             placeholder={t("rx_search")}
-            className="w-full sm:max-w-sm"
+            className="w-full sm:max-w-sm h-9"
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -176,7 +176,7 @@ export default function PrescriptionsPage() {
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
+              <Button variant="outline" size="sm" className="flex items-center gap-2 h-9">
                 <FilterIcon className="h-4 w-4" /> {t("common_status")}
               </Button>
             </DropdownMenuTrigger>
@@ -220,32 +220,32 @@ export default function PrescriptionsPage() {
         <div className="flex-1 overflow-x-auto">
           {loading ? (
             <div className="flex h-64 items-center justify-center">
-              <p className="text-neutral-500">{t("common_loading")}</p>
+              <p className="text-muted-foreground">{t("common_loading")}</p>
             </div>
           ) : paged.length === 0 ? (
             <div className="flex h-64 flex-col items-center justify-center text-center">
-              <Pill className="mb-4 h-12 w-12 text-neutral-300" />
-              <p className="text-neutral-600">{t("rx_empty")}</p>
+              <Pill className="mb-4 h-12 w-12 text-muted-foreground/40" />
+              <p className="text-muted-foreground">{t("rx_empty")}</p>
             </div>
           ) : (
             <table className="w-full text-left text-sm">
-              <thead className="bg-neutral-50 font-medium text-neutral-500 dark:bg-neutral-800/50">
+              <thead className="bg-muted/40 font-semibold text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
-                  <th className="border-b px-6 py-4">{t("rx_colPatient")}</th>
-                  <th className="border-b px-6 py-4">{t("rx_colMedication")}</th>
-                  <th className="hidden border-b px-6 py-4 md:table-cell">
+                  <th className="border-b border-border px-6 py-3.5">{t("rx_colPatient")}</th>
+                  <th className="border-b border-border px-6 py-3.5">{t("rx_colMedication")}</th>
+                  <th className="hidden border-b border-border px-6 py-3.5 md:table-cell">
                     {t("rx_colPrescriber")}
                   </th>
-                  <th className="border-b px-6 py-4">{t("common_status")}</th>
-                  <th className="hidden border-b px-6 py-4 lg:table-cell">
+                  <th className="border-b border-border px-6 py-3.5">{t("common_status")}</th>
+                  <th className="hidden border-b border-border px-6 py-3.5 lg:table-cell">
                     {t("rx_colDate")}
                   </th>
-                  <th className="border-b px-6 py-4">{t("common_actions")}</th>
+                  <th className="border-b border-border px-6 py-3.5">{t("common_actions")}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
+              <tbody className="divide-y divide-border text-foreground">
                 {paged.map((rx) => (
-                  <tr key={rx.id} className="transition hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
+                  <tr key={rx.id} className="transition-colors hover:bg-muted/30">
                     <td className="px-6 py-4">
                       <Link
                         href={`/patients/${rx.patientId}`}
@@ -255,14 +255,14 @@ export default function PrescriptionsPage() {
                       </Link>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="font-medium">{rx.medicationName}</p>
+                      <p className="font-semibold text-foreground">{rx.medicationName}</p>
                       {rx.items.length > 0 ? (
-                        <p className="text-xs text-neutral-500">
+                        <p className="text-xs text-muted-foreground">
                           +{rx.items.length} {t("rx_moreItems")}
                         </p>
                       ) : null}
                     </td>
-                    <td className="hidden px-6 py-4 md:table-cell">
+                    <td className="hidden px-6 py-4 md:table-cell text-muted-foreground">
                       {rx.prescriber?.name ?? "—"}
                     </td>
                     <td className="px-6 py-4">
@@ -271,20 +271,20 @@ export default function PrescriptionsPage() {
                           {statusLabel(rx.status)}
                         </span>
                         {rx.sentToPharmacy ? (
-                          <span className="rounded bg-neutral-100 px-2 py-0.5 text-[10px] font-semibold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+                          <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground border border-border">
                             {t("rx_sentToPharmacy")}
                           </span>
                         ) : null}
                       </div>
                     </td>
-                    <td className="hidden px-6 py-4 lg:table-cell">
+                    <td className="hidden px-6 py-4 lg:table-cell text-muted-foreground">
                       {new Date(rx.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm" asChild>
+                      <div className="flex items-center gap-1.5">
+                        <Button variant="ghost" size="sm" className="h-8" asChild>
                           <Link href={`/print/prescription/${rx.id}`}>
-                            <Printer className="h-4 w-4" /> {t("rx_print")}
+                            <Printer className="mr-1.5 h-4 w-4" /> {t("rx_print")}
                           </Link>
                         </Button>
                         {rx.status === "active" ? (
@@ -292,27 +292,28 @@ export default function PrescriptionsPage() {
                             <Button
                               variant="outline"
                               size="sm"
+                              className="h-8"
                               onClick={() => void setStatus(rx.id, "completed")}
                             >
-                              <Check />{t("rx_complete")}
+                              <Check className="mr-1 h-3.5 w-3.5" />{t("rx_complete")}
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-red-600"
+                              className="h-8 text-destructive hover:text-destructive"
                               onClick={() => void setStatus(rx.id, "cancelled")}
                             >
-                              <X />{t("rx_cancel")}
+                              <X className="mr-1 h-3.5 w-3.5" />{t("rx_cancel")}
                             </Button>
                           </>
                         ) : rx.status === "cancelled" ? (
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-red-600"
+                            className="h-8 text-destructive hover:text-destructive"
                             onClick={() => void handleDelete(rx.id)}
                           >
-                            <Trash2 />{t("common_delete")}
+                            <Trash2 className="mr-1.5 h-4 w-4" />{t("common_delete")}
                           </Button>
                         ) : null}
                       </div>

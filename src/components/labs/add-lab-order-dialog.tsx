@@ -58,18 +58,77 @@ export function AddLabOrderDialog({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild><Button variant="outline"><ClipboardPlus className="mr-2 h-4 w-4" />{t("labs_addOrder")}</Button></DialogTrigger>
-      <DialogContent>
-        <DialogHeader><DialogTitle>{t("labs_orderTitle")}</DialogTitle><DialogDescription>{t("labs_orderDesc")}</DialogDescription></DialogHeader>
-        <form onSubmit={submit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2"><Label>{t("labs_patientRequired")}</Label><Select value={form.patientId} onValueChange={(value) => setForm({ ...form, patientId: value })}><SelectTrigger><SelectValue placeholder={t("labs_selectPatient")} /></SelectTrigger><SelectContent>{patients.map((patient) => <SelectItem key={patient.id} value={patient.id}>{patient.firstName} {patient.lastName}</SelectItem>)}</SelectContent></Select></div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2"><Label>{t("labs_orderType")}</Label><Select value={form.orderType} onValueChange={(value) => setForm({ ...form, orderType: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="lab">{t("labs_typeLab")}</SelectItem><SelectItem value="imaging">{t("labs_typeImaging")}</SelectItem></SelectContent></Select></div>
-            <div className="flex flex-col gap-2"><Label>{t("labs_priority")}</Label><Select value={form.priority} onValueChange={(value) => setForm({ ...form, priority: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="routine">{t("labs_routine")}</SelectItem><SelectItem value="urgent">{t("labs_urgent")}</SelectItem><SelectItem value="stat">{t("labs_stat")}</SelectItem></SelectContent></Select></div>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="h-9 gap-2">
+          <ClipboardPlus className="h-4 w-4" />
+          {t("labs_addOrder")}
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{t("labs_orderTitle")}</DialogTitle>
+          <DialogDescription>{t("labs_orderDesc")}</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={submit} className="flex flex-col gap-4 pt-2">
+          <div className="flex flex-col gap-1.5">
+            <Label>{t("labs_patientRequired")}</Label>
+            <Select value={form.patientId} onValueChange={(value) => setForm({ ...form, patientId: value })}>
+              <SelectTrigger>
+                <SelectValue placeholder={t("labs_selectPatient")} />
+              </SelectTrigger>
+              <SelectContent>
+                {patients.map((patient) => (
+                  <SelectItem key={patient.id} value={patient.id}>
+                    {patient.firstName} {patient.lastName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <div className="flex flex-col gap-2"><Label>{t("labs_testName")}</Label><Input value={form.testName} onChange={(event) => setForm({ ...form, testName: event.target.value })} /></div>
-          <div className="flex flex-col gap-2"><Label>{t("labs_indication")}</Label><Input value={form.indication} onChange={(event) => setForm({ ...form, indication: event.target.value })} /></div>
-          <Button type="submit" disabled={loading}><Plus />{loading ? t("labs_ordering") : t("labs_addOrder")}</Button>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <Label>{t("labs_orderType")}</Label>
+              <Select value={form.orderType} onValueChange={(value) => setForm({ ...form, orderType: value })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="lab">{t("labs_typeLab")}</SelectItem>
+                  <SelectItem value="imaging">{t("labs_typeImaging")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label>{t("labs_priority")}</Label>
+              <Select value={form.priority} onValueChange={(value) => setForm({ ...form, priority: value })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="routine">{t("labs_routine")}</SelectItem>
+                  <SelectItem value="urgent">{t("labs_urgent")}</SelectItem>
+                  <SelectItem value="stat">{t("labs_stat")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>{t("labs_testName")}</Label>
+            <Input value={form.testName} onChange={(event) => setForm({ ...form, testName: event.target.value })} />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>{t("labs_indication")}</Label>
+            <Input value={form.indication} onChange={(event) => setForm({ ...form, indication: event.target.value })} />
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={loading}>
+              {t("common_cancel")}
+            </Button>
+            <Button type="submit" disabled={loading} className="gap-2">
+              <Plus className="h-4 w-4" />
+              {loading ? t("labs_ordering") : t("labs_addOrder")}
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

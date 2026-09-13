@@ -108,9 +108,9 @@ export function AiAssistCard({ encounterId, soap, setSoap }: AiAssistCardProps) 
   };
 
   return (
-    <div className="rounded-lg border border-dashed p-3">
+    <div className="rounded-lg border border-dashed border-border p-3 bg-muted/20">
       <details open className="group">
-        <summary className="cursor-pointer list-none text-sm font-medium">
+        <summary className="cursor-pointer list-none text-sm font-semibold text-foreground">
           {t("ai_title")}
         </summary>
         <div className="mt-2 space-y-2">
@@ -123,6 +123,7 @@ export function AiAssistCard({ encounterId, soap, setSoap }: AiAssistCardProps) 
                 onChange={(event) => setTranscript(event.target.value)}
                 placeholder={t("ai_scribePlaceholder")}
                 rows={3}
+                className="bg-card"
               />
               <div className="flex flex-wrap items-center gap-2">
                 <Button
@@ -131,7 +132,7 @@ export function AiAssistCard({ encounterId, soap, setSoap }: AiAssistCardProps) 
                   disabled={thinking !== "idle" || !transcript.trim()}
                   onClick={() => void runScribe()}
                 >
-                  <MessageCircle />{thinking === "scribe" ? t("common_loading") : t("ai_scribe")}
+                  <MessageCircle className="mr-1.5 h-4 w-4" />{thinking === "scribe" ? t("common_loading") : t("ai_scribe")}
                 </Button>
                 <Button
                   size="sm"
@@ -139,26 +140,26 @@ export function AiAssistCard({ encounterId, soap, setSoap }: AiAssistCardProps) 
                   disabled={thinking !== "idle"}
                   onClick={() => void runSummary()}
                 >
-                  <FileText />{thinking === "summary" ? t("common_loading") : t("ai_summary")}
+                  <FileText className="mr-1.5 h-4 w-4" />{thinking === "summary" ? t("common_loading") : t("ai_summary")}
                 </Button>
               </div>
-              {notice ? <p className="text-xs text-amber-600">{notice}</p> : null}
+              {notice ? <p className="text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 p-2 rounded-md border border-amber-200/50">{notice}</p> : null}
               {summary ? (
-                <div className="space-y-1 rounded border bg-muted/40 p-2 text-xs">
+                <div className="space-y-2 rounded-md border border-border bg-card p-3 text-xs shadow-xs">
                   {summary.findings.length ? (
                     <div>
-                      <p className="font-semibold">{t("ai_findings")}</p>
-                      <ul className="list-inside list-disc">{summary.findings.map((item, index) => <li key={index}>{item}</li>)}</ul>
+                      <p className="font-semibold text-foreground">{t("ai_findings")}</p>
+                      <ul className="list-inside list-disc text-muted-foreground mt-1">{summary.findings.map((item, index) => <li key={index}>{item}</li>)}</ul>
                     </div>
                   ) : null}
                   {summary.planSummary.length ? (
                     <div>
-                      <p className="font-semibold">{t("ai_plan")}</p>
-                      <ul className="list-inside list-disc">{summary.planSummary.map((item, index) => <li key={index}>{item}</li>)}</ul>
+                      <p className="font-semibold text-foreground">{t("ai_plan")}</p>
+                      <ul className="list-inside list-disc text-muted-foreground mt-1">{summary.planSummary.map((item, index) => <li key={index}>{item}</li>)}</ul>
                     </div>
                   ) : null}
                   {summary.followUpDays ? (
-                    <p>{t("ai_followUp")}: {summary.followUpDays} {t("common_days")}</p>
+                    <p className="text-muted-foreground"><strong className="font-semibold text-foreground">{t("ai_followUp")}:</strong> {summary.followUpDays} {t("common_days")}</p>
                   ) : null}
                 </div>
               ) : null}
