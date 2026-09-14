@@ -85,9 +85,12 @@ const toMedLines = (lines: RxMedLine[]): MedLine[] =>
   }));
 
 /**
- * Searchable medication-name field backed by the current doctor's favorites.
+ * Searchable medication-name field backed by the current doctor's favorites
+ * PLUS the clinic medication database (inventory stock, G1).
  * Live filtering starts at 2 characters; selecting a favorite also fills its
  * default dosage/frequency/duration (all still editable afterwards).
+ * Stock rows show quantity and low-stock state; out-of-stock rows are
+ * still selectable (doctor's call) but flagged.
  */
 function MedicationNameInput({
   value,
@@ -106,21 +109,30 @@ function MedicationNameInput({
 }) {
   const { t } = useLocale();
   const [results, setResults] = React.useState<FavoriteItem[]>([]);
+  const [stock, setStock] = React.useState<
+    { id: string; name: string; quantity: number; unit: string | null; lowStock: boolean; outOfStock: boolean }[]
+  >([]);
   const [open, setOpen] = React.useState(false);
   const [activeIndex, setActiveIndex] = React.useState(-1);
   const debounceRef = React.useRef<number | null>(null);
 
   const load = React.useCallback(async (query: string) => {
     try {
-      const response = await fetch(
-        `/api/prescriptions/favorites?q=${encodeURIComponent(query)}`,
-      );
-      if (!response.ok) return;
-      const data = (await response.json()) as FavoriteItem[];
-      if (Array.isArray(data)) {
-        setResults(data);
-        setOpen(true);
-        setActiveIndex(-1);
+      const [favRes, stockRes] = await Promise.all([
+        fetch(`/api/prescriptions/favorites?q=${encodeURIComponent(query)}`),
+        fetch(`/api/medications/search?q=${encodeURIComponent(query)}&limit=8`),
+      ]);
+      if (favRes.ok) {
+        const data = (await favRes.json()) as FavoriteItem[];
+        if (Array.isArray(data)) {
+          setResults(data);
+          setOpen(true);
+          setActiveIndex(-1);
+        }
+      }
+      if (stockRes.ok) {
+        const data = (await stockRes.json()) as { id: string; name: string; quantity: number; unit: string | null; lowStock: boolean; outOfStock: boolean }[];
+        if (Array.isArray(data)) setStock(data);
       }
     } catch {
       logClientError("Prescription favorites lookup failed");
@@ -142,6 +154,37 @@ function MedicationNameInput({
     };
   }, [open, value, load, scheduleLoad]);
 
+  const applyStock = (name: string) => {
+    onChange(name);
+    setOpen(false);
+    setResults([]);
+  };
+
+  const favNames = new Set(results.map((r) => r.medicationName.toLowerCase()));
+  const extraStock = stock.filter((s) => !favNames.has(s.name.toLowerCase()));
+
+  const flatCount = results.length + extraStock.length;
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "ArrowDown" && flatCount > 0) {
+      event.preventDefault();
+      setActiveIndex((prev) => (prev + 1) % flatCount);
+    } else if (event.key === "ArrowUp" && flatCount > 0) {
+      event.preventDefault();
+      setActiveIndex((prev) => (prev - 1 + flatCount) % flatCount);
+    } else if (event.key === "Enter" && activeIndex >= 0) {
+      event.preventDefault();
+      if (activeIndex < results.length) {
+        const item = results[activeIndex];
+        if (item) apply(item);
+      } else {
+        const s = extraStock[activeIndex - results.length];
+        if (s) applyStock(s.name);
+      }
+    } else if (event.key === "Escape") {
+      setOpen(false);
+    }
+  };
+
   const apply = (item: FavoriteItem) => {
     onChange(item.medicationName);
     onApplyDefaults({
@@ -151,22 +194,6 @@ function MedicationNameInput({
     });
     setOpen(false);
     setResults([]);
-  };
-
-  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "ArrowDown" && results.length > 0) {
-      event.preventDefault();
-      setActiveIndex((prev) => (prev + 1) % results.length);
-    } else if (event.key === "ArrowUp" && results.length > 0) {
-      event.preventDefault();
-      setActiveIndex((prev) => (prev - 1 + results.length) % results.length);
-    } else if (event.key === "Enter" && activeIndex >= 0) {
-      event.preventDefault();
-      const item = results[activeIndex];
-      if (item) apply(item);
-    } else if (event.key === "Escape") {
-      setOpen(false);
-    }
   };
 
   return (
@@ -181,7 +208,7 @@ function MedicationNameInput({
         />
       </PopoverTrigger>
       <PopoverContent className="w-72 p-0" align="start" sideOffset={4}>
-        {results.length === 0 ? (
+        {flatCount === 0 ? (
           <p className="px-3 py-3 text-sm text-muted-foreground">{t("rx_no_favorites")}</p>
         ) : (
           <ul className="max-h-64 overflow-auto py-1">
@@ -211,6 +238,36 @@ function MedicationNameInput({
                 </button>
               </li>
             ))}
+            {extraStock.map((s, si) => {
+              const index = results.length + si;
+              return (
+                <li key={s.id}>
+                  <button
+                    type="button"
+                    className={`flex w-full items-center justify-between gap-3 px-3 py-2 text-start text-sm transition ${
+                      index === activeIndex
+                        ? "bg-accent text-accent-foreground"
+                        : "hover:bg-muted/50"
+                    }`}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => applyStock(s.name)}
+                  >
+                    <span className="min-w-0 flex-1 truncate">{s.name}</span>
+                    <span
+                      className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
+                        s.outOfStock
+                          ? "bg-critical-bg text-critical-text"
+                          : s.lowStock
+                            ? "bg-warning-bg text-warning-text"
+                            : "bg-success-bg text-success-text"
+                      }`}
+                    >
+                      {s.outOfStock ? t("rx_stockOut") : `${s.quantity} ${s.unit ?? ""}`}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         )}
       </PopoverContent>

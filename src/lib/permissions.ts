@@ -36,16 +36,16 @@ export const ROLE_MODULE_ACCESS: Record<string, readonly string[]> = {
   Doctor: [
     "dashboard", "patients", "appointments", "queue", "encounters", "analytics",
     "consents", "audit", "labs", "tasks", "documents", "reports", "availability",
-    "catalogs", "help",
+    "catalogs", "automation", "help",
   ],
   "Care Coordinator": [
     "dashboard", "patients", "appointments", "queue", "consents", "tasks",
-    "documents", "communications", "locations", "waitlist", "help",
+    "documents", "communications", "campaigns", "locations", "waitlist", "help",
   ],
   Nurse: [
-    "dashboard", "patients", "appointments", "encounters", "analytics", "consents",
+    "dashboard", "patients", "appointments", "queue", "encounters", "analytics", "consents",
     "labs", "inventory", "tasks", "documents", "reports", "availability", "catalogs",
-    "help",
+    "automation", "help",
   ],
   Biller: [
     "dashboard", "patients", "appointments", "analytics", "audit", "billing",

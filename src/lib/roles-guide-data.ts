@@ -40,16 +40,16 @@ const GUIDE_ROLE_MODULE_ACCESS: Record<string, readonly string[]> = {
   Doctor: [
     "dashboard", "patients", "appointments", "queue", "encounters", "analytics",
     "consents", "audit", "labs", "tasks", "documents", "reports", "availability",
-    "catalogs", "help",
+    "catalogs", "automation", "help",
   ],
   "Care Coordinator": [
     "dashboard", "patients", "appointments", "queue", "consents", "tasks",
-    "documents", "communications", "locations", "waitlist", "help",
+    "documents", "communications", "campaigns", "locations", "waitlist", "help",
   ],
   Nurse: [
-    "dashboard", "patients", "appointments", "encounters", "analytics", "consents",
+    "dashboard", "patients", "appointments", "queue", "encounters", "analytics", "consents",
     "labs", "inventory", "tasks", "documents", "reports", "availability", "catalogs",
-    "help",
+    "automation", "help",
   ],
   Biller: [
     "dashboard", "patients", "appointments", "analytics", "audit", "billing",
@@ -508,8 +508,8 @@ export const ROLES_GUIDE: GuideRole[] = [
     icon: "HeartPulse",
     name: t("الممرضة (Nurse)", "Nurse"),
     profile: t(
-      "التمريض: يساعد في الزيارات والعلامات والتحاليل والروشتات، ويدير المخزون والمعدات. يرى لوحة care-board العامة ويملك موديول inventory بدل queue/audit.",
-      "Nursing: assists in encounters, vitals, labs and prescriptions, and runs inventory and equipment. Sees the general care-board and holds the inventory module instead of queue/audit.",
+      "التمريض: يساعد في الزيارات والعلامات والتحاليل والروشتات، ويدير المخزون والمعدات. يرى لوحة care-board العامة ويملك موديولي inventory وqueue (لا audit).",
+      "Nursing: assists in encounters, vitals, labs and prescriptions, and runs inventory and equipment. Sees the general care-board and holds the inventory and queue modules (no audit).",
     ),
     landing: t(
       "لوحة /dashboard العامة (care-board) — ليست DoctorBoard ولا ReceptionBoard (التفرع للدكتور وCare Coordinator فقط) — src/app/(dashboard)/dashboard/page.tsx:31-32.",
@@ -644,7 +644,7 @@ export const ROLES_GUIDE: GuideRole[] = [
       },
     ],
     boundaries: [
-      t("لا يرى الطابور (/queue للدكتور والممرضة؟ لا — للـ Doctor/Nurse/Receptionist في proxy لكن موديول queue ليس للممرضة: الصفحة تُفتح؟ proxy يسمح لـ Nurse! لكن API يتطلب موديول queue → 403. الحدود الفعلية: واجهة بلا بيانات.", "No working queue (proxy allows Nurse on /queue, but API needs queue module → 403. UI without data)."),
+      t("الطابور يعمل للممرضة (موديول queue + صفحة /queue + زر تسجيل الحيوية). لا ترى سجل التدقيق (موديول audit للدكتور والدفع-Biller فقط).", "Queue works for Nurse (queue module + /queue page + record-vitals button). No audit trail (audit module is Doctor/Biller only)."),
       t("لا يرى سجل التدقيق (موديول audit للدكتور والدفع-Biller فقط).", "No audit trail (audit module is Doctor/Biller only)."),
       t("لا يرى الفوترة والمدفوعات والتأمين (Biller + المالك).", "No billing/payments/insurance (Biller + Owner)."),
       t("لا يرى الاتصالات والحملات والانتظار والمواقع (الاستقبال) ولا الإعدادات (المالك).", "No communications/campaigns/waitlist/locations (Reception) and no settings (Owner)."),
@@ -754,15 +754,15 @@ export const ROLES_GUIDE: GuideRole[] = [
       },
       {
         id: "recep-campaigns-blocked",
-        icon: "Ban",
-        title: t("الحملات: مرئية لكن محظورة (مهم!)", "Campaigns: visible but blocked (important!)"),
-        where: t("صفحة /campaigns — تظهر في السايدبار للاستقبال لكن proxy للمالك فقط", "Page /campaigns — visible in sidebar to Reception but proxy is Owner-only"),
+        icon: "Megaphone",
+        title: t("الحملات: متاحة للاستقبال (أُصلحت في G13)", "Campaigns: available to Reception (fixed in G13)"),
+        where: t("صفحة /campaigns — السايدبار والـ proxy والـ API كلها تسمح للاستقبال الآن", "Page /campaigns — sidebar, proxy, and API all allow Reception now"),
         steps: [
-          t("السايدبار يعرضها (moduleKey=communications) لكن proxy يحوّل غير المالك لـ /dashboard.", "Sidebar shows it (moduleKey=communications) but proxy redirects non-Owners to /dashboard."),
-          t("حتى بالوصول المباشر: الـ API يتطلب موديول campaigns (غير موجود للاستقبال) فيرد 403.", "Even direct: API needs campaigns module (absent for Reception) → 403."),
+          t("ينشئ حملة عبر POST /api/communications/campaigns (مسودة draft).", "Creates a campaign via POST /api/communications/campaigns (draft)."),
+          t("يطلقها عبر POST …/[id]/launch (تصبح active).", "Launches it via POST …/[id]/launch (becomes active)."),
         ],
-        backend: t("ثلاث نقاط منع: label السايدبار ≠ سماح proxy ≠ سماح API. الإنشاء والإطلاق (draft→active) للمالك/الخطة.", "Three enforcement points disagree: sidebar label ≠ proxy allow ≠ API allow. Create/launch (draft→active) is Owner/plan-gated."),
-        result: t("لا نتيجة للاستقبال حاليًا — تحتاج قرار مالك/خطة.", "No outcome for Reception currently — needs Owner/plan decision."),
+        backend: t("الحماية campaigns + موديول campaigns (أُضيف للاستقبال في G13) مع حد الخطة.", "campaigns guard + campaigns module (granted to Reception in G13) with plan limit."),
+        result: t("القائمة تتحدث والحملة تُرسل.", "List refreshes and the campaign sends."),
       },
       {
         id: "recep-consents",
@@ -813,7 +813,7 @@ export const ROLES_GUIDE: GuideRole[] = [
       },
     ],
     boundaries: [
-      t("الحملات محظورة فعليًا (راجع البطاقة) رغم ظهورها في السايدبار.", "Campaigns effectively blocked (see card) despite sidebar visibility."),
+      t("الحملات متاحة للاستقبال (إنشاء وإطلاق) منذ إصلاح G13.", "Campaigns are available to Reception (create and launch) since the G13 fix."),
       t("إنشاء الفروع/الغرف والكتالوجات للمالك فقط.", "Branch/room and catalog creation is Owner-only."),
       t("لا فوترة/مدفوعات/تأمين (Biller)، ولا روشتات/تحاليل/زيارات (الدكتور/الممرضة).", "No billing/payments/insurance (Biller), no encounters/labs/prescriptions (Doctor/Nurse)."),
       t("لا إعدادات/خطط/طاقم/تكاملات (المالك) ولا منصة السوبر.", "No settings/plans/staff/integrations (Owner) and no Super platform."),

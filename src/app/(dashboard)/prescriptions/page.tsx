@@ -230,9 +230,10 @@ export default function PrescriptionsPage() {
               <p className="text-muted-foreground">{t("common_loading")}</p>
             </div>
           ) : paged.length === 0 ? (
-            <div className="flex h-64 flex-col items-center justify-center text-center">
-              <Pill className="mb-4 h-12 w-12 text-muted-foreground/40" />
+            <div className="flex h-64 flex-col items-center justify-center gap-3 text-center">
+              <Pill className="h-12 w-12 text-muted-foreground/40" />
               <p className="text-muted-foreground">{t("rx_empty")}</p>
+              <NewPrescriptionDialog onSuccess={fetchPrescriptions} />
             </div>
           ) : (
             <table className="w-full text-start text-sm">

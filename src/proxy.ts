@@ -37,14 +37,17 @@ const PUBLIC_API_PREFIXES = [
 const CLINIC_PAGE_ACCESS: Record<string, string[]> = {
   "/plan": ["Owner"],
   "/settings": ["Owner"],
-  "/automation": ["Owner"],
-  "/campaigns": ["Owner"],
+  "/staff": ["Owner"],
+  "/integrations": ["Owner"],
+  "/automation": ["Owner", "Doctor", "Nurse"],
+  "/campaigns": ["Owner", "Receptionist"],
   "/queue": ["Doctor", "Nurse", "Receptionist"],
   "/encounters": ["Doctor", "Nurse"],
   "/analytics": ["Doctor", "Nurse", "Biller"],
   "/consents": ["Doctor", "Nurse", "Receptionist"],
   "/audit": ["Doctor", "Biller"],
   "/labs": ["Doctor", "Nurse", "Pharmacist"],
+  "/prescriptions": ["Doctor", "Nurse", "Pharmacist"],
   "/tasks": ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"],
   "/documents": ["Doctor", "Nurse", "Receptionist"],
   "/reports": ["Doctor", "Nurse", "Biller"],
@@ -55,7 +58,11 @@ const CLINIC_PAGE_ACCESS: Record<string, string[]> = {
   "/waitlist": ["Receptionist"],
   "/billing": ["Biller"],
   "/payments": ["Biller"],
+  "/insurance": ["Biller"],
   "/inventory": ["Nurse", "Pharmacist"],
+  "/equipment": ["Nurse", "Pharmacist"],
+  "/patients": ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"],
+  "/print": ["Doctor", "Nurse", "Receptionist", "Biller", "Pharmacist"],
 };
 
 function isPublicPage(pathname: string) {

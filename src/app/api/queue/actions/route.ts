@@ -101,7 +101,46 @@ export async function POST(request: Request) {
       beforeState: JSON.stringify({ status: appointment.status }),
       afterState: JSON.stringify({ status: target, queueAction: action }),
     });
-    return NextResponse.json({ id: appointment.id, status: target });
+
+    // G3: call-next (arrived -> in_progress) auto-opens the clinical visit.
+    // Idempotent: Appointment -> Encounter is 1-1 (appointmentId @unique).
+    // Wrapped so a missing encounters permission never breaks the queue move.
+    let encounterId: string | null = null;
+    if (action === "call-next") {
+      try {
+        const existing = await prisma.encounter.findFirst({
+          where: { appointmentId: appointment.id, organizationId: orgId },
+          select: { id: true },
+        });
+        if (existing) {
+          encounterId = existing.id;
+        } else {
+          const created = await prisma.encounter.create({
+            data: {
+              organizationId: orgId,
+              patientId: appointment.patientId,
+              appointmentId: appointment.id,
+              startTime: new Date(),
+              status: "in_progress",
+              encounterType: "office_visit",
+            },
+            select: { id: true },
+          });
+          encounterId = created.id;
+          await createAuditLog({
+            organizationId: orgId,
+            userId,
+            action: "CREATE",
+            entityType: "Encounter",
+            entityId: created.id,
+            afterState: JSON.stringify({ appointmentId: appointment.id }),
+          });
+        }
+      } catch {
+        encounterId = null;
+      }
+    }
+    return NextResponse.json({ id: appointment.id, status: target, encounterId });
   } catch (error) {
     logServerError("Queue action failed", error);
     return NextResponse.json({ error: "Queue action failed" }, { status: 500 });

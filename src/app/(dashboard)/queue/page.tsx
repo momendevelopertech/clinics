@@ -9,12 +9,13 @@ import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { TableSkeleton } from "@/components/ui/loading";
+import { RecordVitalsDialog } from "@/components/encounters/record-vitals-dialog";
 
 type QueueItem = {
   id: string;
   tokenNumber: string | null;
   status: string;
-  patient: { firstName: string; lastName: string; mrn: string | null };
+  patient: { id: string; firstName: string; lastName: string; mrn: string | null };
   provider: { name: string | null };
   room: { name: string; number: string | null } | null;
 };
@@ -65,22 +66,33 @@ export default function QueuePage() {
       });
       if (response.status === 403) {
         setForbidden(true);
-        return;
+        return null;
       }
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error || t("queue_actionError"));
       }
+      const data = (await response.json().catch(() => null)) as { encounterId?: string | null } | null;
       await load();
       toast.success(t(successKey(action)));
+      return data;
     } catch (reason: unknown) {
       const message = reason instanceof Error ? reason.message : t("queue_actionError");
       setError(message);
       toast.error(message);
       logClientError("Queue action failed", reason);
+      return null;
     } finally {
       setBusyId(null);
     }
+  };
+
+  const startVisit = async (item: QueueItem) => {
+    const data = await runAction("call-next", item.id);
+    const encounterId = data?.encounterId;
+    const params = new URLSearchParams({ appointmentId: item.id, patientId: item.patient.id });
+    if (encounterId) params.set("encounterId", encounterId);
+    window.location.href = `/encounters?${params.toString()}`;
   };
 
   if (forbidden) {
@@ -116,21 +128,31 @@ export default function QueuePage() {
             <div>
               <p className="text-xs font-semibold text-foreground">{item.patient.firstName} {item.patient.lastName}</p>
               <p className="mt-0.5 text-xs text-muted-foreground">{item.patient.mrn ?? ""} · {item.provider.name ?? ""}</p>
-              <div className="mt-2.5 flex gap-2">
+              <div className="mt-2.5 flex flex-wrap gap-2">
+                <RecordVitalsDialog
+                  patientId={item.patient.id}
+                  patientLabel={`${item.patient.firstName} ${item.patient.lastName}`}
+                  onSaved={() => void load()}
+                />
                 {item.status === "arrived" ? (
                   <>
-                    <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" disabled={busyId === item.id} onClick={() => runAction("call-next", item.id)}>
-                      {busyId === item.id ? <Loader2 className="me-1 h-3.5 w-3.5 animate-spin" /> : <Phone className="me-1 h-3.5 w-3.5" />}{t("queue_callNext")}
+                    <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" disabled={busyId === item.id} onClick={() => void startVisit(item)}>
+                      {busyId === item.id ? <Loader2 className="me-1 h-3.5 w-3.5 animate-spin" /> : <Phone className="me-1 h-3.5 w-3.5" />}{t("queue_startVisit")}
                     </Button>
-                    <Button size="sm" variant="ghost" className="h-7 px-2.5 text-xs text-destructive hover:text-destructive hover:bg-destructive/10" disabled={busyId === item.id} onClick={() => runAction("no-show", item.id)}>
+                    <Button size="sm" variant="ghost" className="h-7 px-2.5 text-xs text-destructive hover:text-destructive hover:bg-destructive/10" disabled={busyId === item.id} onClick={() => void runAction("no-show", item.id)}>
                       {busyId === item.id ? <Loader2 className="me-1 h-3.5 w-3.5 animate-spin" /> : <Ban className="me-1 h-3.5 w-3.5" />}{t("queue_noShow")}
                     </Button>
                   </>
                 ) : null}
                 {item.status === "in_progress" ? (
-                  <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" disabled={busyId === item.id} onClick={() => runAction("complete", item.id)}>
-                    {busyId === item.id ? <Loader2 className="me-1 h-3.5 w-3.5 animate-spin" /> : <Check className="me-1 h-3.5 w-3.5" />}{t("queue_complete")}
-                  </Button>
+                  <>
+                    <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" asChild>
+                      <a href={`/encounters?appointmentId=${item.id}&patientId=${item.patient.id}`}>{t("common_openChart")}</a>
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" disabled={busyId === item.id} onClick={() => void runAction("complete", item.id)}>
+                      {busyId === item.id ? <Loader2 className="me-1 h-3.5 w-3.5 animate-spin" /> : <Check className="me-1 h-3.5 w-3.5" />}{t("queue_complete")}
+                    </Button>
+                  </>
                 ) : null}
               </div>
             </div>

@@ -13,6 +13,7 @@ import { isSoapEmpty, prefillSoap } from "@/lib/clinical-templates";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { AiAssistCard } from "@/components/encounters/ai-assist-card";
+import { EncounterVitalsCard } from "@/components/encounters/encounter-vitals-card";
 import { NewPrescriptionDialog } from "@/components/prescriptions/new-prescription-dialog";
 
 export type SoapNote = { subjective: string; objective: string; assessment: string; plan: string };
@@ -34,6 +35,7 @@ export function EncountersWorkspace() {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [encounters, setEncounters] = useState<Encounter[]>([]);
   const [patientId, setPatientId] = useState("");
+  const [appointmentId, setAppointmentId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState("");
   const [templates, setTemplates] = useState<Array<{ id: string; name: string; specialty: string | null; subjective: string | null; objective: string | null; assessment: string | null; plan: string | null }>>([]);
   const [templateId, setTemplateId] = useState("");
@@ -68,6 +70,17 @@ export function EncountersWorkspace() {
     void refresh().catch((reason: unknown) => {
       if (!cancelled) setError(reason instanceof Error ? reason.message : t("enc_loadError"));
     });
+    // G3: deep-link from Queue (?appointmentId=&patientId=) pre-fills the
+    // visit start so the reception -> doctor handoff is one click.
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const appt = params.get("appointmentId");
+      const pat = params.get("patientId");
+      if (appt) setAppointmentId(appt);
+      if (pat) setPatientId(pat);
+    } catch {
+      /* ignore */
+    }
     return () => { cancelled = true; };
   }, [refresh, t]);
 
@@ -76,10 +89,23 @@ export function EncountersWorkspace() {
     const response = await fetch("/api/encounters", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ patientId, encounterType: "office_visit" }),
+      body: JSON.stringify({ patientId, appointmentId, encounterType: "office_visit" }),
     });
-    if (!response.ok) throw new Error(t("enc_startError"));
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error((data as { error?: string }).error || t("enc_startError"));
+    }
     setPatientId("");
+    setAppointmentId(null);
+    // Clear the deep-link so a refresh does not re-create the same visit.
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("appointmentId");
+      url.searchParams.delete("patientId");
+      window.history.replaceState(null, "", url.toString());
+    } catch {
+      /* ignore */
+    }
     await refresh();
     toast.success(t("common_added"));
   };
@@ -172,7 +198,7 @@ export function EncountersWorkspace() {
             <SearchableSelect
               id="encounter-patient"
               value={patientId}
-              onValueChange={setPatientId}
+              onValueChange={(value) => { setPatientId(value); if (!value) setAppointmentId(null); }}
               options={[
                 { value: "", label: t("enc_selectPatient") },
                 ...patients.map((patient) => ({
@@ -183,6 +209,9 @@ export function EncountersWorkspace() {
               placeholder={t("enc_selectPatient")}
               triggerClassName="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground"
             />
+            {appointmentId ? (
+              <p className="text-[11px] text-muted-foreground">{t("enc_linkedAppointment")}: {appointmentId.slice(0, 8)}…</p>
+            ) : null}
           </div>
           </FeatureTip>
           <Button onClick={() => void startEncounter().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_startError")))}><Plus className="mr-1.5 h-4 w-4" />{t("enc_start")}</Button>
@@ -211,6 +240,14 @@ export function EncountersWorkspace() {
                 {encounter.status === "in_progress" ? <Button size="sm" onClick={() => void complete(encounter.id).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_completeError")))}><CheckCheck className="mr-1.5 h-4 w-4" />{t("enc_complete")}</Button> : null}
               </div>
               {encounter.notes.map((entry) => <p key={entry.id} className="mt-3 whitespace-pre-wrap text-sm text-foreground bg-muted-bg p-3 rounded-md border border-border">{entry.text ?? entry.assessment}</p>)}
+              <div className="mt-3">
+                <EncounterVitalsCard
+                  patientId={encounter.patient.id}
+                  encounterId={encounter.id}
+                  patientLabel={`${encounter.patient.firstName} ${encounter.patient.lastName}`}
+                  onSaved={() => void refresh().catch(() => undefined)}
+                />
+              </div>
               {encounter.status === "in_progress" ? (
                 <div className="mt-3 flex flex-col gap-3">
                   <div className="flex flex-col gap-2 sm:flex-row">
