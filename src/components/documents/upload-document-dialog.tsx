@@ -76,13 +76,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
     file: null as File | null,
   });
 
-  React.useEffect(() => {
-    if (open) {
-      fetchPatients();
-    }
-  }, [open]);
-
-  const fetchPatients = async () => {
+  const fetchPatients = React.useCallback(async () => {
     try {
       const response = await fetch("/api/patients");
       if (!response.ok) throw new Error("Failed to fetch patients");
@@ -92,7 +86,13 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
       toast.error(t("common_loadPatientsError"));
       logClientError("Upload document patient lookup failed", error);
     }
-  };
+  }, [t]);
+
+  React.useEffect(() => {
+    if (open) {
+      fetchPatients();
+    }
+  }, [fetchPatients, open]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -195,7 +195,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
                 setFormData({ ...formData, patientId: value })
               }
             >
-              <SelectTrigger id="patient">
+              <SelectTrigger id="patient" className="h-9">
                 <SelectValue placeholder={t("common_selectPatient")} />
               </SelectTrigger>
               <SelectContent>
@@ -219,7 +219,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
                 })
               }
             >
-              <SelectTrigger id="doc-type">
+              <SelectTrigger id="doc-type" className="h-9">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -234,7 +234,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
 
           <div className="gap-2 flex flex-col">
             <Label htmlFor="file">{t("doc_fileUpload")}</Label>
-            <div className="border-2 border-dashed rounded-lg p-6 text-center">
+            <div className="border border-dashed border-border bg-muted-bg/30 hover:bg-muted-bg/50 rounded-lg p-6 text-center transition-colors">
               <input
                 id="file"
                 type="file"
@@ -243,28 +243,29 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
                 accept="image/jpeg,image/png,image/webp,application/pdf,.doc,.docx"
               />
               <label htmlFor="file" className="cursor-pointer">
-                <Upload className="w-8 h-8 text-neutral-400 mx-auto mb-2" />
-                <p className="text-sm font-medium">
+                <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm font-medium text-foreground">
                   {formData.file
                     ? formData.file.name
                     : t("doc_dropHint")}
                 </p>
-                <p className="text-xs text-neutral-500">{t("doc_sizeLimit")}</p>
+                <p className="text-xs text-muted-foreground">{t("doc_sizeLimit")}</p>
               </label>
             </div>
           </div>
 
-          <div className="flex gap-2 justify-end">
+          <div className="flex gap-2 justify-end mt-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
               disabled={loading}
+              className="h-9"
             >
-              <X />{t("common_cancel")}
+              <X className="h-4 w-4 mr-1" />{t("common_cancel")}
             </Button>
-            <Button type="submit" disabled={loading}>
-              <Upload />{loading ? t("doc_uploading") : t("doc_uploadTrigger")}
+            <Button type="submit" disabled={loading} className="h-9">
+              <Upload className="h-4 w-4 mr-1" />{loading ? t("doc_uploading") : t("doc_uploadTrigger")}
             </Button>
           </div>
         </form>

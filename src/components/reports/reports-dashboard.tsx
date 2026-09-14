@@ -14,6 +14,7 @@ import {
 import type { Dictionary } from "@/lib/i18n/locale";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { buildMonthlyCsv } from "@/lib/report-export";
+import { Button } from "@/components/ui/button";
 
 type ReportData = {
   month: string;
@@ -120,7 +121,7 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
   if (forbidden) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-semibold tracking-[-0.03em]">{t["reports_title"]}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t["reports_title"]}</h1>
         <PermissionDenied
           title={t["reports_forbiddenTitle"] ?? "You don't have permission"}
           description={t["reports_forbidden"] ?? "Only staff with billing or clinical access can view reports."}
@@ -133,8 +134,8 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-[-0.03em]">{t["reports_title"]}</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{t["reports_title"]}</h1>
+          <p className="text-xs text-muted-foreground">
             {data ? `${data.summary.totalAppointments} ${t["reports_appointments"]}` : "…"}
           </p>
         </div>
@@ -143,95 +144,102 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
             type="month"
             value={month}
             onChange={(event) => setMonth(event.target.value)}
-            className="h-11 rounded-[16px] border border-border bg-white/80 px-4 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15 dark:bg-white/[0.04]"
+            className="h-9 rounded-md border border-input bg-card px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
           />
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => window.print()}
-            className="inline-flex h-11 items-center gap-2 rounded-[16px] border border-white/60 bg-white/70 px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-white dark:border-white/6 dark:bg-white/[0.04]"
+            className="h-9 px-3 text-xs font-semibold gap-1.5"
           >
-            <Printer className="h-4 w-4" />
+            <Printer className="h-3.5 w-3.5" />
             {t["reports_print"]}
-          </button>
-          <button
+          </Button>
+          <Button
+            size="sm"
             onClick={exportCsv}
             disabled={!data}
-            className="inline-flex h-11 items-center gap-2 rounded-[16px] bg-linear-to-r from-primary to-cyan-500 px-4 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px] disabled:opacity-50"
+            className="h-9 px-3 text-xs font-semibold gap-1.5 shadow-2xs"
           >
-            <Download className="h-4 w-4" />
+            <Download className="h-3.5 w-3.5" />
             {t["reports_exportCsv"]}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => void exportXlsx()}
             disabled={!data}
-            className="inline-flex h-11 items-center gap-2 rounded-[16px] border border-white/60 bg-white/70 px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-white dark:border-white/6 dark:bg-white/[0.04] disabled:opacity-50"
+            className="h-9 px-3 text-xs font-semibold gap-1.5"
           >
-            <Download className="h-4 w-4" />
+            <Download className="h-3.5 w-3.5" />
             {t["reports_exportXlsx"]}
-          </button>
+          </Button>
         </div>
       </div>
 
       {loading ? (
         <div className="grid min-h-64 place-content-center text-muted-foreground">
-          <Loader2 className="h-6 w-6 animate-spin" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
       ) : !data ? (
-        <p className="text-sm text-muted-foreground">{t["reports_noData"]}</p>
+        <p className="text-xs text-muted-foreground py-8 text-center">{t["reports_noData"]}</p>
       ) : (
         <>
           {/* Summary cards */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { icon: BarChart3, label: t["reports_summaryAppointments"], value: data.summary.totalAppointments },
-              { icon: CheckCircle2, label: t["reports_completed"], value: data.summary.completed },
-              { icon: CalendarX2, label: t["reports_cancelled"], value: data.summary.cancelled },
-              { icon: UserX, label: t["reports_noShow"], value: data.summary.noShow },
+              { icon: BarChart3, label: t["reports_summaryAppointments"], value: data.summary.totalAppointments, token: "bg-primary/10 text-primary border border-primary/20" },
+              { icon: CheckCircle2, label: t["reports_completed"], value: data.summary.completed, token: "bg-success-bg text-success-text border border-success/30" },
+              { icon: CalendarX2, label: t["reports_cancelled"], value: data.summary.cancelled, token: "bg-warning-bg text-warning-text border border-warning/30" },
+              { icon: UserX, label: t["reports_noShow"], value: data.summary.noShow, token: "bg-critical-bg text-critical-text border border-critical/30" },
             ].map((card) => (
-              <div key={card.label} className="surface-panel rounded-[24px] border border-white/55 p-5 dark:border-white/6">
-                <div className="grid size-11 place-content-center rounded-[14px] bg-primary/10 text-primary print-hide">
-                  <card.icon className="h-5 w-5" />
+              <div key={card.label} className="rounded-lg border border-border bg-card p-5 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold text-muted-foreground">{card.label}</p>
+                  <div className={`grid size-8 place-content-center rounded-md ${card.token} print-hide`}>
+                    <card.icon className="h-4 w-4" />
+                  </div>
                 </div>
-                <p className="mt-4 text-2xl font-semibold tracking-tight">{card.value}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{card.label}</p>
+                <p className="mt-3 text-2xl font-bold tracking-tight text-foreground font-mono">{card.value}</p>
               </div>
             ))}
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2">
             {/* Per-day bar chart */}
-            <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground print-hide">
+            <div className="rounded-lg border border-border bg-card p-5 shadow-2xs">
+              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground print-hide">
                 {t["reports_perDay"]}
               </p>
               <div className="mt-5 flex h-40 items-end gap-1.5 print-hide">
                 {data.perDay.map((row) => (
                   <div key={row.day} className="group flex flex-1 flex-col items-center gap-1">
-                    <span className="text-[10px] font-medium text-muted-foreground opacity-0 transition group-hover:opacity-100">
+                    <span className="text-[10px] font-mono font-medium text-muted-foreground opacity-0 transition group-hover:opacity-100">
                       {row.total}
                     </span>
                     <div
-                      className="w-full rounded-t-[6px] bg-linear-to-t from-primary to-cyan-400 transition hover:opacity-80"
+                      className="w-full rounded-t-xs bg-primary transition hover:bg-primary-hover"
                       style={{ height: `${Math.max(4, (row.total / maxDay) * 130)}px` }}
                     />
-                    <span className="text-[10px] text-muted-foreground">{row.day.slice(8)}</span>
+                    <span className="text-[10px] font-mono text-muted-foreground">{row.day.slice(8)}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Per-doctor breakdown */}
-            <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+            <div className="rounded-lg border border-border bg-card p-5 shadow-2xs">
+              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 {t["reports_perDoctor"]}
               </p>
-              <div className="mt-4 space-y-3">
+              <div className="mt-4 space-y-2.5">
                 {data.perDoctor.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">{t["reports_noData"]}</p>
+                  <p className="text-xs text-muted-foreground py-4 text-center">{t["reports_noData"]}</p>
                 ) : (
                   data.perDoctor.map((row) => (
-                    <div key={row.name} className="flex items-center justify-between gap-3 text-sm">
-                      <span className="font-medium text-foreground">{row.name}</span>
-                      <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                    <div key={row.name} className="flex items-center justify-between gap-3 text-xs rounded-md bg-muted-bg/50 px-3 py-2">
+                      <span className="font-semibold text-foreground">{row.name}</span>
+                      <span className="rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-[11px] font-bold text-primary font-mono">
                         {row.appointments}
                       </span>
                     </div>
@@ -242,19 +250,19 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
           </div>
 
           {/* Per-service revenue */}
-          <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card p-5 shadow-2xs">
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {t["reports_perService"]}
             </p>
-            <div className="mt-4 space-y-3">
+            <div className="mt-4 space-y-2.5">
               {(data.perService ?? []).length === 0 ? (
-                <p className="text-sm text-muted-foreground">{t["reports_noData"]}</p>
+                <p className="text-xs text-muted-foreground py-4 text-center">{t["reports_noData"]}</p>
               ) : (
                 (data.perService ?? []).map((row) => (
-                  <div key={row.name} className="flex items-center justify-between gap-3 text-sm">
-                    <span className="font-medium text-foreground">{row.name}</span>
-                    <span className="text-muted-foreground">
-                      {row.count} · ${row.revenue.toFixed(2)}
+                  <div key={row.name} className="flex items-center justify-between gap-3 text-xs rounded-md bg-muted-bg/50 px-3 py-2">
+                    <span className="font-semibold text-foreground">{row.name}</span>
+                    <span className="font-mono text-muted-foreground">
+                      {row.count} · <strong className="text-foreground">${row.revenue.toFixed(2)}</strong>
                     </span>
                   </div>
                 ))
@@ -263,48 +271,48 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
           </div>
 
           {/* Financial summary */}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-lg border border-border bg-card p-5 shadow-2xs">
               <div className="flex items-center gap-3">
-                <div className="grid size-11 place-content-center rounded-[14px] bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400 print-hide">
-                  <Wallet className="h-5 w-5" />
+                <div className="grid size-9 place-content-center rounded-md bg-success-bg text-success-text border border-success/30 print-hide">
+                  <Wallet className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-2xl font-semibold tracking-tight">${data.summary.revenue.toFixed(2)}</p>
-                  <p className="text-sm text-muted-foreground">{t["reports_revenue"]}</p>
+                  <p className="text-xl font-bold font-mono tracking-tight text-foreground">${data.summary.revenue.toFixed(2)}</p>
+                  <p className="text-xs text-muted-foreground">{t["reports_revenue"]}</p>
                 </div>
               </div>
             </div>
-            <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+            <div className="rounded-lg border border-border bg-card p-5 shadow-2xs">
               <div className="flex items-center gap-3">
-                <div className="grid size-11 place-content-center rounded-[14px] bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400 print-hide">
-                  <Wallet className="h-5 w-5" />
+                <div className="grid size-9 place-content-center rounded-md bg-warning-bg text-warning-text border border-warning/30 print-hide">
+                  <Wallet className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-2xl font-semibold tracking-tight">${data.summary.outstanding.toFixed(2)}</p>
-                  <p className="text-sm text-muted-foreground">{t["reports_outstanding"]}</p>
+                  <p className="text-xl font-bold font-mono tracking-tight text-foreground">${data.summary.outstanding.toFixed(2)}</p>
+                  <p className="text-xs text-muted-foreground">{t["reports_outstanding"]}</p>
                 </div>
               </div>
             </div>
-            <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+            <div className="rounded-lg border border-border bg-card p-5 shadow-2xs">
               <div className="flex items-center gap-3">
-                <div className="grid size-11 place-content-center rounded-[14px] bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400 print-hide">
-                  <Wallet className="h-5 w-5" />
+                <div className="grid size-9 place-content-center rounded-md bg-critical-bg text-critical-text border border-critical/30 print-hide">
+                  <Wallet className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-2xl font-semibold tracking-tight">${(data.summary.expenses ?? 0).toFixed(2)}</p>
-                  <p className="text-sm text-muted-foreground">{t["reports_expenses"]}</p>
+                  <p className="text-xl font-bold font-mono tracking-tight text-foreground">${(data.summary.expenses ?? 0).toFixed(2)}</p>
+                  <p className="text-xs text-muted-foreground">{t["reports_expenses"]}</p>
                 </div>
               </div>
             </div>
-            <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+            <div className="rounded-lg border border-border bg-card p-5 shadow-2xs">
               <div className="flex items-center gap-3">
-                <div className="grid size-11 place-content-center rounded-[14px] bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-400 print-hide">
-                  <Wallet className="h-5 w-5" />
+                <div className="grid size-9 place-content-center rounded-md bg-accent-blue-bg text-accent-blue-text border border-accent-blue/30 print-hide">
+                  <Wallet className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-2xl font-semibold tracking-tight">${(data.summary.net ?? 0).toFixed(2)}</p>
-                  <p className="text-sm text-muted-foreground">{t["reports_net"]}</p>
+                  <p className="text-xl font-bold font-mono tracking-tight text-foreground">${(data.summary.net ?? 0).toFixed(2)}</p>
+                  <p className="text-xs text-muted-foreground">{t["reports_net"]}</p>
                 </div>
               </div>
             </div>

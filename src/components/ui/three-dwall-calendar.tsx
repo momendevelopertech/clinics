@@ -102,18 +102,18 @@ export function ThreeDWallCalendar({
           variant="outline"
           size="sm"
           onClick={() => setDateRef((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1))}
-          className="rounded-[5px]"
+          className="rounded-md"
         >
           Prev Month
         </Button>
-        <div className="font-semibold text-neutral-900 dark:text-neutral-50 min-w-[140px] text-center">
+        <div className="font-semibold text-foreground min-w-[140px] text-center">
           {format(dateRef, "MMMM yyyy")}
         </div>
         <Button
           variant="outline"
           size="sm"
           onClick={() => setDateRef((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1))}
-          className="rounded-[5px]"
+          className="rounded-md"
         >
           Next Month
         </Button>
@@ -165,7 +165,7 @@ export function ThreeDWallCalendar({
                     zIndex: Math.round(100 - Math.abs(rowOffset)),
                   }}
                 >
-                  <Card className="h-full overflow-visible rounded-[5px]">
+                  <Card className="h-full overflow-visible rounded-lg border-border">
                     <CardContent className="p-3 h-full flex flex-col pt-3">
                       <div className="flex justify-between items-start">
                         <div className="text-xs font-medium">{format(day, "d")}</div>
@@ -183,7 +183,7 @@ export function ThreeDWallCalendar({
                                 <HoverCard>
                                   <HoverCardTrigger asChild>
                                     <div
-                                      className="absolute w-7 h-7 rounded-[5px] bg-violet-500 dark:bg-violet-600 flex items-center justify-center text-white text-[10px] cursor-pointer shadow-md hover:bg-violet-600 dark:hover:bg-violet-500 transition-colors"
+                                      className="absolute w-7 h-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-[10px] cursor-pointer shadow-xs hover:opacity-90 transition-colors"
                                       style={{ left, top, transform: `translateZ(20px)` }}
                                     >
                                       •
@@ -194,11 +194,11 @@ export function ThreeDWallCalendar({
                                   </HoverCardContent>
                                 </HoverCard>
                               </PopoverTrigger>
-                              <PopoverContent className="w-56 rounded-[5px]">
+                              <PopoverContent className="w-56 rounded-md">
                                 <Card className="border-0 shadow-none">
                                   <CardContent className="flex justify-between items-center p-2 text-sm">
                                     <div>
-                                      <div className="font-medium">{ev.title}</div>
+                                      <div className="font-medium text-foreground">{ev.title}</div>
                                       <div className="text-xs text-muted-foreground">
                                         {format(new Date(ev.date), "PPP p")}
                                       </div>
@@ -211,7 +211,7 @@ export function ThreeDWallCalendar({
                                         onClick={() => onRemoveEvent(ev.id)}
                                         aria-label="Remove event"
                                       >
-                                        <Trash2 className="h-4 w-4 text-red-500" />
+                                        <Trash2 className="h-4 w-4 text-critical-text" />
                                       </Button>
                                     )}
                                   </CardContent>
@@ -241,15 +241,15 @@ export function ThreeDWallCalendar({
             placeholder="Event title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="rounded-[5px] max-w-[200px]"
+            className="rounded-md max-w-[200px]"
           />
           <Input
             type="date"
             value={newDate}
             onChange={(e) => setNewDate(e.target.value)}
-            className="rounded-[5px] max-w-[160px]"
+            className="rounded-md max-w-[160px]"
           />
-          <Button onClick={handleAdd} className="rounded-[5px]">
+          <Button onClick={handleAdd} className="rounded-md">
             Add Event
           </Button>
         </div>

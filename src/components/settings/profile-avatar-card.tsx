@@ -51,12 +51,12 @@ export function ProfileAvatarCard({
   };
 
   return (
-    <div className="rounded-[5px] border p-4 flex flex-col gap-3">
+    <div className="rounded-lg border border-border bg-card p-4 flex flex-col gap-3 shadow-sm">
       <div>
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">
+        <h3 className="text-sm font-semibold text-foreground">
           {title}
         </h3>
-        <p className="text-xs text-neutral-500 mt-1">{description}</p>
+        <p className="text-xs text-muted-foreground mt-1">{description}</p>
       </div>
       <CloudinaryImageUpload
         purpose="avatar"

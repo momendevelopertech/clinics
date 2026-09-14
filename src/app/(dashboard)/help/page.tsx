@@ -83,10 +83,10 @@ export default function HelpPage() {
   return (
     <div className="flex flex-col gap-8 w-full max-w-4xl mx-auto">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Help & Support
         </h1>
-        <p className="text-neutral-600 dark:text-neutral-400 mt-1">
+        <p className="text-muted-foreground mt-1">
           Get help with HealthCRM, browse documentation, or reach our support team.
         </p>
       </div>
@@ -98,45 +98,42 @@ export default function HelpPage() {
             key={link.label}
             href={link.href}
             className={cn(
-              "flex items-center gap-4 p-4 rounded-[5px] border transition-all duration-200",
-              "border-neutral-200/50 dark:border-neutral-800/50",
-              "bg-white/70 dark:bg-neutral-900/70 backdrop-blur-xl",
-              "hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-800",
-              "hover:bg-indigo-50/30 dark:hover:bg-indigo-900/10"
+              "flex items-center gap-4 p-4 rounded-lg border transition-colors shadow-sm",
+              "border-border bg-card hover:bg-muted-bg/50"
             )}
           >
-            <div className="p-2.5 rounded-[5px] bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400">
+            <div className="p-2.5 rounded-md bg-primary/10 text-primary">
               <link.icon className="h-5 w-5" strokeWidth={2} aria-hidden />
             </div>
-            <span className="font-medium text-neutral-900 dark:text-neutral-100 flex-1">
+            <span className="font-medium text-foreground flex-1">
               {link.label}
             </span>
-            <ChevronRight className="h-4 w-4 text-neutral-400" aria-hidden />
+            <ChevronRight className="h-4 w-4 text-muted-foreground" aria-hidden />
           </Link>
         ))}
       </div>
 
       {/* FAQ */}
-      <div className="rounded-[5px] border border-neutral-200/50 dark:border-neutral-800/50 bg-white/70 dark:bg-neutral-900/70 backdrop-blur-xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-neutral-200/50 dark:border-neutral-800/50 bg-white/40 dark:bg-neutral-950/40">
-          <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-50 tracking-tight flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-indigo-600" aria-hidden />
+      <div className="rounded-lg border border-border bg-card shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-border bg-muted-bg/30">
+          <h2 className="text-lg font-bold text-foreground tracking-tight flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-primary" aria-hidden />
             Frequently Asked Questions
           </h2>
         </div>
-        <div className="divide-y divide-neutral-200/50 dark:divide-neutral-800/50">
+        <div className="divide-y divide-border">
           {faqs.map((faq, i) => (
             <details
               key={i}
               className="group"
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between px-6 py-4 hover:bg-neutral-50/50 dark:hover:bg-neutral-800/30 transition-colors [&::-webkit-details-marker]:hidden">
-                <span className="font-medium text-neutral-900 dark:text-neutral-100">
+              <summary className="flex cursor-pointer list-none items-center justify-between px-6 py-4 hover:bg-muted-bg/50 transition-colors [&::-webkit-details-marker]:hidden">
+                <span className="font-medium text-foreground">
                   {faq.question}
                 </span>
-                <ChevronRight className="h-4 w-4 text-neutral-400 shrink-0 transition-transform group-open:rotate-90" aria-hidden />
+                <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 transition-transform group-open:rotate-90" aria-hidden />
               </summary>
-              <div className="px-6 pb-4 text-neutral-600 dark:text-neutral-400">
+              <div className="px-6 pb-4 text-muted-foreground">
                 {faq.answer}
               </div>
             </details>
@@ -145,19 +142,19 @@ export default function HelpPage() {
       </div>
 
       {/* Feature Tips */}
-      <div className="rounded-[5px] border border-neutral-200/50 dark:border-neutral-800/50 bg-white/70 dark:bg-neutral-900/70 backdrop-blur-xl p-6 shadow-sm">
-        <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-50 tracking-tight mb-1 flex items-center gap-2">
-          <Lightbulb className="h-5 w-5 text-indigo-600" aria-hidden />
+      <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+        <h2 className="text-lg font-bold text-foreground tracking-tight mb-1 flex items-center gap-2">
+          <Lightbulb className="h-5 w-5 text-primary" aria-hidden />
           {t("help_featureTips")}
         </h2>
-        <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-5">
+        <p className="text-sm text-muted-foreground mb-5">
           {t("help_featureTipsDesc")}
         </p>
         <FeatureTip tipId="help-reset-tips">
           <Button
             type="button"
             variant="outline"
-            className="rounded-[5px] border-neutral-200 dark:border-neutral-800"
+            className="h-9"
             onClick={handleResetTips}
           >
             <Lightbulb className="h-4 w-4 mr-2" aria-hidden />
@@ -167,17 +164,17 @@ export default function HelpPage() {
       </div>
 
       {/* Contact Support */}
-      <div className="rounded-[5px] border border-neutral-200/50 dark:border-neutral-800/50 bg-white/70 dark:bg-neutral-900/70 backdrop-blur-xl p-6 shadow-sm">
-        <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-50 tracking-tight mb-4 flex items-center gap-2">
-          <MessageSquare className="h-5 w-5 text-indigo-600" aria-hidden />
+      <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+        <h2 className="text-lg font-bold text-foreground tracking-tight mb-4 flex items-center gap-2">
+          <MessageSquare className="h-5 w-5 text-primary" aria-hidden />
           Contact Support
         </h2>
-        <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">
+        <p className="text-sm text-muted-foreground mb-6">
           Can&apos;t find what you need? Send us a message and our team will respond within 24 business hours.
         </p>
         <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
           {sent ? (
-            <div className="flex items-center gap-2 rounded-[5px] border border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800/50 dark:bg-emerald-950/40 dark:text-emerald-200 px-4 py-3 text-sm">
+            <div className="flex items-center gap-2 rounded-lg border border-success-text/30 bg-success-bg text-success-text px-4 py-3 text-sm">
               <CheckCircle2 className="h-4 w-4" aria-hidden />
               Your email client has been opened with your message. We&apos;ll get back to you within 24 business hours.
             </div>
@@ -190,7 +187,7 @@ export default function HelpPage() {
               placeholder="you@clinic.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="rounded-[5px]"
+              className="h-9"
             />
           </div>
           <div className="grid gap-2">
@@ -202,15 +199,15 @@ export default function HelpPage() {
               onChange={(e) => setMessage(e.target.value)}
               rows={4}
               className={cn(
-                "flex min-h-[100px] w-full rounded-[5px] border border-neutral-200 dark:border-neutral-800",
-                "bg-white dark:bg-neutral-950 px-3 py-2 text-sm",
-                "placeholder:text-neutral-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                "flex min-h-[100px] w-full rounded-md border border-border",
+                "bg-background text-foreground px-3 py-2 text-sm",
+                "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               )}
             />
           </div>
           <Button
             type="submit"
-            className="rounded-[5px] bg-indigo-600 hover:bg-indigo-700"
+            className="h-9"
           >
             <Mail className="h-4 w-4 mr-2" aria-hidden />
             Send Message

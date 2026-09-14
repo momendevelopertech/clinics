@@ -75,33 +75,33 @@ export default function AnalyticsPage() {
         {cards.map((c, i) => (
           <motion.div
             key={c.label}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
           >
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-neutral-500 flex items-center gap-2">
-                  <c.icon className="w-4 h-4" />
+            <Card className="rounded-lg border border-border bg-card shadow-2xs">
+              <CardHeader className="p-5 pb-2">
+                <CardTitle className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
+                  <c.icon className="w-4 h-4 text-primary" />
                   {c.label}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <span className="text-2xl font-bold">{c.value}</span>
+              <CardContent className="p-5 pt-0">
+                <span className="text-2xl font-bold tracking-tight text-foreground">{c.value}</span>
               </CardContent>
             </Card>
           </motion.div>
         ))}
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="w-5 h-5" />
+      <Card className="rounded-lg border border-border bg-card shadow-2xs">
+        <CardHeader className="p-5 border-b border-border bg-muted-bg">
+          <CardTitle className="flex items-center gap-2 text-base font-bold text-foreground">
+            <BarChart3 className="w-5 h-5 text-primary" />
             {t("analytics_operationalMetrics")}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-5">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Metric label={t("analytics_completionRate")} value={`${stats?.monthlyCompletionRate ?? "—"}%`} />
             <Metric label={t("analytics_noShowRate")} value={`${stats?.monthlyNoShowRate ?? "—"}%`} icon={UserX} />
@@ -131,10 +131,12 @@ function Metric({
   icon?: typeof BarChart3;
 }) {
   return (
-    <div className="rounded-xl border border-border/60 p-4">
-      <Icon className="mb-2 h-4 w-4 text-primary" />
-      <p className="text-xl font-semibold">{value}</p>
-      <p className="text-xs text-neutral-500">{label}</p>
+    <div className="rounded-lg border border-border bg-muted-bg p-4 transition-colors hover:bg-muted/40">
+      <div className="flex items-center justify-between">
+        <Icon className="h-4 w-4 text-primary" />
+      </div>
+      <p className="mt-2 text-xl font-bold tracking-tight text-foreground">{value}</p>
+      <p className="mt-0.5 text-xs text-muted-foreground">{label}</p>
     </div>
   );
 }

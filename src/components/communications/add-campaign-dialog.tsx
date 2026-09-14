@@ -115,7 +115,7 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
                 <SelectItem value="broadcast">{t("camp_broadcast")}</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-xs text-gray-500 mt-1">{t("camp_typeHelp")}</p>
+            <p className="text-xs text-muted-foreground mt-1">{t("camp_typeHelp")}</p>
           </div>
 
           {/* Trigger Type (optional) */}
@@ -127,7 +127,7 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
                 setFormData({ ...formData, triggerType: value })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="h-9">
                 <SelectValue placeholder={t("camp_triggerPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
@@ -138,16 +138,16 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
                 </SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-xs text-gray-500 mt-1">{t("camp_triggerHelp")}</p>
+            <p className="text-xs text-muted-foreground mt-1">{t("camp_triggerHelp")}</p>
           </div>
         </div>
 
         <div className="flex gap-2 justify-end mt-6">
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            <X />{t("common_cancel")}
+          <Button variant="outline" onClick={() => setOpen(false)} className="h-9">
+            <X className="h-4 w-4 mr-1" />{t("common_cancel")}
           </Button>
-          <Button onClick={handleSubmit} disabled={loading}>
-            <Plus />{loading ? t("camp_creating") : t("camp_create")}
+          <Button onClick={handleSubmit} disabled={loading} className="h-9">
+            <Plus className="h-4 w-4 mr-1" />{loading ? t("camp_creating") : t("camp_create")}
           </Button>
         </div>
       </DialogContent>

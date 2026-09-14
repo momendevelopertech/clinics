@@ -81,11 +81,11 @@ export function VitalsTrendCard({
   }, [patientId, metric]);
 
   return (
-    <div className="rounded-[20px] border border-white/55 bg-white/60 p-4 dark:border-white/6 dark:bg-white/[0.03]">
+    <div className="rounded-lg border border-border bg-card p-4 shadow-xs">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm font-medium">{t["trend_title"]}</p>
+        <p className="text-sm font-semibold text-foreground">{t["trend_title"]}</p>
         <select
-          className="h-9 rounded-md border bg-background px-2 text-sm"
+          className="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           value={metric}
           onChange={(e) => setMetric(e.target.value)}
           aria-label={t["trend_metric"]}
@@ -103,12 +103,12 @@ export function VitalsTrendCard({
         <>
           <div className="mt-2"><Sparkline points={points} /></div>
           {stats ? (
-            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-              <span>{t["trend_last"]}: {stats.last}</span>
-              <span>{t["trend_avg"]}: {stats.avg}</span>
-              <span>{t["trend_range"]}: {stats.min}–{stats.max}</span>
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+              <span>{t["trend_last"]}: <strong className="font-semibold text-foreground">{stats.last}</strong></span>
+              <span>{t["trend_avg"]}: <strong className="font-semibold text-foreground">{stats.avg}</strong></span>
+              <span>{t["trend_range"]}: <strong className="font-semibold text-foreground">{stats.min}–{stats.max}</strong></span>
               <span>
-                {t["trend_change"]}: {stats.delta != null && stats.delta > 0 ? "+" : ""}{stats.delta}
+                {t["trend_change"]}: <strong className="font-semibold text-foreground">{stats.delta != null && stats.delta > 0 ? "+" : ""}{stats.delta}</strong>
               </span>
             </div>
           ) : null}

@@ -4,7 +4,6 @@ import { requireOrgContext } from "@/lib/org";
 import { requireModulePermission } from "@/lib/permissions";
 import { availabilityUpdateSchema } from "@/lib/validations/ops";
 import { createAuditLog } from "@/lib/audit";
-import { logServerError } from "@/lib/safe-logger";
 
 export async function PATCH(request: Request) {
   const context = await requireOrgContext().catch(() => null);

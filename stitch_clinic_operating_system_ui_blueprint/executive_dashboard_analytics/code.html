@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-tertiary-fixed":"#001a42","secondary-fixed":"#d8e3fb","on-secondary-fixed-variant":"#3c475a","surface-tint":"#006a61","on-secondary":"#ffffff","tertiary-container":"#2170e4","on-primary":"#ffffff","on-surface":"#0b1c30","outline-variant":"#bcc9c6","primary-container":"#008378","secondary-fixed-dim":"#bcc7de","surface-container-high":"#dce9ff","surface-dim":"#cbdbf5","surface-container":"#e5eeff","surface-bright":"#f8f9ff","error-container":"#ffdad6","surface":"#f8f9ff","on-secondary-container":"#586377","background":"#f8f9ff","outline":"#6d7a77","on-surface-variant":"#3d4947","inverse-surface":"#213145","on-tertiary-fixed-variant":"#004395","tertiary-fixed":"#d8e2ff","primary-fixed":"#89f5e7","on-secondary-fixed":"#111c2d","secondary":"#545f73","on-background":"#0b1c30","tertiary-fixed-dim":"#adc6ff","tertiary":"#0058be","on-tertiary":"#ffffff","surface-variant":"#d3e4fe","inverse-on-surface":"#eaf1ff","primary-fixed-dim":"#6bd8cb","secondary-container":"#d5e0f8","surface-container-highest":"#d3e4fe","surface-container-low":"#eff4ff","on-tertiary-container":"#fefcff","error":"#ba1a1a","primary":"#00685f","on-error-container":"#93000a","on-error":"#ffffff","surface-container-lowest":"#ffffff","on-primary-fixed":"#00201d","on-primary-container":"#f4fffc","inverse-primary":"#6bd8cb","on-primary-fixed-variant":"#005049"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-xs":"0.25rem","sidebar-width":"17.5rem","gutter":"1rem","subnav-width":"15rem","space-2xs":"0.125rem","space-base":"1rem","space-md":"0.75rem","space-sm":"0.5rem","space-xl":"2rem","space-lg":"1.5rem","space-2xl":"3rem"},"fontFamily":{"headline-sm":["IBM Plex Sans"],"label-md":["IBM Plex Sans"],"body-sm":["IBM Plex Sans"],"body-md":["IBM Plex Sans"],"headline-xl":["IBM Plex Sans"],"body-lg":["IBM Plex Sans"],"mono-metric":["JetBrains Mono"],"headline-lg":["IBM Plex Sans"],"headline-xl-mobile":["IBM Plex Sans"],"mono-code":["JetBrains Mono"],"label-sm":["IBM Plex Sans"]},"fontSize":{"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"400"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"headline-xl":["28px",{"lineHeight":"36px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-lg":["15px",{"lineHeight":"22px","letterSpacing":"0em","fontWeight":"400"}],"mono-metric":["13px",{"lineHeight":"16px","letterSpacing":"0em","fontWeight":"500"}],"headline-lg":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-xl-mobile":["22px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"mono-code":["11px",{"lineHeight":"14px","letterSpacing":"0.02em","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.025em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed right-0 top-0 h-full w-sidebar-width bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between overflow-y-auto"><div class="flex flex-col"><div class="h-16 px-space-base flex items-center justify-between bg-surface-container-lowest"><div class="flex items-center gap-space-sm"><img alt="ClinicOS Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UWqmh1VUKLrHVYUqgHVYiHDUSuXjk5E0Ye9Q4lT54dQPmDAn9E7rmF_QGWfCIZJNfWPbunOASJyuIMNd76tNngZvhB11FuriJdV2kEItTwJfqLsO0PzmyZUBOD6DrlBtGgzbRxcBXhRrV0Zig1Y3EW_zLf7xpRkufAljm30qY93yRJuwbLtlwR7OBhApUw3cWyazHFYy9qruImfdqnIk0rGC7noaktUCRpAmTgkLzav1vjICWY7b8p2UYC"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary leading-none">ClinicOS</span><span class="font-label-sm text-label-sm text-secondary leading-tight mt-space-2xs">نظام إدارة العيادات 2027</span></div></div><span class="font-mono-code text-mono-code bg-surface-container text-secondary px-space-xs py-space-2xs rounded">v4.2</span></div><div class="px-space-base py-space-sm"><div class="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between gap-space-xs"><div class="flex items-center gap-space-xs overflow-hidden"><span class="material-symbols-outlined text-primary text-headline-sm shrink-0">domain</span><div class="flex flex-col truncate"><span class="font-label-sm text-label-sm text-on-surface truncate">فرع الرياض التخصصي</span><span class="font-mono-code text-mono-code text-on-surface-variant truncate">عيادة 302 - باطنة وقلب</span></div></div><span class="material-symbols-outlined text-outline text-headline-sm shrink-0">unfold_more</span></div></div><div class="px-space-sm mt-space-xs"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">النظرة العامة والتحليل</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a aria-current="page" class="flex items-center px-space-md py-space-sm rounded-xl transition-all bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-path="dashboard" href="#"><span class="font-body-md text-body-md">لوحة المثoostشرات والتحليلات</span></a></nav></div><div class="px-space-sm mt-space-md"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">الاستقبال وإدارة المرضى</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="appointments" href="#"><span class="font-body-md text-body-md">المواعيد وجدول الحجز</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="check-in-queue" href="#"><span class="font-body-md text-body-md">تسجيل الوصول والانتظار</span><span class="font-mono-code text-mono-code px-space-xs py-space-2xs rounded bg-secondary-container text-on-secondary-container">14</span></a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="patients" href="#"><span class="font-body-md text-body-md">سجل المرضى</span></a></nav></div><div class="px-space-sm mt-space-md"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">القسم الطبي والسريري</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="visits-consultation" href="#"><span class="font-body-md text-body-md">غرفة الكشف والزيارة</span></a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="prescriptions-orders" href="#"><span class="font-body-md text-body-md">الروشتة والأوامر الطبية</span></a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="lab-imaging" href="#"><span class="font-body-md text-body-md">الفحوصات والنتائج</span></a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="medical-timeline" href="#"><span class="font-body-md text-body-md">المخطط الزمني للمريض</span></a></nav></div><div class="px-space-sm mt-space-md mb-space-base"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">الإدارة والعمليات</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="billing-invoices" href="#"><span class="font-body-md text-body-md">الفوترة والمدفوعات</span></a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="master-catalogs" href="#"><span class="font-body-md text-body-md">كتالوج الخدمات والأدوية</span></a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="branches-rooms" href="#"><span class="font-body-md text-body-md">الفروع والغرف</span></a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="audit-security" href="#"><span class="font-body-md text-body-md">المستخدمين وسجل التدقيق</span></a></nav></div></div><div class="p-space-base bg-surface-container-low"><div class="flex items-center justify-between"><div class="flex items-center gap-space-xs"><span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span><span class="font-label-sm text-label-sm text-secondary">خادم السجلات: متصل</span></div><span class="font-mono-code text-mono-code text-secondary">RT-24ms</span></div></div></aside><div class="pr-sidebar-width min-h-screen bg-surface"><header class="fixed top-0 right-sidebar-width left-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md flex-1 max-w-xl"><div class="relative w-full"><span class="material-symbols-outlined text-on-surface-variant absolute right-space-md top-1/2 -translate-y-1/2 text-headline-sm">search</span><input class="w-full h-10 pr-space-2xl pl-space-md bg-surface-container-low text-on-surface placeholder-secondary font-body-md text-body-md rounded-xl focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" placeholder="بحث شامل عن مريض (الاسم، رقم الهوية الوطنية، رقم الملف الطبي MRN)..." type="text"/></div><div class="hidden lg:flex items-center gap-space-xs px-space-sm py-space-xs rounded bg-surface-container text-on-surface"><span class="w-2 h-2 rounded-full bg-primary"></span><span class="font-label-sm text-label-sm font-semibold">متصل - فرع الرياض</span></div></div><div class="flex items-center gap-space-md"><button class="hidden sm:flex items-center gap-space-xs h-10 px-space-md rounded-xl bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-[0_1px_8px_rgba(0,0,0,0.04)]" type="button"><span class="material-symbols-outlined text-headline-sm">add_circle</span><span class="font-label-md text-label-md">حجز جديد / مريض جديد</span></button><button class="relative w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-headline-sm">notifications</span><span class="absolute -top-1 -left-1 flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-error text-on-error font-mono-code text-mono-code font-bold">3</span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="hidden md:flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface text-right">د. أحمد المنصوري</span><span class="font-label-sm text-label-sm text-secondary text-right">استشاري باطنة وقلب</span></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9cpdmaCWhOFyr05pJyBoIMkSi4anLFma2lf5y1hIpPALoNjhKq6b1h9dz-FYVUtajIuGSaQUG8t913et7mmt7SfWLbOiXGDUWIr9B_YvFCegyI90gD7qqQ5A3F61-9FpH8PSXr_i8z4Tclvpodt3KNYqJN9Bi-Fr9Nh2fT-KJKtJiGGlRqSb0L0xdezJFfvFh0wxaDxYfjnke2vpYzC3qijjc7nejC33tK4x2PKI_INk1nuXl4QeRUA"/></div></div></header><main class="w-full pt-16 bg-surface px-space-lg pb-space-2xl"><div class="flex flex-col w-full">
+<!-- Top Command & Executive Filter Bar -->
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-md mb-space-lg">
+<div class="flex flex-col gap-space-2xs">
+<div class="flex items-center gap-space-xs text-secondary font-label-sm">
+<span>لوحة التحكم الرئيسية</span>
+<span class="material-symbols-outlined text-sm text-outline">chevron_left</span>
+<span>الذكاء التشغيلي</span>
+<span class="material-symbols-outlined text-sm text-outline">chevron_left</span>
+<span class="text-primary font-semibold">المؤشرات والتحليلات التنفيذية 2027</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">اللوحة القيادية التنفيذية المتكاملة</h1>
+<div class="flex items-center gap-space-2xs px-space-sm py-space-2xs rounded-full bg-primary/10 text-primary font-label-sm">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span>بث حي مُحدَّث</span>
+</div>
+</div>
+</div>
+<!-- Filters & Actions Strip -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<!-- Time Range Selector -->
+<div class="flex items-center bg-surface-container-low rounded-xl p-space-2xs">
+<button class="px-space-md py-space-xs rounded-lg font-label-sm text-label-sm bg-surface-container-lowest text-primary shadow-sm transition-all">اليوم</button>
+<button class="px-space-md py-space-xs rounded-lg font-label-sm text-label-sm text-secondary hover:text-on-surface transition-all">7 أيام</button>
+<button class="px-space-md py-space-xs rounded-lg font-label-sm text-label-sm text-secondary hover:text-on-surface transition-all">أكتوبر 2027</button>
+<button class="px-space-xs py-space-xs text-secondary hover:text-on-surface flex items-center">
+<span class="material-symbols-outlined text-headline-sm">date_range</span>
+</button>
+</div>
+<!-- Branch Selection Dropdown -->
+<div class="relative">
+<button class="h-10 px-space-md bg-surface-container-lowest text-on-surface rounded-xl shadow-sm flex items-center gap-space-sm text-label-md font-label-md hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-primary text-headline-sm">location_city</span>
+<span>كافة الفروع (الرياض التخصصي، الخبر، جدة)</span>
+<span class="material-symbols-outlined text-outline text-headline-sm">expand_more</span>
+</button>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-space-xs">
+<button class="h-10 px-space-md bg-surface-container-lowest text-secondary hover:text-primary rounded-xl shadow-sm flex items-center gap-space-xs text-label-md font-label-md transition-all" type="button">
+<span class="material-symbols-outlined text-headline-sm">sync</span>
+<span class="hidden sm:inline">تحديث فوري</span>
+</button>
+<button class="h-10 px-space-md bg-primary text-on-primary hover:bg-primary-container rounded-xl shadow-sm flex items-center gap-space-xs text-label-md font-label-md transition-all" type="button">
+<span class="material-symbols-outlined text-headline-sm">download</span>
+<span>تصدير تنفيذي (PDF/XLSX)</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Primary Executive KPI Cards Grid (5 Vital Metrics) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-space-md mb-space-lg">
+<!-- Metric 1: Financial Performance -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-secondary">إجمالي دخل العيادات اليوم</span>
+<span class="font-headline-lg text-headline-lg text-on-surface mt-space-2xs">48,250 <span class="font-label-sm font-normal text-secondary">ر.س</span></span>
+</div>
+<div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-headline-sm">payments</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs">
+<div class="flex items-center justify-between font-label-sm mb-space-2xs">
+<span class="text-primary font-semibold flex items-center gap-space-2xs">
+<span class="material-symbols-outlined text-xs">trending_up</span> +14.8%
+          </span>
+<span class="text-secondary font-mono-code">عن الأسبوع الماضي</span>
+</div>
+<div class="grid grid-cols-3 gap-space-2xs pt-space-xs text-center font-mono-code text-label-sm bg-surface-container-low rounded-lg p-space-xs">
+<div>
+<div class="text-secondary">تأمين</div>
+<div class="font-semibold text-on-surface">68%</div>
+</div>
+<div>
+<div class="text-secondary">مدى/بطاقة</div>
+<div class="font-semibold text-on-surface">24%</div>
+</div>
+<div>
+<div class="text-secondary">نقدي</div>
+<div class="font-semibold text-on-surface">8%</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Metric 2: Patient Volume & Engagement -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-secondary">المواعيد وتدفق المرضى</span>
+<span class="font-headline-lg text-headline-lg text-on-surface mt-space-2xs">142 <span class="font-label-sm font-normal text-secondary">زيارة مجدولة</span></span>
+</div>
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-headline-sm">groups</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs">
+<div class="flex justify-between items-center text-label-sm font-label-sm mb-space-2xs">
+<span class="text-on-surface font-semibold">نسبة الحضور: 91.2%</span>
+<span class="text-secondary font-mono-code">غياب: 4.2%</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden flex">
+<div class="bg-primary h-full" style="width: 91.2%"></div>
+<div class="bg-secondary-container h-full" style="width: 4.6%"></div>
+<div class="bg-error h-full" style="width: 4.2%"></div>
+</div>
+<div class="flex justify-between items-center text-label-sm text-secondary mt-space-xs font-mono-code">
+<span>حضر: 129</span>
+<span>انتظار: 7</span>
+<span class="text-error">غياب: 6</span>
+</div>
+</div>
+</div>
+<!-- Metric 3: Patient Flow & Cycle Time -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-secondary">متوسط زمن الانتظار والترياج</span>
+<span class="font-headline-lg text-headline-lg text-on-surface mt-space-2xs">11.4 <span class="font-label-sm font-normal text-secondary">دقيقة</span></span>
+</div>
+<div class="w-10 h-10 rounded-xl bg-primary-fixed text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-headline-sm">timer</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs">
+<div class="flex items-center justify-between font-label-sm mb-space-2xs">
+<span class="px-space-xs py-space-2xs rounded bg-surface-container text-primary font-semibold font-mono-code text-label-sm">المستهدف &lt; 15 د</span>
+<span class="text-primary font-semibold text-label-sm">ممتاز (-3.6 د)</span>
+</div>
+<div class="flex items-center justify-between text-label-sm text-secondary bg-surface-container-low p-space-xs rounded-lg">
+<span>مدة الاستشارة السريرية:</span>
+<span class="font-mono-code font-semibold text-on-surface">18.6 دقيقة</span>
+</div>
+</div>
+</div>
+<!-- Metric 4: Unified Insurance (NPHIES) Acceptance -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-secondary">اعتماد مطالبات نفيس (NPHIES)</span>
+<span class="font-headline-lg text-headline-lg text-on-surface mt-space-2xs">98.6% <span class="font-label-sm font-normal text-secondary">قبول فوري</span></span>
+</div>
+<div class="w-10 h-10 rounded-xl bg-surface-container-high text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-headline-sm">verified_user</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs">
+<div class="flex items-center justify-between text-label-sm font-mono-code mb-space-2xs">
+<span class="text-secondary">المعتمد: 34,120 ر.س</span>
+<span class="text-error font-semibold">مرفوض: 2</span>
+</div>
+<div class="flex items-center gap-space-2xs text-label-sm text-secondary bg-surface-container-low p-space-xs rounded-lg">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span>مطالبات معلقة تحت التدقيق: 1,480 ر.س</span>
+</div>
+</div>
+</div>
+<!-- Metric 5: Facilities & Clinical Rooms Occupancy -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-secondary">نسبة إشغال الغرف والعيادات</span>
+<span class="font-headline-lg text-headline-lg text-on-surface mt-space-2xs">86% <span class="font-label-sm font-normal text-secondary">سعة نشطة</span></span>
+</div>
+<div class="w-10 h-10 rounded-xl bg-secondary-container text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-headline-sm">meeting_room</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs">
+<div class="flex justify-between items-center text-label-sm mb-space-2xs">
+<span class="font-mono-code text-on-surface font-semibold">21 من أصل 24 عيادة</span>
+<span class="text-secondary font-label-sm">3 غرف شاغرة</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 86%"></div>
+</div>
+<div class="text-label-sm text-secondary mt-space-xs flex items-center justify-between">
+<span>غرف الفحص: 100%</span>
+<span>الأشعة: 75%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Operational & Clinical Action Center (Urgent Attention Banners) -->
+<div class="mb-space-lg bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between pb-space-sm mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-lg bg-error-container text-error flex items-center justify-center">
+<span class="material-symbols-outlined text-headline-sm">crisis_alert</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">مركز الإجراءات السريرية والتشغيلية المباشرة (Action Center)</span>
+<span class="font-label-sm text-secondary">تنبيهات فورية تتطلب تدخل المشرف الإكلينيكي أو مدير العمليات</span>
+</div>
+</div>
+<span class="px-space-sm py-space-2xs rounded-full bg-error-container text-error font-mono-code text-label-sm font-semibold">3 تنبيهات حرجة</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-md">
+<!-- Critical Alert 1: Lab Critical Value -->
+<div class="bg-error-container/20 p-space-sm rounded-xl flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-error text-on-error flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-headline-sm">vital_signs</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-error font-bold truncate">نتيجة مخبرية حرجة: Troponin I عالي جداً</span>
+<span class="font-mono-code text-label-sm text-secondary">منذ 4 د</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface mt-space-2xs">
+            المريض: <strong class="font-semibold">عبدالله ناصر الشهري</strong> (MRN-84920) - عيادة الطوارئ والباطنة 302. تم إخطار الطبيب المناوب.
+          </p>
+<div class="mt-space-xs flex items-center gap-space-xs">
+<button class="px-space-sm py-space-2xs rounded bg-error text-on-error font-label-sm hover:opacity-90 transition-all">فتح الملف الفوري</button>
+<button class="px-space-sm py-space-2xs rounded bg-surface-container-lowest text-on-surface font-label-sm shadow-sm hover:bg-surface-container transition-all">تأكيد الاستلام</button>
+</div>
+</div>
+</div>
+<!-- Operational Bottleneck Alert 2 -->
+<div class="bg-surface-container-high/40 p-space-sm rounded-xl flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-headline-sm">hourglass_top</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-tertiary font-bold truncate">اختناق تشغيلي: محطة سحب العينات</span>
+<span class="font-mono-code text-label-sm text-secondary">منذ 12 د</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface mt-space-2xs">
+            تجاوز زمن الانتظار الفعلي 14.8 دقيقة مع تكدس 9 مرضى. يوصى بفتح المسار الاحتياطي رقم 3 وتوجيه فني تمريض داعم.
+          </p>
+<div class="mt-space-xs flex items-center gap-space-xs">
+<button class="px-space-sm py-space-2xs rounded bg-tertiary text-on-tertiary font-label-sm hover:opacity-90 transition-all">تفعيل المسار الإضافي</button>
+<button class="px-space-sm py-space-2xs rounded bg-surface-container-lowest text-on-surface font-label-sm shadow-sm hover:bg-surface-container transition-all">تجاهل</button>
+</div>
+</div>
+</div>
+<!-- Care Continuity Alert 3 -->
+<div class="bg-surface-container-low p-space-sm rounded-xl flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-headline-sm">event_repeat</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-primary font-bold truncate">متابعات الرعاية المستحقة (Care Plan)</span>
+<span class="font-mono-code text-label-sm text-secondary">اليوم</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface mt-space-2xs">
+            18 مريضاً من أصحاب الأمراض المزمنة تخلفوا عن إعادة صرف الأدوية أو حجز موعد المتابعة الدوري خلال 48 ساعة.
+          </p>
+<div class="mt-space-xs flex items-center gap-space-xs">
+<button class="px-space-sm py-space-2xs rounded bg-primary text-on-primary font-label-sm hover:bg-primary-container transition-all">إرسال تنبيهات SMS وواتساب</button>
+<button class="px-space-sm py-space-2xs rounded bg-surface-container-lowest text-on-surface font-label-sm shadow-sm hover:bg-surface-container transition-all">قائمة المرضى</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Deep Data Visualizations & Analytics (Bento Grid) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg mb-space-lg">
+<!-- Main Chart: Hourly Patient Flow vs Capacity (7 Cols) -->
+<div class="xl:col-span-7 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">كثافة تدفق المرضى على مدار ساعات العمل</span>
+<span class="font-label-sm text-secondary">مقارنة فترات الذروة المباشرة مع سقف الطاقة الاستيعابية القصوى (18 مريض/ساعة)</span>
+</div>
+<div class="flex items-center gap-space-md font-label-sm">
+<div class="flex items-center gap-space-2xs">
+<span class="w-3 h-3 rounded bg-primary"></span>
+<span class="text-secondary">التدفق الفعلي</span>
+</div>
+<div class="flex items-center gap-space-2xs">
+<span class="w-3 h-0.5 bg-error"></span>
+<span class="text-secondary">حد الطاقة الاستيعابية</span>
+</div>
+</div>
+</div>
+<!-- High Fidelity SVG Bar & Line Overlay Chart -->
+<div class="relative w-full h-64 mt-space-sm flex items-end">
+<!-- SVG Canvas -->
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 700 240">
+<defs>
+<lineargradient id="primaryFlowGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#00685f" stop-opacity="0.85"></stop>
+<stop offset="100%" stop-color="#89f5e7" stop-opacity="0.2"></stop>
+</lineargradient>
+<pattern height="40" id="gridLines" patternunits="userSpaceOnUse" width="70">
+<line opacity="0.4" stroke="#bcc9c6" stroke-dasharray="3,3" stroke-width="0.5" x1="0" x2="700" y1="40" y2="40"></line>
+</pattern>
+</defs>
+<!-- Background Guidelines -->
+<rect fill="url(#gridLines)" height="200" width="700"></rect>
+<!-- Capacity Limit Threshold (Dashed Red Line at Y=45) -->
+<line stroke="#ba1a1a" stroke-dasharray="6,4" stroke-width="1.5" x1="10" x2="690" y1="45" y2="45"></line>
+<text fill="#ba1a1a" font-family="JetBrains Mono" font-size="11" font-weight="600" text-anchor="end" x="685" y="38">حد الاستيعاب (18 مريض/ساعة)</text>
+<!-- Bars for Each Hour from 08:00 to 21:00 -->
+<!-- 08:00 (h=70) -->
+<rect fill="url(#primaryFlowGrad)" height="70" rx="4" width="28" x="25" y="150"></rect>
+<!-- 09:00 Peak 1 (h=150) -->
+<rect fill="url(#primaryFlowGrad)" height="150" rx="4" width="28" x="80" y="70"></rect>
+<!-- 10:00 High Peak (h=175) Over Capacity Warning -->
+<rect fill="#00685f" height="180" rx="4" width="28" x="135" y="40"></rect>
+<circle cx="149" cy="32" fill="#ba1a1a" r="4"></circle>
+<!-- 11:00 (h=140) -->
+<rect fill="url(#primaryFlowGrad)" height="140" rx="4" width="28" x="190" y="80"></rect>
+<!-- 12:00 (h=90) -->
+<rect fill="url(#primaryFlowGrad)" height="90" rx="4" width="28" x="245" y="130"></rect>
+<!-- 13:00 Shift Handover (h=45) -->
+<rect fill="#bcc7de" height="45" opacity="0.6" rx="4" width="28" x="300" y="175"></rect>
+<!-- 14:00 (h=60) -->
+<rect fill="#bcc7de" height="60" opacity="0.6" rx="4" width="28" x="355" y="160"></rect>
+<!-- 15:00 (h=100) -->
+<rect fill="url(#primaryFlowGrad)" height="100" rx="4" width="28" x="410" y="120"></rect>
+<!-- 16:00 (h=130) -->
+<rect fill="url(#primaryFlowGrad)" height="130" rx="4" width="28" x="465" y="90"></rect>
+<!-- 17:00 Evening Peak 2 (h=165) -->
+<rect fill="url(#primaryFlowGrad)" height="165" rx="4" width="28" x="520" y="55"></rect>
+<!-- 18:00 Peak 2 (h=160) -->
+<rect fill="url(#primaryFlowGrad)" height="160" rx="4" width="28" x="575" y="60"></rect>
+<!-- 19:00 (h=110) -->
+<rect fill="url(#primaryFlowGrad)" height="110" rx="4" width="28" x="630" y="110"></rect>
+<!-- Running Average Smooth Trendline -->
+<path d="M 39 160 Q 94 90, 149 50 T 259 140 T 369 170 T 479 100 T 589 70 T 644 120" fill="none" stroke="#0058be" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- X-Axis Labels -->
+<text fill="#545f73" font-family="JetBrains Mono" font-size="11" text-anchor="middle" x="39" y="235">08:00</text>
+<text fill="#545f73" font-family="JetBrains Mono" font-size="11" text-anchor="middle" x="94" y="235">09:00</text>
+<text fill="#00685f" font-family="JetBrains Mono" font-size="11" font-weight="600" text-anchor="middle" x="149" y="235">10:00</text>
+<text fill="#545f73" font-family="JetBrains Mono" font-size="11" text-anchor="middle" x="204" y="235">11:00</text>
+<text fill="#545f73" font-family="JetBrains Mono" font-size="11" text-anchor="middle" x="259" y="235">12:00</text>
+<text fill="#545f73" font-family="JetBrains Mono" font-size="11" text-anchor="middle" x="314" y="235">13:00</text>
+<text fill="#545f73" font-family="JetBrains Mono" font-size="11" text-anchor="middle" x="369" y="235">14:00</text>
+<text fill="#545f73" font-family="JetBrains Mono" font-size="11" text-anchor="middle" x="424" y="235">15:00</text>
+<text fill="#545f73" font-family="JetBrains Mono" font-size="11" text-anchor="middle" x="479" y="235">16:00</text>
+<text fill="#00685f" font-family="JetBrains Mono" font-size="11" font-weight="600" text-anchor="middle" x="534" y="235">17:00</text>
+<text fill="#545f73" font-family="JetBrains Mono" font-size="11" text-anchor="middle" x="589" y="235">18:00</text>
+<text fill="#545f73" font-family="JetBrains Mono" font-size="11" text-anchor="middle" x="644" y="235">19:00</text>
+</svg>
+</div>
+<div class="mt-space-md pt-space-sm flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-low p-space-sm rounded-xl">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-headline-sm">tips_and_updates</span>
+<span class="font-body-sm text-body-sm text-on-surface">ذروة الصباح المسجلة: <strong>10:00 - 11:00 ص</strong> (19 مريضاً - تجاوز بنسبة 5.5%). تم دعم الكوادر آلياً.</span>
+</div>
+<span class="font-mono-code text-label-sm text-primary font-semibold">معدل التحويل إلى المختبر: 42%</span>
+</div>
+</div>
+<!-- Secondary Chart: Revenue by Clinical Specialty (5 Cols) -->
+<div class="xl:col-span-5 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">توزيع الإيرادات حسب التخصصات والخدمات</span>
+<span class="font-label-sm text-secondary">حصة الأقسام الطبية من الدخل اليومي الإجمالي</span>
+</div>
+<span class="font-mono-code text-label-sm text-primary font-semibold">إجمالي 48,250 ر.س</span>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-space-lg my-auto">
+<!-- SVG Donut Chart -->
+<div class="relative w-44 h-44 shrink-0 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<!-- Background track -->
+<circle cx="50" cy="50" fill="none" r="38" stroke="#eff4ff" stroke-width="14"></circle>
+<!-- Cardiology & Internal Medicine: 38% -->
+<circle cx="50" cy="50" fill="none" r="38" stroke="#00685f" stroke-dasharray="90.7 238.7" stroke-dashoffset="0" stroke-width="14"></circle>
+<!-- Dental & Dermatology: 26% -->
+<circle cx="50" cy="50" fill="none" r="38" stroke="#2170e4" stroke-dasharray="62.1 238.7" stroke-dashoffset="-90.7" stroke-width="14"></circle>
+<!-- Lab & Diagnostics: 20% -->
+<circle cx="50" cy="50" fill="none" r="38" stroke="#008378" stroke-dasharray="47.7 238.7" stroke-dashoffset="-152.8" stroke-width="14"></circle>
+<!-- Radiology: 16% -->
+<circle cx="50" cy="50" fill="none" r="38" stroke="#bcc7de" stroke-dasharray="38.2 238.7" stroke-dashoffset="-200.5" stroke-width="14"></circle>
+</svg>
+<div class="absolute flex flex-col items-center justify-center text-center">
+<span class="font-mono-metric text-mono-metric text-on-surface font-bold">100%</span>
+<span class="font-label-sm text-secondary">4 أقسام</span>
+</div>
+</div>
+<!-- Breakdown List -->
+<div class="flex flex-col gap-space-sm w-full">
+<!-- Cardiology -->
+<div class="flex flex-col gap-space-2xs">
+<div class="flex justify-between items-center text-label-sm">
+<span class="flex items-center gap-space-xs font-semibold text-on-surface">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+                عيادات الباطنة والقلب
+              </span>
+<span class="font-mono-code text-on-surface font-semibold">18,335 ر.س (38%)</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 38%"></div>
+</div>
+</div>
+<!-- Dental & Derma -->
+<div class="flex flex-col gap-space-2xs">
+<div class="flex justify-between items-center text-label-sm">
+<span class="flex items-center gap-space-xs font-semibold text-on-surface">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary-container"></span>
+                طب الأسنان والجلدية
+              </span>
+<span class="font-mono-code text-on-surface font-semibold">12,545 ر.س (26%)</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-tertiary-container h-full" style="width: 26%"></div>
+</div>
+</div>
+<!-- Laboratory -->
+<div class="flex flex-col gap-space-2xs">
+<div class="flex justify-between items-center text-label-sm">
+<span class="flex items-center gap-space-xs font-semibold text-on-surface">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+                المختبر والتحاليل الطبية
+              </span>
+<span class="font-mono-code text-on-surface font-semibold">9,650 ر.س (20%)</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full" style="width: 20%"></div>
+</div>
+</div>
+<!-- Radiology -->
+<div class="flex flex-col gap-space-2xs">
+<div class="flex justify-between items-center text-label-sm">
+<span class="flex items-center gap-space-xs font-semibold text-on-surface">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-fixed-dim"></span>
+                الأشعة والتصوير التشخيصي
+              </span>
+<span class="font-mono-code text-on-surface font-semibold">7,720 ر.س (16%)</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary-fixed-dim h-full" style="width: 16%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs text-label-sm text-secondary flex items-center justify-between">
+<span>متوسط قيمة الفاتورة لكل مريض: <strong class="text-on-surface font-mono-code">339.80 ر.س</strong></span>
+<button class="text-primary font-semibold hover:underline flex items-center gap-space-2xs">
+<span>تقرير الإيرادات الشامل</span>
+<span class="material-symbols-outlined text-xs">arrow_back</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Lower Section: Doctor Performance & Clinical Compliance Status -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg mb-space-lg">
+<!-- Top Performing Physicians Table (8 Cols) -->
+<div class="xl:col-span-8 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">إنتاجية وكفاءة الأطباء الأكثر نشاطاً اليوم</span>
+<span class="font-label-sm text-secondary">إجمالي الكشوفات، الدخل المحقق، والتقييم السريري اللحظي</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-secondary">الترتيب حسب:</span>
+<select class="bg-surface-container-low text-on-surface text-label-sm font-label-sm rounded-lg px-space-sm py-space-2xs focus:outline-none">
+<option>الأعلى إيراداً</option>
+<option>عدد الكشوفات</option>
+<option>التقييم</option>
+</select>
+</div>
+</div>
+<!-- High-Density Clinical Doctors Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-secondary font-label-sm text-label-sm">
+<th class="py-space-sm px-space-md rounded-r-lg">الطبيب المعالج</th>
+<th class="py-space-sm px-space-sm">التخصص والعيادة</th>
+<th class="py-space-sm px-space-sm text-center">كشوفات اليوم</th>
+<th class="py-space-sm px-space-sm text-center">الإيراد المحقق</th>
+<th class="py-space-sm px-space-sm text-center">زمن الاستشارة</th>
+<th class="py-space-sm px-space-sm text-center">تقييم المرضى</th>
+<th class="py-space-sm px-space-md rounded-l-lg text-center">الحالة الحالية</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-body-sm font-body-sm">
+<!-- Doctor 1 -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-space-sm px-space-md">
+<div class="flex items-center gap-space-sm">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="A portrait of Dr. Ahmed Al-Mansouri, a senior male consultant cardiologist in medical scrubs and stethoscope, clinic ambient light in teal and white tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3yz2HLqDDZT0AIDnDK9jJGuOdzXzbvGvf1TZ-fOPNrhc0TyrdrWdHCyjiewBnqh_U6GP2yFlYkCbzLChBwuqB4oED6lxSGnQ0y5yFugLqmaB2eRI6V9ktpaaIaYYrmNgrILMV_f8TwSsEBjlfggE3W6LPDaAlsl0TuNyQqRPIOxQaUhxQqFKe3DuYB1vp6CG3qXhmwlXrBMOA18PIy5-WiyECojdZHVC1w5cmgIPecszbFAWa5ChIYQ"/>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">د. أحمد المنصوري</span>
+<span class="font-mono-code text-label-sm text-secondary">LIC-SA-89410</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-sm">
+<span class="text-on-surface">استشاري أمراض القلب</span>
+<span class="block text-label-sm text-secondary font-mono-code">عيادة 302</span>
+</td>
+<td class="py-space-sm px-space-sm text-center font-mono-metric font-bold text-on-surface">32</td>
+<td class="py-space-sm px-space-sm text-center font-mono-metric font-semibold text-primary">18,400 ر.س</td>
+<td class="py-space-sm px-space-sm text-center font-mono-code text-secondary">19.2 دقيقة</td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="inline-flex items-center gap-1 font-mono-code font-bold text-on-surface">
+                  4.9 <span class="material-symbols-outlined text-xs text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center gap-1 px-space-xs py-space-2xs rounded bg-surface-container text-primary font-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                  في كشف الآن
+                </span>
+</td>
+</tr>
+<!-- Doctor 2 -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-space-sm px-space-md">
+<div class="flex items-center gap-space-sm">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="A portrait of Dr. Sarah Al-Qahtani, a female dermatologist wearing a clean doctor lab coat with a friendly professional expression, soft clinical lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuArRp1hruOs7YczDTpOothINJonFIGkXS41rzEYzrtwY5vrHTGy5XRfv_tGCEOWmDJSGl-ZF0OrgnTbKUVRUoQbMyUaICBAQEd6EKriZkT5T16H5Uq4ETSJCOjSF9JPNhdCH3yZDnhLtEeBbooTW2JjyhOX-xRsuoUs0TOOWlXrszue_o_BaYo4okZDqSY9wfn2itoM0sxmwvLODNzNuZIUouF3KjtpOBP-oc5xxh70ff125NisOva-iw"/>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">د. سارة القحطاني</span>
+<span class="font-mono-code text-label-sm text-secondary">LIC-SA-77231</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-sm">
+<span class="text-on-surface">أخصائية جلدية وتجميل</span>
+<span class="block text-label-sm text-secondary font-mono-code">عيادة 108</span>
+</td>
+<td class="py-space-sm px-space-sm text-center font-mono-metric font-bold text-on-surface">28</td>
+<td class="py-space-sm px-space-sm text-center font-mono-metric font-semibold text-primary">14,200 ر.س</td>
+<td class="py-space-sm px-space-sm text-center font-mono-code text-secondary">17.5 دقيقة</td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="inline-flex items-center gap-1 font-mono-code font-bold text-on-surface">
+                  4.8 <span class="material-symbols-outlined text-xs text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center gap-1 px-space-xs py-space-2xs rounded bg-surface-container text-secondary font-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                  استراحة قصيرة
+                </span>
+</td>
+</tr>
+<!-- Doctor 3 -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-space-sm px-space-md">
+<div class="flex items-center gap-space-sm">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="A portrait of Dr. Khaled Al-Ruwaili, a consultant dentist in sterile medical uniform inspecting digital scans, sharp teal-tinted medical ambiance" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBB5QSqGMc_mGFF3874Th_wXZh9aSM16WN-wh6u8lhsiIknQB0Pqe0bI16h5q_ILHoODYJ8KzqYH7gRy6jWgX_Hh59yHj_PJ7LhOVZMZuqCMsJ-u5rEIPXeeCy168YjkyHHkP9lIKtNDqXPB3gvu-tE4C8TTXan9wz3JWRH8lJ5HubiklmFaVdF_3LzKPesE9wT81kVaOndo3BgfAD_IimE-ybirv-J12EHwN4HedMcX3GQPoZa0Y87ew"/>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">د. خالد الرويلي</span>
+<span class="font-mono-code text-label-sm text-secondary">LIC-SA-65490</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-sm">
+<span class="text-on-surface">جراحة وطب الأسنان</span>
+<span class="block text-label-sm text-secondary font-mono-code">عيادة 204</span>
+</td>
+<td class="py-space-sm px-space-sm text-center font-mono-metric font-bold text-on-surface">24</td>
+<td class="py-space-sm px-space-sm text-center font-mono-metric font-semibold text-primary">11,850 ر.س</td>
+<td class="py-space-sm px-space-sm text-center font-mono-code text-secondary">22.0 دقيقة</td>
+<td class="py-space-sm px-space-sm text-center">
+<span class="inline-flex items-center gap-1 font-mono-code font-bold text-on-surface">
+                  4.9 <span class="material-symbols-outlined text-xs text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center gap-1 px-space-xs py-space-2xs rounded bg-surface-container text-primary font-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                  في كشف الآن
+                </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-space-md pt-space-xs flex justify-between items-center text-label-sm">
+<span class="text-secondary">إجمالي عدد الأطباء المناوبين في العيادات اليوم: <strong>14 طبيباً واستشارياً</strong></span>
+<button class="text-primary font-semibold hover:underline">عرض سجل الإنتاجية السريرية الكامل</button>
+</div>
+</div>
+<!-- National Compliance & Interoperability Radar (4 Cols) -->
+<div class="xl:col-span-4 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-headline-sm">policy</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">الامتثال والتكامل الحكومي</span>
+</div>
+<span class="font-mono-code text-label-sm px-space-xs py-space-2xs rounded bg-primary/10 text-primary font-bold">2027 Ready</span>
+</div>
+<p class="font-label-sm text-secondary mb-space-md">حالة الربط التقني والسيبراني الحي مع المنصات الصحية الوطنية</p>
+<!-- Compliance Badges & Integration Status -->
+<div class="flex flex-col gap-space-sm">
+<!-- SFDA Item -->
+<div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary shadow-sm font-bold font-mono-code text-label-sm">SFDA</div>
+<div class="flex flex-col">
+<span class="font-label-md text-on-surface">الهيئة العامة للغذاء والدواء</span>
+<span class="font-label-sm text-secondary">رصد الأدوية والتتبع اللوجستي</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-mono-code text-label-sm font-semibold text-primary">100% متصل</span>
+</div>
+</div>
+<!-- NPHIES Item -->
+<div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-lowest flex items-center justify-center text-tertiary shadow-sm font-bold font-mono-code text-label-sm">NPH</div>
+<div class="flex flex-col">
+<span class="font-label-md text-on-surface">منصة نفيس للتأمين الصحي</span>
+<span class="font-label-sm text-secondary">الأهلية والمطالبات الإلكترونية</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-mono-code text-label-sm font-semibold text-primary">99.8% متصل</span>
+</div>
+</div>
+<!-- ZATCA Item -->
+<div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-lowest flex items-center justify-center text-on-surface shadow-sm font-bold font-mono-code text-label-sm">ZAT</div>
+<div class="flex flex-col">
+<span class="font-label-md text-on-surface">فوترة زاتكا - المرحلة الثانية</span>
+<span class="font-label-sm text-secondary">التكامل والربط الضريبي المباشر</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-mono-code text-label-sm font-semibold text-primary">100% متطابق</span>
+</div>
+</div>
+<!-- PDPL Security Protocol -->
+<div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-sm">security</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-on-surface">حماية البيانات الصحية (PDPL)</span>
+<span class="font-label-sm text-secondary">تشفير السجلات الطبية والخصوصية</span>
+</div>
+</div>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container text-primary font-mono-code text-label-sm font-bold">HIPAA+</span>
+</div>
+</div>
+</div>
+<!-- Quick System Diagnostics Indicator -->
+<div class="mt-space-md pt-space-xs text-secondary text-label-sm flex items-center justify-between">
+<span class="font-mono-code">تشفير E2E مفعل (AES-256)</span>
+<span class="font-mono-code text-primary font-semibold">التدقيق: سليم تماماً</span>
+</div>
+</div>
+</div>
+<!-- Bottom Executive Summary Bar -->
+<div class="bg-surface-container-low p-space-md rounded-xl flex flex-col md:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-headline-sm">monitoring</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-on-surface font-semibold">الملخص التشغيلي لليوم حتى اللحظة</span>
+<span class="font-label-sm text-secondary">إجمالي الإيرادات تسير بوتيرة أعلى بـ +12% من خطة الربع الرابع لعام 2027. لا توجد اختناقات سريرية حرجة غير معالجة.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm shrink-0">
+<button class="px-space-md py-space-sm rounded-xl bg-surface-container-lowest text-on-surface shadow-sm font-label-md hover:bg-surface-container transition-all">
+        تعديل الأهداف الشهرية
+      </button>
+<button class="px-space-md py-space-sm rounded-xl bg-primary text-on-primary font-label-md hover:bg-primary-container transition-all">
+        جدولة تقرير الإدارة العليا
+      </button>
+</div>
+</div>
+</div>
+<script>
+  // Executive Dashboard Micro-interactions
+  document.addEventListener('DOMContentLoaded', () => {
+    // Interactive button state toggles for period selector
+    const periodButtons = document.querySelectorAll('.bg-surface-container-low button');
+    periodButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        periodButtons.forEach(b => {
+          b.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-sm');
+          b.classList.add('text-secondary');
+        });
+        btn.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-sm');
+        btn.classList.remove('text-secondary');
+      });
+    });
+  });
+</script></main></div></body></html>

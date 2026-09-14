@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
-import { reportsMonthQuerySchema } from "@/lib/validations/ops";
 import { netProfit } from "@/lib/analytics";
 
 function monthBounds(month?: string | null) {

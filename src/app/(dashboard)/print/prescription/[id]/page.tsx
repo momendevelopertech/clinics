@@ -57,8 +57,8 @@ export default async function PrescriptionPrintPage({
       ];
 
   return (
-    <main className="hero-glow min-h-screen px-4 py-8">
-      <div className="mx-auto max-w-[520px]">
+    <main className="min-h-screen bg-muted-bg px-4 py-8">
+      <div className="mx-auto max-w-[560px]">
         <div className="mb-4 flex items-center justify-between gap-2 print-hide">
           <Link
             href="/encounters"
@@ -78,29 +78,29 @@ export default async function PrescriptionPrintPage({
           </div>
         </div>
 
-        <div className="print-sheet surface-panel rounded-[24px] border border-white/55 p-8 dark:border-white/6">
+        <div className="print-sheet rounded-lg border border-border bg-card p-8 shadow-xs">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="grid size-12 place-content-center rounded-[16px] bg-linear-to-br from-cyan-500 via-teal-500 to-emerald-500 text-white">
+              <div className="grid size-10 place-content-center rounded-md bg-primary text-primary-foreground">
                 <Activity className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-lg font-semibold">{prescription.organization.name}</p>
+                <p className="text-lg font-semibold text-foreground">{prescription.organization.name}</p>
                 <p className="text-xs text-muted-foreground">
                   {prescription.organization.address ?? ""}
                   {prescription.organization.phone ? ` · ${prescription.organization.phone}` : ""}
                 </p>
               </div>
             </div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">
               Rx
             </p>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3 rounded-[16px] border border-white/60 bg-white/60 p-4 text-sm dark:border-white/6 dark:bg-white/[0.03]">
+          <div className="mt-6 grid grid-cols-2 gap-3 rounded-lg border border-border bg-muted-bg p-4 text-sm">
             <div>
               <p className="text-xs text-muted-foreground">{t["print_patient"]}</p>
-              <p className="mt-1 font-semibold">
+              <p className="mt-1 font-semibold text-foreground">
                 {prescription.patient.firstName} {prescription.patient.lastName}
               </p>
               <p className="mt-0.5 text-xs text-muted-foreground">
@@ -109,19 +109,19 @@ export default async function PrescriptionPrintPage({
             </div>
             <div>
               <p className="text-xs text-muted-foreground">{t["print_doctor"]}</p>
-              <p className="mt-1 font-semibold">{prescription.prescriber.name}</p>
+              <p className="mt-1 font-semibold text-foreground">{prescription.prescriber.name}</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 {prescription.prescriber.specialty ?? ""}
               </p>
             </div>
           </div>
 
-          <div className="mt-6 rounded-[16px] border border-white/60 p-5 dark:border-white/6">
+          <div className="mt-6 rounded-lg border border-border bg-card p-5">
             {hasItems ? (
               <div className="overflow-x-auto print:overflow-visible">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/60 text-left text-xs text-muted-foreground dark:border-white/6">
+                  <tr className="border-b border-border text-left text-xs text-muted-foreground">
                     <th className="pb-2 pr-3 font-medium">{t["print_medication"]}</th>
                     <th className="pb-2 pr-3 font-medium">{t["print_dosage"]}</th>
                     <th className="pb-2 pr-3 font-medium">{t["print_frequency"]}</th>
@@ -133,9 +133,9 @@ export default async function PrescriptionPrintPage({
                   {medLines.map((line) => (
                     <tr
                       key={line.id}
-                      className="border-b border-white/40 last:border-0 dark:border-white/4"
+                      className="border-b border-border/60 last:border-0"
                     >
-                      <td className="py-2.5 pr-3 font-semibold">{line.medicationName}</td>
+                      <td className="py-2.5 pr-3 font-semibold text-foreground">{line.medicationName}</td>
                       <td className="py-2.5 pr-3 ltr-on-rtl">{line.dosage ?? "—"}</td>
                       <td className="py-2.5 pr-3 ltr-on-rtl">{line.frequency ?? "—"}</td>
                       <td className="py-2.5 pr-3 ltr-on-rtl">{line.duration ?? "—"}</td>
@@ -147,7 +147,7 @@ export default async function PrescriptionPrintPage({
               </div>
             ) : (
               <div>
-                <p className="text-xl font-semibold">{prescription.medicationName}</p>
+                <p className="text-xl font-semibold text-foreground">{prescription.medicationName}</p>
                 <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
                   <div>
                     <p className="text-xs text-muted-foreground">{t["print_dosage"]}</p>

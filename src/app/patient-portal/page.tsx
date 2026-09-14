@@ -281,22 +281,22 @@ export default function PatientPortalPage() {
 
   if (!patient) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-neutral-500">{t("portal_loading")}</p>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-muted-foreground">{t("portal_loading")}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <div className="bg-white dark:bg-neutral-900 border-b shadow-sm">
+      <div className="bg-card border-b border-border shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
               {t("portal_welcome").replace("{name}", patient.firstName)}
             </h1>
-            <p className="text-sm text-neutral-500">
+            <p className="text-sm text-muted-foreground">
               {t("portal_mrnLabel")}: {patient.mrn || t("portal_na")}
             </p>
           </div>
@@ -304,7 +304,7 @@ export default function PatientPortalPage() {
             variant="outline"
             onClick={handleLogout}
             disabled={isLoggingOut}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 h-9"
           >
             <LogOut className="w-4 h-4" /> {isLoggingOut ? t("portal_loggingOut") : t("portal_logout")}
           </Button>
@@ -315,14 +315,14 @@ export default function PatientPortalPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Quick Actions */}
-          <Card>
+          <Card className="border-border bg-card shadow-sm">
             <CardHeader>
               <CardTitle>{t("portal_quickActions")}</CardTitle>
               <CardDescription>{t("portal_quickActionsDesc")}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
               {orgSlug ? (
-                <Button variant="outline" className="justify-start" asChild>
+                <Button variant="outline" className="justify-start h-9" asChild>
                   <Link href={`/book/${orgSlug}`}>
                     <Calendar className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t("portal_bookAppointment")}
                   </Link>
@@ -330,7 +330,7 @@ export default function PatientPortalPage() {
               ) : (
                 <Button
                   variant="outline"
-                  className="justify-start"
+                  className="justify-start h-9"
                   disabled
                   title={t("portal_comingSoon")}
                 >
@@ -339,7 +339,7 @@ export default function PatientPortalPage() {
               )}
               <Button
                 variant="outline"
-                className="justify-start"
+                className="justify-start h-9"
                 disabled
                 title={t("portal_comingSoon")}
               >
@@ -347,7 +347,7 @@ export default function PatientPortalPage() {
               </Button>
               <Button
                 variant="outline"
-                className="justify-start"
+                className="justify-start h-9"
                 disabled
                 title={t("portal_comingSoon")}
               >
@@ -355,7 +355,7 @@ export default function PatientPortalPage() {
               </Button>
               <Button
                 variant="outline"
-                className="justify-start"
+                className="justify-start h-9"
                 disabled
                 title={t("portal_comingSoon")}
               >
@@ -365,39 +365,39 @@ export default function PatientPortalPage() {
           </Card>
 
           {/* Account Info */}
-          <Card>
+          <Card className="border-border bg-card shadow-sm">
             <CardHeader>
               <CardTitle>{t("portal_accountInfo")}</CardTitle>
               <CardDescription>{t("portal_accountInfoDesc")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <div>
-                <p className="text-sm text-neutral-500">{t("portal_name")}</p>
-                <p className="font-medium">
+                <p className="text-sm text-muted-foreground">{t("portal_name")}</p>
+                <p className="font-medium text-foreground">
                   {patient.firstName} {patient.lastName}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-neutral-500">{t("portal_emailLabel")}</p>
-                <p className="font-medium">{patient.email || t("portal_na")}</p>
+                <p className="text-sm text-muted-foreground">{t("portal_emailLabel")}</p>
+                <p className="font-medium text-foreground">{patient.email || t("portal_na")}</p>
               </div>
               <div>
-                <p className="text-sm text-neutral-500">{t("portal_mrnLabel")}</p>
-                <p className="font-medium">{patient.mrn || t("portal_na")}</p>
+                <p className="text-sm text-muted-foreground">{t("portal_mrnLabel")}</p>
+                <p className="font-medium text-foreground">{patient.mrn || t("portal_na")}</p>
               </div>
               <Button
                 variant="outline"
-                className="w-full"
+                className="w-full h-9"
                 disabled
                 title={t("portal_comingSoon")}
               >
-                <Pencil />{t("portal_updateProfile")}
+                <Pencil className="h-4 w-4 mr-1" />{t("portal_updateProfile")}
               </Button>
             </CardContent>
           </Card>
         </div>
 
-        <Card className="mb-6">
+        <Card className="mb-6 border-border bg-card shadow-sm">
           <CardHeader>
             <div className="flex items-center justify-between gap-4">
               <div>
@@ -407,12 +407,12 @@ export default function PatientPortalPage() {
                 </CardDescription>
               </div>
               <span
-                className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
+                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
                   vitalsStatus === "live"
-                    ? "bg-emerald-100 text-emerald-800"
+                    ? "bg-success-bg text-success-text"
                     : vitalsStatus === "error"
-                      ? "bg-red-100 text-red-800"
-                      : "bg-neutral-100 text-neutral-700"
+                      ? "bg-critical-bg text-critical-text"
+                      : "bg-muted-bg text-muted-foreground"
                 }`}
               >
                 {vitalsStatus === "live"
@@ -426,48 +426,48 @@ export default function PatientPortalPage() {
           <CardContent>
             {displayedVital ? (
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                <div className="rounded-xl border p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">
+                <div className="rounded-lg border border-border bg-card p-4">
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">
                     {t("portal_bloodPressure")}
                   </p>
-                  <p className="mt-2 text-2xl font-semibold">
+                  <p className="mt-2 text-2xl font-semibold text-foreground">
                     {displayedVital.bloodPressureSystolic ?? "--"}/
                     {displayedVital.bloodPressureDiastolic ?? "--"}
                   </p>
                 </div>
-                <div className="rounded-xl border p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">
+                <div className="rounded-lg border border-border bg-card p-4">
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">
                     {t("portal_heartRate")}
                   </p>
-                  <p className="mt-2 text-2xl font-semibold">
+                  <p className="mt-2 text-2xl font-semibold text-foreground">
                     {displayedVital.heartRate ?? "--"} bpm
                   </p>
                 </div>
-                <div className="rounded-xl border p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">
+                <div className="rounded-lg border border-border bg-card p-4">
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">
                     {t("portal_spo2")}
                   </p>
-                  <p className="mt-2 text-2xl font-semibold">
+                  <p className="mt-2 text-2xl font-semibold text-foreground">
                     {displayedVital.spO2 ?? "--"}%
                   </p>
                 </div>
-                <div className="rounded-xl border p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">
+                <div className="rounded-lg border border-border bg-card p-4">
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">
                     {t("portal_temperature")}
                   </p>
-                  <p className="mt-2 text-2xl font-semibold">
+                  <p className="mt-2 text-2xl font-semibold text-foreground">
                     {displayedVital.temperature ?? "--"} C
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="rounded-xl border border-dashed p-6 text-sm text-neutral-500">
+              <div className="rounded-lg border border-dashed border-border p-6 text-sm text-muted-foreground text-center">
                 {t("portal_noVitals")}
               </div>
             )}
 
             {displayedVital ? (
-              <div className="mt-4 flex items-center gap-2 text-sm text-neutral-500">
+              <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
                 <Activity className="h-4 w-4" />
                 {t("portal_lastUpdated").replace(
                   "{time}",
@@ -479,14 +479,14 @@ export default function PatientPortalPage() {
         </Card>
 
         {/* Appointments */}
-        <Card className="mb-6" id="portal-appointments">
+        <Card className="mb-6 border-border bg-card shadow-sm" id="portal-appointments">
           <CardHeader>
             <CardTitle>{t("portal_upcomingAppointments")}</CardTitle>
             <CardDescription>{t("portal_upcomingAppointmentsDesc")}</CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <p className="text-neutral-500">{t("portal_loading")}</p>
+              <p className="text-muted-foreground">{t("portal_loading")}</p>
             ) : appointments.length > 0 ? (
               <div className="space-y-3">
                 {appointments.map((apt) => {
@@ -496,18 +496,18 @@ export default function PatientPortalPage() {
                   return (
                     <div
                       key={apt.id}
-                      className="border rounded p-3 hover:bg-neutral-50"
+                      className="border border-border rounded-lg p-3 bg-card hover:bg-muted-bg/50 transition-colors"
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="font-medium">
+                          <p className="font-medium text-foreground">
                             {apt.type || t("portal_generalCheckup")}
                           </p>
-                          <p className="text-sm text-neutral-500">
+                          <p className="text-sm text-muted-foreground">
                             {apt.provider || t("portal_drTbd")}
                           </p>
                         </div>
-                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                        <span className="text-xs bg-accent-blue-bg text-accent-blue-text px-2.5 py-0.5 rounded-full font-medium">
                           {apt.status}
                         </span>
                       </div>
@@ -518,8 +518,9 @@ export default function PatientPortalPage() {
                             size="sm"
                             disabled={workingId === apt.id}
                             onClick={() => cancelAppointment(apt.id)}
+                            className="h-8"
                           >
-                            <X />{t("portal_cancelAppointment")}
+                            <X className="h-3.5 w-3.5 mr-1" />{t("portal_cancelAppointment")}
                           </Button>
                           <Button
                             variant="outline"
@@ -531,8 +532,9 @@ export default function PatientPortalPage() {
                               setRescheduleSlots([]);
                               setRescheduleDate("");
                             }}
+                            className="h-8"
                           >
-                            <CalendarDays />{t("portal_reschedule")}
+                            <CalendarDays className="h-3.5 w-3.5 mr-1" />{t("portal_reschedule")}
                           </Button>
                           {shouldShowJoinLink({
                             appointmentType: apt.type,
@@ -541,13 +543,13 @@ export default function PatientPortalPage() {
                             status: apt.status,
                           }) && apt.telehealthUrl ? (
                             <a href={apt.telehealthUrl} target="_blank" rel="noopener noreferrer">
-                              <Button size="sm"><Video />{t("tele_join")}</Button>
+                              <Button size="sm" className="h-8"><Video className="h-3.5 w-3.5 mr-1" />{t("tele_join")}</Button>
                             </a>
                           ) : null}
                         </div>
                       )}
                       {reschedulingId === apt.id && (
-                        <div className="mt-3 space-y-2 border-t pt-3">
+                        <div className="mt-3 space-y-2 border-t border-border pt-3">
                           <Input
                             type="date"
                             value={rescheduleDate}
@@ -557,6 +559,7 @@ export default function PatientPortalPage() {
                               setRescheduleSlot("");
                               loadRescheduleSlots(apt.id, apt.providerId, e.target.value);
                             }}
+                            className="h-9"
                           />
                           {rescheduleSlots.length > 0 && (
                             <div className="grid grid-cols-3 gap-2">
@@ -567,6 +570,7 @@ export default function PatientPortalPage() {
                                   size="sm"
                                   variant={rescheduleSlot === s.start ? "default" : "outline"}
                                   onClick={() => setRescheduleSlot(s.start)}
+                                  className="h-8 text-xs"
                                 >
                                   {new Date(s.start).toLocaleTimeString(
                                     lang === "ar" ? "ar-EG" : "en-US",
@@ -581,8 +585,9 @@ export default function PatientPortalPage() {
                             size="sm"
                             disabled={!rescheduleSlot || workingId === apt.id}
                             onClick={() => confirmReschedule(apt.id)}
+                            className="h-8"
                           >
-                            <Check />{t("portal_confirmBooking")}
+                            <Check className="h-3.5 w-3.5 mr-1" />{t("portal_confirmBooking")}
                           </Button>
                         </div>
                       )}
@@ -591,22 +596,22 @@ export default function PatientPortalPage() {
                 })}
               </div>
             ) : (
-              <p className="text-neutral-500 text-center py-4">
+              <p className="text-muted-foreground text-center py-4">
                 {t("portal_noUpcomingAppointments")}
               </p>
             )}
             <Button
               variant="outline"
-              className="w-full mt-4"
+              className="w-full mt-4 h-9"
               onClick={() => scrollToSection("portal-appointments")}
             >
-              <Eye />{t("portal_viewAllAppointments")}
+              <Eye className="h-4 w-4 mr-1" />{t("portal_viewAllAppointments")}
             </Button>
           </CardContent>
         </Card>
 
         {rateable.length > 0 ? (
-          <Card className="mb-6" id="portal-rate">
+          <Card className="mb-6 border-border bg-card shadow-sm" id="portal-rate">
             <CardHeader>
               <CardTitle>{t("portal_rateTitle")}</CardTitle>
               <CardDescription>{t("portal_rateDesc")}</CardDescription>
@@ -614,11 +619,11 @@ export default function PatientPortalPage() {
             <CardContent>
               <div className="space-y-3">
                 {rateable.map((visit) => (
-                  <div key={visit.id} className="border rounded p-3">
-                    <p className="font-medium">
+                  <div key={visit.id} className="border border-border rounded-lg p-3 bg-card">
+                    <p className="font-medium text-foreground">
                       {visit.type} · {visit.provider}
                     </p>
-                    <p className="text-sm text-neutral-500">
+                    <p className="text-sm text-muted-foreground">
                       {new Date(visit.startTime).toLocaleDateString()}
                     </p>
                     <div className="mt-2 flex items-center gap-1">
@@ -630,13 +635,13 @@ export default function PatientPortalPage() {
                           onClick={() => setStars({ ...stars, [visit.id]: n })}
                         >
                           <Star
-                            className={`h-6 w-6 ${(stars[visit.id] ?? 0) >= n ? "fill-amber-400 text-amber-400" : "text-neutral-300"}`}
+                            className={`h-6 w-6 ${(stars[visit.id] ?? 0) >= n ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`}
                           />
                         </button>
                       ))}
                     </div>
                     <Input
-                      className="mt-2"
+                      className="mt-2 h-9"
                       placeholder={t("portal_ratePlaceholder")}
                       value={comments[visit.id] ?? ""}
                       onChange={(e) => setComments({ ...comments, [visit.id]: e.target.value })}
@@ -644,10 +649,10 @@ export default function PatientPortalPage() {
                     <Button
                       type="button"
                       size="sm"
-                      className="mt-2"
+                      className="mt-2 h-8"
                       onClick={() => submitRating(visit.id)}
                     >
-                      <Star />{t("portal_rateSubmit")}
+                      <Star className="h-3.5 w-3.5 mr-1" />{t("portal_rateSubmit")}
                     </Button>
                   </div>
                 ))}
@@ -658,33 +663,33 @@ export default function PatientPortalPage() {
 
         {/* Lab Results */}
         <PortalIntakeCard />
-        <Card id="portal-lab-results">
+        <Card id="portal-lab-results" className="border-border bg-card shadow-sm">
           <CardHeader>
             <CardTitle>{t("portal_recentLabResults")}</CardTitle>
             <CardDescription>{t("portal_recentLabResultsDesc")}</CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <p className="text-neutral-500">{t("portal_loading")}</p>
+              <p className="text-muted-foreground">{t("portal_loading")}</p>
             ) : labResults.length > 0 ? (
               <div className="space-y-3">
                 {labResults.map((lab) => (
                   <div
                     key={lab.id}
-                    className="border rounded p-3 hover:bg-neutral-50"
+                    className="border border-border rounded-lg p-3 bg-card hover:bg-muted-bg/50 transition-colors"
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="font-medium">{lab.testName}</p>
-                        <p className="text-sm text-neutral-500">
+                        <p className="font-medium text-foreground">{lab.testName}</p>
+                        <p className="text-sm text-muted-foreground">
                           {lab.resultValue} {lab.unit}
                         </p>
                       </div>
                       <span
-                        className={`text-xs px-2 py-1 rounded ${
+                        className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
                           lab.status === "abnormal"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-green-100 text-green-800"
+                            ? "bg-critical-bg text-critical-text"
+                            : "bg-success-bg text-success-text"
                         }`}
                       >
                         {lab.status}
@@ -694,43 +699,43 @@ export default function PatientPortalPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-neutral-500 text-center py-4">
+              <p className="text-muted-foreground text-center py-4">
                 {t("portal_noLabResults")}
               </p>
             )}
             <Button
               variant="outline"
-              className="w-full mt-4"
+              className="w-full mt-4 h-9"
               onClick={() => scrollToSection("portal-lab-results")}
             >
-              <Eye />{t("portal_viewAllResults")}
+              <Eye className="h-4 w-4 mr-1" />{t("portal_viewAllResults")}
             </Button>
           </CardContent>
         </Card>
 
         {/* Documents */}
-        <Card className="mb-6" id="portal-documents">
+        <Card className="mb-6 border-border bg-card shadow-sm" id="portal-documents">
           <CardHeader>
             <CardTitle>{t("portal_documents")}</CardTitle>
             <CardDescription>{t("portal_documentsDesc")}</CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <p className="text-neutral-500">{t("portal_loading")}</p>
+              <p className="text-muted-foreground">{t("portal_loading")}</p>
             ) : documents.length > 0 ? (
               <div className="space-y-3">
                 {documents.map((doc) => (
-                  <div key={doc.id} className="border rounded p-3 hover:bg-neutral-50">
+                  <div key={doc.id} className="border border-border rounded-lg p-3 bg-card hover:bg-muted-bg/50 transition-colors">
                     <div className="flex justify-between items-start gap-2">
                       <div className="min-w-0">
-                        <p className="font-medium truncate">{doc.name}</p>
-                        <p className="text-sm text-neutral-500">{doc.type}</p>
+                        <p className="font-medium truncate text-foreground">{doc.name}</p>
+                        <p className="text-sm text-muted-foreground">{doc.type}</p>
                       </div>
                       <a
                         href={doc.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-primary underline shrink-0"
+                        className="text-sm text-primary hover:underline shrink-0"
                       >
                         {doc.type}
                       </a>
@@ -739,45 +744,45 @@ export default function PatientPortalPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-neutral-500 text-center py-4">{t("portal_noDocuments")}</p>
+              <p className="text-muted-foreground text-center py-4">{t("portal_noDocuments")}</p>
             )}
           </CardContent>
         </Card>
 
         {/* Invoices */}
-        <Card className="mb-6" id="portal-invoices">
+        <Card className="mb-6 border-border bg-card shadow-sm" id="portal-invoices">
           <CardHeader>
             <CardTitle>{t("portal_invoices")}</CardTitle>
             <CardDescription>{t("portal_invoicesDesc")}</CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <p className="text-neutral-500">{t("portal_loading")}</p>
+              <p className="text-muted-foreground">{t("portal_loading")}</p>
             ) : invoices.length > 0 ? (
               <div className="space-y-3">
                 {invoices.map((inv) => (
-                  <div key={inv.id} className="border rounded p-3 hover:bg-neutral-50">
+                  <div key={inv.id} className="border border-border rounded-lg p-3 bg-card hover:bg-muted-bg/50 transition-colors">
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="font-medium">{inv.invoiceNumber}</p>
-                        <p className="text-sm text-neutral-500">{inv.status}</p>
+                        <p className="font-medium text-foreground">{inv.invoiceNumber}</p>
+                        <p className="text-sm text-muted-foreground">{inv.status}</p>
                       </div>
                       <div className="text-left rtl:text-right">
-                        <p className="font-medium">
+                        <p className="font-medium text-foreground">
                           {t("portal_balance")}: {inv.balance}
                         </p>
-                        <p className="text-sm text-neutral-500">
+                        <p className="text-sm text-muted-foreground">
                           {inv.amountPaid}/{inv.totalAmount}
                         </p>
                         {inv.balance > 0 && (
                           <Button
                             size="sm"
                             variant="outline"
-                            className="mt-2"
+                            className="mt-2 h-8"
                             disabled={workingId === `pay-${inv.id}`}
                             onClick={() => payInvoice(inv.id)}
                           >
-                            <CreditCard />{t("portal_payNow")}
+                            <CreditCard className="h-3.5 w-3.5 mr-1" />{t("portal_payNow")}
                           </Button>
                         )}
                       </div>
@@ -786,28 +791,28 @@ export default function PatientPortalPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-neutral-500 text-center py-4">{t("portal_noInvoices")}</p>
+              <p className="text-muted-foreground text-center py-4">{t("portal_noInvoices")}</p>
             )}
           </CardContent>
         </Card>
 
         {/* Consents */}
-        <Card id="portal-consents">
+        <Card id="portal-consents" className="border-border bg-card shadow-sm">
           <CardHeader>
             <CardTitle>{t("portal_consents")}</CardTitle>
             <CardDescription>{t("portal_consentsDesc")}</CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <p className="text-neutral-500">{t("portal_loading")}</p>
+              <p className="text-muted-foreground">{t("portal_loading")}</p>
             ) : (
               <div className="space-y-3">
                 {consents.map((c) => (
-                  <div key={c.type} className="border rounded p-3">
+                  <div key={c.type} className="border border-border rounded-lg p-3 bg-card">
                     <div className="flex justify-between items-center gap-2">
                       <div>
-                        <p className="font-medium">{c.type}</p>
-                        <p className="text-sm text-neutral-500">
+                        <p className="font-medium text-foreground">{c.type}</p>
+                        <p className="text-sm text-muted-foreground">
                           {c.granted ? t("portal_consentSigned") : t("portal_consentPending")}
                         </p>
                       </div>
@@ -817,16 +822,18 @@ export default function PatientPortalPage() {
                           variant="outline"
                           disabled={workingId === `consent-${c.type}`}
                           onClick={() => signConsent(c.type, true)}
+                          className="h-8"
                         >
-                          <Check />{t("portal_accept")}
+                          <Check className="h-3.5 w-3.5 mr-1" />{t("portal_accept")}
                         </Button>
                         <Button
                           size="sm"
                           variant="ghost"
                           disabled={workingId === `consent-${c.type}`}
                           onClick={() => signConsent(c.type, false)}
+                          className="h-8"
                         >
-                          <X />{t("portal_decline")}
+                          <X className="h-3.5 w-3.5 mr-1" />{t("portal_decline")}
                         </Button>
                       </div>
                     </div>

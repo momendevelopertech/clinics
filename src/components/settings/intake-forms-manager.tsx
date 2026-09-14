@@ -120,53 +120,54 @@ export function IntakeFormsManager() {
   return (
     <div className="space-y-4">
       <div className="flex gap-2">
-        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("intake_formName")} />
-        <Button onClick={createForm} disabled={!name.trim()}><Plus />{t("intake_createForm")}</Button>
+        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("intake_formName")} className="h-9" />
+        <Button onClick={createForm} disabled={!name.trim()} className="h-9"><Plus className="h-4 w-4 mr-1" />{t("intake_createForm")}</Button>
       </div>
       {forms.map((form) => (
-        <div key={form.id} className="rounded border p-3 space-y-2">
+        <div key={form.id} className="rounded-lg border border-border bg-card p-4 space-y-3 shadow-sm">
           <div className="flex items-center justify-between">
-            <p className="font-medium text-sm">{form.name}</p>
-            <Button size="sm" variant="outline" onClick={() => viewResponses(form.id)}>
-              <Eye />{t("intake_viewResponses")}
+            <p className="font-medium text-sm text-foreground">{form.name}</p>
+            <Button size="sm" variant="outline" onClick={() => viewResponses(form.id)} className="h-8">
+              <Eye className="h-3.5 w-3.5 mr-1" />{t("intake_viewResponses")}
             </Button>
           </div>
           {form.fields.map((f) => (
-            <p key={f.id} className="text-xs text-neutral-500">
+            <p key={f.id} className="text-xs text-muted-foreground">
               {f.label} · {f.kind}{f.required ? " *" : ""}
             </p>
           ))}
           {(responses[form.id] ?? []).map((r, i) => (
-            <p key={i} className="text-xs rounded bg-neutral-50 dark:bg-neutral-800 p-2">
-              <span className="font-medium">{r.patientName}</span> ·{" "}
-              {new Date(r.createdAt).toLocaleDateString()} · {r.answers}
+            <p key={i} className="text-xs rounded-md bg-muted-bg border border-border/60 p-2.5 text-foreground">
+              <span className="font-medium text-foreground">{r.patientName}</span> ·{" "}
+              <span className="text-muted-foreground">{new Date(r.createdAt).toLocaleDateString()}</span> · {r.answers}
             </p>
           ))}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 border-t pt-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 border-t border-border pt-3">
             <Input
               value={fieldForm[form.id]?.label ?? ""}
               onChange={(e) => setF(form.id, { label: e.target.value })}
               placeholder={t("intake_fieldLabel")}
+              className="h-9"
             />
             <Select
               value={fieldForm[form.id]?.kind ?? "text"}
               onValueChange={(v) => setF(form.id, { kind: v })}
             >
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {KINDS.map((k) => (
                   <SelectItem key={k} value={k}>{k}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <label className="flex items-center gap-2 text-sm">
+            <label className="flex items-center gap-2 text-sm text-foreground">
               <Checkbox
                 checked={fieldForm[form.id]?.required ?? false}
                 onCheckedChange={(c) => setF(form.id, { required: c === true })}
               />
               {t("intake_required")}
             </label>
-            <Button size="sm" onClick={() => addField(form.id)}>{t("intake_addField")}</Button>
+            <Button size="sm" onClick={() => addField(form.id)} className="h-9">{t("intake_addField")}</Button>
           </div>
         </div>
       ))}

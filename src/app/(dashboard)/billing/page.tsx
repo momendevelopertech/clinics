@@ -7,7 +7,7 @@ import {
   FileText,
   Plus,
   Trash2,
-} from "lucide-react";;
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -144,8 +144,8 @@ export default function BillingPage() {
 
   if (forbidden) {
     return (
-      <div className="flex flex-col gap-8 w-full">
-        <h1 className="text-2xl font-bold tracking-tight">{t("billing_title")}</h1>
+      <div className="flex flex-col gap-6 w-full">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("billing_title")}</h1>
         <PermissionDenied
           title={t("billing_forbiddenTitle") ?? "You don't have permission"}
           description={t("billing_forbidden") ?? "Only staff with billing access can view invoices."}
@@ -155,11 +155,12 @@ export default function BillingPage() {
   }
 
   const statusColor: Record<string, string> = {
-    draft: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
-    sent: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400",
-    partially_paid: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400",
-    paid: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400",
-    overdue: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400",
+    draft: "bg-muted-bg text-muted-foreground border border-border",
+    sent: "bg-primary/10 text-primary border border-primary/20",
+    partially_paid: "bg-warning-bg text-warning-text border border-warning/30",
+    paid: "bg-success-bg text-success-text border border-success/30",
+    overdue: "bg-critical-bg text-critical-text border border-critical/30",
+    void: "bg-muted-bg text-muted-foreground border border-border",
   };
 
   const statusLabel: Record<string, string> = {
@@ -187,7 +188,7 @@ export default function BillingPage() {
 
   return (
     <motion.div
-      className="flex flex-col gap-8 w-full"
+      className="flex flex-col gap-6 w-full pb-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
@@ -196,113 +197,127 @@ export default function BillingPage() {
       {stripe && !stripe.configured ? (
         <FeatureNotConfiguredBanner feature="stripe" missingEnvVars={stripe.missing} />
       ) : null}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">{t("billing_title")}</h1>
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("billing_title")}</h1>
+          <p className="text-xs text-muted-foreground">{t("billing_invoices")}</p>
+        </div>
         <NewInvoiceDialog onSuccess={loadInvoices} />
       </div>
 
       <FeatureTip tipId="billing-summary">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-neutral-500">{t("billing_totalCollected")}</CardTitle>
+        <Card className="rounded-lg border border-border bg-card shadow-2xs">
+          <CardHeader className="p-5 pb-2">
+            <CardTitle className="text-xs font-semibold text-muted-foreground">{t("billing_totalCollected")}</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-5 pt-0">
             <div className="flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-emerald-500" />
-              <span className="text-2xl font-bold">${collected.toLocaleString()}</span>
+              <div className="rounded-md bg-success-bg p-2 text-success-text border border-success/30">
+                <DollarSign className="w-4 h-4" />
+              </div>
+              <span className="text-2xl font-bold tracking-tight text-foreground">${collected.toLocaleString()}</span>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-neutral-500">{t("billing_outstanding")}</CardTitle>
+        <Card className="rounded-lg border border-border bg-card shadow-2xs">
+          <CardHeader className="p-5 pb-2">
+            <CardTitle className="text-xs font-semibold text-muted-foreground">{t("billing_outstanding")}</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-5 pt-0">
             <div className="flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-amber-500" />
-              <span className="text-2xl font-bold">${outstanding.toLocaleString()}</span>
+              <div className="rounded-md bg-warning-bg p-2 text-warning-text border border-warning/30">
+                <DollarSign className="w-4 h-4" />
+              </div>
+              <span className="text-2xl font-bold tracking-tight text-foreground">${outstanding.toLocaleString()}</span>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-neutral-500">{t("billing_openInvoices")}</CardTitle>
+        <Card className="rounded-lg border border-border bg-card shadow-2xs">
+          <CardHeader className="p-5 pb-2">
+            <CardTitle className="text-xs font-semibold text-muted-foreground">{t("billing_openInvoices")}</CardTitle>
           </CardHeader>
-          <CardContent>
-            <span className="text-2xl font-bold">{openInvoices}</span>
+          <CardContent className="p-5 pt-0">
+            <div className="flex items-center gap-2">
+              <div className="rounded-md bg-primary/10 p-2 text-primary border border-primary/20">
+                <FileText className="w-4 h-4" />
+              </div>
+              <span className="text-2xl font-bold tracking-tight text-foreground">{openInvoices}</span>
+            </div>
           </CardContent>
         </Card>
       </div>
       </FeatureTip>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5" />
-            {t("billing_invoices")}
-          </CardTitle>
-          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-            <Input
-              type="search"
-              placeholder={t("billing_search")}
-              className="w-full sm:max-w-sm"
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setPage(1);
-              }}
-            />
-            <Select
-              value={statusFilter}
-              onValueChange={(value) => {
-                setStatusFilter(value);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder={t("billing_filterStatus")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("common_all")}</SelectItem>
-                {Object.keys(statusLabel).map((status) => (
-                  <SelectItem key={status} value={status}>
-                    {statusLabel[status] ?? status}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+      <Card className="rounded-lg border border-border bg-card shadow-2xs">
+        <CardHeader className="p-5 border-b border-border bg-muted-bg">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-base font-bold text-foreground">
+              <FileText className="w-4 h-4 text-primary" />
+              {t("billing_invoices")}
+            </CardTitle>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-stretch sm:items-center">
+              <Input
+                type="search"
+                placeholder={t("billing_search")}
+                className="h-9 w-full sm:w-64 bg-card text-xs border-input"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setPage(1);
+                }}
+              />
+              <Select
+                value={statusFilter}
+                onValueChange={(value) => {
+                  setStatusFilter(value);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="h-9 w-full sm:w-44 bg-card text-xs border-input">
+                  <SelectValue placeholder={t("billing_filterStatus")} />
+                </SelectTrigger>
+                <SelectContent className="text-xs">
+                  <SelectItem value="all">{t("common_all")}</SelectItem>
+                  {Object.keys(statusLabel).map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {statusLabel[status] ?? status}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           {loading ? (
-            <div className="p-8 text-center text-neutral-500">{t("common_loading")}</div>
+            <div className="p-8 text-center text-xs text-muted-foreground">{t("common_loading")}</div>
           ) : invoices.length === 0 ? (
-            <div className="p-8 text-center text-neutral-500 border rounded-[5px]">
+            <div className="p-8 text-center text-xs text-muted-foreground">
               {t("billing_empty")}
             </div>
           ) : (
-            <div className="rounded-[5px] border overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-neutral-50 dark:bg-neutral-800/50">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-left">
+                <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium">{t("billing_colInvoice")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("billing_colPatient")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("billing_colTotal")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("billing_colStatus")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_actions")}</th>
+                    <th className="px-4 py-3">{t("billing_colInvoice")}</th>
+                    <th className="px-4 py-3">{t("billing_colPatient")}</th>
+                    <th className="px-4 py-3">{t("billing_colTotal")}</th>
+                    <th className="px-4 py-3">{t("billing_colStatus")}</th>
+                    <th className="px-4 py-3">{t("common_actions")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y">
+                <tbody className="divide-y divide-border text-foreground">
                   {pagedInvoices.map((inv) => (
-                    <tr key={inv.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
-                      <td className="px-4 py-3 font-mono">{inv.invoiceNumber}</td>
-                      <td className="px-4 py-3">
+                    <tr key={inv.id} className="transition-colors hover:bg-muted/40">
+                      <td className="px-4 py-3 font-mono font-bold">{inv.invoiceNumber}</td>
+                      <td className="px-4 py-3 font-semibold">
                         {inv.patient ? `${inv.patient.firstName} ${inv.patient.lastName}` : "—"}
                       </td>
-                      <td className="px-4 py-3">${inv.totalAmount?.toString?.() ?? "0"}</td>
+                      <td className="px-4 py-3 font-mono font-medium">${inv.totalAmount?.toString?.() ?? "0"}</td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded-[5px] text-xs font-medium ${statusColor[inv.status] ?? "bg-neutral-100"}`}>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${statusColor[inv.status] ?? "bg-muted-bg text-muted-foreground border border-border"}`}>
                           {statusLabel[inv.status] ?? inv.status}
                         </span>
                       </td>
@@ -328,60 +343,73 @@ export default function BillingPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            {t("exp_title")}
-            <span className="text-sm font-normal text-neutral-500">
+      <Card className="rounded-lg border border-border bg-card shadow-2xs">
+        <CardHeader className="p-5 border-b border-border bg-muted-bg">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-base font-bold text-foreground">
+                {t("exp_title")}
+              </CardTitle>
+              <p className="text-xs text-muted-foreground mt-0.5">{t("exp_subtitle")}</p>
+            </div>
+            <span className="font-mono text-sm font-bold text-foreground">
               {t("exp_total")}: ${expTotal.toFixed(2)}
             </span>
-          </CardTitle>
-          <p className="text-sm text-neutral-500">{t("exp_subtitle")}</p>
+          </div>
         </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-            <div className="gap-2 flex flex-col">
-              <Label>{t("exp_category")}</Label>
+        <CardContent className="p-5 flex flex-col gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            <div className="gap-1.5 flex flex-col">
+              <Label className="text-xs font-semibold">{t("exp_category")}</Label>
               <Select value={expForm.category} onValueChange={(v) => setExpForm({ ...expForm, category: v })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
+                <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent className="text-xs">
                   {["rent", "salaries", "supplies", "utilities", "marketing", "other"].map((c) => (
                     <SelectItem key={c} value={c}>{expCatLabel(c)}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="gap-2 flex flex-col">
-              <Label>{t("exp_amount")}</Label>
-              <Input type="number" min="0.01" step="0.01" value={expForm.amount} onChange={(e) => setExpForm({ ...expForm, amount: e.target.value })} />
+            <div className="gap-1.5 flex flex-col">
+              <Label className="text-xs font-semibold">{t("exp_amount")}</Label>
+              <Input type="number" min="0.01" step="0.01" value={expForm.amount} onChange={(e) => setExpForm({ ...expForm, amount: e.target.value })} className="h-9 text-xs" />
             </div>
-            <div className="gap-2 flex flex-col">
-              <Label>{t("exp_date")}</Label>
-              <Input type="date" value={expForm.date} onChange={(e) => setExpForm({ ...expForm, date: e.target.value })} />
+            <div className="gap-1.5 flex flex-col">
+              <Label className="text-xs font-semibold">{t("exp_date")}</Label>
+              <Input type="date" value={expForm.date} onChange={(e) => setExpForm({ ...expForm, date: e.target.value })} className="h-9 text-xs" />
             </div>
-            <div className="gap-2 flex flex-col">
-              <Label>{t("exp_notes")}</Label>
-              <Input value={expForm.notes} onChange={(e) => setExpForm({ ...expForm, notes: e.target.value })} />
+            <div className="gap-1.5 flex flex-col">
+              <Label className="text-xs font-semibold">{t("exp_notes")}</Label>
+              <Input value={expForm.notes} onChange={(e) => setExpForm({ ...expForm, notes: e.target.value })} className="h-9 text-xs" />
             </div>
             <div className="flex items-end">
-              <Button onClick={handleAddExpense}><Plus />{t("exp_add")}</Button>
+              <Button onClick={handleAddExpense} className="h-9 w-full text-xs font-semibold shadow-2xs gap-1.5"><Plus className="w-3.5 h-3.5" />{t("exp_add")}</Button>
             </div>
           </div>
           {expenses.length === 0 ? (
-            <p className="text-sm text-neutral-500">{t("exp_empty")}</p>
+            <p className="py-6 text-center text-xs text-muted-foreground">{t("exp_empty")}</p>
           ) : (
-            <div className="rounded-[5px] border overflow-x-auto">
-              <table className="w-full text-sm">
-                <tbody className="divide-y">
+            <div className="overflow-x-auto rounded-md border border-border">
+              <table className="w-full text-xs text-left">
+                <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <tr>
+                    <th className="px-4 py-2.5">{t("exp_category")}</th>
+                    <th className="px-4 py-2.5">{t("exp_amount")}</th>
+                    <th className="px-4 py-2.5">{t("exp_date")}</th>
+                    <th className="px-4 py-2.5">{t("exp_notes")}</th>
+                    <th className="px-4 py-2.5 text-right">{t("common_actions")}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border text-foreground">
                   {expenses.slice(0, 20).map((e) => (
-                    <tr key={e.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
-                      <td className="px-4 py-2">{expCatLabel(e.category)}</td>
-                      <td className="px-4 py-2 font-medium">${Number(e.amount).toFixed(2)}</td>
-                      <td className="px-4 py-2 text-neutral-500">{new Date(e.spentAt).toLocaleDateString()}</td>
-                      <td className="px-4 py-2 text-neutral-500">{e.notes ?? "—"}</td>
-                      <td className="px-4 py-2 text-right">
-                        <Button variant="ghost" size="sm" className="text-red-600" onClick={() => handleDeleteExpense(e.id)}>
-                          <Trash2 />{t("exp_delete")}
+                    <tr key={e.id} className="transition-colors hover:bg-muted/40">
+                      <td className="px-4 py-2.5 font-medium">{expCatLabel(e.category)}</td>
+                      <td className="px-4 py-2.5 font-mono font-bold">${Number(e.amount).toFixed(2)}</td>
+                      <td className="px-4 py-2.5 text-muted-foreground">{new Date(e.spentAt).toLocaleDateString()}</td>
+                      <td className="px-4 py-2.5 text-muted-foreground">{e.notes ?? "—"}</td>
+                      <td className="px-4 py-2.5 text-right">
+                        <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleDeleteExpense(e.id)}>
+                          <Trash2 className="w-3.5 h-3.5 mr-1" />{t("exp_delete")}
                         </Button>
                       </td>
                     </tr>

@@ -58,22 +58,28 @@ export function StaffProfiles({ t }: { t: (key: string) => string }) {
   }
 
   return (
-    <div className="space-y-4">
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+    <div className="space-y-3">
+      {error ? (
+        <div className="rounded-md border border-critical/20 bg-critical-bg p-3 text-sm text-critical-text">
+          {error}
+        </div>
+      ) : null}
       {staff.map((member) => (
-        <div key={member.id} className="rounded-xl border p-4">
-          <div className="flex items-center justify-between gap-4">
+        <div key={member.id} className="rounded-md border border-border bg-card p-4 transition-colors hover:bg-muted-bg/30">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <p className="font-medium">{member.name ?? member.email}</p>
-              <p className="text-sm text-muted-foreground">{member.email}</p>
+              <p className="font-medium text-foreground">{member.name ?? member.email}</p>
+              <p className="text-xs text-muted-foreground">{member.email}</p>
             </div>
-            <span className="text-xs text-muted-foreground">{member.specialty ?? t("settings_specialtyUnset")}</span>
-            <Select value={member.userRoles[0]?.role.id} onValueChange={(roleId) => void assignRole(member.id, roleId)}>
-              <SelectTrigger className="w-40"><SelectValue placeholder={t("settings_selectRole")} /></SelectTrigger>
-              <SelectContent>{roles.map((role) => <SelectItem key={role.id} value={role.id}>{displayRoleName(role.name)}</SelectItem>)}</SelectContent>
-            </Select>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-muted-foreground">{member.specialty ?? t("settings_specialtyUnset")}</span>
+              <Select value={member.userRoles[0]?.role.id} onValueChange={(roleId) => void assignRole(member.id, roleId)}>
+                <SelectTrigger className="w-40 h-9 bg-background"><SelectValue placeholder={t("settings_selectRole")} /></SelectTrigger>
+                <SelectContent>{roles.map((role) => <SelectItem key={role.id} value={role.id}>{displayRoleName(role.name)}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">
+          <p className="mt-2 text-xs text-muted-foreground border-t border-border pt-2">
             {member.licenseNumber ?? t("settings_licenseUnset")} · {member.branch?.name ?? t("locations_unassigned")} · {member.room?.name ?? t("locations_unassigned")}
           </p>
         </div>

@@ -110,79 +110,85 @@ export function BookClinicClient({ orgSlug }: { orgSlug: string }) {
 
   if (missing) {
     return (
-      <main className="min-h-screen grid place-items-center p-6">
-        <p className="text-neutral-500">{t("portal_clinicNotFound")}</p>
+      <main className="min-h-screen grid place-items-center p-6 bg-background text-foreground">
+        <p className="text-muted-foreground">{t("portal_clinicNotFound")}</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
-      <div className="max-w-2xl mx-auto px-4 py-10">
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
-          {clinicName || t("portal_bookTitle")}
-        </h1>
-        <p className="text-sm text-neutral-500 mt-1">{t("portal_bookDesc")}</p>
-
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="book-provider">{t("portal_pickProvider")}</Label>
-            <Select value={providerId} onValueChange={setProviderId}>
-              <SelectTrigger id="book-provider">
-                <SelectValue placeholder={t("portal_pickProvider")} />
-              </SelectTrigger>
-              <SelectContent>
-                {providers.map((p) => (
-                  <SelectItem key={p.id} value={p.id}>
-                    {p.name ?? p.id}
-                    {p.specialty ? ` · ${p.specialty}` : ""}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+    <main className="min-h-screen bg-background text-foreground py-10">
+      <div className="max-w-2xl mx-auto px-4">
+        <div className="rounded-lg border border-border bg-card p-6 shadow-sm space-y-6">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              {clinicName || t("portal_bookTitle")}
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">{t("portal_bookDesc")}</p>
           </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="book-date">{t("portal_pickDate")}</Label>
-            <Input
-              id="book-date"
-              type="date"
-              value={date}
-              min={new Date().toISOString().split("T")[0]}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </div>
-        </div>
 
-        <div className="mt-6">
-          <p className="text-sm font-medium mb-2">{t("portal_pickSlot")}</p>
-          {loading ? (
-            <p className="text-sm text-neutral-500">{t("portal_loading")}</p>
-          ) : slots.length === 0 ? (
-            <p className="text-sm text-neutral-500">{t("portal_noSlots")}</p>
-          ) : (
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-              {slots.map((s) => (
-                <Button
-                  key={s.start}
-                  type="button"
-                  variant={selected === s.start ? "default" : "outline"}
-                  onClick={() => setSelected(s.start)}
-                >
-                  <Clock />{formatSlot(s.start, lang)}
-                </Button>
-              ))}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="book-provider">{t("portal_pickProvider")}</Label>
+              <Select value={providerId} onValueChange={setProviderId}>
+                <SelectTrigger id="book-provider" className="h-9">
+                  <SelectValue placeholder={t("portal_pickProvider")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {providers.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      {p.name ?? p.id}
+                      {p.specialty ? ` · ${p.specialty}` : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          )}
-        </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="book-date">{t("portal_pickDate")}</Label>
+              <Input
+                id="book-date"
+                type="date"
+                value={date}
+                min={new Date().toISOString().split("T")[0]}
+                onChange={(e) => setDate(e.target.value)}
+                className="h-9"
+              />
+            </div>
+          </div>
 
-        <Button
-          type="button"
-          className="w-full mt-6"
-          disabled={!selected || booking}
-          onClick={confirm}
-        >
-          <CalendarPlus />{t("portal_confirmBooking")}
-        </Button>
+          <div>
+            <p className="text-sm font-medium text-foreground mb-2">{t("portal_pickSlot")}</p>
+            {loading ? (
+              <p className="text-sm text-muted-foreground">{t("portal_loading")}</p>
+            ) : slots.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{t("portal_noSlots")}</p>
+            ) : (
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {slots.map((s) => (
+                  <Button
+                    key={s.start}
+                    type="button"
+                    variant={selected === s.start ? "default" : "outline"}
+                    className="h-9 text-xs"
+                    onClick={() => setSelected(s.start)}
+                  >
+                    <Clock className="h-3.5 w-3.5 mr-1" />{formatSlot(s.start, lang)}
+                  </Button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <Button
+            type="button"
+            className="w-full h-9"
+            disabled={!selected || booking}
+            onClick={confirm}
+          >
+            <CalendarPlus className="h-4 w-4 mr-1" />{t("portal_confirmBooking")}
+          </Button>
+        </div>
       </div>
     </main>
   );

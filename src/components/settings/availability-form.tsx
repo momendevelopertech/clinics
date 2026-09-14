@@ -4,6 +4,8 @@ import { useState, type FormEvent } from "react";
 import { CalendarClock, CheckCircle2, Loader2 } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n/locale";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 
@@ -72,20 +74,20 @@ export function AvailabilityForm({ t, current }: AvailabilityFormProps) {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="flex items-center gap-3">
-        <div className="grid size-12 place-content-center rounded-[16px] bg-primary/10 text-primary">
+        <div className="grid size-10 place-content-center rounded-md bg-primary/10 text-primary">
           <CalendarClock className="h-5 w-5" />
         </div>
         <div>
-          <h1 className="text-2xl font-semibold tracking-[-0.03em]">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
             {t["availability_title"]}
           </h1>
           <p className="text-sm text-muted-foreground">{t["availability_subtitle"]}</p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="surface-panel space-y-6 rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+      <form onSubmit={handleSubmit} className="rounded-lg border border-border bg-card p-6 shadow-xs space-y-6">
         <div>
-          <p className="text-sm font-medium text-foreground">{t["availability_type"]}</p>
+          <p className="text-sm font-semibold text-foreground">{t["availability_type"]}</p>
           <FeatureTip tipId="availability-template">
             <div className="mt-3 grid gap-2 sm:grid-cols-3">
               {[
@@ -97,10 +99,10 @@ export function AvailabilityForm({ t, current }: AvailabilityFormProps) {
                   key={option.value}
                   type="button"
                   onClick={() => setAvailabilityType(option.value)}
-                  className={`rounded-[16px] border px-4 py-3 text-sm font-medium transition ${
+                  className={`rounded-md border px-4 py-2.5 text-sm font-medium transition cursor-pointer ${
                     availabilityType === option.value
                       ? "border-primary bg-primary/10 text-primary"
-                      : "border-white/60 bg-white/60 text-muted-foreground dark:border-white/6 dark:bg-white/[0.03]"
+                      : "border-border bg-background text-muted-foreground hover:bg-muted-bg hover:text-foreground"
                   }`}
                 >
                   {option.label}
@@ -113,7 +115,7 @@ export function AvailabilityForm({ t, current }: AvailabilityFormProps) {
         {regularMode ? (
           <>
             <div>
-              <p className="text-sm font-medium text-foreground">{t["availability_days"]}</p>
+              <p className="text-sm font-semibold text-foreground">{t["availability_days"]}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {DAYS.map((day) => {
                   const active = days.includes(day);
@@ -122,10 +124,10 @@ export function AvailabilityForm({ t, current }: AvailabilityFormProps) {
                       key={day}
                       type="button"
                       onClick={() => toggleDay(day)}
-                      className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                      className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition cursor-pointer ${
                         active
-                          ? "bg-primary text-white shadow-sm"
-                          : "border border-white/60 bg-white/60 text-muted-foreground hover:text-foreground dark:border-white/6 dark:bg-white/[0.03]"
+                          ? "bg-primary text-primary-foreground shadow-2xs"
+                          : "border border-border bg-background text-muted-foreground hover:text-foreground hover:bg-muted-bg"
                       }`}
                     >
                       {t[`availability_${day}` as keyof Dictionary]}
@@ -138,20 +140,20 @@ export function AvailabilityForm({ t, current }: AvailabilityFormProps) {
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block space-y-2">
                 <span className="text-sm font-medium text-foreground">{t["availability_from"]}</span>
-                <input
+                <Input
                   type="time"
                   value={from}
                   onChange={(event) => setFrom(event.target.value)}
-                  className="h-12 w-full rounded-[16px] border border-border bg-white/80 px-4 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15 dark:bg-white/[0.04]"
+                  className="h-9 bg-background"
                 />
               </label>
               <label className="block space-y-2">
                 <span className="text-sm font-medium text-foreground">{t["availability_to"]}</span>
-                <input
+                <Input
                   type="time"
                   value={to}
                   onChange={(event) => setTo(event.target.value)}
-                  className="h-12 w-full rounded-[16px] border border-border bg-white/80 px-4 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15 dark:bg-white/[0.04]"
+                  className="h-9 bg-background"
                 />
               </label>
             </div>
@@ -159,22 +161,22 @@ export function AvailabilityForm({ t, current }: AvailabilityFormProps) {
         ) : null}
 
         {error ? (
-          <p className="rounded-[16px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/25 dark:bg-red-500/10 dark:text-red-300">
+          <div className="rounded-md border border-critical/20 bg-critical-bg px-4 py-3 text-sm text-critical-text">
             {error}
-          </p>
+          </div>
         ) : null}
 
         <div className="flex items-center gap-3">
-          <button
+          <Button
             type="submit"
             disabled={submitting}
-            className="inline-flex h-12 items-center gap-2 rounded-[16px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px] disabled:opacity-60"
+            className="h-9 gap-1.5"
           >
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             {submitting ? "..." : t["common_save"]}
-          </button>
+          </Button>
           {saved ? (
-            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-text">
               <CheckCircle2 className="h-4 w-4" />
               {t["availability_saved"]}
             </span>

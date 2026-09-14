@@ -7,9 +7,9 @@ export default async function SuspendedPage() {
 
   return (
     <main className="hero-glow flex min-h-screen items-center justify-center px-6 py-12">
-      <div className="surface-panel w-full max-w-md rounded-[36px] border border-white/60 p-10 text-center">
+      <div className="surface-panel w-full max-w-md rounded-lg border border-border p-8 text-center shadow-sm">
         <div className="flex items-center justify-between">
-          <div className="mx-auto grid size-16 place-content-center rounded-[20px] bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400">
+          <div className="mx-auto grid size-16 place-content-center rounded-lg bg-critical-bg text-critical-text">
             <CircleSlash2 className="h-8 w-8" />
           </div>
           <LanguageSwitcher />

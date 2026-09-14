@@ -35,7 +35,7 @@ const PlanBanner = dynamic(
     loading: () => (
       <div
         aria-hidden="true"
-        className="surface-panel mx-auto mb-6 h-16 max-w-6xl animate-pulse rounded-[22px] border border-white/55 dark:border-white/6"
+        className="mx-auto mb-6 h-16 max-w-6xl animate-pulse rounded-lg border border-border bg-card shadow-xs"
       />
     ),
   },
@@ -80,21 +80,21 @@ const TaskItem = React.memo(function TaskItem({
 }) {
   const { lang } = useLocale();
   return (
-    <article className="surface-panel overflow-hidden rounded-[24px] border border-white/60 dark:border-white/6">
+    <article className="overflow-hidden rounded-lg border border-border bg-card shadow-xs">
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={open}
-        className="flex w-full items-center gap-3 p-4 text-start"
+        className="flex w-full items-center gap-3 p-4 text-start transition-colors hover:bg-muted-bg/50 cursor-pointer"
       >
-        <span className="grid size-10 shrink-0 place-content-center rounded-[14px] bg-primary/10 text-primary">
+        <span className="grid size-9 shrink-0 place-content-center rounded-md bg-primary/10 text-primary">
           <RoleIcon name={task.icon} />
         </span>
         <span className="min-w-0 flex-1">
           <span className="block text-xs text-muted-foreground">
             {String(index + 1).padStart(2, "0")}
           </span>
-          <span className="block truncate font-semibold">{task.title[lang]}</span>
+          <span className="block truncate font-semibold text-foreground">{task.title[lang]}</span>
         </span>
         <ChevronDown
           className={cn(
@@ -104,28 +104,28 @@ const TaskItem = React.memo(function TaskItem({
         />
       </button>
       {open ? (
-        <div className="border-t border-white/60 px-4 py-4 dark:border-white/6">
+        <div className="border-t border-border bg-muted-bg/30 px-5 py-4">
           {task.where[lang].length > 0 ? (
             <p className="text-sm">
-              <span className="font-semibold">{whereLabel}: </span>
+              <span className="font-semibold text-foreground">{whereLabel}: </span>
               <span className="text-muted-foreground">{task.where[lang]}</span>
             </p>
           ) : null}
           <ol className="mt-3 space-y-2">
             {task.steps.map((step, stepIndex) => (
-              <li key={stepIndex} className="flex gap-2.5 text-sm leading-7">
-                <span className="grid size-6 shrink-0 place-content-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+              <li key={stepIndex} className="flex gap-2.5 text-sm leading-6">
+                <span className="grid size-5 shrink-0 place-content-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                   {stepIndex + 1}
                 </span>
-                <span>{step[lang]}</span>
+                <span className="text-foreground/90">{step[lang]}</span>
               </li>
             ))}
           </ol>
           {task.result[lang].length > 0 ? (
-            <p className="mt-2 flex gap-2 text-sm">
+            <p className="mt-2 flex items-center gap-2 text-sm">
               <Eye className="h-4 w-4 shrink-0 text-muted-foreground" />
               <span>
-                <span className="font-semibold">{resultLabel}: </span>
+                <span className="font-semibold text-foreground">{resultLabel}: </span>
                 <span className="text-muted-foreground">{task.result[lang]}</span>
               </span>
             </p>
@@ -185,13 +185,13 @@ export function PublicUserStories() {
       <PlanBanner />
 
       <div className="flex w-full flex-col gap-6 pb-6">
-        <section className="hero-glow surface-panel rounded-[28px] border border-white/60 px-6 py-6 dark:border-white/6">
+        <section className="rounded-lg border border-border bg-card p-5 shadow-xs">
           <div className="flex items-center gap-3">
-            <div className="grid size-11 place-content-center rounded-[16px] bg-primary/10 text-primary">
+            <div className="grid size-10 place-content-center rounded-md bg-primary/10 text-primary">
               <BookOpen className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-2xl font-semibold tracking-[-0.03em]">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground">
                 {t("nav_rolesGuide")}
               </h2>
               <p className="text-sm text-muted-foreground">{t("rg_subtitle")}</p>
@@ -203,7 +203,7 @@ export function PublicUserStories() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder={t("rg_search")}
-              className="h-11 w-full rounded-[16px] border border-border bg-white/80 pe-4 ps-10 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15 dark:bg-white/[0.04]"
+              className="h-9 w-full rounded-md border border-input bg-background pe-4 ps-10 text-sm outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
             />
           </div>
         </section>
@@ -215,10 +215,10 @@ export function PublicUserStories() {
               type="button"
               onClick={() => setActiveId(item.id)}
               className={cn(
-                "inline-flex shrink-0 items-center gap-2 rounded-[14px] border px-3 py-2 text-sm font-semibold transition",
+                "inline-flex shrink-0 items-center gap-2 rounded-md border px-3 py-2 text-sm font-semibold transition cursor-pointer",
                 item.id === role.id
                   ? "border-primary bg-primary text-primary-foreground"
-                  : "border-white/60 bg-white/70 text-muted-foreground dark:border-white/6 dark:bg-white/[0.04]",
+                  : "border-border bg-card text-muted-foreground hover:bg-muted-bg",
               )}
             >
               <RoleIcon name={item.icon} />
@@ -229,23 +229,23 @@ export function PublicUserStories() {
 
         <div className="grid gap-6 md:grid-cols-[280px_1fr]">
           <aside className="hidden md:block">
-            <div className="surface-panel sticky top-4 rounded-[24px] border border-white/60 p-3 dark:border-white/6">
+            <div className="sticky top-4 rounded-lg border border-border bg-card p-3 shadow-xs space-y-1">
               {stories.map((item) => (
                 <button
                   key={item.id}
                   type="button"
                   onClick={() => setActiveId(item.id)}
                   className={cn(
-                    "mb-1 flex w-full items-center gap-3 rounded-[16px] px-3 py-2.5 text-start text-sm font-semibold transition",
+                    "flex w-full items-center gap-3 rounded-md px-3 py-2 text-start text-sm font-semibold transition cursor-pointer",
                     item.id === role.id
                       ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-white/70 hover:text-foreground dark:hover:bg-white/[0.05]",
+                      : "text-muted-foreground hover:bg-muted-bg hover:text-foreground",
                   )}
                 >
                   <span
                     className={cn(
-                      "grid size-9 shrink-0 place-content-center rounded-[12px]",
-                      item.id === role.id ? "bg-white/20" : "bg-primary/10 text-primary",
+                      "grid size-8 shrink-0 place-content-center rounded-md",
+                      item.id === role.id ? "bg-primary-foreground/20 text-primary-foreground" : "bg-primary/10 text-primary",
                     )}
                   >
                     <RoleIcon name={item.icon} />
@@ -266,46 +266,46 @@ export function PublicUserStories() {
             </div>
           </aside>
 
-          <div className="min-w-0">
-            <section className="surface-panel rounded-[24px] border border-white/60 p-5 dark:border-white/6">
+          <div className="min-w-0 space-y-4">
+            <section className="rounded-lg border border-border bg-card p-5 shadow-xs">
               <div className="flex items-center gap-3">
-                <span className="grid size-11 shrink-0 place-content-center rounded-[16px] bg-primary/10 text-primary">
+                <span className="grid size-10 shrink-0 place-content-center rounded-md bg-primary/10 text-primary">
                   <RoleIcon name={role.icon} className="h-5 w-5" />
                 </span>
-                <h3 className="text-xl font-semibold">{role.name[lang]}</h3>
+                <h3 className="text-xl font-bold text-foreground">{role.name[lang]}</h3>
               </div>
-              <h4 className="mt-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              <h4 className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("rg_profile")}
               </h4>
-              <p className="mt-1 text-sm leading-7">{role.profile[lang]}</p>
-              <h4 className="mt-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              <p className="mt-1 text-sm leading-6 text-foreground/90">{role.profile[lang]}</p>
+              <h4 className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("rg_landing")}
               </h4>
-              <p className="mt-1 text-sm leading-7">{role.landing[lang]}</p>
+              <p className="mt-1 text-sm leading-6 text-foreground/90">{role.landing[lang]}</p>
             </section>
 
-            <section className="surface-panel mt-4 rounded-[24px] border border-white/60 p-5 dark:border-white/6">
-              <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            <section className="rounded-lg border border-border bg-card p-5 shadow-xs">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("rg_modules")}
               </h4>
               <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                 {role.modules.map((key) => (
                   <li key={key} className="flex items-center gap-2 text-sm">
-                    <span className="grid size-6 shrink-0 place-content-center rounded-full bg-emerald-500/12 text-emerald-700 dark:text-emerald-300">
+                    <span className="grid size-5 shrink-0 place-content-center rounded-full bg-success-bg text-success-text">
                       <Check className="h-3.5 w-3.5" />
                     </span>
-                    <span className="truncate">{moduleLabel(key)}</span>
+                    <span className="truncate text-foreground/90">{moduleLabel(key)}</span>
                   </li>
                 ))}
               </ul>
             </section>
 
-            <section className="mt-4">
-              <h4 className="mb-2 px-1 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            <section>
+              <h4 className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("userStories_sampleTasks")} ({tasks.length})
               </h4>
               {tasks.length === 0 ? (
-                <p className="surface-panel rounded-[24px] border border-white/60 p-5 text-sm text-muted-foreground dark:border-white/6">
+                <p className="rounded-lg border border-border bg-card p-5 text-sm text-muted-foreground shadow-xs">
                   {t("rg_noResults")}
                 </p>
               ) : null}
@@ -327,17 +327,17 @@ export function PublicUserStories() {
             </section>
 
             {role.boundaries.length > 0 ? (
-              <section className="surface-panel mt-4 rounded-[24px] border border-white/60 p-5 dark:border-white/6">
-                <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              <section className="rounded-lg border border-border bg-card p-5 shadow-xs">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {t("rg_boundaries")}
                 </h4>
                 <ul className="mt-3 space-y-2">
                   {role.boundaries.map((boundary, index) => (
-                    <li key={index} className="flex gap-2 text-sm leading-7">
-                      <span className="grid size-6 shrink-0 place-content-center rounded-full bg-red-500/10 text-red-600 dark:text-red-300">
+                    <li key={index} className="flex items-center gap-2 text-sm leading-6">
+                      <span className="grid size-5 shrink-0 place-content-center rounded-full bg-critical-bg text-critical-text">
                         <X className="h-3.5 w-3.5" />
                       </span>
-                      <span>{boundary[lang]}</span>
+                      <span className="text-foreground/90">{boundary[lang]}</span>
                     </li>
                   ))}
                 </ul>

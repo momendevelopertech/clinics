@@ -9,7 +9,7 @@ export const metadata = {
 export default function OfflinePage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-background px-4 text-center">
-      <div className="mb-6 grid size-20 place-content-center rounded-[24px] bg-muted">
+      <div className="mb-6 grid size-20 place-content-center rounded-lg bg-muted">
         <WifiOff className="h-10 w-10 text-muted-foreground" />
       </div>
       <h1 className="text-2xl font-semibold tracking-tight">You&apos;re Offline</h1>
@@ -19,7 +19,7 @@ export default function OfflinePage() {
       </p>
       <Link
         href="/dashboard"
-        className="mt-8 inline-flex h-11 items-center gap-2 rounded-[16px] bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition hover:translate-y-[-1px]"
+        className="mt-8 inline-flex h-9 items-center gap-2 rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
       >
         <Activity className="h-4 w-4" />
         Try Dashboard

@@ -291,10 +291,10 @@ export default async function PatientTimelinePage({
         {t["timeline_backToPatients"]}
       </Link>
 
-      <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+      <div className="rounded-lg border border-border bg-card p-6 shadow-xs">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold tracking-[-0.03em]">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
               {patient.firstName} {patient.lastName}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -304,7 +304,7 @@ export default async function PatientTimelinePage({
                 : "—"}
             </p>
           </div>
-          <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold text-primary print-hide">
+          <div className="flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary print-hide">
             <FileText className="h-4 w-4" />
             {events.length}
           </div>
@@ -318,17 +318,17 @@ export default async function PatientTimelinePage({
               />
             </div>
           ) : null}
-          <Link href="/prescriptions" className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground shadow print-hide hover:bg-primary/90">
+          <Link href="/prescriptions" className="inline-flex h-9 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-xs print-hide hover:bg-primary-hover transition-colors">
             <Pill className="h-4 w-4" /> {t["nav_prescriptions"] ?? "Prescriptions"}
           </Link>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
-          <span className="rounded-full bg-neutral-100 px-3 py-1 font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+          <span className="rounded-full bg-muted-bg px-3 py-1 font-medium text-muted-foreground">
             {t["timeline_attendance"]}: {attendance.completed} · {attendance.noShows}{" "}
             {t["timeline_noShow"]} · {attendance.lateCancels} {t["timeline_lateCancels"]}
           </span>
           {attendance.flagged && (
-            <span className="rounded-full bg-red-100 px-3 py-1 font-semibold text-red-700 dark:bg-red-900/40 dark:text-red-300">
+            <span className="rounded-full bg-critical-bg text-critical-text border border-critical/30 px-3 py-1 font-semibold">
               {t["timeline_policyFlag"]}
             </span>
           )}
@@ -342,7 +342,7 @@ export default async function PatientTimelinePage({
       <PatientAllergiesCard patientId={patientId} t={t} />
 
       {events.length === 0 ? (
-        <p className="rounded-[20px] border border-white/55 bg-white/60 p-8 text-center text-sm text-muted-foreground dark:border-white/6 dark:bg-white/[0.03]">
+        <p className="rounded-lg border border-border bg-card p-8 text-center text-sm text-muted-foreground shadow-xs">
           {t["timeline_empty"]}
         </p>
       ) : (
@@ -351,7 +351,7 @@ export default async function PatientTimelinePage({
             const Icon = iconFor(event);
             const content = (
               <>
-                <div className="grid size-11 shrink-0 place-content-center rounded-[14px] bg-primary/10 text-primary">
+                <div className="grid size-10 shrink-0 place-content-center rounded-md bg-primary/10 text-primary">
                   <Icon className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -359,7 +359,7 @@ export default async function PatientTimelinePage({
                     <p className="truncate text-sm font-semibold text-foreground">
                       {event.title}
                     </p>
-                    <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                    <span className="rounded-full bg-muted-bg px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
                       {eventLabel(event)}
                     </span>
                   </div>
@@ -377,12 +377,12 @@ export default async function PatientTimelinePage({
             return (
               <li
                 key={event.id}
-                className="flex gap-4 rounded-[20px] border border-white/55 bg-white/60 p-4 dark:border-white/6 dark:bg-white/[0.03]"
+                className="flex gap-4 rounded-lg border border-border bg-card p-4 shadow-xs"
               >
                 {event.href && event.kind === "prescription" ? (
                   <Link
                     href={event.href}
-                    className="flex flex-1 gap-4 rounded-lg outline-none transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-primary"
+                    className="flex flex-1 gap-4 rounded-md outline-none transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-primary"
                   >
                     {content}
                   </Link>

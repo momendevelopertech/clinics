@@ -15,8 +15,6 @@ import { checkPlanLimit } from "@/lib/plans";
 import { appointmentUpdateSchema, appointmentCreateSchema } from "@/lib/validations/appointment";
 import { isAppointmentTransitionAllowed } from "@/lib/appointments";
 
-const ACTIVE_STATUSES = ["scheduled", "confirmed", "arrived", "in_progress"];
-
 export async function GET() {
   try {
     const orgId = await getOrgId();

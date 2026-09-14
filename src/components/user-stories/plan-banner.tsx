@@ -52,15 +52,15 @@ export function PlanBanner() {
     return (
       <div
         aria-hidden="true"
-        className="surface-panel mx-auto mb-6 h-16 max-w-6xl animate-pulse rounded-[22px] border border-white/55 dark:border-white/6"
+        className="mx-auto mb-6 h-16 max-w-6xl animate-pulse rounded-lg border border-border bg-card shadow-xs"
       />
     );
   }
 
   return (
-    <div className="surface-panel mx-auto mb-6 flex max-w-6xl flex-wrap items-center justify-between gap-3 rounded-[22px] border border-white/55 px-5 py-4 dark:border-white/6">
+    <div className="mx-auto mb-6 flex max-w-6xl flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card px-5 py-4 shadow-xs">
       <p className="flex items-center gap-2 text-sm">
-        <span className="grid size-9 place-content-center rounded-[12px] bg-primary/10 text-primary">
+        <span className="grid size-9 place-content-center rounded-md bg-primary/10 text-primary">
           <CreditCard className="h-4 w-4" />
         </span>
         <span className="text-muted-foreground">{t("plan_currentPlan")}: </span>

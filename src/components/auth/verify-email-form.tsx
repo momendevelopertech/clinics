@@ -70,36 +70,36 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
   }
 
   return (
-    <main className="hero-glow flex min-h-screen items-center justify-center px-6 py-12">
-      <div className="surface-panel w-full max-w-md rounded-[36px] border border-white/60 p-10 text-center">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8 sm:px-6">
+      <div className="w-full max-w-md rounded-lg border border-border bg-card p-8 text-center shadow-xl">
         {state === "verifying" || state === "pending" ? (
           <>
-            <div className="mx-auto grid size-16 place-content-center rounded-[20px] bg-primary/10 text-primary">
-              <Loader2 className="h-8 w-8 animate-spin" />
+            <div className="mx-auto grid size-12 place-content-center rounded-full bg-primary/10 text-primary">
+              <Loader2 className="h-6 w-6 animate-spin" />
             </div>
-            <h1 className="mt-6 text-2xl font-semibold tracking-[-0.03em]">
+            <h1 className="mt-5 text-2xl font-bold tracking-tight text-foreground">
               {t["verify_title"]}
             </h1>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
               {t["verify_pending"]}
             </p>
             {!initialToken ? (
-              <div className="mt-8">
+              <div className="mt-6">
                 <button
                   onClick={() => void handleResend()}
                   disabled={resending}
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-[16px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 disabled:opacity-60"
+                  className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary hover:bg-primary/90 px-5 text-xs font-semibold text-primary-foreground transition-colors shadow-xs disabled:opacity-60 cursor-pointer"
                 >
                   <MailCheck className="h-4 w-4" />
                   {resending ? "..." : t["verify_resend"]}
                 </button>
                 {resent ? (
-                  <p className="mt-4 text-sm font-medium text-emerald-600">
+                  <p className="mt-3 text-xs font-semibold text-success-text">
                     {t["verify_resent"]}
                   </p>
                 ) : null}
                 {resendError ? (
-                  <p className="mt-4 text-sm font-medium text-red-600">
+                  <p className="mt-3 text-xs font-semibold text-critical-text">
                     {t["verify_resendError"]}
                   </p>
                 ) : null}
@@ -110,16 +110,16 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
 
         {state === "success" ? (
           <>
-            <div className="mx-auto grid size-16 place-content-center rounded-[20px] bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400">
-              <CheckCircle2 className="h-8 w-8" />
+            <div className="mx-auto grid size-12 place-content-center rounded-full bg-success-bg border border-success/30 text-success-text">
+              <CheckCircle2 className="h-6 w-6" />
             </div>
-            <h1 className="mt-6 text-2xl font-semibold tracking-[-0.03em]">
+            <h1 className="mt-5 text-2xl font-bold tracking-tight text-foreground">
               {t["verify_success"]}
             </h1>
-            <div className="mt-8">
+            <div className="mt-6">
               <Link
                 href="/login"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-[16px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20"
+                className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary hover:bg-primary/90 px-5 text-xs font-semibold text-primary-foreground transition-colors shadow-xs"
               >
                 {t["auth_backToLogin"]}
               </Link>
@@ -129,17 +129,17 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
 
         {state === "invalid" ? (
           <>
-            <div className="mx-auto grid size-16 place-content-center rounded-[20px] bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400">
-              <XCircle className="h-8 w-8" />
+            <div className="mx-auto grid size-12 place-content-center rounded-full bg-critical-bg border border-critical/30 text-critical-text">
+              <XCircle className="h-6 w-6" />
             </div>
-            <h1 className="mt-6 text-2xl font-semibold tracking-[-0.03em]">
+            <h1 className="mt-5 text-2xl font-bold tracking-tight text-foreground">
               {t["verify_invalid"]}
             </h1>
-            <div className="mt-8">
+            <div className="mt-6">
               <button
                 onClick={() => void handleResend()}
                 disabled={resending}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-[16px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 disabled:opacity-60"
+                className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary hover:bg-primary/90 px-5 text-xs font-semibold text-primary-foreground transition-colors shadow-xs disabled:opacity-60 cursor-pointer"
               >
                 {resending ? "..." : t["verify_resend"]}
               </button>
@@ -148,7 +148,7 @@ export function VerifyEmailForm({ t, initialToken, initialEmail }: VerifyEmailFo
         ) : null}
 
         {state === "error" ? (
-          <p className="text-sm text-red-600">{t["common_error"]}</p>
+          <p className="text-xs font-semibold text-critical-text">{t["common_error"]}</p>
         ) : null}
       </div>
     </main>

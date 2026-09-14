@@ -84,7 +84,7 @@ export function BookFromWaitlistDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="link" className="p-0 h-auto text-sm font-medium text-indigo-600">
+        <Button variant="link" className="p-0 h-auto text-sm font-medium text-primary">
           <CalendarPlus />{t("wl_book")}
         </Button>
       </DialogTrigger>

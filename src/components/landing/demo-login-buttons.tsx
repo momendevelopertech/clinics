@@ -27,20 +27,20 @@ export function DemoLoginButtons() {
   }
 
   return (
-    <div className="mx-auto mt-8 grid max-w-3xl gap-3 sm:grid-cols-3">
+    <div className="mx-auto mt-3 grid gap-2 sm:grid-cols-3">
       {DEMO_ACCOUNTS.map((account) => (
         <button
           key={account.email}
           onClick={() => handleLogin(account.email, account.password)}
           disabled={pendingEmail !== null}
-          className="flex items-center justify-center gap-2 rounded-[18px] border border-white/60 bg-white/70 px-4 py-3 text-sm font-semibold text-foreground shadow-sm transition hover:bg-white dark:border-white/6 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] disabled:opacity-60"
+          className="flex h-9 items-center justify-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-semibold text-foreground shadow-xs transition hover:bg-muted disabled:opacity-60 cursor-pointer"
         >
           {pendingEmail === account.email ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
           ) : (
-            <LogIn className="h-4 w-4" />
+            <LogIn className="h-3.5 w-3.5 text-primary" />
           )}
-          {account.role}
+          <span className="truncate">{account.role}</span>
         </button>
       ))}
     </div>

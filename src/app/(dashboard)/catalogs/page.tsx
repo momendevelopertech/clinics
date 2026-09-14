@@ -42,7 +42,7 @@ export default function CatalogsPage() {
   if (forbidden) {
     return (
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
-        <h1 className="text-2xl font-bold">{t("catalogs_title")}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("catalogs_title")}</h1>
         <PermissionDenied
           title={t("catalogs_forbiddenTitle") ?? "You don't have permission"}
           description={t("catalogs_forbidden") ?? "Your role can't view service catalogs."}
@@ -68,14 +68,18 @@ export default function CatalogsPage() {
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold">{t("catalogs_title")}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("catalogs_title")}</h1>
         <p className="text-sm text-muted-foreground">{t("catalogs_subtitle")}</p>
       </div>
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? (
+        <div className="rounded-md border border-critical/20 bg-critical-bg p-3 text-sm text-critical-text">
+          {error}
+        </div>
+      ) : null}
       <Input
         type="search"
         placeholder={t("catalogs_search")}
-        className="max-w-sm"
+        className="max-w-sm h-9 bg-background"
         value={searchQuery}
         onChange={(e) => {
           setSearchQuery(e.target.value);
@@ -84,12 +88,13 @@ export default function CatalogsPage() {
         }}
       />
       <PackagesSection />
-      <section className="rounded-xl border bg-white p-5 dark:bg-neutral-900">
-        <h2 className="mb-3 text-lg font-semibold">{t("catalogs_services")}</h2>
+      <section className="rounded-lg border border-border bg-card p-5 shadow-xs">
+        <h2 className="mb-3 text-base font-semibold text-foreground">{t("catalogs_services")}</h2>
         <div className="space-y-2">
           {pagedServices.map((service) => (
-            <div key={service.id} className="flex justify-between rounded-lg border p-3 text-sm">
-              <span>{service.code} · {service.name}</span><span>{service.price}</span>
+            <div key={service.id} className="flex justify-between items-center rounded-md border border-border bg-background p-3 text-sm transition-colors hover:bg-muted-bg/50">
+              <span className="font-medium">{service.code} · {service.name}</span>
+              <span className="font-mono text-muted-foreground">{service.price}</span>
             </div>
           ))}
           {!services.length ? <p className="text-sm text-muted-foreground">{t("catalogs_empty")}</p> : null}
@@ -103,11 +108,15 @@ export default function CatalogsPage() {
           />
         ) : null}
       </section>
-      <section className="rounded-xl border bg-white p-5 dark:bg-neutral-900">
-        <h2 className="mb-3 text-lg font-semibold">{t("catalogs_clinical")}</h2>
+      <section className="rounded-lg border border-border bg-card p-5 shadow-xs">
+        <h2 className="mb-3 text-base font-semibold text-foreground">{t("catalogs_clinical")}</h2>
         <div className="space-y-2">
           {pagedClinical.map((entry) => (
-            <div key={entry.id} className="rounded-lg border p-3 text-sm">{entry.system} · {entry.code} · {entry.name} ({entry.category})</div>
+            <div key={entry.id} className="rounded-md border border-border bg-background p-3 text-sm transition-colors hover:bg-muted-bg/50">
+              <span className="font-mono text-xs text-primary me-2">{entry.system} · {entry.code}</span>
+              <span className="font-medium">{entry.name}</span>
+              <span className="text-xs text-muted-foreground ms-2">({entry.category})</span>
+            </div>
           ))}
           {!clinical.length ? <p className="text-sm text-muted-foreground">{t("catalogs_empty")}</p> : null}
         </div>

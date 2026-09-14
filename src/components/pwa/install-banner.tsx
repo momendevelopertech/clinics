@@ -24,13 +24,13 @@ export function InstallBanner() {
 
   return (
     <div className="fixed bottom-20 right-4 z-50 max-w-sm">
-      <div className="rounded-[20px] border border-white/60 bg-white/95 p-4 shadow-2xl backdrop-blur-sm dark:border-white/6 dark:bg-neutral-900/95">
+      <div className="rounded-lg border border-border bg-card/95 p-4 shadow-xl backdrop-blur-sm">
         <div className="flex items-start gap-3">
-          <div className="grid size-10 shrink-0 place-content-center rounded-[14px] bg-primary/10 text-primary">
+          <div className="grid size-10 shrink-0 place-content-center rounded-md bg-primary/10 text-primary">
             <Download className="h-5 w-5" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold">Install Healthcare CRM</p>
+            <p className="text-sm font-semibold text-foreground">Install Healthcare CRM</p>
             <p className="mt-1 text-xs text-muted-foreground">
               Add to your home screen for quick access and offline support.
             </p>
@@ -38,7 +38,7 @@ export function InstallBanner() {
               <Button
                 size="sm"
                 onClick={install}
-                className="h-8 rounded-[12px] px-3 text-xs"
+                className="h-8 rounded-md px-3 text-xs"
               >
                 Install
               </Button>
@@ -46,7 +46,7 @@ export function InstallBanner() {
                 size="sm"
                 variant="ghost"
                 onClick={handleDismiss}
-                className="h-8 rounded-[12px] px-3 text-xs"
+                className="h-8 rounded-md px-3 text-xs"
               >
                 Not now
               </Button>
@@ -55,7 +55,7 @@ export function InstallBanner() {
           <button
             onClick={handleDismiss}
             aria-label="Dismiss"
-            className="shrink-0 rounded-[10px] p-1 text-muted-foreground hover:bg-muted"
+            className="shrink-0 rounded-md p-1 text-muted-foreground hover:bg-muted"
           >
             <X className="h-4 w-4" />
           </button>

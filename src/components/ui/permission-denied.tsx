@@ -19,11 +19,11 @@ export function PermissionDenied({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-4 rounded-3xl border border-border/60 surface-panel px-6 py-16 text-center",
+        "flex flex-col items-center justify-center gap-4 rounded-lg border border-border surface-panel px-6 py-16 text-center shadow-sm",
         className,
       )}
     >
-      <div className="rounded-full bg-red-500/10 p-4 text-red-600 dark:text-red-400">
+      <div className="rounded-full bg-critical-bg p-4 text-critical-text">
         <ShieldX className="h-8 w-8" />
       </div>
       <div className="space-y-1">

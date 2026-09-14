@@ -137,7 +137,7 @@ export default function ConsentsPage() {
   if (forbidden) {
     return (
       <div className="flex flex-col gap-6 w-full h-full">
-        <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground mb-1">
           {t("consent_title")}
         </h2>
         <PermissionDenied />
@@ -149,11 +149,11 @@ export default function ConsentsPage() {
     <div className="flex flex-col gap-6 w-full h-full">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">
-            <CheckCircle2 className="w-6 h-6 inline me-2" />
+          <h2 className="text-2xl font-bold tracking-tight text-foreground mb-1">
+            <CheckCircle2 className="w-6 h-6 inline me-2 text-primary" />
             {t("consent_title")}
           </h2>
-          <p className="text-sm text-neutral-500">{t("consent_subtitle")}</p>
+          <p className="text-sm text-muted-foreground">{t("consent_subtitle")}</p>
         </div>
 
         <FeatureTip tipId="consents-log">
@@ -163,8 +163,8 @@ export default function ConsentsPage() {
         </FeatureTip>
       </div>
 
-      <div className="bg-white dark:bg-neutral-900 border rounded-[5px] flex-1 shadow-sm flex flex-col pt-2">
-        <div className="px-6 py-4 border-b">
+      <div className="bg-card border border-border rounded-lg flex-1 shadow-sm flex flex-col pt-2 overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
           <FilterBar
             hasActiveFilters={searchQuery !== "" || grantedFilter !== null}
             onReset={resetFilters}
@@ -172,7 +172,7 @@ export default function ConsentsPage() {
             <Input
               type="search"
               placeholder={t("consent_searchPlaceholder")}
-              className="w-full sm:max-w-sm"
+              className="w-full sm:max-w-sm h-9"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -184,7 +184,7 @@ export default function ConsentsPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 h-9"
                 >
                   <FilterIcon className="w-4 h-4" /> {t("common_status")}
                 </Button>
@@ -227,7 +227,7 @@ export default function ConsentsPage() {
               variant="outline"
               size="sm"
               onClick={handleExport}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 h-9"
             >
               <Download className="w-4 h-4" /> {t("common_export")}
             </Button>
@@ -236,20 +236,20 @@ export default function ConsentsPage() {
 
         <div className="p-0 overflow-x-auto flex-1">
           <table className="w-full text-sm text-start">
-            <thead className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 font-medium">
+            <thead className="bg-muted-bg text-muted-foreground font-medium">
               <tr>
-                <th className="px-6 py-4 border-b">{t("common_patient")}</th>
-                <th className="px-6 py-4 border-b">{t("consent_colType")}</th>
-                <th className="px-6 py-4 border-b">{t("common_status")}</th>
-                <th className="px-6 py-4 border-b hidden md:table-cell">
+                <th className="px-6 py-3 border-b border-border text-start">{t("common_patient")}</th>
+                <th className="px-6 py-3 border-b border-border text-start">{t("consent_colType")}</th>
+                <th className="px-6 py-3 border-b border-border text-start">{t("common_status")}</th>
+                <th className="px-6 py-3 border-b border-border text-start hidden md:table-cell">
                   {t("consent_colSigned")}
                 </th>
-                <th className="px-6 py-4 border-b hidden md:table-cell">
+                <th className="px-6 py-3 border-b border-border text-start hidden md:table-cell">
                   {t("consent_colDocument")}
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
+            <tbody className="divide-y divide-border text-foreground">
               {showSkeleton ? (
                 <tr>
                   <td colSpan={5} className="px-0">
@@ -270,7 +270,7 @@ export default function ConsentsPage() {
                   <td colSpan={5} className="px-0 py-4">
                     <EmptyState
                       icon={
-                        <CheckCircle2 className="w-10 h-10 text-neutral-300" />
+                        <CheckCircle2 className="w-10 h-10 text-muted-foreground/40" />
                       }
                       title={t("consent_empty")}
                     />
@@ -280,29 +280,29 @@ export default function ConsentsPage() {
                 pagedConsents.map((consent) => (
                   <tr
                     key={consent.id}
-                    className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition"
+                    className="hover:bg-muted-bg/50 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-[5px] bg-green-100 text-green-700 font-bold flex justify-center items-center text-xs">
+                        <div className="w-8 h-8 rounded-md bg-muted-bg border border-border/50 text-foreground font-bold flex justify-center items-center text-xs">
                           {consent.patientName
                             .split(" ")
                             .map((n) => n[0])
                             .join("")
                             .slice(0, 2)}
                         </div>
-                        <p className="font-medium">{consent.patientName}</p>
+                        <p className="font-medium text-foreground">{consent.patientName}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="font-medium">{consent.consentType}</p>
+                      <p className="font-medium text-foreground">{consent.consentType}</p>
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${
+                        className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           consent.isGranted
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                            ? "bg-success-bg text-success-text"
+                            : "bg-critical-bg text-critical-text"
                         }`}
                       >
                         {consent.isGranted
@@ -310,7 +310,7 @@ export default function ConsentsPage() {
                           : t("consent_denied")}
                       </span>
                     </td>
-                    <td className="px-6 py-4 hidden md:table-cell">
+                    <td className="px-6 py-4 hidden md:table-cell text-muted-foreground">
                       {consent.signedAt
                         ? new Date(consent.signedAt).toLocaleDateString()
                         : "-"}
@@ -321,12 +321,12 @@ export default function ConsentsPage() {
                           href={consent.documentUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline"
+                          className="text-primary hover:underline"
                         >
                           {t("common_view")}
                         </a>
                       ) : (
-                        <span className="text-neutral-500">-</span>
+                        <span className="text-muted-foreground">-</span>
                       )}
                     </td>
                   </tr>

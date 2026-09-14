@@ -132,10 +132,10 @@ function MedicationNameInput({
     }
   }, []);
 
-  const scheduleLoad = (query: string) => {
+  const scheduleLoad = React.useCallback((query: string) => {
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
     debounceRef.current = window.setTimeout(() => void load(query), 200);
-  };
+  }, [load]);
 
   React.useEffect(() => {
     if (open) {
@@ -145,7 +145,7 @@ function MedicationNameInput({
     return () => {
       if (debounceRef.current) window.clearTimeout(debounceRef.current);
     };
-  }, [open]);
+  }, [open, value, load, scheduleLoad]);
 
   const apply = (item: FavoriteItem) => {
     onChange(item.medicationName);
@@ -196,8 +196,8 @@ function MedicationNameInput({
                   type="button"
                   className={`flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition ${
                     index === activeIndex
-                      ? "bg-neutral-100 dark:bg-neutral-800"
-                      : "hover:bg-neutral-50 dark:hover:bg-neutral-800/60"
+                      ? "bg-accent text-accent-foreground"
+                      : "hover:bg-muted/50"
                   }`}
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={() => apply(item)}
@@ -261,18 +261,7 @@ export function NewPrescriptionDialog({
   const [templateShared, setTemplateShared] = React.useState(false);
   const [savingTemplate, setSavingTemplate] = React.useState(false);
 
-  React.useEffect(() => {
-    if (open) {
-      fetchPatients();
-      void fetchTemplates();
-      setWarnings([]);
-      if (initialLines && initialLines.length > 0) {
-        setLines(toMedLines(initialLines));
-      }
-    }
-  }, [open]);
-
-  const fetchPatients = async () => {
+  const fetchPatients = React.useCallback(async () => {
     try {
       const response = await fetch("/api/patients");
       if (!response.ok) throw new Error("Failed to fetch patients");
@@ -282,7 +271,7 @@ export function NewPrescriptionDialog({
       toast.error(t("rx_loadPatientsError"));
       logClientError("Prescription patient lookup failed", error);
     }
-  };
+  }, [t]);
 
   const fetchTemplates = React.useCallback(async () => {
     try {
@@ -294,6 +283,24 @@ export function NewPrescriptionDialog({
       logClientError("Prescription templates fetch failed", error);
     }
   }, []);
+
+  const initialLinesRef = React.useRef(initialLines);
+
+  React.useEffect(() => {
+    initialLinesRef.current = initialLines;
+  });
+
+  React.useEffect(() => {
+    if (open) {
+      fetchPatients();
+      void fetchTemplates();
+      setWarnings([]);
+      const seeded = initialLinesRef.current;
+      if (seeded && seeded.length > 0) {
+        setLines(toMedLines(seeded));
+      }
+    }
+  }, [open, fetchPatients, fetchTemplates]);
 
   const applyTemplate = (tpl: TemplateItem) => {
     const filledCount = lines.filter((line) => line.medicationName.trim().length > 0).length;
@@ -484,7 +491,7 @@ export function NewPrescriptionDialog({
                       <li key={tpl.id}>
                         <button
                           type="button"
-                          className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition hover:bg-neutral-50 dark:hover:bg-neutral-800/60"
+                          className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition hover:bg-muted/50"
                           onClick={() => applyTemplate(tpl)}
                         >
                           <span className="flex min-w-0 flex-col">
@@ -527,10 +534,10 @@ export function NewPrescriptionDialog({
             {lines.map((line, index) => (
               <div
                 key={index}
-                className="rounded-[16px] border border-white/60 bg-white/60 p-4 dark:border-white/6 dark:bg-white/[0.03]"
+                className="rounded-lg border border-border bg-card p-4 shadow-xs"
               >
                 <div className="mb-3 flex items-center justify-between">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     {t("rx_line")} {index + 1}
                   </p>
                   {lines.length > 1 ? (
@@ -538,7 +545,7 @@ export function NewPrescriptionDialog({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="h-7 w-7 rounded-full p-0 text-red-600"
+                      className="h-7 w-7 rounded-md p-0 text-destructive hover:text-destructive"
                       onClick={() => removeLine(index)}
                       aria-label={t("rx_removeLine")}
                     >
@@ -548,7 +555,7 @@ export function NewPrescriptionDialog({
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="flex flex-col gap-1 sm:col-span-2">
-                    <Label>{t("rx_medication")}</Label>
+                    <Label className="text-xs font-semibold">{t("rx_medication")}</Label>
                     <MedicationNameInput
                       value={line.medicationName}
                       onChange={(value) => updateLine(index, "medicationName", value)}
@@ -565,34 +572,34 @@ export function NewPrescriptionDialog({
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <Label>{t("rx_dosage")}</Label>
+                    <Label className="text-xs font-semibold">{t("rx_dosage")}</Label>
                     <Input
                       value={line.dosage}
                       onChange={(e) => updateLine(index, "dosage", e.target.value)}
                       placeholder={t("rx_dosagePlaceholder")}
-                      className="ltr-on-rtl"
+                      className="ltr-on-rtl h-9"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <Label>{t("rx_frequency")}</Label>
+                    <Label className="text-xs font-semibold">{t("rx_frequency")}</Label>
                     <Input
                       value={line.frequency}
                       onChange={(e) => updateLine(index, "frequency", e.target.value)}
                       placeholder={t("rx_frequencyPlaceholder")}
-                      className="ltr-on-rtl"
+                      className="ltr-on-rtl h-9"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <Label>{t("rx_duration")}</Label>
+                    <Label className="text-xs font-semibold">{t("rx_duration")}</Label>
                     <Input
                       value={line.duration}
                       onChange={(e) => updateLine(index, "duration", e.target.value)}
                       placeholder={t("rx_durationPlaceholder")}
-                      className="ltr-on-rtl"
+                      className="ltr-on-rtl h-9"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <Label>{t("rx_instructions")}</Label>
+                    <Label className="text-xs font-semibold">{t("rx_instructions")}</Label>
                     <Textarea
                       value={line.instructions}
                       onChange={(e) => updateLine(index, "instructions", e.target.value)}
@@ -606,11 +613,11 @@ export function NewPrescriptionDialog({
           </div>
 
           <Button type="button" variant="outline" size="sm" onClick={addLine} className="self-start">
-            <Plus className="h-4 w-4" /> {t("rx_addLine")}
+            <Plus className="mr-1.5 h-4 w-4" /> {t("rx_addLine")}
           </Button>
 
           {warnings.length > 0 ? (
-            <div className="flex items-start gap-2 rounded-[14px] border border-amber-400/50 bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-500/10 dark:text-amber-200">
+            <div className="flex items-start gap-2 rounded-md border border-warning/30 bg-warning-bg p-3 text-sm text-warning-text">
               <X className="mt-0.5 h-4 w-4 shrink-0" />
               <p>
                 {t("rx_allergyWarning")}: {warnings.join(", ")}
@@ -618,17 +625,17 @@ export function NewPrescriptionDialog({
             </div>
           ) : null}
 
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 pt-2 border-t border-border">
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              <X />{t("common_cancel")}
+              <X className="mr-1.5 h-4 w-4" />{t("common_cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              <Save />{loading ? t("common_loading") : t("rx_save")}
+              <Save className="mr-1.5 h-4 w-4" />{loading ? t("common_loading") : t("rx_save")}
             </Button>
           </div>
         </form>
@@ -664,7 +671,7 @@ export function NewPrescriptionDialog({
                 type="checkbox"
                 checked={templateShared}
                 onChange={(e) => setTemplateShared(e.target.checked)}
-                className="h-4 w-4 rounded border-neutral-300 accent-[var(--clinic)]"
+                className="h-4 w-4 rounded border-border-muted accent-primary"
               />
               {t("rx_template_share")}
             </label>

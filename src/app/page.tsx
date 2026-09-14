@@ -39,9 +39,9 @@ export default async function HomePage() {
     <main className="min-h-screen">
       {/* Sticky nav */}
       <header className="sticky top-0 z-40 px-4 pt-4 sm:px-6">
-        <div className="surface-panel mx-auto flex h-16 max-w-6xl items-center justify-between rounded-[22px] border border-white/55 px-4 sm:px-6 dark:border-white/6">
+        <div className="surface-panel mx-auto flex h-16 max-w-6xl items-center justify-between rounded-lg border border-border px-4 sm:px-6 shadow-sm">
           <Link href="/" className="flex items-center gap-2">
-            <div className="grid size-9 place-content-center rounded-[14px] bg-linear-to-br from-cyan-500 via-teal-500 to-emerald-500 text-white shadow-lg shadow-cyan-500/20">
+            <div className="grid size-9 place-content-center rounded-md bg-primary text-primary-foreground shadow-sm">
               <Activity className="h-4 w-4" />
             </div>
             <span className="text-lg font-semibold tracking-tight">{t["appName"]}</span>
@@ -73,7 +73,7 @@ export default async function HomePage() {
             {isLoggedIn ? (
               <Link
                 href={dashboardHref}
-                className="rounded-[14px] bg-linear-to-r from-primary to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+                className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
               >
                 {t["nav_dashboard"]}
               </Link>
@@ -87,7 +87,7 @@ export default async function HomePage() {
                 </Link>
                 <Link
                   href="/signup"
-                  className="rounded-[14px] bg-linear-to-r from-primary to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+                  className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
                 >
                   {t["landing_navStartFree"]}
                 </Link>
@@ -100,7 +100,7 @@ export default async function HomePage() {
       {/* Hero */}
       <section className="px-4 pt-16 sm:px-6 lg:pt-24">
         <div className="mx-auto max-w-6xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-primary shadow-sm dark:border-white/6 dark:bg-white/[0.04]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-primary shadow-sm">
             <HeartPulse className="h-3.5 w-3.5" />
             {t["landing_badge"]}
           </div>
@@ -114,7 +114,7 @@ export default async function HomePage() {
             {isLoggedIn ? (
               <Link
                 href={dashboardHref}
-                className="inline-flex h-13 items-center justify-center gap-2 rounded-[18px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
               >
                 {t["nav_dashboard"]}
                 <ArrowRight className="h-4 w-4 rtl:rotate-180" />
@@ -123,14 +123,14 @@ export default async function HomePage() {
               <>
                 <Link
                   href="/signup"
-                  className="inline-flex h-13 items-center justify-center gap-2 rounded-[18px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
                 >
                   {t["landing_heroCta"]}
                   <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                 </Link>
                 <Link
                   href="/login"
-                  className="inline-flex h-13 items-center justify-center rounded-[18px] border border-white/60 bg-white/70 px-6 text-sm font-semibold text-foreground shadow-sm transition hover:bg-white dark:border-white/6 dark:bg-white/[0.04]"
+                  className="inline-flex h-11 items-center justify-center rounded-md border border-border bg-card px-6 text-sm font-semibold text-foreground shadow-sm transition hover:bg-muted"
                 >
                   {t["landing_heroCtaSecondary"]}
                 </Link>
@@ -139,7 +139,7 @@ export default async function HomePage() {
           </div>
 
           {/* Stats strip */}
-          <div className="mt-14 grid gap-3 rounded-[28px] border border-white/55 surface-panel p-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-14 grid gap-3 rounded-lg border border-border surface-panel p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
             {[
               { icon: Trophy, value: "3+", label: t["landing_statsClinics"] },
               { icon: Users, value: "7+", label: t["landing_statsDoctors"] },
@@ -147,7 +147,7 @@ export default async function HomePage() {
               { icon: CalendarCheck2, value: "200+", label: t["landing_statsAppointments"] },
             ].map((stat) => (
               <div key={stat.label} className="flex items-center justify-center gap-3">
-                <div className="grid size-11 place-content-center rounded-[14px] bg-primary/10 text-primary">
+                <div className="grid size-11 place-content-center rounded-md bg-primary/10 text-primary">
                   <stat.icon className="h-5 w-5" />
                 </div>
                 <div className="text-left">
@@ -177,7 +177,7 @@ export default async function HomePage() {
             ].map((item) => (
               <div
                 key={item.step}
-                className="rounded-[28px] border border-white/55 surface-panel p-6"
+                className="rounded-lg border border-border surface-panel p-6 shadow-sm"
               >
                 <p className="font-mono text-sm font-semibold text-primary">{item.step}</p>
                 <h3 className="mt-3 text-xl font-semibold">{item.title}</h3>
@@ -205,9 +205,9 @@ export default async function HomePage() {
             ].map((feature) => (
               <div
                 key={feature.title}
-                className="rounded-[28px] border border-white/55 surface-panel p-6"
+                className="rounded-lg border border-border surface-panel p-6 shadow-sm"
               >
-                <div className="grid size-12 place-content-center rounded-[16px] bg-primary/10 text-primary">
+                <div className="grid size-11 place-content-center rounded-md bg-primary/10 text-primary">
                   <feature.icon className="h-5 w-5" />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold">{feature.title}</h3>
@@ -221,7 +221,7 @@ export default async function HomePage() {
         <div className="mt-8 text-center">
           <Link
             href="/user-stories"
-            className="inline-flex h-13 items-center justify-center gap-2 rounded-[18px] bg-gradient-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
           >
             {t["landing_ctaUserStories"]}
             <ArrowRight className="h-4 w-4 rtl:rotate-180" />
@@ -252,7 +252,7 @@ export default async function HomePage() {
 
       {/* Demo accounts */}
       <section id="demo" className="px-4 pb-24 sm:px-6">
-        <div className="surface-panel mx-auto max-w-4xl rounded-[36px] border border-white/55 p-10 text-center">
+        <div className="surface-panel mx-auto max-w-4xl rounded-lg border border-border p-8 text-center shadow-sm">
           <h2 className="text-3xl font-semibold tracking-[-0.04em]">{t["landing_demoTitle"]}</h2>
           <p className="mt-3 text-sm text-muted-foreground">{t["landing_demoNote"]}</p>
           <DemoLoginButtons />
@@ -272,10 +272,10 @@ export default async function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/55 px-4 py-8 dark:border-white/6">
+      <footer className="border-t border-border px-4 py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-sm text-muted-foreground sm:flex-row">
           <div className="flex items-center gap-2">
-            <div className="grid size-8 place-content-center rounded-[12px] bg-linear-to-br from-cyan-500 via-teal-500 to-emerald-500 text-white">
+            <div className="grid size-8 place-content-center rounded-md bg-primary text-primary-foreground">
               <Activity className="h-3.5 w-3.5" />
             </div>
             <span className="font-semibold text-foreground">{t["appName"]}</span>

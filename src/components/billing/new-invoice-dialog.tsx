@@ -5,7 +5,7 @@ import {
   FileText,
   Plus,
   X,
-} from "lucide-react";;
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -130,8 +130,8 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-indigo-600 hover:bg-indigo-700">
-          <Plus className="w-4 h-4 mr-2" /> New Invoice
+        <Button className="h-9 gap-1.5 text-xs font-semibold shadow-2xs">
+          <Plus className="w-3.5 h-3.5" /> New Invoice
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] max-w-md overflow-y-auto">
@@ -142,19 +142,19 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="gap-2 flex flex-col">
-            <Label htmlFor="invoice-patient">Patient *</Label>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 py-2">
+          <div className="gap-1.5 flex flex-col">
+            <Label htmlFor="invoice-patient" className="text-xs font-semibold">Patient *</Label>
             <Select
               value={formData.patientId}
               onValueChange={(value) =>
                 setFormData({ ...formData, patientId: value })
               }
             >
-              <SelectTrigger id="invoice-patient">
+              <SelectTrigger id="invoice-patient" className="h-9 text-xs">
                 <SelectValue placeholder="Select a patient" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="text-xs">
                 {patients.map((patient) => (
                   <SelectItem key={patient.id} value={patient.id}>
                     {patient.firstName} {patient.lastName}
@@ -164,8 +164,8 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
             </Select>
           </div>
 
-          <div className="gap-2 flex flex-col">
-            <Label htmlFor="invoice-description">Description</Label>
+          <div className="gap-1.5 flex flex-col">
+            <Label htmlFor="invoice-description" className="text-xs font-semibold">Description</Label>
             <Input
               id="invoice-description"
               value={formData.description}
@@ -173,12 +173,13 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
                 setFormData({ ...formData, description: e.target.value })
               }
               placeholder="General consultation"
+              className="h-9 text-xs"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="gap-2 flex flex-col">
-              <Label htmlFor="invoice-quantity">Quantity</Label>
+            <div className="gap-1.5 flex flex-col">
+              <Label htmlFor="invoice-quantity" className="text-xs font-semibold">Quantity</Label>
               <Input
                 id="invoice-quantity"
                 type="number"
@@ -188,10 +189,11 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, quantity: e.target.value })
                 }
+                className="h-9 text-xs"
               />
             </div>
-            <div className="gap-2 flex flex-col">
-              <Label htmlFor="invoice-price">Unit Price ($)</Label>
+            <div className="gap-1.5 flex flex-col">
+              <Label htmlFor="invoice-price" className="text-xs font-semibold">Unit Price ($)</Label>
               <Input
                 id="invoice-price"
                 type="number"
@@ -201,12 +203,13 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, unitPrice: e.target.value })
                 }
+                className="h-9 text-xs"
               />
             </div>
           </div>
 
-          <div className="gap-2 flex flex-col">
-            <Label htmlFor="invoice-due">Due Date</Label>
+          <div className="gap-1.5 flex flex-col">
+            <Label htmlFor="invoice-due" className="text-xs font-semibold">Due Date</Label>
             <Input
               id="invoice-due"
               type="date"
@@ -214,11 +217,12 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
               onChange={(e) =>
                 setFormData({ ...formData, dueDate: e.target.value })
               }
+              className="h-9 text-xs"
             />
           </div>
 
-          <div className="gap-2 flex flex-col">
-            <Label htmlFor="invoice-coupon">Coupon code (optional)</Label>
+          <div className="gap-1.5 flex flex-col">
+            <Label htmlFor="invoice-coupon" className="text-xs font-semibold">Coupon code (optional)</Label>
             <Input
               id="invoice-coupon"
               value={formData.couponCode}
@@ -226,20 +230,22 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
                 setFormData({ ...formData, couponCode: e.target.value.toUpperCase() })
               }
               placeholder="RAMADAN10"
+              className="h-9 text-xs"
             />
           </div>
 
-          <div className="flex gap-2 justify-end">
+          <div className="flex gap-2 justify-end pt-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
               disabled={loading}
+              className="h-9 text-xs"
             >
-              <X />Cancel
+              <X className="mr-1 h-3.5 w-3.5" />Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
-              <FileText />{loading ? "Creating..." : "Create Invoice"}
+            <Button type="submit" disabled={loading} className="h-9 text-xs">
+              <FileText className="mr-1 h-3.5 w-3.5" />{loading ? "Creating..." : "Create Invoice"}
             </Button>
           </div>
         </form>

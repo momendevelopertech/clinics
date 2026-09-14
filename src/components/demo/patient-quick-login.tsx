@@ -56,7 +56,7 @@ export function PatientQuickLogin({
   return (
     <button
       type="button"
-      className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[14px] bg-cyan-600 px-3 text-xs font-semibold text-white shadow-md shadow-cyan-500/20 transition hover:translate-y-[-1px] hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-70"
+      className="inline-flex h-8 items-center justify-center gap-1.5 rounded-md bg-primary hover:bg-primary/90 px-2.5 text-xs font-semibold text-primary-foreground shadow-xs transition-colors disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
       disabled={pending}
       onClick={() => void handleLogin()}
     >

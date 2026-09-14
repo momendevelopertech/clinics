@@ -152,53 +152,66 @@ export function EncountersWorkspace() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("enc_title")}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("enc_title")}</h1>
         <p className="text-sm text-muted-foreground">{t("enc_subtitle")}</p>
       </div>
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
       <Card>
         <CardHeader><CardTitle>{t("enc_start")}</CardTitle></CardHeader>
         <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-end">
         <FeatureTip tipId="encounters-charting">
           <div className="grid flex-1 gap-2">
             <Label htmlFor="encounter-patient">{t("enc_patient")}</Label>
-            <select id="encounter-patient" className="h-10 rounded-md border bg-background px-3 text-sm" value={patientId} onChange={(event) => setPatientId(event.target.value)}>
+            <select id="encounter-patient" className="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" value={patientId} onChange={(event) => setPatientId(event.target.value)}>
               <option value="">{t("enc_selectPatient")}</option>
               {patients.map((patient) => <option key={patient.id} value={patient.id}>{patient.firstName} {patient.lastName} · {patient.mrn}</option>)}
             </select>
           </div>
           </FeatureTip>
-          <Button onClick={() => void startEncounter().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_startError")))}><Plus />{t("enc_start")}</Button>
+          <Button onClick={() => void startEncounter().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_startError")))}><Plus className="mr-1.5 h-4 w-4" />{t("enc_start")}</Button>
         </CardContent>
       </Card>
       <Card>
         <CardHeader><CardTitle>{t("enc_recent")}</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           {encounters.map((encounter) => (
-            <div key={encounter.id} className="rounded-lg border p-4">
+            <div key={encounter.id} className="rounded-lg border border-border bg-card p-4 shadow-xs">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <div><p className="font-medium">{encounter.patient.firstName} {encounter.patient.lastName}</p><p className="text-xs text-muted-foreground">{encounter.encounterType ?? "office_visit"} · {encounter.status}</p></div>
-                {encounter.status === "in_progress" ? <Button size="sm" onClick={() => void complete(encounter.id).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_completeError")))}><CheckCheck />{t("enc_complete")}</Button> : null}
+                <div>
+                  <p className="font-semibold text-foreground">{encounter.patient.firstName} {encounter.patient.lastName}</p>
+                  <p className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
+                    <span>{encounter.encounterType ?? "office_visit"}</span>
+                    <span>·</span>
+                    <span className={`px-2 py-0.5 rounded-md font-semibold text-[11px] ${
+                      encounter.status === "completed"
+                        ? "bg-success-bg text-success-text"
+                        : "bg-primary/10 text-primary"
+                    }`}>
+                      {encounter.status}
+                    </span>
+                  </p>
+                </div>
+                {encounter.status === "in_progress" ? <Button size="sm" onClick={() => void complete(encounter.id).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_completeError")))}><CheckCheck className="mr-1.5 h-4 w-4" />{t("enc_complete")}</Button> : null}
               </div>
-              {encounter.notes.map((entry) => <p key={entry.id} className="mt-3 whitespace-pre-wrap text-sm text-muted-foreground">{entry.text ?? entry.assessment}</p>)}
+              {encounter.notes.map((entry) => <p key={entry.id} className="mt-3 whitespace-pre-wrap text-sm text-foreground bg-muted-bg p-3 rounded-md border border-border">{entry.text ?? entry.assessment}</p>)}
               {encounter.status === "in_progress" ? (
-                <div className="mt-3 flex flex-col gap-2">
+                <div className="mt-3 flex flex-col gap-3">
                   <div className="flex flex-col gap-2 sm:flex-row">
-                    <select className="h-10 flex-1 rounded-md border bg-background px-3 text-sm" value={selectedId === encounter.id ? templateId : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); applyTemplate(event.target.value); }}>
+                    <select className="h-9 flex-1 rounded-md border border-input bg-background px-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" value={selectedId === encounter.id ? templateId : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); applyTemplate(event.target.value); }}>
                       <option value="">{t("enc_tplSelect")}</option>
                       {templates.map((tpl) => <option key={tpl.id} value={tpl.id}>{tpl.name}{tpl.specialty ? ` · ${tpl.specialty}` : ""}</option>)}
                     </select>
                   </div>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    <div className="grid gap-1"><Label>{t("enc_soapSubjective")}</Label><Textarea value={selectedId === encounter.id ? soap.subjective : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, subjective: event.target.value }); }} placeholder={t("enc_soapSubjective")} /></div>
-                    <div className="grid gap-1"><Label>{t("enc_soapObjective")}</Label><Textarea value={selectedId === encounter.id ? soap.objective : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, objective: event.target.value }); }} placeholder={t("enc_soapObjective")} /></div>
-                    <div className="grid gap-1"><Label>{t("enc_soapAssessment")}</Label><Textarea value={selectedId === encounter.id ? soap.assessment : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, assessment: event.target.value }); }} placeholder={t("enc_soapAssessment")} /></div>
-                    <div className="grid gap-1"><Label>{t("enc_soapPlan")}</Label><Textarea value={selectedId === encounter.id ? soap.plan : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, plan: event.target.value }); }} placeholder={t("enc_soapPlan")} /></div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_soapSubjective")}</Label><Textarea value={selectedId === encounter.id ? soap.subjective : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, subjective: event.target.value }); }} placeholder={t("enc_soapSubjective")} /></div>
+                    <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_soapObjective")}</Label><Textarea value={selectedId === encounter.id ? soap.objective : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, objective: event.target.value }); }} placeholder={t("enc_soapObjective")} /></div>
+                    <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_soapAssessment")}</Label><Textarea value={selectedId === encounter.id ? soap.assessment : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, assessment: event.target.value }); }} placeholder={t("enc_soapAssessment")} /></div>
+                    <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_soapPlan")}</Label><Textarea value={selectedId === encounter.id ? soap.plan : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, plan: event.target.value }); }} placeholder={t("enc_soapPlan")} /></div>
                   </div>
-                  <div><Button variant="outline" onClick={() => void addSoapNote().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_noteError")))}><FileText />{t("enc_addNote")}</Button></div>
+                  <div><Button variant="outline" size="sm" onClick={() => void addSoapNote().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_noteError")))}><FileText className="mr-1.5 h-4 w-4" />{t("enc_addNote")}</Button></div>
                   <AiAssistCard encounterId={encounter.id} soap={soap} setSoap={setSoap} />
-                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed p-3">
-                    <div><p className="text-sm font-semibold">{t("rx_cardTitle")}</p><p className="text-xs text-muted-foreground">{t("rx_cardDesc")}</p></div>
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-border p-3 bg-muted-bg">
+                    <div><p className="text-sm font-semibold text-foreground">{t("rx_cardTitle")}</p><p className="text-xs text-muted-foreground">{t("rx_cardDesc")}</p></div>
                     <NewPrescriptionDialog
                       onSuccess={() => { /* list page refreshes itself */ }}
                       defaultPatientId={encounter.patient.id}
@@ -217,17 +230,17 @@ export function EncountersWorkspace() {
         <CardHeader><CardTitle>{t("enc_tplTitle")}</CardTitle></CardHeader>
         <CardContent className="space-y-3">
         {templates.map((tpl) => (
-          <div key={tpl.id} className="flex items-center justify-between gap-3 rounded-lg border p-3">
-          <div><p className="text-sm font-medium">{tpl.name}</p><p className="text-xs text-muted-foreground">{tpl.specialty ?? t("enc_tplGeneral")}</p></div>
-          <Button size="sm" variant="ghost" className="text-red-600" onClick={() => void deleteTemplate(tpl.id).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_tplDeleteError")))}><Trash2 />{t("common_delete")}</Button>
+          <div key={tpl.id} className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-3 shadow-xs">
+          <div><p className="text-sm font-semibold text-foreground">{tpl.name}</p><p className="text-xs text-muted-foreground">{tpl.specialty ?? t("enc_tplGeneral")}</p></div>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => void deleteTemplate(tpl.id).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_tplDeleteError")))}><Trash2 className="mr-1.5 h-4 w-4" />{t("common_delete")}</Button>
           </div>
         ))}
         {!templates.length ? <p className="text-sm text-muted-foreground">{t("enc_tplEmpty")}</p> : null}
-        <div className="grid gap-2 sm:grid-cols-2">
-          <div className="grid gap-1"><Label>{t("enc_tplName")}</Label><Textarea value={tplName} onChange={(event) => setTplName(event.target.value)} placeholder={t("enc_tplName")} /></div>
-          <div className="grid gap-1"><Label>{t("enc_tplSpecialty")}</Label><Textarea value={tplSpecialty} onChange={(event) => setTplSpecialty(event.target.value)} placeholder={t("enc_tplSpecialty")} /></div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_tplName")}</Label><Textarea value={tplName} onChange={(event) => setTplName(event.target.value)} placeholder={t("enc_tplName")} /></div>
+          <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_tplSpecialty")}</Label><Textarea value={tplSpecialty} onChange={(event) => setTplSpecialty(event.target.value)} placeholder={t("enc_tplSpecialty")} /></div>
         </div>
-        <div><Button variant="outline" onClick={() => void saveTemplate().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_tplSaveError")))}><Save />{t("enc_tplSave")}</Button></div>
+        <div><Button variant="outline" size="sm" onClick={() => void saveTemplate().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_tplSaveError")))}><Save className="mr-1.5 h-4 w-4" />{t("enc_tplSave")}</Button></div>
         <p className="text-xs text-muted-foreground">{t("enc_tplSaveHint")}</p>
         </CardContent>
       </Card>

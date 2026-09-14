@@ -60,8 +60,8 @@ export default async function ReceiptPrintPage({
   ].join(", ");
 
   return (
-    <main className="hero-glow min-h-screen px-4 py-8">
-      <div className="mx-auto max-w-[520px]">
+    <main className="min-h-screen bg-muted-bg px-4 py-8">
+      <div className="mx-auto max-w-[560px]">
         <div className="mb-4 flex items-center justify-between print-hide">
           <Link
             href="/payments"
@@ -72,14 +72,14 @@ export default async function ReceiptPrintPage({
           <PrintButton />
         </div>
 
-        <div className="print-sheet surface-panel rounded-[24px] border border-white/55 p-8 dark:border-white/6">
+        <div className="print-sheet rounded-lg border border-border bg-card p-8 shadow-xs">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="grid size-12 place-content-center rounded-[16px] bg-linear-to-br from-cyan-500 via-teal-500 to-emerald-500 text-white">
+              <div className="grid size-10 place-content-center rounded-md bg-primary text-primary-foreground">
                 <Activity className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-lg font-semibold">{invoice.organization.name}</p>
+                <p className="text-lg font-semibold text-foreground">{invoice.organization.name}</p>
                 <p className="text-xs text-muted-foreground">
                   {invoice.organization.address ?? ""}
                   {invoice.organization.phone ? ` · ${invoice.organization.phone}` : ""}
@@ -96,10 +96,10 @@ export default async function ReceiptPrintPage({
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-between rounded-[16px] border border-white/60 bg-white/60 p-4 text-sm dark:border-white/6 dark:bg-white/[0.03]">
+          <div className="mt-6 flex items-center justify-between rounded-lg border border-border bg-muted-bg p-4 text-sm">
             <div>
               <p className="text-xs text-muted-foreground">{t["print_patient"]}</p>
-              <p className="mt-1 font-semibold">
+              <p className="mt-1 font-semibold text-foreground">
                 {invoice.patient.firstName} {invoice.patient.lastName}
               </p>
               <p className="mt-0.5 text-xs text-muted-foreground">
@@ -108,7 +108,7 @@ export default async function ReceiptPrintPage({
             </div>
             <div className="text-right">
               <p className="text-xs text-muted-foreground">{t["print_date"]}</p>
-              <p className="mt-1 font-medium">
+              <p className="mt-1 font-medium text-foreground">
                 {new Intl.DateTimeFormat().format(invoice.createdAt)}
               </p>
               <p className="mt-0.5 text-xs text-muted-foreground">{invoice.status}</p>
@@ -118,7 +118,7 @@ export default async function ReceiptPrintPage({
           <div className="overflow-x-auto print:overflow-visible">
           <table className="mt-6 w-full text-sm">
             <thead>
-              <tr className="border-b border-foreground/15 text-xs text-muted-foreground">
+              <tr className="border-b border-border text-xs text-muted-foreground">
                 <th className="py-2 text-left font-medium">{t["print_item"]}</th>
                 <th className="py-2 text-right font-medium">{t["print_qty"]}</th>
                 <th className="py-2 text-right font-medium">{t["print_unitPrice"]}</th>
@@ -127,11 +127,11 @@ export default async function ReceiptPrintPage({
             </thead>
             <tbody>
               {invoice.lineItems.map((item, index) => (
-                <tr key={index} className="border-b border-foreground/10">
-                  <td className="py-2">{item.description}</td>
+                <tr key={index} className="border-b border-border/60 last:border-0">
+                  <td className="py-2 text-foreground">{item.description}</td>
                   <td className="py-2 text-right ltr-on-rtl">{item.quantity}</td>
                   <td className="py-2 text-right ltr-on-rtl">{fmt(Number(item.unitPrice))}</td>
-                  <td className="py-2 text-right font-medium ltr-on-rtl">
+                  <td className="py-2 text-right font-medium text-foreground ltr-on-rtl">
                     {fmt(Number(item.amount))}
                   </td>
                 </tr>
@@ -141,21 +141,21 @@ export default async function ReceiptPrintPage({
           </div>
 
           <div className="mt-4 space-y-1.5 text-sm">
-            <div className="flex justify-between font-semibold">
+            <div className="flex justify-between font-semibold text-foreground">
               <span>{t["print_total"]}</span>
               <span className="ltr-on-rtl">{fmt(total)}</span>
             </div>
-            <div className="flex justify-between text-emerald-700 dark:text-emerald-400">
+            <div className="flex justify-between text-success-text font-medium">
               <span>{t["print_paid"]}</span>
               <span className="ltr-on-rtl">{fmt(paid)}</span>
             </div>
-            <div className="flex justify-between text-amber-700 dark:text-amber-400">
+            <div className="flex justify-between text-warning-text font-medium">
               <span>{t["print_balance"]}</span>
               <span className="ltr-on-rtl">{fmt(balance)}</span>
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-between gap-4 border-t border-foreground/10 pt-4 text-xs text-muted-foreground">
+          <div className="mt-6 flex items-center justify-between gap-4 border-t border-border pt-4 text-xs text-muted-foreground">
             <span>{t["print_paymentMethod"]}: {paymentMethods || "—"}</span>
             <span className="font-medium text-foreground">{fmt(paid)}</span>
           </div>

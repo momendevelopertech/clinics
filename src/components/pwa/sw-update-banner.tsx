@@ -80,7 +80,7 @@ export function SWUpdateBanner() {
     <div className="fixed bottom-4 left-4 z-50">
       <button
         onClick={() => void applyUpdate()}
-        className="flex items-center gap-2 rounded-[16px] border border-cyan-200 bg-cyan-50 px-4 py-2.5 text-sm font-medium text-cyan-700 shadow-lg backdrop-blur-sm transition hover:bg-cyan-100 dark:border-cyan-800 dark:bg-cyan-950 dark:text-cyan-300 dark:hover:bg-cyan-900"
+        className="flex items-center gap-2 rounded-md border border-accent-blue-text/20 bg-accent-blue-bg px-4 py-2.5 text-sm font-medium text-accent-blue-text shadow-lg backdrop-blur-sm transition hover:opacity-90"
       >
         <RefreshCw className="h-4 w-4" />
         New version available — Refresh

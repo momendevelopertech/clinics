@@ -218,10 +218,10 @@ export function SuperConsole({ t }: { t: Dictionary }) {
   const statusBadge = (status: string) => {
     const styles =
       status === "active"
-        ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+        ? "bg-success-bg text-success-text"
         : status === "suspended"
-          ? "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300"
-          : "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300";
+          ? "bg-critical-bg text-critical-text"
+          : "bg-warning-bg text-warning-text";
     const label =
       status === "active"
         ? t["super_activeOrg"]
@@ -246,18 +246,18 @@ export function SuperConsole({ t }: { t: Dictionary }) {
   ];
 
   return (
-    <main className="hero-glow min-h-screen px-4 py-8 sm:px-6">
+    <main className="min-h-screen bg-background px-4 py-8 sm:px-6">
       <div className="mx-auto max-w-6xl">
         <header className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Link
               href="/super"
-              className="grid size-11 place-content-center rounded-[16px] bg-linear-to-br from-cyan-500 via-teal-500 to-emerald-500 text-white shadow-lg shadow-cyan-500/20"
+              className="grid size-11 place-content-center rounded-lg bg-primary text-primary-foreground shadow-xs"
             >
               <Activity className="h-5 w-5" />
             </Link>
             <div>
-              <h1 className="text-2xl font-semibold tracking-[-0.03em]">{t["super_title"]}</h1>
+              <h1 className="text-2xl font-semibold tracking-[-0.03em] text-foreground">{t["super_title"]}</h1>
               <p className="text-sm text-muted-foreground">{t["super_subtitle"]}</p>
             </div>
           </div>
@@ -265,14 +265,14 @@ export function SuperConsole({ t }: { t: Dictionary }) {
             <button
               onClick={() => void load()}
               disabled={loading}
-              className="grid size-10 place-content-center rounded-[14px] border border-white/60 bg-white/70 text-muted-foreground shadow-sm transition hover:text-foreground dark:border-white/6 dark:bg-white/[0.04] disabled:opacity-50"
+              className="grid size-10 place-content-center rounded-md border border-border bg-card text-muted-foreground shadow-xs transition hover:bg-muted hover:text-foreground disabled:opacity-50"
               aria-label={t["super_refresh"]}
             >
               <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             </button>
             <Link
               href="/super/plans"
-              className="inline-flex items-center gap-2 rounded-[14px] border border-white/60 bg-white/70 px-3 py-2 text-sm font-semibold text-muted-foreground shadow-sm transition hover:text-foreground dark:border-white/6 dark:bg-white/[0.04]"
+              className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm font-semibold text-muted-foreground shadow-xs transition hover:bg-muted hover:text-foreground"
             >
               <Lock className="h-4 w-4" />
               {t["super_navPlans"]}
@@ -282,7 +282,7 @@ export function SuperConsole({ t }: { t: Dictionary }) {
               type="button"
               onClick={() => void handleLogout()}
               disabled={isLoggingOut}
-              className="inline-flex items-center gap-2 rounded-[14px] border border-red-200 bg-white/70 px-3 py-2 text-sm font-semibold text-red-700 shadow-sm transition hover:bg-red-50 disabled:cursor-wait disabled:opacity-60 dark:border-red-400/20 dark:bg-white/[0.04] dark:text-red-300 dark:hover:bg-red-400/10"
+              className="inline-flex items-center gap-2 rounded-md border border-critical/30 bg-critical-bg px-3 py-2 text-sm font-semibold text-critical-text shadow-xs transition hover:bg-critical/20 disabled:cursor-wait disabled:opacity-60"
             >
               <LogOut className="h-4 w-4" />
               {isLoggingOut ? `${t["header_logout"]}...` : t["header_logout"]}
@@ -291,20 +291,20 @@ export function SuperConsole({ t }: { t: Dictionary }) {
         </header>
 
         {error ? (
-          <p className="mt-6 rounded-[16px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/25 dark:bg-red-500/10 dark:text-red-300">
+          <p className="mt-6 rounded-lg border border-critical/30 bg-critical-bg px-4 py-3 text-sm text-critical-text">
             {error}
           </p>
         ) : null}
 
-        <nav className="mt-7 flex gap-2 overflow-x-auto border-b border-white/50 pb-2 dark:border-white/8">
+        <nav className="mt-7 flex gap-2 overflow-x-auto border-b border-border pb-2">
           {sectionTabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               onClick={() => setSection(id)}
-              className={`inline-flex shrink-0 items-center gap-2 rounded-[14px] px-3 py-2 text-sm font-semibold transition ${
+              className={`inline-flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold transition ${
                 section === id
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:bg-white/60 hover:text-foreground dark:hover:bg-white/[0.05]"
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -314,7 +314,7 @@ export function SuperConsole({ t }: { t: Dictionary }) {
         </nav>
 
         {loading ? (
-          <div className="surface-panel mt-6 flex items-center justify-center gap-2 rounded-[28px] p-12 text-muted-foreground">
+          <div className="mt-6 flex items-center justify-center gap-2 rounded-lg border border-border bg-card p-12 text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin" />
             <span className="text-sm">{t["common_loading"]}</span>
           </div>
@@ -367,7 +367,7 @@ function OrganizationsSection({
   return (
     <section className="mt-6 space-y-4">
       <div>
-        <h2 className="text-xl font-semibold">{t["super_orgs"]}</h2>
+        <h2 className="text-xl font-semibold text-foreground">{t["super_orgs"]}</h2>
         <p className="text-sm text-muted-foreground">{t["super_organizationsHelp"]}</p>
       </div>
       <div className="grid gap-3 sm:grid-cols-3">
@@ -376,20 +376,20 @@ function OrganizationsSection({
           [t["super_activeClinics"], orgs.filter((org) => org.status === "active").length],
           [t["super_pendingClinics"], orgs.filter((org) => org.status === "pending").length],
         ].map(([label, value]) => (
-          <div key={label} className="surface-panel rounded-[22px] p-4">
+          <div key={label} className="rounded-lg border border-border bg-card p-4">
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{label}</p>
-            <p className="mt-2 text-2xl font-semibold">{value}</p>
+            <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </div>
         ))}
       </div>
-      <div className="surface-panel overflow-hidden rounded-[28px] border border-white/55 dark:border-white/6">
+      <div className="overflow-hidden rounded-lg border border-border bg-card">
         {orgs.length === 0 ? (
           <p className="p-12 text-center text-sm text-muted-foreground">{t["super_noOrgs"]}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[900px] text-left text-sm">
               <thead>
-                <tr className="border-b border-white/55 text-xs uppercase tracking-widest text-muted-foreground dark:border-white/6">
+                <tr className="border-b border-border text-xs uppercase tracking-widest text-muted-foreground">
                   <th className="px-5 py-3">{t["super_orgs"]}</th>
                   <th className="px-5 py-3">{t["super_status"]}</th>
                   <th className="px-5 py-3">{t["super_plan"]}</th>
@@ -397,11 +397,11 @@ function OrganizationsSection({
                   <th className="px-5 py-3">{t["super_created"]}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/45 dark:divide-white/5">
+              <tbody className="divide-y divide-border/50">
                 {orgs.map((org) => (
-                  <tr key={org.id} className="align-top hover:bg-white/40 dark:hover:bg-white/[0.03]">
+                  <tr key={org.id} className="align-top hover:bg-muted/40">
                     <td className="px-5 py-4">
-                      <Link href={`/super/clinics/${org.id}`} className="font-semibold hover:text-primary">
+                      <Link href={`/super/clinics/${org.id}`} className="font-semibold text-foreground hover:text-primary">
                         {org.name}
                       </Link>
                       <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -409,7 +409,7 @@ function OrganizationsSection({
                       </div>
                     </td>
                     <td className="px-5 py-4">{statusBadge(org.status)}</td>
-                    <td className="px-5 py-4 font-semibold capitalize">{org.plan}</td>
+                    <td className="px-5 py-4 font-semibold capitalize text-foreground">{org.plan}</td>
                     <td className="px-5 py-4 text-xs text-muted-foreground">
                       <div>{t["super_patients"]}: {formatUsage(org.usage.patients, org.limits.maxPatients)}</div>
                       <div>{t["super_staff"]}: {formatUsage(org.usage.staff, org.limits.maxStaff)}</div>
@@ -446,9 +446,9 @@ function ApprovalsSection({
     <section className="mt-6 grid gap-5 lg:grid-cols-2">
       <ApprovalCard title={t["super_pendingSignups"]} empty={pendingSignups.length === 0} emptyText={t["super_noPending"]}>
         {pendingSignups.map((org) => (
-          <div key={org.id} className="rounded-[18px] border border-white/60 bg-white/50 p-4 dark:border-white/8 dark:bg-white/[0.03]">
+          <div key={org.id} className="rounded-lg border border-border bg-card p-4">
             <div className="flex items-start justify-between gap-3">
-              <div><p className="font-semibold">{org.name}</p><p className="text-xs text-muted-foreground">{org.users[0]?.email ?? org.slug}</p></div>
+              <div><p className="font-semibold text-foreground">{org.name}</p><p className="text-xs text-muted-foreground">{org.users[0]?.email ?? org.slug}</p></div>
               {statusBadge(org.status)}
             </div>
             <div className="mt-3 flex gap-2">
@@ -470,10 +470,10 @@ function ApprovalsSection({
       </ApprovalCard>
       <ApprovalCard title={t["super_upgradeRequests"]} empty={upgradeRequests.length === 0} emptyText={t["super_noPending"]}>
         {upgradeRequests.map((org) => (
-          <div key={org.id} className="rounded-[18px] border border-white/60 bg-white/50 p-4 dark:border-white/8 dark:bg-white/[0.03]">
+          <div key={org.id} className="rounded-lg border border-border bg-card p-4">
             <div className="flex items-start justify-between gap-3">
-              <div><p className="font-semibold">{org.name}</p><p className="text-xs text-muted-foreground">{org.plan} → <span className="font-semibold text-cyan-700 dark:text-cyan-300">{org.upgradeRequestedPlan}</span></p></div>
-              <span className="rounded-full bg-cyan-100 px-2.5 py-1 text-xs font-semibold text-cyan-700 dark:bg-cyan-500/15 dark:text-cyan-300">{t["super_upgradeRequested"]}</span>
+              <div><p className="font-semibold text-foreground">{org.name}</p><p className="text-xs text-muted-foreground">{org.plan} → <span className="font-semibold text-accent-blue-text">{org.upgradeRequestedPlan}</span></p></div>
+              <span className="rounded-full bg-accent-blue-bg px-2.5 py-1 text-xs font-semibold text-accent-blue-text">{t["super_upgradeRequested"]}</span>
             </div>
             {org.upgradeNote ? <p className="mt-2 text-xs text-muted-foreground">{org.upgradeNote}</p> : null}
             <div className="mt-3 flex gap-2">
@@ -489,9 +489,9 @@ function ApprovalsSection({
 
 function ApprovalCard({ title, empty, emptyText, children }: { title: string; empty: boolean; emptyText: string; children: React.ReactNode }) {
   return (
-    <div className="surface-panel rounded-[28px] border border-white/55 p-5 dark:border-white/6">
-      <h2 className="text-lg font-semibold">{title}</h2>
-      <div className="mt-4 space-y-3">{empty ? <p className="rounded-[16px] bg-white/45 p-6 text-center text-sm text-muted-foreground dark:bg-white/[0.03]">{emptyText}</p> : children}</div>
+    <div className="rounded-lg border border-border bg-card p-5">
+      <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+      <div className="mt-4 space-y-3">{empty ? <p className="rounded-md border border-border/50 bg-muted/40 p-6 text-center text-sm text-muted-foreground">{emptyText}</p> : children}</div>
     </div>
   );
 }
@@ -499,13 +499,13 @@ function ApprovalCard({ title, empty, emptyText, children }: { title: string; em
 function BillingSection({ orgs, t, busyId, act, plans }: { orgs: OrgRow[]; t: Dictionary; busyId: string | null; act: (path: string, body: Record<string, unknown>) => Promise<void>; plans: PlanOption[] }) {
   return (
     <section className="mt-6 space-y-4">
-      <div><h2 className="text-xl font-semibold">{t["super_sectionBilling"]}</h2><p className="text-sm text-muted-foreground">{t["super_billingHelp"]}</p></div>
-      <div className="surface-panel overflow-hidden rounded-[28px] border border-white/55 dark:border-white/6">
+      <div><h2 className="text-xl font-semibold text-foreground">{t["super_sectionBilling"]}</h2><p className="text-sm text-muted-foreground">{t["super_billingHelp"]}</p></div>
+      <div className="overflow-hidden rounded-lg border border-border bg-card">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] text-left text-sm">
-            <thead><tr className="border-b border-white/55 text-xs uppercase tracking-widest text-muted-foreground dark:border-white/6"><th className="px-5 py-3">{t["super_orgs"]}</th><th className="px-5 py-3">{t["super_plan"]}</th><th className="px-5 py-3">{t["super_setPlan"]}</th></tr></thead>
-            <tbody className="divide-y divide-white/45 dark:divide-white/5">
-              {orgs.map((org) => <tr key={org.id}><td className="px-5 py-4 font-semibold">{org.name}</td><td className="px-5 py-4 capitalize">{org.plan}</td><td className="px-5 py-4"><div className="flex flex-wrap gap-1.5">{plans.map((plan) => <button key={plan.code} disabled={busyId !== null} onClick={() => void act(`/api/super/orgs/${org.id}/plan`, { plan: plan.code })} className={`rounded-full px-3 py-1 text-xs font-semibold capitalize transition disabled:opacity-50 ${org.plan === plan.code ? "bg-primary text-white" : "border border-white/60 bg-white/60 text-muted-foreground hover:text-foreground dark:border-white/10 dark:bg-white/[0.04]"}`}>{plan.nameEn ?? plan.code}</button>)}</div></td></tr>)}
+            <thead><tr className="border-b border-border text-xs uppercase tracking-widest text-muted-foreground"><th className="px-5 py-3">{t["super_orgs"]}</th><th className="px-5 py-3">{t["super_plan"]}</th><th className="px-5 py-3">{t["super_setPlan"]}</th></tr></thead>
+            <tbody className="divide-y divide-border/50">
+              {orgs.map((org) => <tr key={org.id}><td className="px-5 py-4 font-semibold text-foreground">{org.name}</td><td className="px-5 py-4 capitalize text-foreground">{org.plan}</td><td className="px-5 py-4"><div className="flex flex-wrap gap-1.5">{plans.map((plan) => <button key={plan.code} disabled={busyId !== null} onClick={() => void act(`/api/super/orgs/${org.id}/plan`, { plan: plan.code })} className={`rounded-full px-3 py-1 text-xs font-semibold capitalize transition disabled:opacity-50 ${org.plan === plan.code ? "bg-primary text-primary-foreground" : "border border-border bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground"}`}>{plan.nameEn ?? plan.code}</button>)}</div></td></tr>)}
             </tbody>
           </table>
         </div>
@@ -517,9 +517,9 @@ function BillingSection({ orgs, t, busyId, act, plans }: { orgs: OrgRow[]; t: Di
 function AuditSection({ audit, t }: { audit: AuditRow[]; t: Dictionary }) {
   return (
     <section className="mt-6 space-y-4">
-      <div><h2 className="text-xl font-semibold">{t["super_sectionAudit"]}</h2><p className="text-sm text-muted-foreground">{t["super_auditHelp"]}</p></div>
-      <div className="surface-panel overflow-hidden rounded-[28px] border border-white/55 dark:border-white/6">
-        {audit.length === 0 ? <p className="p-12 text-center text-sm text-muted-foreground">{t["super_noAudit"]}</p> : <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-left text-sm"><thead><tr className="border-b border-white/55 text-xs uppercase tracking-widest text-muted-foreground dark:border-white/6"><th className="px-5 py-3">{t["super_date"]}</th><th className="px-5 py-3">{t["super_action"]}</th><th className="px-5 py-3">{t["super_target"]}</th><th className="px-5 py-3">{t["super_actor"]}</th></tr></thead><tbody className="divide-y divide-white/45 dark:divide-white/5">{audit.map((log) => <tr key={log.id}><td className="px-5 py-4 text-xs text-muted-foreground">{new Date(log.createdAt).toLocaleString()}</td><td className="px-5 py-4"><span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-semibold">{log.action}</span></td><td className="px-5 py-4"><div className="font-semibold">{log.entityType.replace("platform_", "")}</div><div className="text-xs text-muted-foreground">{log.organization.name}</div></td><td className="px-5 py-4 text-xs text-muted-foreground">{log.user?.name ?? log.user?.email ?? "System"}</td></tr>)}</tbody></table></div>}
+      <div><h2 className="text-xl font-semibold text-foreground">{t["super_sectionAudit"]}</h2><p className="text-sm text-muted-foreground">{t["super_auditHelp"]}</p></div>
+      <div className="overflow-hidden rounded-lg border border-border bg-card">
+        {audit.length === 0 ? <p className="p-12 text-center text-sm text-muted-foreground">{t["super_noAudit"]}</p> : <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-left text-sm"><thead><tr className="border-b border-border text-xs uppercase tracking-widest text-muted-foreground"><th className="px-5 py-3">{t["super_date"]}</th><th className="px-5 py-3">{t["super_action"]}</th><th className="px-5 py-3">{t["super_target"]}</th><th className="px-5 py-3">{t["super_actor"]}</th></tr></thead><tbody className="divide-y divide-border/50">{audit.map((log) => <tr key={log.id}><td className="px-5 py-4 text-xs text-muted-foreground">{new Date(log.createdAt).toLocaleString()}</td><td className="px-5 py-4"><span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">{log.action}</span></td><td className="px-5 py-4"><div className="font-semibold text-foreground">{log.entityType.replace("platform_", "")}</div><div className="text-xs text-muted-foreground">{log.organization.name}</div></td><td className="px-5 py-4 text-xs text-muted-foreground">{log.user?.name ?? log.user?.email ?? "System"}</td></tr>)}</tbody></table></div>}
       </div>
     </section>
   );
@@ -528,19 +528,19 @@ function AuditSection({ audit, t }: { audit: AuditRow[]; t: Dictionary }) {
 function SettingsSection({ settings, setSettings, saving, save, t, plans }: { settings: PlatformSettings; setSettings: React.Dispatch<React.SetStateAction<PlatformSettings>>; saving: boolean; save: () => Promise<void>; t: Dictionary; plans: PlanOption[] }) {
   return (
     <section className="mt-6 max-w-3xl space-y-4">
-      <div><h2 className="text-xl font-semibold">{t["super_sectionSettings"]}</h2><p className="text-sm text-muted-foreground">{t["super_settingsHelp"]}</p></div>
-      <div className="surface-panel space-y-5 rounded-[28px] border border-white/55 p-6 dark:border-white/6">
-        <label className="flex items-center justify-between gap-4"><span><span className="block font-semibold">{t["super_maintenanceMode"]}</span><span className="text-xs text-muted-foreground">{t["super_maintenanceHelp"]}</span></span><input type="checkbox" checked={settings.maintenanceMode} onChange={(event) => setSettings((current) => ({ ...current, maintenanceMode: event.target.checked }))} className="size-5 accent-primary" /></label>
-        <label className="flex items-center justify-between gap-4"><span><span className="block font-semibold">{t["super_allowSignups"]}</span><span className="text-xs text-muted-foreground">{t["super_allowSignupsHelp"]}</span></span><input type="checkbox" checked={settings.allowClinicSignups} onChange={(event) => setSettings((current) => ({ ...current, allowClinicSignups: event.target.checked }))} className="size-5 accent-primary" /></label>
-        <label className="block"><span className="mb-1 block text-sm font-semibold">{t["super_defaultPlan"]}</span><select value={settings.defaultPlan} onChange={(event) => setSettings((current) => ({ ...current, defaultPlan: event.target.value }))} className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]">{plans.map((plan) => <option key={plan.code} value={plan.code}>{plan.nameEn ?? plan.code}</option>)}</select></label>
-        <label className="block"><span className="mb-1 block text-sm font-semibold">{t["super_supportEmail"]}</span><input value={settings.supportEmail} onChange={(event) => setSettings((current) => ({ ...current, supportEmail: event.target.value }))} className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]" /></label>
-        <label className="block"><span className="mb-1 block text-sm font-semibold">{t["super_announcement"]}</span><textarea value={settings.announcement} onChange={(event) => setSettings((current) => ({ ...current, announcement: event.target.value }))} rows={3} className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]" /></label>
-        <button onClick={() => void save()} disabled={saving} className="inline-flex items-center gap-2 rounded-[12px] bg-primary px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"><Save className="h-4 w-4" />{saving ? t["common_saving"] : t["common_save"]}</button>
+      <div><h2 className="text-xl font-semibold text-foreground">{t["super_sectionSettings"]}</h2><p className="text-sm text-muted-foreground">{t["super_settingsHelp"]}</p></div>
+      <div className="space-y-5 rounded-lg border border-border bg-card p-6">
+        <label className="flex items-center justify-between gap-4"><span><span className="block font-semibold text-foreground">{t["super_maintenanceMode"]}</span><span className="text-xs text-muted-foreground">{t["super_maintenanceHelp"]}</span></span><input type="checkbox" checked={settings.maintenanceMode} onChange={(event) => setSettings((current) => ({ ...current, maintenanceMode: event.target.checked }))} className="size-5 accent-primary" /></label>
+        <label className="flex items-center justify-between gap-4"><span><span className="block font-semibold text-foreground">{t["super_allowSignups"]}</span><span className="text-xs text-muted-foreground">{t["super_allowSignupsHelp"]}</span></span><input type="checkbox" checked={settings.allowClinicSignups} onChange={(event) => setSettings((current) => ({ ...current, allowClinicSignups: event.target.checked }))} className="size-5 accent-primary" /></label>
+        <label className="block"><span className="mb-1 block text-sm font-semibold text-foreground">{t["super_defaultPlan"]}</span><select value={settings.defaultPlan} onChange={(event) => setSettings((current) => ({ ...current, defaultPlan: event.target.value }))} className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring">{plans.map((plan) => <option key={plan.code} value={plan.code}>{plan.nameEn ?? plan.code}</option>)}</select></label>
+        <label className="block"><span className="mb-1 block text-sm font-semibold text-foreground">{t["super_supportEmail"]}</span><input value={settings.supportEmail} onChange={(event) => setSettings((current) => ({ ...current, supportEmail: event.target.value }))} className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring" /></label>
+        <label className="block"><span className="mb-1 block text-sm font-semibold text-foreground">{t["super_announcement"]}</span><textarea value={settings.announcement} onChange={(event) => setSettings((current) => ({ ...current, announcement: event.target.value }))} rows={3} className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring" /></label>
+        <button onClick={() => void save()} disabled={saving} className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"><Save className="h-4 w-4" />{saving ? t["common_saving"] : t["common_save"]}</button>
       </div>
     </section>
   );
 }
 
 function ActionButton({ children, onClick, disabled, variant, icon }: { children: React.ReactNode; onClick: () => void; disabled: boolean; variant: "success" | "danger"; icon: React.ReactNode }) {
-  return <button disabled={disabled} onClick={onClick} className={`inline-flex items-center gap-1 rounded-[10px] px-2.5 py-1.5 text-xs font-semibold text-white transition disabled:opacity-50 ${variant === "success" ? "bg-emerald-600 hover:bg-emerald-700" : "bg-red-600 hover:bg-red-700"}`}>{icon}{children}</button>;
+  return <button disabled={disabled} onClick={onClick} className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition disabled:opacity-50 ${variant === "success" ? "bg-primary text-primary-foreground hover:bg-primary/90" : "border border-critical/30 bg-critical-bg text-critical-text hover:bg-critical/20"}`}>{icon}{children}</button>;
 }

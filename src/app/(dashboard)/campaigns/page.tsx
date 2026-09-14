@@ -96,12 +96,12 @@ export default function CampaignsPage() {
 
   const statusBadge = (status: string) => {
     const colors: Record<string, string> = {
-      draft: "bg-gray-100 text-gray-800 dark:bg-gray-500/15 dark:text-gray-300",
-      active: "bg-green-100 text-green-800 dark:bg-green-500/15 dark:text-green-300",
-      paused: "bg-yellow-100 text-yellow-800 dark:bg-yellow-500/15 dark:text-yellow-300",
-      archived: "bg-gray-200 text-gray-800 dark:bg-gray-500/15 dark:text-gray-300",
+      draft: "bg-muted-bg text-muted-foreground",
+      active: "bg-success-bg text-success-text",
+      paused: "bg-warning-bg text-warning-text",
+      archived: "bg-muted-bg text-muted-foreground",
     };
-    return colors[status] || "bg-gray-100 text-gray-800 dark:bg-gray-500/15 dark:text-gray-300";
+    return colors[status] || "bg-muted-bg text-muted-foreground";
   };
 
   const statusLabel = (status: string) => {
@@ -116,9 +116,9 @@ export default function CampaignsPage() {
 
   const typeIcon = (type: string) => {
     return type === "drip" ? (
-      <Zap className="w-4 h-4 text-blue-500" />
+      <Zap className="w-4 h-4 text-accent-blue-text" />
     ) : (
-      <Radio className="w-4 h-4 text-purple-500" />
+      <Radio className="w-4 h-4 text-purple-500 dark:text-purple-400" />
     );
   };
 
@@ -126,7 +126,7 @@ export default function CampaignsPage() {
     type === "drip" ? t("camp_drip") : t("camp_broadcast");
 
   const triggerLabel = (trigger: string | null) => {
-    if (!trigger) return <span className="text-gray-400">{t("camp_manual")}</span>;
+    if (!trigger) return <span className="text-muted-foreground">{t("camp_manual")}</span>;
     if (trigger === "post_visit") return t("camp_afterVisit");
     if (trigger === "chronic_care") return t("camp_chronicCare");
     return trigger;
@@ -142,7 +142,7 @@ export default function CampaignsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">{t("camp_title")}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t("camp_title")}</h1>
           </div>
         </div>
         <PermissionDenied />
@@ -155,8 +155,8 @@ export default function CampaignsPage() {
       <UpgradePrompt moduleKey="campaigns" />
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">{t("camp_title")}</h1>
-          <p className="text-gray-600 mt-1">{t("camp_subtitle")}</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t("camp_title")}</h1>
+          <p className="text-muted-foreground mt-1">{t("camp_subtitle")}</p>
         </div>
         <FeatureTip tipId="campaigns-audience">
           <span className="inline-flex">
@@ -167,40 +167,40 @@ export default function CampaignsPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="p-4">
-          <div className="text-sm font-medium text-gray-600">
+        <Card className="p-4 border-border bg-card shadow-sm">
+          <div className="text-sm font-medium text-muted-foreground">
             {t("camp_total")}
           </div>
-          <div className="text-2xl font-bold mt-2">{stats.total}</div>
+          <div className="text-2xl font-bold mt-2 text-foreground">{stats.total}</div>
         </Card>
-        <Card className="p-4">
-          <div className="text-sm font-medium text-gray-600">
+        <Card className="p-4 border-border bg-card shadow-sm">
+          <div className="text-sm font-medium text-muted-foreground">
             {t("camp_active")}
           </div>
-          <div className="text-2xl font-bold mt-2 text-green-600">
+          <div className="text-2xl font-bold mt-2 text-success-text">
             {stats.active}
           </div>
         </Card>
-        <Card className="p-4">
-          <div className="text-sm font-medium text-gray-600">
+        <Card className="p-4 border-border bg-card shadow-sm">
+          <div className="text-sm font-medium text-muted-foreground">
             {t("camp_drafts")}
           </div>
-          <div className="text-2xl font-bold mt-2 text-gray-600">
+          <div className="text-2xl font-bold mt-2 text-muted-foreground">
             {stats.draft}
           </div>
         </Card>
-        <Card className="p-4">
-          <div className="text-sm font-medium text-gray-600">
+        <Card className="p-4 border-border bg-card shadow-sm">
+          <div className="text-sm font-medium text-muted-foreground">
             {t("camp_archived")}
           </div>
-          <div className="text-2xl font-bold mt-2 text-gray-600">
+          <div className="text-2xl font-bold mt-2 text-muted-foreground">
             {stats.archived}
           </div>
         </Card>
       </div>
 
       {/* Search filter */}
-      <Card className="p-4">
+      <Card className="p-4 border-border bg-card shadow-sm">
         <FilterBar hasActiveFilters={searchTerm !== ""} onReset={resetFilters}>
           <Input
             placeholder={t("common_search")}
@@ -209,13 +209,13 @@ export default function CampaignsPage() {
               setSearchTerm(e.target.value);
               setPage(1);
             }}
-            className="w-full sm:max-w-sm"
+            className="w-full sm:max-w-sm h-9"
           />
         </FilterBar>
       </Card>
 
       {/* Campaigns Table */}
-      <Card>
+      <Card className="border-border bg-card shadow-sm overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -251,20 +251,20 @@ export default function CampaignsPage() {
             ) : (
               pagedCampaigns.map((campaign) => (
                 <TableRow key={campaign.id}>
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium text-foreground">
                     {campaign.name}
                   </TableCell>
-                  <TableCell className="flex items-center gap-2">
+                  <TableCell className="flex items-center gap-2 text-foreground">
                     {typeIcon(campaign.type)}
                     {typeLabel(campaign.type)}
                   </TableCell>
-                  <TableCell className="text-sm text-gray-600">
+                  <TableCell className="text-sm text-muted-foreground">
                     {triggerLabel(campaign.triggerType)}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${statusBadge(
+                        className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadge(
                           campaign.status,
                         )}`}
                       >
@@ -290,14 +290,14 @@ export default function CampaignsPage() {
                               logClientError("Campaign launch failed", error);
                             }
                           }}
-                          className="rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100"
+                          className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground hover:bg-muted-bg transition-colors shadow-sm"
                         >
-                          <Send className="h-3.5 w-3.5" />Launch
+                          <Send className="h-3 w-3 mr-1" />Launch
                         </button>
                       ) : null}
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm text-gray-600">
+                  <TableCell className="text-sm text-muted-foreground">
                     {new Date(campaign.createdAt).toLocaleDateString()}
                   </TableCell>
                 </TableRow>

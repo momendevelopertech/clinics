@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-tertiary-fixed":"#001a42","secondary-fixed":"#d8e3fb","on-secondary-fixed-variant":"#3c475a","surface-tint":"#006a61","on-secondary":"#ffffff","tertiary-container":"#2170e4","on-primary":"#ffffff","on-surface":"#0b1c30","outline-variant":"#bcc9c6","primary-container":"#008378","secondary-fixed-dim":"#bcc7de","surface-container-high":"#dce9ff","surface-dim":"#cbdbf5","surface-container":"#e5eeff","surface-bright":"#f8f9ff","error-container":"#ffdad6","surface":"#f8f9ff","on-secondary-container":"#586377","background":"#f8f9ff","outline":"#6d7a77","on-surface-variant":"#3d4947","inverse-surface":"#213145","on-tertiary-fixed-variant":"#004395","tertiary-fixed":"#d8e2ff","primary-fixed":"#89f5e7","on-secondary-fixed":"#111c2d","secondary":"#545f73","on-background":"#0b1c30","tertiary-fixed-dim":"#adc6ff","tertiary":"#0058be","on-tertiary":"#ffffff","surface-variant":"#d3e4fe","inverse-on-surface":"#eaf1ff","primary-fixed-dim":"#6bd8cb","secondary-container":"#d5e0f8","surface-container-highest":"#d3e4fe","surface-container-low":"#eff4ff","on-tertiary-container":"#fefcff","error":"#ba1a1a","primary":"#00685f","on-error-container":"#93000a","on-error":"#ffffff","surface-container-lowest":"#ffffff","on-primary-fixed":"#00201d","on-primary-container":"#f4fffc","inverse-primary":"#6bd8cb","on-primary-fixed-variant":"#005049"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-xs":"0.25rem","sidebar-width":"17.5rem","gutter":"1rem","subnav-width":"15rem","space-2xs":"0.125rem","space-base":"1rem","space-md":"0.75rem","space-sm":"0.5rem","space-xl":"2rem","space-lg":"1.5rem","space-2xl":"3rem"},"fontFamily":{"headline-sm":["IBM Plex Sans"],"label-md":["IBM Plex Sans"],"body-sm":["IBM Plex Sans"],"body-md":["IBM Plex Sans"],"headline-xl":["IBM Plex Sans"],"body-lg":["IBM Plex Sans"],"mono-metric":["JetBrains Mono"],"headline-lg":["IBM Plex Sans"],"headline-xl-mobile":["IBM Plex Sans"],"mono-code":["JetBrains Mono"],"label-sm":["IBM Plex Sans"]},"fontSize":{"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"400"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"headline-xl":["28px",{"lineHeight":"36px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-lg":["15px",{"lineHeight":"22px","letterSpacing":"0em","fontWeight":"400"}],"mono-metric":["13px",{"lineHeight":"16px","letterSpacing":"0em","fontWeight":"500"}],"headline-lg":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-xl-mobile":["22px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"mono-code":["11px",{"lineHeight":"14px","letterSpacing":"0.02em","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.025em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed right-0 top-0 h-full w-sidebar-width bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between overflow-y-auto"><div class="flex flex-col"><div class="h-16 px-space-base flex items-center justify-between bg-surface-container-lowest"><div class="flex items-center gap-space-sm"><img alt="ClinicOS Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UWqmh1VUKLrHVYUqgHVYiHDUSuXjk5E0Ye9Q4lT54dQPmDAn9E7rmF_QGWfCIZJNfWPbunOASJyuIMNd76tNngZvhB11FuriJdV2kEItTwJfqLsO0PzmyZUBOD6DrlBtGgzbRxcBXhRrV0Zig1Y3EW_zLf7xpRkufAljm30qY93yRJuwbLtlwR7OBhApUw3cWyazHFYy9qruImfdqnIk0rGC7noaktUCRpAmTgkLzav1vjICWY7b8p2UYC"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary leading-none">ClinicOS</span><span class="font-label-sm text-label-sm text-secondary leading-tight mt-space-2xs">نظام إدارة العيادات 2027</span></div></div><span class="font-mono-code text-mono-code bg-surface-container text-secondary px-space-xs py-space-2xs rounded">v4.2</span></div><div class="px-space-base py-space-sm"><div class="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between gap-space-xs"><div class="flex items-center gap-space-xs overflow-hidden"><span class="material-symbols-outlined text-primary text-headline-sm shrink-0">domain</span><div class="flex flex-col truncate"><span class="font-label-sm text-label-sm text-on-surface truncate">فرع الرياض التخصصي</span><span class="font-mono-code text-mono-code text-on-surface-variant truncate">عيادة 302 - باطنة وقلب</span></div></div><span class="material-symbols-outlined text-outline text-headline-sm shrink-0">unfold_more</span></div></div><div class="px-space-sm mt-space-xs"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">الاستقبال وإدارة المرضى</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="appointments" href="#">المواعيد وجدول الحجز</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="check-in-queue" href="#">تسجيل الوصول والانتظار</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="patients" href="#">سجل المرضى والملفات</a></nav></div><div class="px-space-sm mt-space-md"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">القسم الطبي والسريري</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="visits-consultation" href="#">غرفة الكشف والزيارة</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="prescriptions-orders" href="#">الروشتة والأوامر الطبية</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="lab-imaging" href="#">الفحوصات والنتائج</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="medical-timeline" href="#">المخطط الزمني للمريض</a></nav></div><div class="px-space-sm mt-space-md mb-space-base"><div class="px-space-sm py-space-2xs font-label-sm text-label-sm text-secondary uppercase tracking-wide">الإدارة والعمليات</div><nav class="flex flex-col gap-space-2xs mt-space-2xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="billing-invoices" href="#">الفوترة والمدفوعات</a><a class="flex items-center px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="master-catalogs" href="#">كاتلوج الخدمات والأدوية</a><a aria-current="page" class="flex items-center px-space-md py-space-sm rounded-xl transition-all bg-primary-container text-on-primary-container font-semibold shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-path="branches-rooms-audit" href="#">الفروع والغرف وسجل التدقيق</a></nav></div></div><div class="p-space-base bg-surface-container-low"><div class="flex items-center justify-between"><div class="flex items-center gap-space-xs"><span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span><span class="font-label-sm text-label-sm text-secondary">خادم السجلات: متصل</span></div><span class="font-mono-code text-mono-code text-secondary">RT-24ms</span></div></div></aside><div class="pr-sidebar-width min-h-screen bg-surface"><header class="fixed top-0 right-sidebar-width left-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md flex-1 max-w-xl"><div class="relative w-full"><span class="material-symbols-outlined text-on-surface-variant absolute right-space-md top-1/2 -translate-y-1/2 text-headline-sm">search</span><input class="w-full h-10 pr-space-2xl pl-space-md bg-surface-container-low text-on-surface placeholder-secondary font-body-md text-body-md rounded-xl focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" placeholder="بحث شامل عن مريض (الاسم، رقم الهوية الوطنية، رقم الملف الطبي MRN)..." type="text"/></div><div class="hidden lg:flex items-center gap-space-xs px-space-sm py-space-xs rounded bg-surface-container text-on-surface"><span class="w-2 h-2 rounded-full bg-primary"></span><span class="font-label-sm text-label-sm font-semibold">متصل - فرع الرياض</span></div></div><div class="flex items-center gap-space-md"><button class="hidden sm:flex items-center gap-space-xs h-10 px-space-md rounded-xl bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-[0_1px_8px_rgba(0,0,0,0.04)]" type="button"><span class="material-symbols-outlined text-headline-sm">add_circle</span><span class="font-label-md text-label-md">حجز جديد / مريض جديد</span></button><button class="relative w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-headline-sm">notifications</span><span class="absolute -top-1 -left-1 flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-error text-on-error font-mono-code text-mono-code font-bold">3</span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="hidden md:flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface text-right">د. أحمد المنصوري</span><span class="font-label-sm text-label-sm text-secondary text-right">استشاري باطنة وقلب</span></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9cpdmaCWhOFyr05pJyBoIMkSi4anLFma2lf5y1hIpPALoNjhKq6b1h9dz-FYVUtajIuGSaQUG8t913et7mmt7SfWLbOiXGDUWIr9B_YvFCegyI90gD7qqQ5A3F61-9FpH8PSXr_i8z4Tclvpodt3KNYqJN9Bi-Fr9Nh2fT-KJKtJiGGlRqSb0L0xdezJFfvFh0wxaDxYfjnke2vpYzC3qijjc7nejC33tK4x2PKI_INk1nuXl4QeRUA"/></div></div></header><main class="w-full pt-16 bg-surface px-space-lg pb-space-2xl"><div class="flex flex-col w-full">
+<!-- Breadcrumb and Context Status Bar -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm mb-space-base">
+<div class="flex items-center gap-space-xs font-body-sm text-body-sm text-secondary">
+<span class="flex items-center gap-space-2xs text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-[16px]">corporate_fare</span>
+<span>الإدارة المركزية والعمليات</span>
+</span>
+<span class="text-outline">‹</span>
+<span class="text-on-surface font-semibold">الفروع والغرف وسجل التدقيق الإداري والأمني</span>
+<span class="text-outline">‹</span>
+<span class="bg-primary-container/15 text-primary font-mono-code text-mono-code px-space-xs py-space-2xs rounded-md">ID-AUDIT-2027</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-space-2xs bg-surface-container-lowest px-space-sm py-space-2xs rounded-lg shadow-sm">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+<span class="font-label-sm text-label-sm text-on-surface">بث التدقيق السريري: متزامن وفوري</span>
+<span class="font-mono-code text-mono-code text-secondary ml-space-xs">TLS 1.3 / AES-256</span>
+</div>
+<button class="flex items-center gap-space-xs h-8 px-space-md rounded-lg bg-surface-container-lowest text-on-surface hover:bg-surface-container transition-colors shadow-sm font-label-sm text-label-sm" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">download</span>
+<span>تصدير السجل القانوني (PDF/CSV)</span>
+</button>
+<button class="flex items-center gap-space-xs h-8 px-space-md rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-sm font-label-sm text-label-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">add_business</span>
+<span>إضافة فرع / عيادة جديدة</span>
+</button>
+</div>
+</div>
+<!-- Metric KPI Cards (Enterprise Grid) -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-space-base mb-space-lg">
+<!-- Metric 1: Branches -->
+<div class="bg-surface-container-lowest rounded-xl p-space-base shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider block mb-space-2xs">الفروع النشطة والعيادات</span>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-xl text-headline-xl text-on-surface font-semibold">3</span>
+<span class="font-label-md text-label-md text-primary font-medium">فروع متزامنة</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">domain</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs flex items-center justify-between font-label-sm text-label-sm text-secondary">
+<span class="truncate">الرياض التخصصي • الخبر • جدة</span>
+<span class="font-mono-code text-mono-code text-primary font-bold">100% Uptime</span>
+</div>
+<div class="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-l from-primary via-primary-fixed to-surface-container"></div>
+</div>
+<!-- Metric 2: Clinic Rooms -->
+<div class="bg-surface-container-lowest rounded-xl p-space-base shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider block mb-space-2xs">إجمالي غرف العيادات والتشخيص</span>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-xl text-headline-xl text-on-surface font-semibold">24</span>
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">غرفة مجهزة</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">meeting_room</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs flex items-center justify-between font-label-sm text-label-sm text-secondary">
+<span>18 كشف • 3 إجراءات • 2 سحب دم • 1 أشعة</span>
+<span class="font-mono-code text-mono-code text-secondary font-bold">19 مشغولة</span>
+</div>
+<div class="absolute bottom-0 right-0 left-0 h-1 bg-surface-container-high"></div>
+</div>
+<!-- Metric 3: Active Roles -->
+<div class="bg-surface-container-lowest rounded-xl p-space-base shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider block mb-space-2xs">الطاقم الطبي والإداري المصرح</span>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-xl text-headline-xl text-on-surface font-semibold">42</span>
+<span class="font-label-md text-label-md text-secondary font-medium">مستخدم نشط</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[22px]">badge</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs flex items-center justify-between font-label-sm text-label-sm text-secondary">
+<span>16 طبيباً • 12 تمريضاً • 8 استقبال • 6 إدارة</span>
+<span class="font-mono-code text-mono-code text-primary">0 جلسة مشبوهة</span>
+</div>
+<div class="absolute bottom-0 right-0 left-0 h-1 bg-surface-container-high"></div>
+</div>
+<!-- Metric 4: Audit Security Events -->
+<div class="bg-surface-container-lowest rounded-xl p-space-base shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider block mb-space-2xs">عمليات التدقيق الموثقة اليوم</span>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-xl text-headline-xl text-primary font-semibold font-mono-metric">1,840</span>
+<span class="font-label-md text-label-md text-primary font-medium">سجل مشفر</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">verified_user</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs flex items-center justify-between font-label-sm text-label-sm text-secondary">
+<span class="flex items-center gap-space-2xs text-primary font-semibold">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span>SHA-256 Immutable Audit Log</span>
+</span>
+<span class="font-mono-code text-mono-code text-secondary font-bold">100% موثق</span>
+</div>
+<div class="absolute bottom-0 right-0 left-0 h-1 bg-primary"></div>
+</div>
+</div>
+<!-- Primary Tab Switcher Navigation -->
+<div class="bg-surface-container-lowest rounded-xl p-space-xs shadow-sm mb-space-base flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs">
+<button class="flex items-center gap-space-xs px-space-md py-space-sm rounded-lg font-label-md text-label-md text-secondary hover:text-on-surface hover:bg-surface-container transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">apartment</span>
+<span>إدارة الفروع والغرف والعيادات (Branches &amp; Rooms)</span>
+<span class="bg-surface-container text-secondary px-space-xs py-space-2xs rounded text-mono-code font-mono-code">3 فروع</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-space-sm rounded-lg font-label-md text-label-md text-secondary hover:text-on-surface hover:bg-surface-container transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">shield_person</span>
+<span>المستخدمون والأدوار ومصفوفة الصلاحيات (Roles &amp; Access Matrix)</span>
+<span class="bg-surface-container text-secondary px-space-xs py-space-2xs rounded text-mono-code font-mono-code">42 مستخدم</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-space-sm rounded-lg font-label-md text-label-md bg-primary text-on-primary shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">policy</span>
+<span>سجل التدقيق والأمان السريري المباشر (Audit Trail Live)</span>
+<span class="bg-primary-container text-on-primary-container px-space-xs py-space-2xs rounded text-mono-code font-mono-code font-bold">نشط الآن</span>
+</button>
+</div>
+<div class="flex items-center gap-space-xs px-space-sm py-space-2xs bg-surface-container-low rounded-lg text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">autorenew</span>
+<span>تحديث حي تلقائي كل 10 ثوانٍ</span>
+</div>
+</div>
+<!-- Main Dual Column Content Area -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-base items-start">
+<!-- Left / Center Column: Audit Trail Table & Controls (8 cols) -->
+<div class="xl:col-span-8 flex flex-col gap-space-base">
+<!-- Filter and Query Bar -->
+<div class="bg-surface-container-lowest rounded-xl p-space-base shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">filter_alt</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">تصفية وتدقيق الأحداث السريرية والإدارية</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="font-label-sm text-label-sm text-primary hover:underline px-space-xs py-space-2xs" type="button">إعادة التعيين</button>
+<span class="text-surface-container">|</span>
+<span class="font-mono-code text-mono-code text-secondary">عرض 6 من أصل 1,840 تسجيلاً</span>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-sm">
+<!-- Role/User Filter -->
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-secondary">المستخدم / الصفة</label>
+<div class="relative">
+<select class="w-full h-9 bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded-lg px-space-sm appearance-none focus:outline-none focus:bg-surface-container-lowest">
+<option value="all">جميع الكوادر (42)</option>
+<option value="doctors">الأطباء والاستشاريون</option>
+<option value="reception">الاستقبال والتسجيل</option>
+<option value="pharmacy">الصيدلية والتمريض</option>
+<option value="admin">مسؤولو النظام (Admin)</option>
+</select>
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-[16px] text-secondary pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Event Action Type Filter -->
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-secondary">نوع العملية (Event Action)</label>
+<div class="relative">
+<select class="w-full h-9 bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded-lg px-space-sm appearance-none focus:outline-none focus:bg-surface-container-lowest">
+<option value="all">كافة العمليات الطبية والإدارية</option>
+<option value="rx">اعتماد وصفة طبية (Rx Order)</option>
+<option value="billing">إصدار / تسوية فاتورة</option>
+<option value="checkin">تسجيل وصول مريض</option>
+<option value="access">عرض ملف طبي مشفر (PHI)</option>
+<option value="auth">تسجيل دخول وخروج</option>
+</select>
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-[16px] text-secondary pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Sensitivity Level -->
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-secondary">مستوى الحساسية والأمان</label>
+<div class="relative">
+<select class="w-full h-9 bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded-lg px-space-sm appearance-none focus:outline-none focus:bg-surface-container-lowest">
+<option value="all">جميع المستويات</option>
+<option value="critical">حساس أمنياً / أدوية مقيدة (Sensitive)</option>
+<option value="medium">متوسط (تعديل مالي أو تشخيص)</option>
+<option value="low">قياسي / روتيني (Standard)</option>
+</select>
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-[16px] text-secondary pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Quick Search -->
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-sm text-label-sm text-secondary">بحث بالمرجع (MRN, Hash, IP)</label>
+<div class="relative">
+<input class="w-full h-9 bg-surface-container-low text-on-surface placeholder-secondary font-body-sm text-body-sm rounded-lg pr-space-sm pl-space-lg focus:outline-none focus:bg-surface-container-lowest" placeholder="مثال: #MRN-94821 أو IP..." type="text"/>
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-[16px] text-secondary">search</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Real-time Audit Table Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="p-space-base flex items-center justify-between bg-surface-container-low/40">
+<div class="flex items-center gap-space-sm">
+<span class="font-headline-sm text-headline-sm text-on-surface">سجل العمليات المشفرة (Immutable Audit Stream)</span>
+<span class="bg-surface-container-high text-on-surface-variant font-mono-code text-mono-code px-space-xs py-space-2xs rounded">سلسلة تدقيق غير قابلة للتعديل</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-mono-code text-mono-code text-secondary">مباشر: فرع الرياض التخصصي</span>
+</div>
+</div>
+<!-- Table Stream -->
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-secondary font-label-sm text-label-sm uppercase">
+<th class="py-space-sm px-space-base">التوقيت الدقيق</th>
+<th class="py-space-sm px-space-base">المستخدم والصفة الوظيفية</th>
+<th class="py-space-sm px-space-base">نوع الإجراء الطبي / الإداري</th>
+<th class="py-space-sm px-space-base">الكيان والمرجع</th>
+<th class="py-space-sm px-space-base">تفاصيل وسياق العملية</th>
+<th class="py-space-sm px-space-base">جهاز الاتصال وIP</th>
+<th class="py-space-sm px-space-base text-left">التوثيق الرقمي</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 font-body-sm text-body-sm">
+<!-- Log Row 1 (Critical Sensitive Rx) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-metric text-mono-metric text-on-surface font-semibold">10:48:14 ص</span>
+<span class="font-label-sm text-label-sm text-secondary">اليوم (منذ دقيقتين)</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex items-center gap-space-xs">
+<div class="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[11px]">
+                      أم
+                    </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">د. أحمد المنصوري</span>
+<span class="font-label-sm text-label-sm text-secondary">استشاري باطنة وقلب</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex flex-col gap-space-2xs items-start">
+<span class="inline-flex items-center gap-1 px-space-xs py-0.5 rounded bg-primary-container/15 text-primary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[13px]">prescriptions</span>
+<span>اعتماد روشتة دواء</span>
+</span>
+<span class="text-error font-mono-code text-mono-code flex items-center gap-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span>عقار مراقب (C-II)</span>
+</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-metric text-mono-metric text-primary font-bold">#MRN-94821</span>
+<span class="font-label-sm text-label-sm text-secondary">سلطان بن فهد الراجحي</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex flex-col max-w-xs">
+<div class="font-body-sm text-body-sm text-on-surface">إضافة دواء: <span class="font-mono-code text-mono-code font-bold">Rosuvastatin 20mg</span></div>
+<div class="font-label-sm text-label-sm text-secondary mt-0.5">الجرعة: قرص مسائي لمدة 90 يوماً مع مراقبة إنزيمات الكبد</div>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-code text-mono-code text-on-surface font-medium">192.168.1.104</span>
+<span class="font-label-sm text-label-sm text-secondary">Room-301-PC (Eth)</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top text-left whitespace-nowrap">
+<div class="flex flex-col items-end">
+<span class="inline-flex items-center gap-1 bg-surface-container-low px-space-xs py-0.5 rounded text-primary font-mono-code text-mono-code font-semibold">
+<span class="material-symbols-outlined text-[13px]">verified</span>
+<span>SHA256:7f8a..e2</span>
+</span>
+<span class="font-label-sm text-label-sm text-secondary mt-0.5">مفتاح طبيب مصدق</span>
+</div>
+</td>
+</tr>
+<!-- Log Row 2 (Reception Check-in) -->
+<tr class="bg-surface-container-low/20 hover:bg-surface-container-low/60 transition-colors">
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-metric text-mono-metric text-on-surface font-semibold">10:42:01 ص</span>
+<span class="font-label-sm text-label-sm text-secondary">اليوم (منذ 8 دقائق)</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex items-center gap-space-xs">
+<div class="w-7 h-7 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-bold text-[11px]">
+                      فم
+                    </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">فيصل المريخي</span>
+<span class="font-label-sm text-label-sm text-secondary">مسؤول استقبال العيادات</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex flex-col gap-space-2xs items-start">
+<span class="inline-flex items-center gap-1 px-space-xs py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[13px]">how_to_reg</span>
+<span>تسجيل وصول مريض</span>
+</span>
+<span class="font-label-sm text-label-sm text-secondary">تأكيد الحضور الحيوي</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-metric text-mono-metric text-primary font-bold">#APP-2027-1049</span>
+<span class="font-label-sm text-label-sm text-secondary">عيادة 301 - قلب</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex flex-col max-w-xs">
+<div class="font-body-sm text-body-sm text-on-surface">تغيير الحالة: <span class="text-secondary line-through font-mono-code text-mono-code">CONFIRMED</span> ← <span class="text-primary font-bold font-mono-code text-mono-code">IN_WAITING</span></div>
+<div class="font-label-sm text-label-sm text-secondary mt-0.5">زمن الانتظار المتوقع: 12 دقيقة • الأولوية: عادية</div>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-code text-mono-code text-on-surface font-medium">192.168.1.12</span>
+<span class="font-label-sm text-label-sm text-secondary">FrontDesk-Main-01</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top text-left whitespace-nowrap">
+<div class="flex flex-col items-end">
+<span class="inline-flex items-center gap-1 bg-surface-container-low px-space-xs py-0.5 rounded text-secondary font-mono-code text-mono-code">
+<span class="material-symbols-outlined text-[13px]">shield</span>
+<span>SHA256:3a1b..89</span>
+</span>
+<span class="font-label-sm text-label-sm text-secondary mt-0.5">محطة عمل آمنة</span>
+</div>
+</td>
+</tr>
+<!-- Log Row 3 (Billing Invoice Payment) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-metric text-mono-metric text-on-surface font-semibold">10:35:19 ص</span>
+<span class="font-label-sm text-label-sm text-secondary">اليوم (منذ 15 دقيقة)</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex items-center gap-space-xs">
+<div class="w-7 h-7 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-bold text-[11px]">
+                      نخ
+                    </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">نورة خالد العتيبي</span>
+<span class="font-label-sm text-label-sm text-secondary">مشرفة الصندوق والفوترة</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex flex-col gap-space-2xs items-start">
+<span class="inline-flex items-center gap-1 px-space-xs py-0.5 rounded bg-surface-container-highest text-tertiary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[13px]">receipt_long</span>
+<span>سداد فاتورة سريرية</span>
+</span>
+<span class="font-label-sm text-label-sm text-secondary">بوابة مدى / نقد</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-metric text-mono-metric text-tertiary font-bold">#INV-2027-8910</span>
+<span class="font-label-sm text-label-sm text-secondary">مبلغ: 450.00 ر.س</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex flex-col max-w-xs">
+<div class="font-body-sm text-body-sm text-on-surface">إغلاق مستحقات الكشف والتحاليل لمريض #MRN-88120</div>
+<div class="font-label-sm text-label-sm text-secondary mt-0.5">الرقم الضريبي ZATCA QR مشفر ومربوط بنجاح</div>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-code text-mono-code text-on-surface font-medium">192.168.1.18</span>
+<span class="font-label-sm text-label-sm text-secondary">POS-Billing-02</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top text-left whitespace-nowrap">
+<div class="flex flex-col items-end">
+<span class="inline-flex items-center gap-1 bg-surface-container-low px-space-xs py-0.5 rounded text-primary font-mono-code text-mono-code font-semibold">
+<span class="material-symbols-outlined text-[13px]">check_circle</span>
+<span>SHA256:bc99..11</span>
+</span>
+<span class="font-label-sm text-label-sm text-secondary mt-0.5">مطابقة ZATCA</span>
+</div>
+</td>
+</tr>
+<!-- Log Row 4 (Sensitive Medical Record PHI Access) -->
+<tr class="bg-surface-container-low/20 hover:bg-surface-container-low/60 transition-colors">
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-metric text-mono-metric text-on-surface font-semibold">10:28:44 ص</span>
+<span class="font-label-sm text-label-sm text-secondary">اليوم (منذ 21 دقيقة)</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex items-center gap-space-xs">
+<div class="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[11px]">
+                      سق
+                    </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">د. سارة القحطاني</span>
+<span class="font-label-sm text-label-sm text-secondary">استشارية أمراض باطنة وغدد</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex flex-col gap-space-2xs items-start">
+<span class="inline-flex items-center gap-1 px-space-xs py-0.5 rounded bg-error-container/60 text-error font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[13px]">visibility</span>
+<span>عرض ملف طبي حساس (PHI)</span>
+</span>
+<span class="font-mono-code text-mono-code text-error font-semibold">تدقيق وصول إلزامي</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-metric text-mono-metric text-primary font-bold">#MRN-91104</span>
+<span class="font-label-sm text-label-sm text-secondary">سجل خزعة وأورام سابق</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex flex-col max-w-xs">
+<div class="font-body-sm text-body-sm text-on-surface">استعراض تقرير الأنسجة المخبري #LAB-90412 لتقييم الغدة</div>
+<div class="font-label-sm text-label-sm text-secondary mt-0.5">سبب الدخول: استشارة سريرية تحويلية من قسم الجراحة</div>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-code text-mono-code text-on-surface font-medium">192.168.1.109</span>
+<span class="font-label-sm text-label-sm text-secondary">Room-302-Workstation</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top text-left whitespace-nowrap">
+<div class="flex flex-col items-end">
+<span class="inline-flex items-center gap-1 bg-surface-container-low px-space-xs py-0.5 rounded text-primary font-mono-code text-mono-code font-semibold">
+<span class="material-symbols-outlined text-[13px]">lock</span>
+<span>SHA256:d41d..fa</span>
+</span>
+<span class="font-label-sm text-label-sm text-secondary mt-0.5">مصادقة ثنائية 2FA</span>
+</div>
+</td>
+</tr>
+<!-- Log Row 5 (Lab Order Entry) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-metric text-mono-metric text-on-surface font-semibold">10:14:02 ص</span>
+<span class="font-label-sm text-label-sm text-secondary">اليوم (منذ 36 دقيقة)</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex items-center gap-space-xs">
+<div class="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[11px]">
+                      أم
+                    </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">د. أحمد المنصوري</span>
+<span class="font-label-sm text-label-sm text-secondary">استشاري باطنة وقلب</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex flex-col gap-space-2xs items-start">
+<span class="inline-flex items-center gap-1 px-space-xs py-0.5 rounded bg-surface-container text-primary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[13px]">biotech</span>
+<span>طلب تحاليل دم ومختبر</span>
+</span>
+<span class="font-label-sm text-label-sm text-secondary">أولوية اعتيادية (Routine)</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-metric text-mono-metric text-primary font-bold">#LAB-ORD-5509</span>
+<span class="font-label-sm text-label-sm text-secondary">مريض #MRN-94821</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex flex-col max-w-xs">
+<div class="font-body-sm text-body-sm text-on-surface">إرسال طلب فحص: <span class="font-mono-code text-mono-code font-bold">Lipid Profile + HbA1c</span></div>
+<div class="font-label-sm text-label-sm text-secondary mt-0.5">تم توجيه العينة إلكترونياً إلى غرفة سحب العينات (غرفة 105)</div>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-code text-mono-code text-on-surface font-medium">192.168.1.104</span>
+<span class="font-label-sm text-label-sm text-secondary">Room-301-PC</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top text-left whitespace-nowrap">
+<div class="flex flex-col items-end">
+<span class="inline-flex items-center gap-1 bg-surface-container-low px-space-xs py-0.5 rounded text-secondary font-mono-code text-mono-code">
+<span class="material-symbols-outlined text-[13px]">token</span>
+<span>SHA256:88e1..5c</span>
+</span>
+<span class="font-label-sm text-label-sm text-secondary mt-0.5">موثق في LIS</span>
+</div>
+</td>
+</tr>
+<!-- Log Row 6 (Admin Privilege / Role Update) -->
+<tr class="bg-surface-container-low/20 hover:bg-surface-container-low/60 transition-colors">
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-metric text-mono-metric text-on-surface font-semibold">09:55:10 ص</span>
+<span class="font-label-sm text-label-sm text-secondary">اليوم (منذ 55 دقيقة)</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex items-center gap-space-xs">
+<div class="w-7 h-7 rounded-full bg-inverse-surface text-inverse-on-surface flex items-center justify-center font-bold text-[11px]">
+                      مس
+                    </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">م. ياسر الشمري</span>
+<span class="font-label-sm text-label-sm text-secondary">مدير أمن النظم والامتثال</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex flex-col gap-space-2xs items-start">
+<span class="inline-flex items-center gap-1 px-space-xs py-0.5 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[13px]">admin_panel_settings</span>
+<span>تعديل صلاحيات دور</span>
+</span>
+<span class="font-mono-code text-mono-code text-primary font-semibold">سجل تدقيق أمني (Audit Root)</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-metric text-mono-metric text-on-surface font-bold">#ROLE-NURSE-SR</span>
+<span class="font-label-sm text-label-sm text-secondary">فئة تمريض العناية المركزة</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top">
+<div class="flex flex-col max-w-xs">
+<div class="font-body-sm text-body-sm text-on-surface">إضافة صلاحية: <span class="font-mono-code text-mono-code text-primary font-bold">MED_ADMINISTRATION_OVERRIDE</span></div>
+<div class="font-label-sm text-label-sm text-secondary mt-0.5">تم الاعتماد بموجب قرار اللجنة الطبية رقم 2027/A4</div>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-mono-code text-mono-code text-on-surface font-medium">10.200.0.5</span>
+<span class="font-label-sm text-label-sm text-secondary">SecOps-HQ-Console</span>
+</div>
+</td>
+<td class="py-space-md px-space-base align-top text-left whitespace-nowrap">
+<div class="flex flex-col items-end">
+<span class="inline-flex items-center gap-1 bg-surface-container-low px-space-xs py-0.5 rounded text-primary font-mono-code text-mono-code font-semibold">
+<span class="material-symbols-outlined text-[13px]">verified_user</span>
+<span>SHA256:cc01..ff</span>
+</span>
+<span class="font-label-sm text-label-sm text-secondary mt-0.5">توقيع أمني فائق</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination & Verification Status -->
+<div class="p-space-base bg-surface-container-low/40 flex flex-wrap items-center justify-between gap-space-sm font-body-sm text-body-sm">
+<div class="flex items-center gap-space-sm">
+<span class="text-secondary">عرض</span>
+<select class="bg-surface-container-lowest text-on-surface rounded px-space-xs py-space-2xs text-mono-code font-mono-code focus:outline-none">
+<option>10</option>
+<option selected="">25</option>
+<option>50</option>
+<option>100</option>
+</select>
+<span class="text-secondary">سجلاً لكل صفحة</span>
+<span class="text-secondary mr-space-md font-mono-code text-mono-code">الصفحة 1 من 74</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="px-space-sm py-space-2xs bg-surface-container-lowest text-secondary rounded font-label-sm text-label-sm hover:bg-surface-container disabled:opacity-50" disabled="" type="button">
+              السابق
+            </button>
+<button class="w-7 h-7 flex items-center justify-center bg-primary text-on-primary rounded font-mono-code text-mono-code font-bold text-[12px]" type="button">
+              1
+            </button>
+<button class="w-7 h-7 flex items-center justify-center bg-surface-container-lowest text-on-surface rounded font-mono-code text-mono-code text-[12px] hover:bg-surface-container" type="button">
+              2
+            </button>
+<button class="w-7 h-7 flex items-center justify-center bg-surface-container-lowest text-on-surface rounded font-mono-code text-mono-code text-[12px] hover:bg-surface-container" type="button">
+              3
+            </button>
+<span class="px-space-2xs text-secondary font-mono-code text-mono-code">...</span>
+<button class="w-7 h-7 flex items-center justify-center bg-surface-container-lowest text-on-surface rounded font-mono-code text-mono-code text-[12px] hover:bg-surface-container" type="button">
+              74
+            </button>
+<button class="px-space-sm py-space-2xs bg-surface-container-lowest text-on-surface rounded font-label-sm text-label-sm hover:bg-surface-container" type="button">
+              التالي
+            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Branches & Active Room Status Inspector (4 cols) -->
+<div class="xl:col-span-4 flex flex-col gap-space-base">
+<!-- Active Branch Overview Card -->
+<div class="bg-surface-container-lowest rounded-xl p-space-base shadow-sm flex flex-col gap-space-md">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="w-9 h-9 rounded-xl bg-primary-container/15 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">location_on</span>
+</div>
+<div>
+<span class="font-headline-sm text-headline-sm text-on-surface block leading-tight">فرع الرياض التخصصي</span>
+<span class="font-label-sm text-label-sm text-secondary">طريق الملك فهد، حي العليا - مبنى B</span>
+</div>
+</div>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container text-primary font-mono-code text-mono-code font-bold">HQ-MAIN</span>
+</div>
+<!-- Branch Operational Micro-Stats -->
+<div class="grid grid-cols-3 gap-space-xs p-space-sm bg-surface-container-low rounded-xl text-center">
+<div class="flex flex-col">
+<span class="font-mono-metric text-mono-metric font-bold text-on-surface">12</span>
+<span class="font-label-sm text-label-sm text-secondary">غرف الفرع</span>
+</div>
+<div class="flex flex-col border-x-0">
+<span class="font-mono-metric text-mono-metric font-bold text-primary">8</span>
+<span class="font-label-sm text-label-sm text-secondary">أطباء متاحون</span>
+</div>
+<div class="flex flex-col">
+<span class="font-mono-metric text-mono-metric font-bold text-on-surface">94%</span>
+<span class="font-label-sm text-label-sm text-secondary">نسبة الإشغال</span>
+</div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-secondary">
+<span>ساعات العمل الرسمية: 08:00 ص - 10:00 م</span>
+<span class="text-primary font-medium cursor-pointer hover:underline">تعديل الدوام</span>
+</div>
+</div>
+<!-- Real-Time Room Inspector Status -->
+<div class="bg-surface-container-lowest rounded-xl p-space-base shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">door_open</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">مراقبة الغرف والعيادات المباشرة</span>
+</div>
+<span class="font-mono-code text-mono-code text-secondary bg-surface-container px-space-xs py-space-2xs rounded">Live Status</span>
+</div>
+<!-- Room 1: Occupied Clinic Room -->
+<div class="p-space-sm rounded-xl bg-surface-container-low/60 flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-error animate-pulse"></span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">غرفة 301 - استشاري القلب</span>
+</div>
+<span class="px-space-xs py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">
+              مشغولة حالياً
+            </span>
+</div>
+<div class="flex items-center justify-between font-body-sm text-body-sm text-on-surface-variant pr-space-md">
+<span>الطبيب: د. أحمد المنصوري</span>
+<span class="font-mono-code text-mono-code text-secondary">الزيارة: 18 دقيقة</span>
+</div>
+<div class="flex items-center justify-between pt-space-xs font-label-sm text-label-sm text-secondary">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">person</span>
+<span>المريض: سلطان الراجحي (#94821)</span>
+</span>
+<span class="text-primary font-medium hover:underline cursor-pointer">عرض الشاشة</span>
+</div>
+</div>
+<!-- Room 2: Available Clinic Room -->
+<div class="p-space-sm rounded-xl bg-surface-container-low/60 flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">غرفة 302 - الباطنة والغدد الصماء</span>
+</div>
+<span class="px-space-xs py-0.5 rounded bg-primary-container/20 text-primary font-label-sm text-label-sm font-semibold">
+              شاغرة وجاهزة للكشف
+            </span>
+</div>
+<div class="flex items-center justify-between font-body-sm text-body-sm text-on-surface-variant pr-space-md">
+<span>الطبيبة: د. سارة القحطاني</span>
+<span class="font-mono-code text-mono-code text-primary">المريض القادم في 6 د</span>
+</div>
+<div class="flex items-center justify-between pt-space-xs font-label-sm text-label-sm text-secondary">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">cleaning_services</span>
+<span>تم التعقيم والتجهيز (10:30 ص)</span>
+</span>
+<span class="text-secondary font-medium hover:text-on-surface cursor-pointer">نداء المريض</span>
+</div>
+</div>
+<!-- Room 3: Lab / Sample Phlebotomy Room -->
+<div class="p-space-sm rounded-xl bg-surface-container-low/60 flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">غرفة 105 - سحب العينات والمختبر</span>
+</div>
+<span class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold">
+              نشطة ومستمرة
+            </span>
+</div>
+<div class="flex items-center justify-between font-body-sm text-body-sm text-on-surface-variant pr-space-md">
+<span>الفني المناوب: فهد الشهري (أخصائي سحب)</span>
+<span class="font-mono-code text-mono-code text-on-surface font-bold">3 عينات بالانتظار</span>
+</div>
+<div class="flex items-center justify-between pt-space-xs font-label-sm text-label-sm text-secondary">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">science</span>
+<span>جهاز التحليل Centrifuge: يعمل</span>
+</span>
+<span class="text-primary font-medium hover:underline cursor-pointer">إدارة الطابور</span>
+</div>
+</div>
+<!-- Quick Administration Actions -->
+<div class="pt-space-xs flex flex-col gap-space-xs">
+<button class="w-full flex items-center justify-center gap-space-xs h-9 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors font-label-md text-label-md" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary">calendar_month</span>
+<span>إعداد مواعيد العمل وأوقات الأطباء (Schedules)</span>
+</button>
+<button class="w-full flex items-center justify-center gap-space-xs h-9 rounded-lg bg-surface-container-low hover:bg-surface-container text-secondary hover:text-on-surface transition-colors font-label-md text-label-md" type="button">
+<span class="material-symbols-outlined text-[18px]">add_location_alt</span>
+<span>إضافة عيادة أو غرفة جديدة للفرع</span>
+</button>
+</div>
+</div>
+<!-- Other Branches Quick Switcher -->
+<div class="bg-surface-container-lowest rounded-xl p-space-base shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">الفروع الإقليمية الأخرى</span>
+<span class="font-label-sm text-label-sm text-secondary">ربط موحد للبيانات</span>
+</div>
+<!-- Branch: Khobar -->
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low/40 hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">local_hospital</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">فرع الخبر الطبي التخصصي</span>
+<span class="font-label-sm text-label-sm text-secondary">7 غرف عيادات • 14 كادر نشط</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-mono-code text-mono-code text-secondary">متصل</span>
+</div>
+</div>
+<!-- Branch: Jeddah -->
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low/40 hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">domain_add</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">فرع جدة الكورنيش</span>
+<span class="font-label-sm text-label-sm text-secondary">5 غرف عيادات • 12 كادر نشط</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-mono-code text-mono-code text-secondary">متصل</span>
+</div>
+</div>
+</div>
+<!-- Legal Compliance & Non-Repudiation Badge -->
+<div class="p-space-base rounded-xl bg-surface-container-low text-secondary flex flex-col gap-space-xs shadow-sm">
+<div class="flex items-center gap-space-xs text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px]">policy</span>
+<span class="font-label-md text-label-md font-semibold">الامتثال للأنظمة الصحية الوطنية</span>
+</div>
+<p class="font-body-sm text-body-sm leading-relaxed text-on-surface-variant">
+          كافة سجلات التدقيق مؤمنة بخوارزميات تشفير لا رجعية لحماية خصوصية بيانات المرضى وسلسلة الوصفات الطبية وفق معايير المركز الوطني للمعلومات الصحية (NHIC) ونظام حماية البيانات الشخصية.
+        </p>
+<div class="flex items-center justify-between pt-space-xs font-mono-code text-mono-code text-[11px] text-secondary">
+<span>HIPAA &amp; PDPL Compliant</span>
+<span>Ledger Hash: 0x8F92...B14</span>
+</div>
+</div>
+</div>
+</div>
+</div></main></div></body></html>

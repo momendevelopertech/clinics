@@ -37,20 +37,20 @@ export function ForgotPasswordForm({ t }: ForgotPasswordFormProps) {
   }
 
   return (
-    <main className="hero-glow flex min-h-screen items-center justify-center px-6 py-12">
-      <div className="surface-panel w-full max-w-md rounded-[36px] border border-white/60 p-10">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8 sm:px-6">
+      <div className="w-full max-w-md rounded-lg border border-border bg-card p-8 text-center shadow-xl">
         {sent ? (
           <div className="text-center">
-            <div className="mx-auto grid size-16 place-content-center rounded-[20px] bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400">
-              <CheckCircle2 className="h-8 w-8" />
+            <div className="mx-auto grid size-12 place-content-center rounded-full bg-success-bg border border-success/30 text-success-text">
+              <CheckCircle2 className="h-6 w-6" />
             </div>
-            <h1 className="mt-6 text-2xl font-semibold tracking-[-0.03em]">
+            <h1 className="mt-5 text-2xl font-bold tracking-tight text-foreground">
               {t["forgot_sent"]}
             </h1>
-            <div className="mt-8">
+            <div className="mt-6">
               <Link
                 href="/login"
-                className="inline-flex h-12 items-center justify-center rounded-[16px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20"
+                className="inline-flex h-9 items-center justify-center rounded-md bg-primary hover:bg-primary/90 px-5 text-xs font-semibold text-primary-foreground transition-colors shadow-xs"
               >
                 {t["auth_backToLogin"]}
               </Link>
@@ -58,21 +58,21 @@ export function ForgotPasswordForm({ t }: ForgotPasswordFormProps) {
           </div>
         ) : (
           <>
-            <div className="space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary">
+            <div className="space-y-1.5 text-center sm:text-left">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
                 {t["forgot_title"]}
               </p>
-              <h1 className="text-3xl font-semibold tracking-[-0.04em] text-foreground">
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">
                 {t["forgot_title"]}
               </h1>
-              <p className="text-sm leading-6 text-muted-foreground">
+              <p className="text-xs leading-relaxed text-muted-foreground">
                 {t["forgot_subtitle"]}
               </p>
             </div>
 
-            <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
-              <label className="block space-y-2">
-                <span className="text-sm font-medium text-foreground">
+            <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+              <label className="block space-y-1.5">
+                <span className="text-xs font-semibold text-foreground">
                   {t["auth_email"]}
                 </span>
                 <input
@@ -80,18 +80,18 @@ export function ForgotPasswordForm({ t }: ForgotPasswordFormProps) {
                   type="email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  className="h-13 w-full rounded-[18px] border border-border bg-white/80 px-4 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15 dark:bg-white/[0.04]"
+                  className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                 />
               </label>
 
               {error ? (
-                <p className="rounded-[16px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/25 dark:bg-red-500/10 dark:text-red-300">
+                <p className="rounded-md border border-critical/30 bg-critical-bg p-3 text-xs font-medium text-critical-text">
                   {error}
                 </p>
               ) : null}
 
               <button
-                className="inline-flex h-13 w-full items-center justify-center gap-2 rounded-[18px] bg-linear-to-r from-primary to-cyan-500 px-4 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px] disabled:cursor-not-allowed disabled:opacity-70"
+                className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-primary hover:bg-primary/90 px-4 text-xs font-semibold text-primary-foreground transition-colors shadow-xs disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
                 disabled={submitting}
                 type="submit"
               >
@@ -104,7 +104,7 @@ export function ForgotPasswordForm({ t }: ForgotPasswordFormProps) {
               </button>
             </form>
 
-            <div className="mt-6 text-center text-sm">
+            <div className="mt-5 text-center text-xs">
               <Link href="/login" className="font-semibold text-primary hover:underline">
                 {t["forgot_back"]}
               </Link>

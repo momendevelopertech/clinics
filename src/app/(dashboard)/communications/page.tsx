@@ -143,25 +143,25 @@ export default function CommunicationsPage() {
   const channelIcon = (channel: string) => {
     switch (channel) {
       case "sms":
-        return <MessageSquare className="w-4 h-4 text-blue-500" />;
+        return <MessageSquare className="w-4 h-4 text-accent-blue-text" />;
       case "email":
-        return <Mail className="w-4 h-4 text-purple-500" />;
+        return <Mail className="w-4 h-4 text-purple-500 dark:text-purple-400" />;
       case "whatsapp":
-        return <MessageCircle className="w-4 h-4 text-green-500" />;
+        return <MessageCircle className="w-4 h-4 text-success-text" />;
       default:
-        return <Phone className="w-4 h-4" />;
+        return <Phone className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
   const statusBadge = (status: string) => {
     const colors: Record<string, string> = {
-      pending: "bg-yellow-100 text-yellow-800",
-      sent: "bg-green-100 text-green-800",
-      delivered: "bg-blue-100 text-blue-800",
-      failed: "bg-red-100 text-red-800",
-      scheduled: "bg-gray-100 text-gray-800",
+      pending: "bg-warning-bg text-warning-text",
+      sent: "bg-success-bg text-success-text",
+      delivered: "bg-accent-blue-bg text-accent-blue-text",
+      failed: "bg-critical-bg text-critical-text",
+      scheduled: "bg-muted-bg text-muted-foreground",
     };
-    return colors[status] || "bg-gray-100 text-gray-800";
+    return colors[status] || "bg-muted-bg text-muted-foreground";
   };
 
   const stats = {
@@ -188,7 +188,7 @@ export default function CommunicationsPage() {
   if (forbidden) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold">{t("nav_communications")}</h1>
+        <h1 className="text-3xl font-bold text-foreground">{t("nav_communications")}</h1>
         <PermissionDenied />
       </div>
     );
@@ -202,46 +202,46 @@ export default function CommunicationsPage() {
       ) : null}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">{t("nav_communications")}</h1>
-          <p className="text-gray-600 mt-1">{t("comm_subtitle")}</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t("nav_communications")}</h1>
+          <p className="text-muted-foreground mt-1">{t("comm_subtitle")}</p>
         </div>
         <AddCommunicationDialog onSuccess={() => fetchCommunications()} />
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="p-4">
-          <div className="text-sm font-medium text-gray-600">
+        <Card className="p-4 border-border bg-card shadow-sm">
+          <div className="text-sm font-medium text-muted-foreground">
             {t("comm_totalSent")}
           </div>
-          <div className="text-2xl font-bold mt-2">{stats.sent}</div>
+          <div className="text-2xl font-bold mt-2 text-foreground">{stats.sent}</div>
         </Card>
-        <Card className="p-4">
-          <div className="text-sm font-medium text-gray-600">
+        <Card className="p-4 border-border bg-card shadow-sm">
+          <div className="text-sm font-medium text-muted-foreground">
             {t("comm_pending")}
           </div>
-          <div className="text-2xl font-bold mt-2 text-yellow-600">
+          <div className="text-2xl font-bold mt-2 text-warning-text">
             {stats.pending}
           </div>
         </Card>
-        <Card className="p-4">
-          <div className="text-sm font-medium text-gray-600">
+        <Card className="p-4 border-border bg-card shadow-sm">
+          <div className="text-sm font-medium text-muted-foreground">
             {t("comm_failed")}
           </div>
-          <div className="text-2xl font-bold mt-2 text-red-600">
+          <div className="text-2xl font-bold mt-2 text-critical-text">
             {stats.failed}
           </div>
         </Card>
-        <Card className="p-4">
-          <div className="text-sm font-medium text-gray-600">
+        <Card className="p-4 border-border bg-card shadow-sm">
+          <div className="text-sm font-medium text-muted-foreground">
             {t("comm_totalMessages")}
           </div>
-          <div className="text-2xl font-bold mt-2">{stats.total}</div>
+          <div className="text-2xl font-bold mt-2 text-foreground">{stats.total}</div>
         </Card>
       </div>
 
       {/* Filters */}
-      <Card className="p-4">
+      <Card className="p-4 border-border bg-card shadow-sm">
         <FilterBar
           hasActiveFilters={
             searchTerm !== "" || channelFilter !== "" || statusFilter !== ""
@@ -255,13 +255,13 @@ export default function CommunicationsPage() {
               setSearchTerm(e.target.value);
               setPage(1);
             }}
-            className="flex-1"
+            className="flex-1 h-9"
           />
           <Select
             value={channelFilter || "all"}
             onValueChange={handleChannelChange}
           >
-            <SelectTrigger className="w-40">
+            <SelectTrigger className="w-40 h-9">
               <SelectValue placeholder={t("comm_allChannels")} />
             </SelectTrigger>
             <SelectContent>
@@ -279,7 +279,7 @@ export default function CommunicationsPage() {
                 value={statusFilter || "all"}
                 onValueChange={handleStatusChange}
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-40 h-9">
                   <SelectValue placeholder={t("comm_allStatus")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -301,7 +301,7 @@ export default function CommunicationsPage() {
       </Card>
 
       {/* Communications Table */}
-      <Card>
+      <Card className="border-border bg-card shadow-sm overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -334,7 +334,7 @@ export default function CommunicationsPage() {
                 <TableCell colSpan={6} className="py-4">
                   <EmptyState
                     icon={
-                      <MessageSquare className="w-10 h-10 text-neutral-300" />
+                      <MessageSquare className="w-10 h-10 text-muted-foreground/40" />
                     }
                     title={t("comm_empty")}
                   />
@@ -343,29 +343,29 @@ export default function CommunicationsPage() {
             ) : (
               pagedComms.map((comm) => (
                 <TableRow key={comm.id}>
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium text-foreground">
                     {comm.patient.firstName} {comm.patient.lastName}
                   </TableCell>
-                  <TableCell className="flex items-center gap-2">
+                  <TableCell className="flex items-center gap-2 text-foreground">
                     {channelIcon(comm.channel)}
                     {channelLabel(comm.channel)}
                   </TableCell>
-                  <TableCell className="capitalize">
+                  <TableCell className="capitalize text-foreground">
                     {typeLabel(comm.type)}
                   </TableCell>
                   <TableCell>
                     <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${statusBadge(
+                      className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadge(
                         comm.status,
                       )}`}
                     >
                       {statusLabel(comm.status)}
                     </span>
                   </TableCell>
-                  <TableCell className="text-sm text-gray-600 max-w-xs truncate">
+                  <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
                     {comm.content}
                   </TableCell>
-                  <TableCell className="text-sm">
+                  <TableCell className="text-sm text-muted-foreground">
                     {comm.sentAt
                       ? new Date(comm.sentAt).toLocaleString()
                       : "-"}

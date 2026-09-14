@@ -193,10 +193,10 @@ export default function IntegrationsPage() {
         <FeatureNotConfiguredBanner feature="fhir" missingEnvVars={fhir.missing} />
       ) : null}
 
-      <Card>
+      <Card className="border-border bg-card shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <KeyRound className="w-5 h-5" />
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <KeyRound className="w-5 h-5 text-primary" />
             {t("int_apiKeys")}
           </CardTitle>
           <p className="text-sm text-muted-foreground">{t("int_apiKeysDesc")}</p>
@@ -205,30 +205,30 @@ export default function IntegrationsPage() {
           <div className="flex flex-col sm:flex-row gap-2">
             <Input
               placeholder={t("int_keyName")}
-              className="w-full sm:max-w-sm"
+              className="w-full sm:max-w-sm h-9"
               value={keyName}
               onChange={(e) => setKeyName(e.target.value)}
             />
-            <Button disabled={keyName.trim().length < 2} onClick={() => void createKey()}>
-              <Plus />{t("common_add")}
+            <Button disabled={keyName.trim().length < 2} onClick={() => void createKey()} className="h-9">
+              <Plus className="h-4 w-4 mr-1" />{t("common_add")}
             </Button>
           </div>
           {freshKey ? (
-            <div className="rounded-[14px] border border-emerald-200 bg-emerald-50/70 p-4 text-sm dark:border-emerald-800/60 dark:bg-emerald-950/20">
-              <p className="font-medium">{t("int_keyOnce")}</p>
-              <code className="mt-2 block break-all rounded-lg bg-white/70 p-2 font-mono text-xs dark:bg-black/30">
+            <div className="rounded-lg border border-border bg-muted-bg/50 p-4 text-sm text-foreground">
+              <p className="font-medium text-foreground">{t("int_keyOnce")}</p>
+              <code className="mt-2 block break-all rounded-md border border-border bg-card p-2 font-mono text-xs text-foreground">
                 {freshKey}
               </code>
               <Button
                 size="sm"
                 variant="outline"
-                className="mt-2"
+                className="mt-2 h-8"
                 onClick={() => {
                   void navigator.clipboard.writeText(freshKey).catch(() => {});
                   toast.success(t("common_success"));
                 }}
               >
-                <Copy />{t("int_copy")}
+                <Copy className="h-3.5 w-3.5 mr-1" />{t("int_copy")}
               </Button>
             </div>
           ) : null}
@@ -237,28 +237,28 @@ export default function IntegrationsPage() {
           ) : keys.length === 0 ? (
             <p className="text-sm text-muted-foreground">{t("int_emptyKeys")}</p>
           ) : (
-            <div className="rounded-[5px] border overflow-x-auto">
+            <div className="rounded-lg border border-border overflow-x-auto">
               <table className="w-full min-w-[640px] text-sm">
-                <thead className="bg-neutral-50 dark:bg-neutral-800/50">
+                <thead className="bg-muted-bg text-muted-foreground font-medium">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_name")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("int_colPrefix")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_status")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_actions")}</th>
+                    <th className="px-4 py-3 text-left">{t("common_name")}</th>
+                    <th className="px-4 py-3 text-left">{t("int_colPrefix")}</th>
+                    <th className="px-4 py-3 text-left">{t("common_status")}</th>
+                    <th className="px-4 py-3 text-left">{t("common_actions")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y">
+                <tbody className="divide-y divide-border text-foreground">
                   {keys.map((k) => (
-                    <tr key={k.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
-                      <td className="px-4 py-3 font-medium">{k.name}</td>
-                      <td className="px-4 py-3 font-mono text-xs">{k.prefix}</td>
+                    <tr key={k.id} className="hover:bg-muted-bg/50 transition-colors">
+                      <td className="px-4 py-3 font-medium text-foreground">{k.name}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{k.prefix}</td>
                       <td className="px-4 py-3">
                         <span
                           className={cn(
-                            "rounded-full px-2.5 py-1 text-xs font-semibold",
+                            "rounded-full px-2.5 py-0.5 text-xs font-medium",
                             k.active
-                              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
-                              : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300",
+                              ? "bg-success-bg text-success-text"
+                              : "bg-muted-bg text-muted-foreground",
                           )}
                         >
                           {k.active ? t("int_active") : t("int_revoked")}
@@ -266,8 +266,8 @@ export default function IntegrationsPage() {
                       </td>
                       <td className="px-4 py-3">
                         {k.active ? (
-                          <Button variant="ghost" size="sm" className="text-red-600" onClick={() => void revokeKey(k.id)}>
-                            <Ban />{t("int_revoke")}
+                          <Button variant="ghost" size="sm" className="text-critical-text hover:text-critical-text hover:bg-critical-bg/50 h-8" onClick={() => void revokeKey(k.id)}>
+                            <Ban className="h-3.5 w-3.5 mr-1" />{t("int_revoke")}
                           </Button>
                         ) : (
                           <span className="text-xs text-muted-foreground">—</span>
@@ -282,10 +282,10 @@ export default function IntegrationsPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-border bg-card shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <WebhookIcon className="w-5 h-5" />
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <WebhookIcon className="w-5 h-5 text-primary" />
             {t("int_webhooks")}
           </CardTitle>
           <p className="text-sm text-muted-foreground">{t("int_webhooksDesc")}</p>
@@ -297,7 +297,7 @@ export default function IntegrationsPage() {
               <Input
                 type="url"
                 placeholder="https://…"
-                className="w-full sm:max-w-md"
+                className="w-full sm:max-w-md h-9"
                 value={hookUrl}
                 onChange={(e) => setHookUrl(e.target.value)}
               />
@@ -307,10 +307,10 @@ export default function IntegrationsPage() {
                 <label
                   key={e}
                   className={cn(
-                    "cursor-pointer rounded-full border px-3 py-1.5 font-mono text-xs",
+                    "cursor-pointer rounded-full border px-3 py-1 font-mono text-xs transition-colors",
                     hookEvents.includes(e)
                       ? "border-primary bg-primary/10 text-primary"
-                      : "border-white/60 text-muted-foreground dark:border-white/10",
+                      : "border-border text-muted-foreground hover:bg-muted-bg/50",
                   )}
                 >
                   <input
@@ -328,36 +328,36 @@ export default function IntegrationsPage() {
               ))}
             </div>
             <div>
-              <Button disabled={!hookUrl.trim() || hookEvents.length === 0} onClick={() => void createWebhook()}>
-                <Plus />{t("common_add")}
+              <Button disabled={!hookUrl.trim() || hookEvents.length === 0} onClick={() => void createWebhook()} className="h-9">
+                <Plus className="h-4 w-4 mr-1" />{t("common_add")}
               </Button>
             </div>
           </div>
           {webhooks.length === 0 && !loading ? (
             <p className="text-sm text-muted-foreground">{t("int_emptyHooks")}</p>
           ) : (
-            <div className="rounded-[5px] border overflow-x-auto">
+            <div className="rounded-lg border border-border overflow-x-auto">
               <table className="w-full min-w-[640px] text-sm">
-                <thead className="bg-neutral-50 dark:bg-neutral-800/50">
+                <thead className="bg-muted-bg text-muted-foreground font-medium">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium">URL</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("int_colEvents")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_status")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("common_actions")}</th>
+                    <th className="px-4 py-3 text-left">URL</th>
+                    <th className="px-4 py-3 text-left">{t("int_colEvents")}</th>
+                    <th className="px-4 py-3 text-left">{t("common_status")}</th>
+                    <th className="px-4 py-3 text-left">{t("common_actions")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y">
+                <tbody className="divide-y divide-border text-foreground">
                   {webhooks.map((h) => (
-                    <tr key={h.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
-                      <td className="px-4 py-3 font-mono text-xs max-w-xs truncate">{h.url}</td>
-                      <td className="px-4 py-3 font-mono text-xs">{h.eventTypes.join(", ")}</td>
+                    <tr key={h.id} className="hover:bg-muted-bg/50 transition-colors">
+                      <td className="px-4 py-3 font-mono text-xs max-w-xs truncate text-foreground">{h.url}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{h.eventTypes.join(", ")}</td>
                       <td className="px-4 py-3">
                         <span
                           className={cn(
-                            "rounded-full px-2.5 py-1 text-xs font-semibold",
+                            "rounded-full px-2.5 py-0.5 text-xs font-medium",
                             h.active
-                              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
-                              : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300",
+                              ? "bg-success-bg text-success-text"
+                              : "bg-muted-bg text-muted-foreground",
                           )}
                         >
                           {h.active ? t("int_active") : t("int_paused")}
@@ -365,11 +365,11 @@ export default function IntegrationsPage() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => void toggleWebhook(h)}>
-                            <Power />{h.active ? t("int_pause") : t("int_resume")}
+                          <Button variant="ghost" size="sm" className="h-8" onClick={() => void toggleWebhook(h)}>
+                            <Power className="h-3.5 w-3.5 mr-1" />{h.active ? t("int_pause") : t("int_resume")}
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-red-600" onClick={() => void deleteWebhook(h.id)}>
-                            <Trash2 />{t("common_delete")}
+                          <Button variant="ghost" size="sm" className="text-critical-text hover:text-critical-text hover:bg-critical-bg/50 h-8" onClick={() => void deleteWebhook(h.id)}>
+                            <Trash2 className="h-3.5 w-3.5 mr-1" />{t("common_delete")}
                           </Button>
                         </div>
                       </td>

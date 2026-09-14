@@ -22,9 +22,9 @@ export default async function UserStoriesPage() {
     <main className="min-h-screen">
       {/* Sticky nav */}
       <header className="sticky top-0 z-40 px-4 pt-4 sm:px-6">
-        <div className="surface-panel mx-auto flex h-16 max-w-6xl items-center justify-between rounded-[22px] border border-white/55 px-4 sm:px-6 dark:border-white/6">
+        <div className="surface-panel mx-auto flex h-16 max-w-6xl items-center justify-between rounded-lg border border-border px-4 sm:px-6 shadow-sm">
           <Link href="/" className="flex items-center gap-2">
-            <div className="grid size-9 place-content-center rounded-[14px] bg-linear-to-br from-cyan-500 via-teal-500 to-emerald-500 text-white shadow-lg shadow-cyan-500/20">
+            <div className="grid size-9 place-content-center rounded-md bg-primary text-primary-foreground shadow-sm">
               <Activity className="h-4 w-4" />
             </div>
             <span className="text-lg font-semibold tracking-tight">{t["appName"]}</span>
@@ -35,7 +35,7 @@ export default async function UserStoriesPage() {
             {isLoggedIn ? (
               <Link
                 href={dashboardHref}
-                className="rounded-[14px] bg-linear-to-r from-primary to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+                className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
               >
                 {t["nav_dashboard"]}
               </Link>
@@ -49,7 +49,7 @@ export default async function UserStoriesPage() {
                 </Link>
                 <Link
                   href="/signup"
-                  className="rounded-[14px] bg-linear-to-r from-primary to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+                  className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
                 >
                   {t["landing_navStartFree"]}
                 </Link>
@@ -62,7 +62,7 @@ export default async function UserStoriesPage() {
       {/* Hero */}
       <section className="px-4 pt-16 sm:px-6 lg:pt-20">
         <div className="mx-auto max-w-6xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-primary shadow-sm dark:border-white/6 dark:bg-white/[0.04]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-primary shadow-sm">
             <Users className="h-3.5 w-3.5" />
             {t["userStories_badge"]}
           </div>
@@ -84,7 +84,7 @@ export default async function UserStoriesPage() {
 
       {/* CTA */}
       <section className="px-4 pb-24 sm:px-6">
-        <div className="surface-panel mx-auto max-w-4xl rounded-[36px] border border-white/55 p-10 text-center">
+        <div className="surface-panel mx-auto max-w-4xl rounded-lg border border-border p-8 text-center shadow-sm">
           <h2 className="text-3xl font-semibold tracking-[-0.04em]">
             {t["userStories_ctaTitle"]}
           </h2>
@@ -95,7 +95,7 @@ export default async function UserStoriesPage() {
             {isLoggedIn ? (
               <Link
                 href={dashboardHref}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-[18px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
               >
                 {t["nav_dashboard"]}
                 <ArrowRight className="h-4 w-4 rtl:rotate-180" />
@@ -104,14 +104,14 @@ export default async function UserStoriesPage() {
               <>
                 <Link
                   href="/signup"
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-[18px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
                 >
                   {t["userStories_ctaSignup"]}
                   <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                 </Link>
                 <Link
                   href="/login"
-                  className="inline-flex h-12 items-center justify-center rounded-[18px] border border-white/60 bg-white/70 px-6 text-sm font-semibold text-foreground shadow-sm transition hover:bg-white dark:border-white/6 dark:bg-white/[0.04]"
+                  className="inline-flex h-11 items-center justify-center rounded-md border border-border bg-card px-6 text-sm font-semibold text-foreground shadow-sm transition hover:bg-muted"
                 >
                   {t["userStories_ctaLogin"]}
                 </Link>

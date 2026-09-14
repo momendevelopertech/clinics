@@ -42,7 +42,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import {
   DropdownMenu,
@@ -125,7 +125,16 @@ export function DashboardWithCollapsibleSidebar({
 
   return (
     <div className="app-shell flex min-h-screen w-full text-foreground">
-      <CollapsibleSidebar open={open} setOpen={setOpen} mobileNavOpen={mobileNavOpen} setMobileNavOpen={setMobileNavOpen} roles={roles} isSuperAdmin={isSuperAdmin} planModules={planModules} />
+      <CollapsibleSidebar
+        open={open}
+        setOpen={setOpen}
+        mobileNavOpen={mobileNavOpen}
+        setMobileNavOpen={setMobileNavOpen}
+        roles={roles}
+        isSuperAdmin={isSuperAdmin}
+        planModules={planModules}
+        orgName={orgName}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <DashboardHeader onMenuClick={() => setMobileNavOpen(true)} orgName={orgName} />
         <main className="flex-1 overflow-auto px-4 pb-6 pt-4 sm:px-6 lg:px-8">
@@ -144,6 +153,7 @@ function CollapsibleSidebar({
   roles,
   isSuperAdmin,
   planModules,
+  orgName,
 }: {
   open: boolean;
   setOpen: (value: boolean) => void;
@@ -152,6 +162,7 @@ function CollapsibleSidebar({
   roles: string[];
   isSuperAdmin: boolean;
   planModules?: Record<string, boolean> | null;
+  orgName?: string;
 }) {
   const { t } = useLocale();
   const { appointments } = useMedical();
@@ -283,95 +294,132 @@ function CollapsibleSidebar({
     <>
     <aside
       className={cn(
-        "surface-panel sticky top-0 hidden h-screen shrink-0 border-r border-sidebar-border/80 px-3 py-4 md:flex md:flex-col",
-        open ? "w-76" : "w-24",
+        "sticky top-0 hidden h-screen shrink-0 border-r border-border bg-sidebar text-sidebar-foreground flex-col justify-between overflow-y-auto md:flex transition-all duration-200 z-30",
+        open ? "w-70" : "w-20",
       )}
     >
-      <Link
-        href="/dashboard"
-        className={cn(
-          "hero-glow flex items-center rounded-[28px] border border-white/50 px-3 py-3 transition-colors",
-          "bg-white/70 dark:bg-white/5",
-        )}
-      >
-        <div className="grid size-12 place-content-center rounded-[20px] bg-linear-to-br from-cyan-500 via-teal-500 to-emerald-500 text-white shadow-lg shadow-cyan-500/20">
-          <Activity className="h-5 w-5" />
-        </div>
-        {open ? (
-          <div className="ml-3 min-w-0">
-            <p className="truncate text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
-              {t("shell_brandEyebrow")}
-            </p>
-            <p className="truncate text-lg font-semibold text-foreground">
-              {t("appName")}
-            </p>
-          </div>
-        ) : null}
-      </Link>
-
-      <div className="mt-6 rounded-[28px] border border-white/50 bg-white/55 p-3 text-sm shadow-sm dark:border-white/5 dark:bg-white/[0.03]">
-        {open ? (
-          <>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-              {t("shell_todayVisits")}
-            </p>
-            <p className="mt-2 text-2xl font-semibold text-foreground">{todayVisits}</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {t("dash_apptsNotCancelled")}
-            </p>
-          </>
-        ) : (
-          <div className="flex justify-center py-2">
-            <span className="rounded-full bg-primary/15 px-2 py-1 text-xs font-semibold text-primary">
-              {todayVisits}
-            </span>
-          </div>
-        )}
-      </div>
-
-      <div className="mt-6 flex-1 space-y-5 overflow-y-auto pb-4">
-        {navGroups.map((group) => (
-          <div key={group.label}>
-            {open ? (
-              <p className="mb-2 px-3 text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-                {group.label}
-              </p>
-            ) : null}
-            <div className="space-y-1">
-              {group.items.map((item) => (
-                <NavLink key={item.href} item={item} open={open} />
-              ))}
+      <div className="flex flex-col min-h-0 flex-1">
+        {/* Brand Logo & Identity */}
+        <div className="h-16 px-4 flex items-center justify-between border-b border-border bg-sidebar">
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-3 transition-opacity hover:opacity-90"
+          >
+            <div className="grid size-9 shrink-0 place-content-center rounded-md bg-primary text-primary-foreground shadow-xs">
+              <Activity className="h-5 w-5" />
             </div>
-          </div>
-        ))}
-      </div>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setOpen(!open)}
-        aria-label={t("header_collapse")}
-        title={t("header_collapse")}
-        className="mt-auto h-12 justify-start rounded-[18px] border border-white/55 bg-white/50 px-2.5 hover:bg-white/80 dark:border-white/5 dark:bg-white/[0.03] dark:hover:bg-white/[0.06]"
-      >
-        <div className="grid size-8 place-content-center rounded-[12px] bg-primary/10 text-primary">
-          <ChevronRight className={cn("h-4 w-4 transition-transform", open ? "rotate-180" : "")} />
+            {open ? (
+              <div className="min-w-0 flex flex-col">
+                <span className="font-semibold text-base text-foreground leading-none">
+                  {t("appName")}
+                </span>
+                <span className="text-[11px] text-muted-foreground leading-tight mt-1">
+                  {t("shell_brandEyebrow")}
+                </span>
+              </div>
+            ) : null}
+          </Link>
+          {open ? (
+            <span className="font-mono text-[11px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded-[4px] font-medium">
+              v4.2
+            </span>
+          ) : null}
         </div>
-        {open ? <span className="ml-2 text-sm font-medium">{t("header_collapse")}</span> : null}
-      </Button>
-    </aside>
-    <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
-      <SheetContent side="left" className="overflow-y-auto px-4 py-6 md:hidden">
-        <SheetHeader>
-          <SheetTitle>{t("appSubtitle")}</SheetTitle>
-        </SheetHeader>
-        <nav className="mt-4 space-y-5" onClick={() => setMobileNavOpen(false)}>
+
+        {/* Branch / Daily Visits Pill */}
+        <div className="p-3 border-b border-border bg-muted-bg">
+          {open ? (
+            <div className="p-2.5 rounded-md border border-border bg-card flex items-center justify-between gap-2 shadow-xs">
+              <div className="flex items-center gap-2 overflow-hidden">
+                <span className="grid size-7 shrink-0 place-content-center rounded-sm bg-primary/10 text-primary">
+                  <Building2 className="h-4 w-4" />
+                </span>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-xs font-semibold text-foreground truncate">
+                    {orgName ?? t("shell_defaultOrgName")}
+                  </span>
+                  <span className="font-mono text-[11px] text-muted-foreground truncate">
+                    {t("shell_todayVisits")}: {todayVisits}
+                  </span>
+                </div>
+              </div>
+              <span className="w-2 h-2 rounded-full bg-success-text shrink-0" title="Connected" />
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <span className="rounded-sm bg-primary/15 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-primary" title={`${t("shell_todayVisits")}: ${todayVisits}`}>
+                {todayVisits}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Navigation Items */}
+        <div className="flex-1 space-y-4 overflow-y-auto p-3">
           {navGroups.map((group) => (
             <div key={group.label}>
-              <p className="mb-2 px-3 text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+              {open ? (
+                <p className="mb-1.5 px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  {group.label}
+                </p>
+              ) : null}
+              <div className="space-y-0.5">
+                {group.items.map((item) => (
+                  <NavLink key={item.href} item={item} open={open} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Telemetry Footer & Collapse Button */}
+      <div className="border-t border-border p-3 bg-muted-bg space-y-2">
+        {open ? (
+          <div className="flex items-center justify-between text-[11px] text-muted-foreground px-1">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-success-text animate-pulse" />
+              <span>{t("shell_serverOnline")}</span>
+            </div>
+            <span className="font-mono text-[10px] bg-muted px-1.5 py-0.5 rounded-sm">RT-24ms</span>
+          </div>
+        ) : null}
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setOpen(!open)}
+          aria-label={t("header_collapse")}
+          title={t("header_collapse")}
+          className="w-full h-8 justify-center rounded-md border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <ChevronRight className={cn("h-4 w-4 transition-transform", open ? "rotate-180" : "")} />
+          {open ? <span className="ml-1.5 text-xs font-medium">{t("header_collapse")}</span> : null}
+        </Button>
+      </div>
+    </aside>
+    <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
+      <SheetContent side="left" className="overflow-y-auto p-0 md:hidden bg-sidebar text-sidebar-foreground w-72">
+        <div className="h-16 px-4 flex items-center gap-3 border-b border-border bg-sidebar">
+          <div className="grid size-9 shrink-0 place-content-center rounded-md bg-primary text-primary-foreground shadow-xs">
+            <Activity className="h-5 w-5" />
+          </div>
+          <div className="min-w-0 flex flex-col">
+            <span className="font-semibold text-base text-foreground leading-none">
+              {t("appName")}
+            </span>
+            <span className="text-[11px] text-muted-foreground leading-tight mt-1">
+              {t("shell_brandEyebrow")}
+            </span>
+          </div>
+        </div>
+        <nav className="p-3 space-y-4" onClick={() => setMobileNavOpen(false)}>
+          {navGroups.map((group) => (
+            <div key={group.label}>
+              <p className="mb-1.5 px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {group.label}
               </p>
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 {group.items.map((item) => (
                   <NavLink key={item.href} item={item} open />
                 ))}
@@ -406,66 +454,52 @@ function NavLink({
     <Link
       href={locked ? `/plan?lock=${encodeURIComponent(item.href.replace("/", ""))}` : item.href}
       className={cn(
-        "group flex items-center rounded-[18px] px-2 py-2.5 transition-all",
+        "group flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors",
         locked
-          ? "text-amber-700/80 hover:bg-amber-50 dark:text-amber-300/80 dark:hover:bg-amber-400/10"
+          ? "text-warning-text hover:bg-warning-bg"
           : isSelected
-            ? "bg-linear-to-r from-primary to-cyan-500 text-primary-foreground shadow-lg shadow-cyan-500/20"
-            : "text-muted-foreground hover:bg-white/75 hover:text-foreground dark:hover:bg-white/[0.05]",
+            ? "bg-primary/10 text-primary font-semibold border-r-2 border-primary rtl:border-r-0 rtl:border-l-2"
+            : "text-muted-foreground hover:bg-muted hover:text-foreground",
       )}
     >
       <div
         className={cn(
-          "grid size-10 shrink-0 place-content-center rounded-[14px] transition-colors",
+          "grid size-7 shrink-0 place-content-center rounded-sm transition-colors",
           locked
-            ? "bg-amber-100/80 text-amber-600 dark:bg-amber-400/15 dark:text-amber-300"
+            ? "bg-warning-bg text-warning-text"
             : isSelected
-              ? "bg-white/18 text-primary-foreground"
-              : "bg-white/70 text-foreground/80 group-hover:bg-white dark:bg-white/[0.04] dark:group-hover:bg-white/[0.08]",
+              ? "text-primary"
+              : "text-muted-foreground group-hover:text-foreground",
         )}
       >
         <Icon className={cn("h-4 w-4", locked && "opacity-80")} />
       </div>
       {open ? (
-        <div className="ml-3 flex min-w-0 flex-1 items-center justify-between gap-2">
-          <div className="min-w-0">
-            <p className={cn("truncate text-sm font-medium", locked && "text-amber-700 dark:text-amber-300")}>
-              {item.label}
-            </p>
-            <p
-              className={cn(
-                "truncate text-xs",
-                locked
-                  ? "text-amber-600/80 dark:text-amber-300/70"
-                  : isSelected
-                    ? "text-black/90"
-                    : "text-muted-foreground",
-              )}
-            >
-              {locked ? t("nav_locked") : item.href === "/dashboard" ? t("appTagline") : t("appSubtitle")}
-            </p>
-          </div>
+        <div className="flex min-w-0 flex-1 items-center justify-between gap-1.5">
+          <span className="truncate text-xs font-medium">
+            {item.label}
+          </span>
           {locked ? (
-            <span className="shrink-0 rounded-full bg-amber-100 px-1.5 py-0.5 text-amber-700 dark:bg-amber-400/15 dark:text-amber-300">
-              <Lock className="h-3 w-3" />
+            <span className="shrink-0 rounded-sm bg-warning-bg border border-warning/30 px-1.5 py-0.5 text-[10px] font-medium text-warning-text">
+              <Lock className="h-3 w-3 inline" />
             </span>
           ) : notConfigured ? (
             <span
               title={t("cfg_badge")}
-              className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:bg-amber-400/15 dark:text-amber-300"
+              className="shrink-0 rounded-sm bg-warning-bg border border-warning/30 px-1.5 py-0.5 text-[10px] font-semibold text-warning-text"
             >
               {t("cfg_badge")}
             </span>
           ) : null}
         </div>
       ) : locked ? (
-        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-amber-500">
+        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-warning-text">
           <Lock className="h-3 w-3" />
         </span>
       ) : notConfigured ? (
         <span
           title={t("cfg_badge")}
-          className="absolute right-2 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-amber-500"
+          className="absolute right-2 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-warning-text"
         />
       ) : null}
     </Link>
@@ -661,23 +695,23 @@ function DashboardHeader({
   };
 
   return (
-    <header className="sticky top-0 z-20 px-4 pt-4 sm:px-6 lg:px-8">
-      <div className="surface-panel flex h-20 items-center justify-between rounded-[30px] border border-white/55 px-4 sm:px-6 dark:border-white/6">
+    <header className="sticky top-0 z-20 border-b border-border bg-card px-4 sm:px-6 lg:px-8">
+      <div className="flex h-16 items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
           <Button
             variant="ghost"
             size="icon-sm"
             onClick={onMenuClick}
-            className="rounded-[14px] md:hidden"
+            className="h-9 w-9 rounded-md border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground md:hidden"
             aria-label={t("header_toggleNav")}
           >
             <Menu className="h-4 w-4" />
           </Button>
           <div className="min-w-0">
-            <p className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               {t("appSubtitle")}
             </p>
-            <h1 className="truncate text-2xl font-semibold text-foreground">
+            <h1 className="truncate text-lg sm:text-xl font-bold text-foreground leading-tight">
               {title}
             </h1>
           </div>
@@ -688,8 +722,8 @@ function DashboardHeader({
           <div className="relative hidden md:block">
             <FeatureTip tipId="shell-search">
               <form onSubmit={handleSearchSubmit}>
-                <label className="flex w-[30rem] items-center gap-3 rounded-[18px] border border-white/55 bg-white/60 px-4 py-2.5 text-sm text-muted-foreground shadow-sm dark:border-white/6 dark:bg-white/[0.03]">
-                  <Search className="h-4 w-4" />
+                <label className="flex w-[20rem] lg:w-[26rem] items-center gap-2.5 rounded-md border border-border bg-muted-bg px-3 py-2 text-xs text-muted-foreground focus-within:border-primary focus-within:bg-card focus-within:ring-2 focus-within:ring-primary/20 transition-all shadow-2xs">
+                  <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
                   <input
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)}
@@ -698,7 +732,7 @@ function DashboardHeader({
                       window.setTimeout(() => setIsSearchFocused(false), 120);
                     }}
                     placeholder={t("header_searchPlaceholder")}
-                    className="w-full bg-transparent text-foreground outline-none placeholder:text-muted-foreground"
+                    className="w-full bg-transparent text-xs text-foreground outline-none placeholder:text-muted-foreground"
                     aria-label={t("header_searchPlaceholder")}
                   />
                 </label>
@@ -706,23 +740,23 @@ function DashboardHeader({
             </FeatureTip>
 
             {isSearchFocused && searchResults.length > 0 ? (
-              <div className="surface-panel absolute left-0 top-[calc(100%+0.75rem)] z-30 w-full rounded-[24px] border border-white/60 p-2 dark:border-white/6">
+              <div className="absolute left-0 top-[calc(100%+0.5rem)] z-30 w-full rounded-lg border border-border bg-popover p-1.5 shadow-lg">
                 {searchResults.map((result) => (
                   <button
                     key={result.id}
                     type="button"
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={() => openSearchResult(result.href)}
-                    className="flex w-full items-center gap-3 rounded-[18px] px-3 py-3 text-left transition-colors hover:bg-white/65 dark:hover:bg-white/[0.05]"
+                    className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors hover:bg-muted"
                   >
-                    <div className="grid size-10 shrink-0 place-content-center rounded-[14px] bg-primary/10 text-primary">
+                    <div className="grid size-8 shrink-0 place-content-center rounded-md bg-primary/10 text-primary">
                       <result.icon className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-foreground">
+                      <p className="truncate text-xs font-semibold text-foreground">
                         {result.title}
                       </p>
-                      <p className="truncate text-xs text-muted-foreground">
+                      <p className="truncate text-[11px] text-muted-foreground">
                         {result.subtitle}
                       </p>
                     </div>
@@ -737,22 +771,22 @@ function DashboardHeader({
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative rounded-[16px] border border-white/55 bg-white/60 dark:border-white/6 dark:bg-white/[0.03]"
+                className="relative h-9 w-9 rounded-md border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
                 aria-label={t("header_notifications")}
               >
                 <Bell className="h-4 w-4" />
                 {unreadNotifications > 0 ? (
-                  <span className="absolute -right-1 -top-1 grid min-h-5 min-w-5 place-content-center rounded-full border-2 border-background bg-amber-500 px-1 text-[10px] font-semibold text-white">
+                  <span className="absolute -top-1 -right-1 grid min-h-4 min-w-4 place-content-center rounded-full bg-amber-500 px-1 text-[9px] font-bold text-white shadow-2xs">
                     {unreadNotifications}
                   </span>
                 ) : null}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80 rounded-[18px] p-2">
-              <DropdownMenuLabel className="px-3 py-2">{t("header_notifications")}</DropdownMenuLabel>
+            <DropdownMenuContent align="end" className="w-80 rounded-lg border border-border bg-popover text-popover-foreground p-1 shadow-lg">
+              <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold">{t("header_notifications")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {notifications.length === 0 ? (
-                <div className="px-3 py-4 text-sm text-muted-foreground">
+                <div className="px-3 py-4 text-xs text-muted-foreground text-center">
                   {t("header_noNotifications")}
                 </div>
               ) : (
@@ -760,17 +794,17 @@ function DashboardHeader({
                   <DropdownMenuItem
                     key={notification.id}
                     asChild
-                    className="rounded-[14px] px-3 py-3 focus:bg-accent/60"
+                    className="rounded-md px-2.5 py-2 focus:bg-muted cursor-pointer"
                   >
-                    <Link href={notification.href} className="flex items-start gap-3">
-                      <div className="grid size-9 shrink-0 place-content-center rounded-[12px] bg-primary/10 text-primary">
+                    <Link href={notification.href} className="flex items-start gap-2.5">
+                      <div className="grid size-8 shrink-0 place-content-center rounded-md bg-primary/10 text-primary mt-0.5">
                         <notification.icon className="h-4 w-4" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-foreground">
+                        <p className="text-xs font-semibold text-foreground">
                           {notification.title}
                         </p>
-                        <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                        <p className="mt-0.5 text-[11px] leading-4 text-muted-foreground">
                           {notification.description}
                         </p>
                       </div>
@@ -790,7 +824,7 @@ function DashboardHeader({
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="rounded-[16px] border border-white/55 bg-white/60 dark:border-white/6 dark:bg-white/[0.03]"
+              className="h-9 w-9 rounded-md border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
               aria-label={theme === "dark" ? t("shell_themeLight") : t("shell_themeDark")}
             >
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -801,38 +835,38 @@ function DashboardHeader({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="h-11 rounded-[18px] border border-white/55 bg-white/60 px-2 dark:border-white/6 dark:bg-white/[0.03]"
+                className="h-9 rounded-md border border-border bg-card px-2 text-left hover:bg-muted transition-colors flex items-center gap-2"
               >
-                <div className="grid size-8 place-content-center rounded-[12px] bg-linear-to-br from-primary to-cyan-500 text-primary-foreground">
-                  <User className="h-4 w-4" />
+                <div className="grid size-6 place-content-center rounded-full bg-primary text-primary-foreground font-semibold text-[11px]">
+                  <User className="h-3.5 w-3.5" />
                 </div>
                 <div className="hidden text-left sm:block">
-                  <p className="text-sm font-medium text-foreground">{t("shell_accountStaff")}</p>
-                  <p className="text-xs text-muted-foreground">{orgName ?? t("shell_defaultOrgName")}</p>
+                  <p className="text-xs font-semibold text-foreground leading-none">{t("shell_accountStaff")}</p>
+                  <p className="text-[10px] text-muted-foreground leading-none mt-0.5">{orgName ?? t("shell_defaultOrgName")}</p>
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 rounded-[18px]">
-              <DropdownMenuLabel>{t("header_account")}</DropdownMenuLabel>
+            <DropdownMenuContent align="end" className="w-56 rounded-lg border border-border bg-popover text-popover-foreground p-1 shadow-lg">
+              <DropdownMenuLabel className="px-3 py-1.5 text-xs font-semibold">{t("header_account")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild className="rounded-md text-xs cursor-pointer">
                 <Link href="/settings">{t("nav_settings")}</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild className="rounded-md text-xs cursor-pointer">
                 <Link href="/security">{t("nav_security")}</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild className="rounded-md text-xs cursor-pointer">
                 <Link href="/help">{t("nav_help")}</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                className="text-red-600"
+                className="rounded-md text-xs text-destructive focus:bg-critical-bg focus:text-critical-text cursor-pointer"
                 disabled={isLoggingOut}
                 onSelect={() => {
                   void handleLogout();
                 }}
               >
-                <LogOut className="mr-2 h-4 w-4" />
+                <LogOut className="mr-2 h-3.5 w-3.5" />
                 {isLoggingOut ? `${t("header_logout")}...` : t("header_logout")}
               </DropdownMenuItem>
             </DropdownMenuContent>

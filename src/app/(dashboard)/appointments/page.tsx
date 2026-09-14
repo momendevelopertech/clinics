@@ -163,8 +163,8 @@ function EditAppointmentDialog({
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onCancel}><X />{t("common_cancel")}</Button>
-            <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white"><Save />{t("appts_saveChanges")}</Button>
+            <Button type="button" variant="outline" onClick={onCancel} className="h-9 text-xs"><X />{t("common_cancel")}</Button>
+            <Button type="submit" className="h-9 text-xs"><Save />{t("appts_saveChanges")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -317,8 +317,8 @@ function AppointmentsPageContent() {
     <div className="flex flex-col gap-6 w-full h-full">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">{t("appts_title")}</h2>
-          <p className="text-sm text-neutral-500">{t("appts_subtitle")}</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("appts_title")}</h1>
+          <p className="text-xs text-muted-foreground">{t("appts_subtitle")}</p>
         </div>
         
         <BookAppointmentDialog
@@ -339,21 +339,21 @@ function AppointmentsPageContent() {
         />
       </div>
 
-      <div className="bg-white dark:bg-neutral-900 border rounded-[5px] flex-1 shadow-sm flex flex-col pt-2">
-         <div className="px-6 py-4 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="overflow-hidden rounded-lg border border-border bg-card shadow-2xs flex-1 flex flex-col">
+         <div className="p-4 sm:px-6 border-b border-border bg-muted-bg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
              <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-               <div className="flex items-center gap-2 text-lg font-medium">
-                 <CalendarIcon className="w-5 h-5 text-neutral-500" />
+               <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                 <CalendarIcon className="w-4 h-4 text-primary" />
                  {view === "list"
                    ? t("appts_todayList")
                    : view === "day"
                      ? t("appts_dayAgenda")
                      : t("appts_monthView")}
                </div>
-<Input
+               <Input
                   type="search"
                   placeholder={t("appts_searchPlaceholder")}
-                  className="w-full sm:max-w-sm"
+                  className="h-9 w-full sm:max-w-sm rounded-md bg-card text-xs border-input"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value)
@@ -369,11 +369,11 @@ function AppointmentsPageContent() {
                       setPage(1)
                     }}
                   >
-                    <SelectTrigger className="w-[190px] h-10" aria-label={t("appts_allProviders")}>
-                      <Filter className="w-4 h-4 mr-2" />
+                    <SelectTrigger className="w-[180px] h-9 rounded-md bg-card text-xs border-input" aria-label={t("appts_allProviders")}>
+                      <Filter className="w-3.5 h-3.5 mr-1.5" />
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="rounded-md shadow-lg text-xs">
                       <SelectItem value="all">{t("appts_allProviders")}</SelectItem>
                       {providers.map((provider) => (
                         <SelectItem key={provider.id} value={provider.name}>
@@ -383,16 +383,16 @@ function AppointmentsPageContent() {
                     </SelectContent>
                   </Select>
                  <FeatureTip tipId="appointments-views">
-                 <div className="bg-neutral-100 dark:bg-neutral-800 rounded-[5px] p-1 flex" role="tablist" aria-label={t("appts_viewMode")}>
+                 <div className="bg-muted-bg rounded-md p-1 flex gap-1" role="tablist" aria-label={t("appts_viewMode")}>
                      <button
                        role="tab"
                        aria-selected={view === "list"}
                        onClick={() => setView("list")}
                        className={cn(
-                         "px-3 py-1.5 rounded-[5px] text-sm font-medium flex items-center gap-1.5 transition-all",
+                         "px-2.5 py-1 rounded-sm text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer",
                          view === "list"
-                           ? "bg-white dark:bg-neutral-700 shadow-sm text-neutral-900 dark:text-neutral-100"
-                           : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+                           ? "bg-card shadow-2xs text-foreground font-bold"
+                           : "text-muted-foreground hover:text-foreground"
                        )}
                      >
                        <List className="w-3.5 h-3.5" />
@@ -403,10 +403,10 @@ function AppointmentsPageContent() {
                        aria-selected={view === "day"}
                        onClick={() => setView("day")}
                        className={cn(
-                         "px-3 py-1.5 rounded-[5px] text-sm font-medium flex items-center gap-1.5 transition-all",
+                         "px-2.5 py-1 rounded-sm text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer",
                          view === "day"
-                           ? "bg-white dark:bg-neutral-700 shadow-sm text-neutral-900 dark:text-neutral-100"
-                           : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+                           ? "bg-card shadow-2xs text-foreground font-bold"
+                           : "text-muted-foreground hover:text-foreground"
                          )}
                        >
                          <Clock className="w-3.5 h-3.5" />
@@ -417,144 +417,147 @@ function AppointmentsPageContent() {
                        aria-selected={view === "calendar"}
                        onClick={() => setView("calendar")}
                        className={cn(
-                         "px-3 py-1.5 rounded-[5px] text-sm font-medium flex items-center gap-1.5 transition-all",
+                         "px-2.5 py-1 rounded-sm text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer",
                          view === "calendar"
-                           ? "bg-white dark:bg-neutral-700 shadow-sm text-neutral-900 dark:text-neutral-100"
-                           : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+                           ? "bg-card shadow-2xs text-foreground font-bold"
+                           : "text-muted-foreground hover:text-foreground"
                        )}
                      >
-<CalendarDays className="w-3.5 h-3.5" />
+                        <CalendarDays className="w-3.5 h-3.5" />
                         {t("appts_calendar")}
                       </button>
- </div>
-               </FeatureTip>
-           </div>
-          </div>
-          
-          {view === "calendar" ? (
-           <div className="flex-1 overflow-auto min-h-0">
-             <FullScreenCalendar
-               events={calendarEvents}
-               onEventClick={(ev) => setEditAptId(ev.id)}
-             />
-           </div>
-         ) : view === "day" ? (
-         <div className="p-6 overflow-auto flex-1">
-           <div className="mb-4 flex items-center gap-3">
-             <Label htmlFor="day-picker">{t("appts_selectDay")}</Label>
-             <Input id="day-picker" type="date" value={selectedDay} onChange={(e) => setSelectedDay(e.target.value)} className="w-auto" />
-           </div>
-           {dayAppointments.length === 0 ? (
-             <p className="text-sm text-neutral-500">{t("appts_noDayAppointments")}</p>
-           ) : (
-             <div className="flex flex-col gap-2">
-             {dayAppointments.map((apt) => {
-               const patient = patients.find((p) => p.id === apt.patientId)
-               const patientName = patient ? `${patient.firstName} ${patient.lastName}` : t("appts_unknownPatient")
-               return (
-                 <div key={apt.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-[5px] border px-4 py-3">
-                   <span className="font-mono font-medium">{apt.time}</span>
-                   <span className="font-medium">{patientName}</span>
-                   <span className="text-sm text-neutral-500">{apptTypeLabel(apt.type)} · {apt.provider}</span>
-                   <span className="px-2 py-1 rounded-[5px] text-xs font-medium bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">{statusLabel(apt.status)}</span>
-                   <span className="ms-auto flex gap-3">
-                     <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0 h-auto" onClick={() => setEditAptId(apt.id)}><Pencil />{t("appts_edit")}</Button>
-                     <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}><Ban />{t("appts_cancel")}</Button>{isTelehealthAppointment(apt.type) ? (<TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />) : null}
-                   </span>
                  </div>
-               )
-             })}
-             </div>
-           )}
-         </div>
-         ) : (
-         <div className="p-0 overflow-x-auto flex-1">
-             <table className="w-full text-sm text-left">
-                 <thead className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-500 font-medium">
-<tr>
-                          <th className="px-6 py-4 border-b">{t("appts_colTime")}</th>
-                          <th className="px-6 py-4 border-b">{t("appts_colPatient")}</th>
-                          <th className="px-6 py-4 border-b">{t("appts_colType")}</th>
-                          <th className="px-6 py-4 border-b hidden md:table-cell">{t("appts_colProvider")}</th>
-                          <th className="px-6 py-4 border-b">{t("appts_status")}</th>
-                          <th className="px-6 py-4 border-b">{t("common_actions")}</th>
+                </FeatureTip>
+            </div>
+           </div>
+           
+           {view === "calendar" ? (
+            <div className="flex-1 overflow-auto min-h-0">
+              <FullScreenCalendar
+                events={calendarEvents}
+                onEventClick={(ev) => setEditAptId(ev.id)}
+              />
+            </div>
+          ) : view === "day" ? (
+          <div className="p-5 sm:p-6 overflow-auto flex-1">
+            <div className="mb-4 flex items-center gap-3">
+              <Label htmlFor="day-picker" className="text-xs font-semibold">{t("appts_selectDay")}</Label>
+              <Input id="day-picker" type="date" value={selectedDay} onChange={(e) => setSelectedDay(e.target.value)} className="h-9 w-auto text-xs" />
+            </div>
+            {dayAppointments.length === 0 ? (
+              <p className="py-8 text-center text-xs text-muted-foreground">{t("appts_noDayAppointments")}</p>
+            ) : (
+              <div className="flex flex-col gap-2">
+              {dayAppointments.map((apt) => {
+                const patient = patients.find((p) => p.id === apt.patientId)
+                const patientName = patient ? `${patient.firstName} ${patient.lastName}` : t("appts_unknownPatient")
+                return (
+                  <div key={apt.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md border border-border bg-muted-bg/50 p-3 text-xs transition-colors hover:bg-muted/40">
+                    <span className="font-mono font-bold text-foreground">{apt.time}</span>
+                    <span className="font-semibold text-foreground">{patientName}</span>
+                    <span className="text-muted-foreground">{apptTypeLabel(apt.type)} · {apt.provider}</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold border border-border bg-card text-muted-foreground">{statusLabel(apt.status)}</span>
+                    <span className="ms-auto flex items-center gap-3">
+                      <Button variant="link" className="text-primary hover:underline p-0 h-auto text-xs font-semibold" onClick={() => setEditAptId(apt.id)}><Pencil className="mr-1 h-3.5 w-3.5" />{t("appts_edit")}</Button>
+                      <Button variant="link" className="text-muted-foreground hover:text-destructive p-0 h-auto text-xs font-medium" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}><Ban className="mr-1 h-3.5 w-3.5" />{t("appts_cancel")}</Button>{isTelehealthAppointment(apt.type) ? (<TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />) : null}
+                    </span>
+                  </div>
+                )
+              })}
+              </div>
+            )}
+          </div>
+          ) : (
+          <div className="p-0 overflow-x-auto flex-1">
+              <table className="w-full text-left text-xs">
+                  <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      <tr>
+                          <th className="px-4 py-3">{t("appts_colTime")}</th>
+                          <th className="px-4 py-3">{t("appts_colPatient")}</th>
+                          <th className="px-4 py-3">{t("appts_colType")}</th>
+                          <th className="px-4 py-3 hidden md:table-cell">{t("appts_colProvider")}</th>
+                          <th className="px-4 py-3">{t("appts_status")}</th>
+                          <th className="px-4 py-3">{t("common_actions")}</th>
                       </tr>
-                 </thead>
-                 <tbody className="divide-y text-neutral-800 dark:text-neutral-200">
-                     {pagedAppointments.map((apt: Appointment) => {
-                         const patient = patients.find(p => p.id === apt.patientId);
-                         const patientName = patient ? `${patient.firstName} ${patient.lastName}` : t("appts_unknownPatient");
-                         const statusKey = (apt.status ?? "").toLowerCase();
-                         return (
-                         <tr key={apt.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition">
-<td className="px-6 py-4">
-                                 <div className="font-medium">{apt.time}</div>
-                                 <div className="text-xs text-neutral-500 flex items-center mt-1">
-                                     <Clock className="w-3 h-3 mr-1" /> {apt.duration}
-                                 </div>
-{apt.tokenNumber ? (
-                                   <span className="mt-1 inline-flex items-center gap-1 rounded-[5px] bg-violet-100 px-2 py-0.5 text-[11px] font-bold text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
-                                     {apt.isWalkIn ? t("appts_walkIn") : t("appts_queue")} · {apt.tokenNumber}
-                                   </span>
-                                 ) : null}
-                               </td>
-                              <td className="px-6 py-4 font-medium">{patientName}</td>
-                              <td className="px-6 py-4">{apptTypeLabel(apt.type)}</td>
-                              <td className="px-6 py-4 hidden md:table-cell text-neutral-500">{apt.provider}</td>
-                              <td className="px-6 py-4">
-<span className={`px-2 py-1 rounded-[5px] text-xs font-medium ${
-                                        statusKey === "confirmed" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
-                                        statusKey === "arrived" || statusKey === "in waiting room" || statusKey === "in_progress" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" :
-                                        statusKey === "scheduled" || statusKey === "pending" ? "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300" :
-                                        statusKey === "cancelled" ? "bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400" :
-                                        statusKey === "completed" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
-                                        "bg-neutral-100 text-neutral-500"
-                                    }`}>
-                                     {statusLabel(apt.status)}
-                                </span>
-                              </td>
-                              <td className="px-6 py-4">
-                                 <Button
-                                   variant="link"
-                                   className="text-indigo-600 hover:text-indigo-700 p-0 h-auto mr-3"
-                                   onClick={() => setEditAptId(apt.id)}
-                                 >
-                                   <Pencil />{t("appts_edit")}
-                                 </Button>
-                                 <Button variant="link" className="text-neutral-400 hover:text-red-600 p-0 h-auto" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}><Ban />{t("appts_cancel")}</Button>
-{!apt.isWalkIn && (apt.status ?? "").toLowerCase() !== "cancelled" ? (
-                                    <FeatureTip tipId="appointments-walkin">
-                                    <Button variant="link" className="text-violet-600 hover:text-violet-700 p-0 h-auto" onClick={() => {
-                                      updateAppointment(apt.id, {
-                                        status: "In Waiting Room",
-                                        isWalkIn: true,
-                                      });
-                                      toast.success(t("appts_markedWalkIn"));
-                                    }}><UserPlus />{t("appts_walkIn")}</Button>
-                                    </FeatureTip>
-                                  ) : null}
-                                  {isTelehealthAppointment(apt.type) ? (
-                                    <span className="inline-flex items-center gap-2">
-                                      <span className="rounded-[5px] bg-teal-100 px-2 py-0.5 text-[11px] font-bold text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">{t("tele_badge")}</span>
-                                      <TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />
+                  </thead>
+                  <tbody className="divide-y divide-border text-foreground">
+                      {pagedAppointments.map((apt: Appointment) => {
+                          const patient = patients.find(p => p.id === apt.patientId);
+                          const patientName = patient ? `${patient.firstName} ${patient.lastName}` : t("appts_unknownPatient");
+                          const statusKey = (apt.status ?? "").toLowerCase();
+                          return (
+                          <tr key={apt.id} className="hover:bg-muted/40 transition-colors">
+                                <td className="px-4 py-3">
+                                  <div className="font-mono font-bold text-foreground">{apt.time}</div>
+                                  <div className="text-[11px] text-muted-foreground flex items-center mt-0.5">
+                                      <Clock className="w-3 h-3 mr-1" /> {apt.duration}
+                                  </div>
+                                  {apt.tokenNumber ? (
+                                    <span className="mt-1 inline-flex items-center gap-1 rounded-full border border-accent-blue/30 bg-accent-blue-bg px-2 py-0.5 text-[10px] font-bold text-accent-blue-text">
+                                      {apt.isWalkIn ? t("appts_walkIn") : t("appts_queue")} · {apt.tokenNumber}
                                     </span>
                                   ) : null}
-                              </td>
-                         </tr>
-                     )})}
-                 </tbody>
-             </table>
-         </div>
-         )}
-         {view === "list" && filteredAppointments.length > PAGE_SIZE ? (
-           <DataPagination
-             page={visiblePage}
-             pageSize={PAGE_SIZE}
-             total={filteredAppointments.length}
-             onPageChange={setPage}
-           />
-         ) : null}
-      </div>
+                                </td>
+                               <td className="px-4 py-3 font-semibold text-foreground">{patientName}</td>
+                               <td className="px-4 py-3 text-muted-foreground">{apptTypeLabel(apt.type)}</td>
+                               <td className="px-4 py-3 hidden md:table-cell text-muted-foreground">{apt.provider}</td>
+                               <td className="px-4 py-3">
+                                  <span className={cn(
+                                    "px-2 py-0.5 rounded-full text-[10px] font-semibold border",
+                                    statusKey === "confirmed" && "bg-success-bg text-success-text border-success/30",
+                                    (statusKey === "arrived" || statusKey === "in waiting room" || statusKey === "in_progress") && "bg-warning-bg text-warning-text border-warning/30",
+                                    (statusKey === "scheduled" || statusKey === "pending") && "bg-primary/10 text-primary border-primary/20",
+                                    statusKey === "cancelled" && "bg-critical-bg text-critical-text border-critical/30",
+                                    statusKey === "completed" && "bg-success-bg text-success-text border-success/30",
+                                    !statusKey && "bg-muted-bg text-muted-foreground border-border"
+                                  )}>
+                                      {statusLabel(apt.status)}
+                                  </span>
+                               </td>
+                               <td className="px-4 py-3">
+                                  <div className="flex items-center gap-2">
+                                    <Button
+                                      variant="link"
+                                      className="text-primary hover:underline p-0 h-auto text-xs font-semibold"
+                                      onClick={() => setEditAptId(apt.id)}
+                                    >
+                                      <Pencil className="mr-1 h-3.5 w-3.5" />{t("appts_edit")}
+                                    </Button>
+                                    <Button variant="link" className="text-muted-foreground hover:text-destructive p-0 h-auto text-xs font-medium" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}><Ban className="mr-1 h-3.5 w-3.5" />{t("appts_cancel")}</Button>
+                                    {!apt.isWalkIn && (apt.status ?? "").toLowerCase() !== "cancelled" ? (
+                                      <FeatureTip tipId="appointments-walkin">
+                                      <Button variant="link" className="text-primary hover:underline p-0 h-auto text-xs font-semibold" onClick={() => {
+                                        updateAppointment(apt.id, {
+                                          status: "In Waiting Room",
+                                          isWalkIn: true,
+                                        });
+                                        toast.success(t("appts_markedWalkIn"));
+                                      }}><UserPlus className="mr-1 h-3.5 w-3.5" />{t("appts_walkIn")}</Button>
+                                      </FeatureTip>
+                                    ) : null}
+                                    {isTelehealthAppointment(apt.type) ? (
+                                      <span className="inline-flex items-center gap-1.5">
+                                        <span className="rounded-full bg-primary/10 border border-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary">{t("tele_badge")}</span>
+                                        <TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />
+                                      </span>
+                                    ) : null}
+                                  </div>
+                               </td>
+                          </tr>
+                      )})}
+                  </tbody>
+              </table>
+          </div>
+          )}
+          {view === "list" && filteredAppointments.length > PAGE_SIZE ? (
+            <DataPagination
+              page={visiblePage}
+              pageSize={PAGE_SIZE}
+              total={filteredAppointments.length}
+              onPageChange={setPage}
+            />
+          ) : null}
+       </div>
 
       {editAptId && (() => {
         const apt = appointments.find((a) => a.id === editAptId)

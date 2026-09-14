@@ -102,13 +102,13 @@ function PendingChangesDialog({
   const statusIcon = (status: OfflineOperation["status"]) => {
     switch (status) {
       case "pending":
-        return <Clock className="h-3.5 w-3.5 text-amber-500" />;
+        return <Clock className="h-3.5 w-3.5 text-warning-text" />;
       case "syncing":
-        return <RefreshCw className="h-3.5 w-3.5 animate-spin text-cyan-500" />;
+        return <RefreshCw className="h-3.5 w-3.5 animate-spin text-accent-blue-text" />;
       case "synced":
-        return <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />;
+        return <CheckCircle2 className="h-3.5 w-3.5 text-success-text" />;
       case "conflict":
-        return <AlertTriangle className="h-3.5 w-3.5 text-red-500" />;
+        return <AlertTriangle className="h-3.5 w-3.5 text-critical-text" />;
     }
   };
 
@@ -116,25 +116,25 @@ function PendingChangesDialog({
     switch (status) {
       case "pending":
         return (
-          <Badge variant="outline" className="border-amber-300 text-amber-700">
+          <Badge variant="outline" className="border-warning-text/20 bg-warning-bg text-warning-text">
             Pending
           </Badge>
         );
       case "syncing":
         return (
-          <Badge variant="outline" className="border-cyan-300 text-cyan-700">
+          <Badge variant="outline" className="border-accent-blue-text/20 bg-accent-blue-bg text-accent-blue-text">
             Syncing
           </Badge>
         );
       case "synced":
         return (
-          <Badge variant="outline" className="border-emerald-300 text-emerald-700">
+          <Badge variant="outline" className="border-success-text/20 bg-success-bg text-success-text">
             Synced
           </Badge>
         );
       case "conflict":
         return (
-          <Badge variant="outline" className="border-red-300 text-red-700">
+          <Badge variant="outline" className="border-critical-text/20 bg-critical-bg text-critical-text">
             Conflict
           </Badge>
         );
@@ -151,15 +151,15 @@ function PendingChangesDialog({
         <Button
           variant="ghost"
           size="sm"
-          className="relative h-9 rounded-[14px] border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300"
+          className="relative h-9 rounded-md border border-warning-text/20 bg-warning-bg text-warning-text hover:opacity-90"
         >
           <Eye className="mr-1.5 h-3.5 w-3.5" />
           {count} pending
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg rounded-[24px]">
+      <DialogContent className="max-w-lg rounded-lg border border-border bg-card shadow-xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground">
             Pending Changes
             <Badge variant="secondary">{count}</Badge>
           </DialogTitle>
@@ -178,18 +178,18 @@ function PendingChangesDialog({
             {operations.map((op) => (
               <div
                 key={op.id}
-                className="flex items-center gap-3 rounded-[14px] border border-white/60 p-3 dark:border-white/6"
+                className="flex items-center gap-3 rounded-md border border-border bg-muted/40 p-3"
               >
                 {statusIcon(op.status)}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">
+                  <p className="truncate text-xs font-semibold text-foreground">
                     {op.method} {op.entityType}
                   </p>
-                  <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                  <p className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">
                     {formatTime(op.timestamp)}
                   </p>
                   {op.conflictDetails && (
-                    <p className="mt-1 text-xs text-red-600">
+                    <p className="mt-1 text-xs text-critical-text">
                       {op.conflictDetails}
                     </p>
                   )}
@@ -199,7 +199,7 @@ function PendingChangesDialog({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 shrink-0"
+                    className="h-7 w-7 shrink-0 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
                     onClick={() => handleRemove(op.id)}
                     aria-label="Remove queued change"
                     title="Remove queued change"
@@ -212,8 +212,8 @@ function PendingChangesDialog({
           </div>
         )}
 
-        <div className="flex justify-end gap-2 border-t pt-4">
-          <Button variant="outline" size="sm" onClick={handleClearAll}>
+        <div className="flex justify-end gap-2 border-t border-border pt-4">
+          <Button variant="outline" size="sm" onClick={handleClearAll} className="rounded-md">
             Clear all
           </Button>
         </div>
