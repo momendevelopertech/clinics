@@ -277,7 +277,7 @@ export default function WaitlistPage() {
               <p className="text-muted-foreground">{t("wl_empty")}</p>
             </div>
           ) : (
-            <table className="w-full text-sm text-left">
+            <table className="w-full text-sm text-start">
               <thead className="bg-muted/40 text-muted-foreground font-medium">
                 <tr>
                   <th className="px-6 py-4 border-b border-border">{t("wl_colPatient")}</th>

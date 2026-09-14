@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Activity } from "lucide-react";
 import { auth } from "@/auth";
@@ -65,12 +65,18 @@ export default async function ReceiptPrintPage({
         <div className="mb-4 flex items-center justify-between print-hide">
           <Link
             href="/payments"
+            id="receipt-back-link"
             className="text-sm font-semibold text-primary hover:underline"
           >
             {t["timeline_backToPatients"]}
           </Link>
           <PrintButton />
         </div>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var el=document.getElementById('receipt-back-link');if(!el||el.dataset.bound)return;el.dataset.bound='1';el.addEventListener('click',function(e){if(window.history.length>1){e.preventDefault();window.history.back();}});})();`,
+          }}
+        />
 
         <div className="print-sheet rounded-lg border border-border bg-card p-8 shadow-xs">
           <div className="flex items-start justify-between gap-4">
@@ -86,7 +92,7 @@ export default async function ReceiptPrintPage({
                 </p>
               </div>
             </div>
-            <div className="text-right">
+            <div className="text-end">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
                 {t["print_receiptTitle"]}
               </p>
@@ -106,7 +112,7 @@ export default async function ReceiptPrintPage({
                 MRN {invoice.patient.mrn ?? "—"}
               </p>
             </div>
-            <div className="text-right">
+            <div className="text-end">
               <p className="text-xs text-muted-foreground">{t["print_date"]}</p>
               <p className="mt-1 font-medium text-foreground">
                 {new Intl.DateTimeFormat().format(invoice.createdAt)}
@@ -119,10 +125,10 @@ export default async function ReceiptPrintPage({
           <table className="mt-6 w-full text-sm">
             <thead>
               <tr className="border-b border-border text-xs text-muted-foreground">
-                <th className="py-2 text-left font-medium">{t["print_item"]}</th>
-                <th className="py-2 text-right font-medium">{t["print_qty"]}</th>
-                <th className="py-2 text-right font-medium">{t["print_unitPrice"]}</th>
-                <th className="py-2 text-right font-medium">{t["print_amount"]}</th>
+                <th className="py-2 text-start font-medium">{t["print_item"]}</th>
+                <th className="py-2 text-end font-medium">{t["print_qty"]}</th>
+                <th className="py-2 text-end font-medium">{t["print_unitPrice"]}</th>
+                <th className="py-2 text-end font-medium">{t["print_amount"]}</th>
               </tr>
             </thead>
             <tbody>

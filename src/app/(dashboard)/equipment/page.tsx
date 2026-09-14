@@ -243,11 +243,11 @@ export default function EquipmentPage() {
               <table className="w-full min-w-[720px] text-sm">
                 <thead className="bg-muted-bg text-muted-foreground font-medium">
                   <tr>
-                    <th className="px-4 py-3 text-left">{t("common_name")}</th>
-                    <th className="px-4 py-3 text-left">{t("common_type")}</th>
-                    <th className="px-4 py-3 text-left">{t("common_status")}</th>
-                    <th className="px-4 py-3 text-left">{t("eq_colCalibration")}</th>
-                    <th className="px-4 py-3 text-left">{t("common_actions")}</th>
+                    <th className="px-4 py-3 text-start">{t("common_name")}</th>
+                    <th className="px-4 py-3 text-start">{t("common_type")}</th>
+                    <th className="px-4 py-3 text-start">{t("common_status")}</th>
+                    <th className="px-4 py-3 text-start">{t("eq_colCalibration")}</th>
+                    <th className="px-4 py-3 text-start">{t("common_actions")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border text-foreground">

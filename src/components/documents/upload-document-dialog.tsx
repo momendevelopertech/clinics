@@ -69,6 +69,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
     documentType: "medical_record" as (typeof DOC_TYPE_OPTIONS)[number],
     file: null as File | null,
   });
+  const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
 
   const fetchPatients = React.useCallback(async () => {
     try {
@@ -96,6 +97,11 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
         return;
       }
       setFormData({ ...formData, file });
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next.file;
+        return next;
+      });
     }
   };
 
@@ -103,14 +109,17 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
     e.preventDefault();
 
     if (!formData.patientId || !formData.documentType) {
+      setFieldErrors({ patientId: t("common_required") });
       toast.error(t("common_required"));
       return;
     }
 
     if (!formData.file) {
+      setFieldErrors({ file: t("doc_requireFile") });
       toast.error(t("doc_requireFile"));
       return;
     }
+    setFieldErrors({});
 
     try {
       setLoading(true);
@@ -185,17 +194,25 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
             <Label htmlFor="patient">{t("common_patientRequired")}</Label>
             <SearchableSelect
               value={formData.patientId}
-              onValueChange={(value) =>
-                setFormData({ ...formData, patientId: value })
-              }
+              onValueChange={(value) => {
+                setFormData({ ...formData, patientId: value });
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.patientId;
+                  return next;
+                });
+              }}
               options={patients.map((patient) => ({
                 value: patient.id,
                 label: `${patient.firstName} ${patient.lastName}`,
               }))}
               placeholder={t("common_selectPatient")}
-              triggerClassName="h-9"
+              triggerClassName={`h-9${fieldErrors.patientId ? " border-destructive" : ""}`}
               id="patient"
             />
+            {fieldErrors.patientId ? (
+              <p className="text-xs text-destructive mt-1">{fieldErrors.patientId}</p>
+            ) : null}
           </div>
 
           <div className="gap-2 flex flex-col">
@@ -219,13 +236,15 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
 
           <div className="gap-2 flex flex-col">
             <Label htmlFor="file">{t("doc_fileUpload")}</Label>
-            <div className="border border-dashed border-border bg-muted-bg/30 hover:bg-muted-bg/50 rounded-lg p-6 text-center transition-colors">
+            <div className={`border border-dashed rounded-lg p-6 text-center transition-colors ${fieldErrors.file ? "border-destructive bg-muted-bg/30" : "border-border bg-muted-bg/30 hover:bg-muted-bg/50"}`}>
               <input
                 id="file"
                 type="file"
                 onChange={handleFileChange}
                 className="hidden"
                 accept="image/jpeg,image/png,image/webp,application/pdf,.doc,.docx"
+                aria-required="true"
+                aria-invalid={fieldErrors.file ? true : undefined}
               />
               <label htmlFor="file" className="cursor-pointer">
                 <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
@@ -237,6 +256,9 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
                 <p className="text-xs text-muted-foreground">{t("doc_sizeLimit")}</p>
               </label>
             </div>
+            {fieldErrors.file ? (
+              <p className="text-xs text-destructive mt-1">{fieldErrors.file}</p>
+            ) : null}
           </div>
 
           <div className="flex gap-2 justify-end mt-2">

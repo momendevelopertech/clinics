@@ -161,7 +161,7 @@ export default function SecurityPage() {
               <p className="text-xs font-medium text-foreground">{t("sec_scanHint")}</p>
               <div className="p-2 border border-border rounded-lg bg-card inline-block w-fit">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={qr} alt="2FA QR" className="w-44 h-44 rounded-md" />
+                <img src={qr} alt={t("security_qrAlt")} className="w-44 h-44 rounded-md" />
               </div>
               <div className="grid gap-1.5 max-w-xs">
                 <Label className="text-xs font-semibold">{t("sec_code")}</Label>

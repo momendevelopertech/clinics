@@ -404,7 +404,7 @@ export function PlanDashboard({
           <p className="text-sm text-muted-foreground">{t["upg_compareSubtitle"]}</p>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] text-left text-sm">
+          <table className="w-full min-w-[720px] text-start text-sm">
             <thead>
               <tr className="border-b border-border text-xs uppercase tracking-widest text-muted-foreground bg-muted/30">
                 <th className="px-6 py-3">{t["upg_feature"]}</th>

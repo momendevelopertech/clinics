@@ -22,6 +22,7 @@ export function AddLabOrderDialog({ onSuccess }: { onSuccess: () => void }) {
   const [patients, setPatients] = React.useState<Patient[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [form, setForm] = React.useState({ patientId: "", orderType: "lab", testName: "", priority: "routine", indication: "" });
+  const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
 
   React.useEffect(() => {
     if (!open) return;
@@ -36,10 +37,15 @@ export function AddLabOrderDialog({ onSuccess }: { onSuccess: () => void }) {
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!form.patientId || !form.testName.trim()) {
+    const errors: Record<string, string> = {};
+    if (!form.patientId) errors.patientId = t("labs_orderRequired");
+    if (!form.testName.trim()) errors.testName = t("labs_orderRequired");
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
       toast.error(t("labs_orderRequired"));
       return;
     }
+    setFieldErrors({});
     try {
       setLoading(true);
       const response = await fetch("/api/lab-orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
@@ -74,13 +80,23 @@ export function AddLabOrderDialog({ onSuccess }: { onSuccess: () => void }) {
             <Label>{t("labs_patientRequired")}</Label>
             <SearchableSelect
               value={form.patientId}
-              onValueChange={(value) => setForm({ ...form, patientId: value })}
+              onValueChange={(value) => {
+                setForm({ ...form, patientId: value });
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.patientId;
+                  return next;
+                });
+              }}
               options={patients.map((patient) => ({
                 value: patient.id,
                 label: `${patient.firstName} ${patient.lastName}`,
               }))}
               placeholder={t("labs_selectPatient")}
             />
+            {fieldErrors.patientId ? (
+              <p className="text-xs text-destructive mt-1">{fieldErrors.patientId}</p>
+            ) : null}
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
@@ -109,7 +125,23 @@ export function AddLabOrderDialog({ onSuccess }: { onSuccess: () => void }) {
           </div>
           <div className="flex flex-col gap-1.5">
             <Label>{t("labs_testName")}</Label>
-            <Input value={form.testName} onChange={(event) => setForm({ ...form, testName: event.target.value })} />
+            <Input
+              value={form.testName}
+              onChange={(event) => {
+                setForm({ ...form, testName: event.target.value });
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.testName;
+                  return next;
+                });
+              }}
+              aria-required="true"
+              aria-invalid={fieldErrors.testName ? true : undefined}
+              className={fieldErrors.testName ? "border-destructive" : undefined}
+            />
+            {fieldErrors.testName ? (
+              <p className="text-xs text-destructive mt-1">{fieldErrors.testName}</p>
+            ) : null}
           </div>
           <div className="flex flex-col gap-1.5">
             <Label>{t("labs_indication")}</Label>

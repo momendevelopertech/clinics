@@ -14,6 +14,7 @@ import {
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getDictionary } from "@/lib/i18n/server";
+import { formatMoney } from "@/lib/format-money";
 import { parseOrgSettings } from "@/lib/org-settings";
 import { summarizeAttendance } from "@/lib/appointments";
 import { TreatmentPlansSection } from "@/components/treatment/treatment-plans-section";
@@ -37,6 +38,7 @@ type TimelineEvent = {
   title: string;
   subtitle?: string | null;
   href?: string;
+  chip?: string;
 };
 
 export default async function PatientTimelinePage({
@@ -114,7 +116,15 @@ export default async function PatientTimelinePage({
       }),
       prisma.invoice.findMany({
         where: { patientId, organizationId },
-        select: { id: true, createdAt: true, invoiceNumber: true, totalAmount: true },
+        select: {
+          id: true,
+          createdAt: true,
+          invoiceNumber: true,
+          totalAmount: true,
+          amountPaid: true,
+          status: true,
+          currency: true,
+        },
       }),
       prisma.labResult.findMany({
         where: { patientId, organizationId },
@@ -169,6 +179,16 @@ export default async function PatientTimelinePage({
     return status;
   };
 
+  const invoiceStatusLabel = (status: string) => {
+    if (status === "paid") return t["billing_statusPaid"];
+    if (status === "overdue") return t["billing_statusOverdue"];
+    if (status === "partially_paid") return t["billing_statusPartiallyPaid"];
+    if (status === "sent") return t["billing_statusSent"];
+    if (status === "draft") return t["billing_statusDraft"];
+    if (status === "void") return t["billing_statusVoid"];
+    return status;
+  };
+
   const events: TimelineEvent[] = [
     ...appointments.map((a) => ({
       id: `appt-${a.id}`,
@@ -195,13 +215,21 @@ export default async function PatientTimelinePage({
       subtitle: p.prescriber.name,
       href: `/print/prescription/${p.id}`,
     })),
-    ...invoices.map((inv) => ({
-      id: `inv-${inv.id}`,
-      kind: "invoice" as const,
-      date: inv.createdAt,
-      title: `${inv.invoiceNumber}`,
-      subtitle: `$${Number(inv.totalAmount).toFixed(2)}`,
-    })),
+    ...invoices.map((inv) => {
+      const total = Number(inv.totalAmount);
+      const paid = Number(inv.amountPaid ?? 0);
+      const balance = Math.max(0, total - paid);
+      const currency = inv.currency ?? "USD";
+      return {
+        id: `inv-${inv.id}`,
+        kind: "invoice" as const,
+        date: inv.createdAt,
+        title: `${inv.invoiceNumber} · ${formatMoney(total, currency)}`,
+        subtitle: `${t["common_paid"]}: ${formatMoney(paid, currency)} · ${t["common_balance"]}: ${formatMoney(balance, currency)}`,
+        href: `/print/receipt/${inv.id}`,
+        chip: invoiceStatusLabel(inv.status),
+      };
+    }),
     ...labResults.map((lab) => ({
       id: `lab-${lab.id}`,
       kind: "lab" as const,
@@ -359,9 +387,16 @@ export default async function PatientTimelinePage({
                     <p className="truncate text-sm font-semibold text-foreground">
                       {event.title}
                     </p>
-                    <span className="rounded-full bg-muted-bg px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
-                      {eventLabel(event)}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      {event.chip ? (
+                        <span className="rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
+                          {event.chip}
+                        </span>
+                      ) : null}
+                      <span className="rounded-full bg-muted-bg px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                        {eventLabel(event)}
+                      </span>
+                    </div>
                   </div>
                   {event.subtitle ? (
                     <p className="mt-1 truncate text-xs text-muted-foreground">
@@ -379,7 +414,8 @@ export default async function PatientTimelinePage({
                 key={event.id}
                 className="flex gap-4 rounded-lg border border-border bg-card p-4 shadow-xs"
               >
-                {event.href && event.kind === "prescription" ? (
+                {event.href &&
+                (event.kind === "prescription" || event.kind === "invoice") ? (
                   <Link
                     href={event.href}
                     className="flex flex-1 gap-4 rounded-md outline-none transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-primary"

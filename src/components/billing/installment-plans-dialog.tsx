@@ -42,6 +42,8 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
   const [frequency, setFrequency] = React.useState("monthly");
   const [downPayment, setDownPayment] = React.useState("");
   const [method, setMethod] = React.useState("cash");
+  const [creating, setCreating] = React.useState(false);
+  const [payingId, setPayingId] = React.useState<string | null>(null);
   const { t } = useLocale();
 
   const fetchPlans = React.useCallback(async () => {
@@ -62,7 +64,9 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
   }, [open, fetchPlans]);
 
   const handleCreate = async () => {
+    if (creating) return;
     try {
+      setCreating(true);
       const response = await fetch("/api/installment-plans", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -85,11 +89,15 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("inst_createError"));
       logClientError("Installment plan create failed", error);
+    } finally {
+      setCreating(false);
     }
   };
 
   const handlePay = async (planId: string, installmentId: string) => {
+    if (payingId) return;
     try {
+      setPayingId(installmentId);
       const response = await fetch(`/api/installment-plans/${planId}/pay`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -105,6 +113,8 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("inst_payError"));
       logClientError("Installment pay failed", error);
+    } finally {
+      setPayingId(null);
     }
   };
 
@@ -149,8 +159,8 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
                         {new Date(due.dueDate).toLocaleDateString()} · <span className="font-mono font-semibold text-foreground">${Number(due.amount).toFixed(2)}</span> · <span className={due.status === "paid" ? "text-success-text font-medium" : due.status === "overdue" ? "text-critical-text font-medium" : "text-muted-foreground"}>{dueLabel(due.status)}</span>
                       </span>
                       {plan.status === "active" && (due.status === "pending" || due.status === "overdue") ? (
-                        <Button size="sm" variant="outline" className="h-6 px-2 text-[11px]" onClick={() => handlePay(plan.id, due.id)}>
-                          <CreditCard className="w-3 h-3 mr-1" />{t("inst_pay")}
+                        <Button size="sm" variant="outline" className="h-6 px-2 text-[11px]" onClick={() => handlePay(plan.id, due.id)} disabled={payingId !== null || creating}>
+                          <CreditCard className="w-3 h-3 mr-1" />{payingId === due.id ? t("common_processing") : t("inst_pay")}
                         </Button>
                       ) : null}
                     </div>
@@ -163,8 +173,8 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
 
         <div className="grid grid-cols-2 gap-3 border-t border-border pt-4">
           <div className="gap-1.5 flex flex-col">
-            <Label className="text-xs font-semibold">{t("inst_count")}</Label>
-            <Input type="number" min="2" max="24" value={count} onChange={(e) => setCount(e.target.value)} className="h-9 text-xs" />
+            <Label className="text-xs font-semibold">{t("inst_count")} *</Label>
+            <Input type="number" min="2" max="24" value={count} onChange={(e) => setCount(e.target.value)} className="h-9 text-xs" aria-required="true" />
           </div>
           <div className="gap-1.5 flex flex-col">
             <Label className="text-xs font-semibold">{t("inst_firstDue")}</Label>
@@ -192,7 +202,7 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
           </div>
         </div>
         <div className="flex justify-end pt-2">
-          <Button onClick={handleCreate} className="h-9 text-xs font-semibold"><Plus className="w-3.5 h-3.5 mr-1" />{t("inst_create")}</Button>
+          <Button onClick={handleCreate} disabled={creating || payingId !== null} className="h-9 text-xs font-semibold"><Plus className="w-3.5 h-3.5 mr-1" />{creating ? t("common_processing") : t("inst_create")}</Button>
         </div>
       </DialogContent>
     </Dialog>

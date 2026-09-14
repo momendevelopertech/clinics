@@ -29,6 +29,7 @@ import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface PrescriptionRow {
   id: string;
@@ -50,6 +51,8 @@ export default function PrescriptionsPage() {
   const [loading, setLoading] = React.useState(true);
   const [page, setPage] = React.useState(1);
   const { forbidden, setForbidden } = usePermissionState();
+  const [deleteId, setDeleteId] = React.useState<string | null>(null);
+  const [deleting, setDeleting] = React.useState(false);
 
   const fetchPrescriptions = React.useCallback(async () => {
     try {
@@ -122,16 +125,20 @@ export default function PrescriptionsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm(t("rx_deleteConfirm"))) return;
+  const handleDelete = async () => {
+    if (!deleteId || deleting) return;
     try {
-      const response = await fetch(`/api/prescriptions/${id}`, { method: "DELETE" });
+      setDeleting(true);
+      const response = await fetch(`/api/prescriptions/${deleteId}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Failed to delete prescription");
       toast.success(t("rx_deleteSuccess"));
+      setDeleteId(null);
       await fetchPrescriptions();
     } catch (error) {
       toast.error(t("rx_deleteError"));
       logClientError("Prescription delete failed", error);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -228,7 +235,7 @@ export default function PrescriptionsPage() {
               <p className="text-muted-foreground">{t("rx_empty")}</p>
             </div>
           ) : (
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-start text-sm">
               <thead className="bg-muted-bg font-semibold text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
                   <th className="border-b border-border px-6 py-3.5">{t("rx_colPatient")}</th>
@@ -311,7 +318,7 @@ export default function PrescriptionsPage() {
                             variant="ghost"
                             size="sm"
                             className="h-8 text-destructive hover:text-destructive"
-                            onClick={() => void handleDelete(rx.id)}
+                            onClick={() => setDeleteId(rx.id)}
                           >
                             <Trash2 className="mr-1.5 h-4 w-4" />{t("common_delete")}
                           </Button>
@@ -334,6 +341,15 @@ export default function PrescriptionsPage() {
           />
         ) : null}
       </div>
+      <ConfirmDialog
+        open={deleteId !== null}
+        onOpenChange={(open) => { if (!open && !deleting) setDeleteId(null) }}
+        title={t("common_confirmTitle")}
+        description={t("rx_deleteConfirm")}
+        onConfirm={handleDelete}
+        destructive
+        loading={deleting}
+      />
     </div>
   );
 }

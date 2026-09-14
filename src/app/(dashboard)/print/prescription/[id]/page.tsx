@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Activity } from "lucide-react";
 import { auth } from "@/auth";
@@ -121,7 +121,7 @@ export default async function PrescriptionPrintPage({
               <div className="overflow-x-auto print:overflow-visible">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border text-left text-xs text-muted-foreground">
+                  <tr className="border-b border-border text-start text-xs text-muted-foreground">
                     <th className="pb-2 pr-3 font-medium">{t["print_medication"]}</th>
                     <th className="pb-2 pr-3 font-medium">{t["print_dosage"]}</th>
                     <th className="pb-2 pr-3 font-medium">{t["print_frequency"]}</th>

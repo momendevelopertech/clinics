@@ -99,7 +99,7 @@ export function ResetPasswordForm({
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8 sm:px-6">
       <div className="w-full max-w-md rounded-lg border border-border bg-card p-8 shadow-xl">
-        <div className="space-y-1.5 text-center sm:text-left">
+        <div className="space-y-1.5 text-center sm:text-start">
           <div className="grid size-10 place-content-center rounded-md bg-primary/10 text-primary">
             <KeyRound className="h-5 w-5" />
           </div>

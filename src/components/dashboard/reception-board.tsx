@@ -41,15 +41,22 @@ export function ReceptionBoard() {
     return s === "scheduled" || s === "arrived" || s === "in waiting room" || s === "in_waiting_room" || s === "in progress";
   };
 
+  const actionLabelKey = (action: Action) =>
+    action === "check-in" ? "reception_checkIn" : action === "check-out" ? "reception_checkOut" : "reception_markNoShow";
+
   const runAction = async (id: string, action: Action) => {
     setBusy(id);
     try {
+      const appointment = appointments.find((a) => a.id === id);
+      const patient = appointment ? patients.find((p) => p.id === appointment.patientId) : undefined;
+      const name = patient ? `${patient.firstName} ${patient.lastName}` : "";
+      const label = `${t(actionLabelKey(action))}${name ? ` — ${name}` : ""}`;
       const r = await fetch(`/api/appointments/${id}/${action}`, { method: "POST" });
       const data = await r.json().catch(() => ({}));
       if (!r.ok) {
-        toast.error(data.error || t("reception_checkIn"));
+        toast.error(data.error || label);
       } else {
-        toast.success(t("reception_boardTitle"));
+        toast.success(label);
         void refetchAppointments();
       }
     } catch (error) {
@@ -129,7 +136,7 @@ export function ReceptionBoard() {
           <p className="py-6 text-center text-xs text-muted-foreground">{t("reception_noAppointments")}</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left text-xs">
+            <table className="w-full min-w-[640px] text-start text-xs">
               <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3">{t("doctor_time")}</th>
@@ -191,7 +198,7 @@ export function ReceptionBoard() {
                               disabled={busy === appointment.id}
                               onClick={() => void runAction(appointment.id, "no-show")}
                             >
-                              <X className="mr-1 h-3 w-3" />
+                              <X className="me-1 h-3 w-3" />
                               {t("reception_markNoShow")}
                             </Button>
                           </div>

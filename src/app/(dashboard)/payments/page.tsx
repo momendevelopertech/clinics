@@ -381,7 +381,7 @@ export default function PaymentsPage() {
               <p className="text-xs text-muted-foreground">{t("pay_empty")}</p>
             </div>
           ) : (
-            <table className="w-full text-xs text-left">
+            <table className="w-full text-xs text-start">
               <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 <tr>
                   <th className="px-6 py-3.5">{t("pay_colInvoice")}</th>

@@ -40,6 +40,7 @@ import { paginate } from "@/lib/pagination"
 import { useLocale } from "@/components/locale/locale-provider"
 import { cn } from "@/lib/utils"
 import { FeatureTip } from "@/components/feature-tips/feature-tip"
+import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 
 function toStatusValue(s: Appointment["status"]): string {
   if (s === "Confirmed") return "confirmed"
@@ -173,6 +174,8 @@ function AppointmentsPageContent() {
   const [editAptId, setEditAptId] = React.useState<string | null>(null)
   const [providerFilter, setProviderFilter] = React.useState<string>("all")
   const [page, setPage] = React.useState(1)
+  const [confirmId, setConfirmId] = React.useState<string | null>(null)
+  const [cancelling, setCancelling] = React.useState(false)
 
   const statusLabel = (s: string) => {
     const map: Record<string, string> = {
@@ -246,6 +249,18 @@ function AppointmentsPageContent() {
     toast.success(t("appts_updated"))
   }
 
+  const handleConfirmCancel = async () => {
+    if (!confirmId) return
+    try {
+      setCancelling(true)
+      await updateAppointment(confirmId, { status: "Cancelled" })
+      toast.success(t("appts_cancelled"))
+      setConfirmId(null)
+    } finally {
+      setCancelling(false)
+    }
+  }
+
   // Map appointments to CalendarEvent for 3D calendar (exclude cancelled)
   const calendarEvents: CalendarEvent[] = React.useMemo(() => {
     return appointments
@@ -302,6 +317,7 @@ function AppointmentsPageContent() {
   const pageCount = Math.max(1, Math.ceil(filteredAppointments.length / PAGE_SIZE))
   const visiblePage = Math.min(page, pageCount)
   const pagedAppointments = paginate(filteredAppointments, visiblePage, PAGE_SIZE)
+  const preselectedPatientId = searchParams.get("patientId") ?? undefined
 
   return (
     <div className="flex flex-col gap-6 w-full h-full">
@@ -314,6 +330,8 @@ function AppointmentsPageContent() {
         <BookAppointmentDialog
           patients={patients}
           providers={providers}
+          appointments={appointments}
+          initialPatientId={preselectedPatientId}
           onBook={(data) =>
             addAppointment({
               patientId: data.patientId,
@@ -443,8 +461,8 @@ function AppointmentsPageContent() {
                     <span className="text-muted-foreground">{apptTypeLabel(apt.type)} · {apt.provider}</span>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold border border-border bg-card text-muted-foreground">{statusLabel(apt.status)}</span>
                     <span className="ms-auto flex items-center gap-3">
-                      <Button variant="link" className="text-primary hover:underline p-0 h-auto text-xs font-semibold" onClick={() => setEditAptId(apt.id)}><Pencil className="mr-1 h-3.5 w-3.5" />{t("appts_edit")}</Button>
-                      <Button variant="link" className="text-muted-foreground hover:text-destructive p-0 h-auto text-xs font-medium" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}><Ban className="mr-1 h-3.5 w-3.5" />{t("appts_cancel")}</Button>{isTelehealthAppointment(apt.type) ? (<TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />) : null}
+                      <Button variant="link" className="text-primary hover:underline p-0 h-auto text-xs font-semibold" onClick={() => setEditAptId(apt.id)}><Pencil className="me-1 h-3.5 w-3.5" />{t("appts_edit")}</Button>
+                      <Button variant="link" className="text-muted-foreground hover:text-destructive p-0 h-auto text-xs font-medium" onClick={() => setConfirmId(apt.id)}><Ban className="me-1 h-3.5 w-3.5" />{t("appts_cancel")}</Button>{isTelehealthAppointment(apt.type) ? (<TelehealthLinkDialog appointmentId={apt.id} currentUrl={apt.telehealthUrl} onSuccess={() => void refetchAppointments()} />) : null}
                     </span>
                   </div>
                 )
@@ -454,7 +472,7 @@ function AppointmentsPageContent() {
           </div>
           ) : (
           <div className="p-0 overflow-x-auto flex-1">
-              <table className="w-full text-left text-xs">
+              <table className="w-full text-start text-xs">
                   <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       <tr>
                           <th className="px-4 py-3">{t("appts_colTime")}</th>
@@ -475,7 +493,7 @@ function AppointmentsPageContent() {
                                 <td className="px-4 py-3">
                                   <div className="font-mono font-bold text-foreground">{apt.time}</div>
                                   <div className="text-[11px] text-muted-foreground flex items-center mt-0.5">
-                                      <Clock className="w-3 h-3 mr-1" /> {apt.duration}
+                                      <Clock className="w-3 h-3 me-1" /> {apt.duration}
                                   </div>
                                   {apt.tokenNumber ? (
                                     <span className="mt-1 inline-flex items-center gap-1 rounded-full border border-accent-blue/30 bg-accent-blue-bg px-2 py-0.5 text-[10px] font-bold text-accent-blue-text">
@@ -506,9 +524,9 @@ function AppointmentsPageContent() {
                                       className="text-primary hover:underline p-0 h-auto text-xs font-semibold"
                                       onClick={() => setEditAptId(apt.id)}
                                     >
-                                      <Pencil className="mr-1 h-3.5 w-3.5" />{t("appts_edit")}
+                                      <Pencil className="me-1 h-3.5 w-3.5" />{t("appts_edit")}
                                     </Button>
-                                    <Button variant="link" className="text-muted-foreground hover:text-destructive p-0 h-auto text-xs font-medium" onClick={() => { if (!window.confirm(t("common_confirmAction"))) return; updateAppointment(apt.id, { status: "Cancelled" }); toast.success(t("appts_cancelled")); }}><Ban className="mr-1 h-3.5 w-3.5" />{t("appts_cancel")}</Button>
+                                    <Button variant="link" className="text-muted-foreground hover:text-destructive p-0 h-auto text-xs font-medium" onClick={() => setConfirmId(apt.id)}><Ban className="me-1 h-3.5 w-3.5" />{t("appts_cancel")}</Button>
                                     {!apt.isWalkIn && (apt.status ?? "").toLowerCase() !== "cancelled" ? (
                                       <FeatureTip tipId="appointments-walkin">
                                       <Button variant="link" className="text-primary hover:underline p-0 h-auto text-xs font-semibold" onClick={() => {
@@ -517,7 +535,7 @@ function AppointmentsPageContent() {
                                           isWalkIn: true,
                                         });
                                         toast.success(t("appts_markedWalkIn"));
-                                      }}><UserPlus className="mr-1 h-3.5 w-3.5" />{t("appts_walkIn")}</Button>
+                                      }}><UserPlus className="me-1 h-3.5 w-3.5" />{t("appts_walkIn")}</Button>
                                       </FeatureTip>
                                     ) : null}
                                     {isTelehealthAppointment(apt.type) ? (
@@ -563,6 +581,15 @@ function AppointmentsPageContent() {
           />
         )
       })()}
+      <ConfirmDialog
+        open={confirmId !== null}
+        onOpenChange={(open) => { if (!open && !cancelling) setConfirmId(null) }}
+        title={t("common_confirmTitle")}
+        description={t("common_confirmAction")}
+        onConfirm={handleConfirmCancel}
+        destructive
+        loading={cancelling}
+      />
     </div>
   )
 }

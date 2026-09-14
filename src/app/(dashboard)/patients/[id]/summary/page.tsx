@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useLocale } from "@/components/locale/locale-provider";
 
 interface SummaryVitals {
   bloodPressure: string | null;
@@ -34,6 +35,7 @@ interface PatientSummary {
 
 export default function PatientSummaryPage() {
   const params = useParams<{ id: string }>();
+  const { t } = useLocale();
   const [summary, setSummary] = useState<PatientSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -69,7 +71,7 @@ export default function PatientSummaryPage() {
           </div>
           {summary.qrUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={summary.qrUrl} alt="Patient QR code" className="h-28 w-28 rounded-md border border-border bg-white p-2" />
+            <img src={summary.qrUrl} alt={t("summary_qrAlt")} className="h-28 w-28 rounded-md border border-border bg-white p-2" />
           ) : null}
         </div>
       </div>

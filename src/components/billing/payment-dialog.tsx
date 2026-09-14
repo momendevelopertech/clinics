@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { getClientErrorMessage, logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { formatMoney } from "@/lib/format-money";
 
 type InvoiceOption = {
   id: string;
@@ -33,9 +34,10 @@ type InvoiceOption = {
 interface PaymentDialogProps {
   invoiceId?: string;
   onSuccess?: () => void;
+  trigger?: React.ReactNode;
 }
 
-export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
+export function PaymentDialog({ invoiceId, onSuccess, trigger }: PaymentDialogProps) {
   const { t } = useLocale();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -70,15 +72,34 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
     }
   }, [fetchInvoices, open]);
 
-  const getInvoiceAmount = () => {
-    if (!formData.invoiceId) return "";
-    const invoice = invoices.find((i) => i.id === formData.invoiceId);
+  const getInvoiceAmount = (id?: string) => {
+    const lookupId = id ?? formData.invoiceId;
+    if (!lookupId) return "";
+    const invoice = invoices.find((i) => i.id === lookupId);
     if (!invoice) return "";
 
     const total = Number(invoice.total ?? 0);
     const amountPaid = Number(invoice.amountPaid ?? 0);
     return (total - amountPaid).toFixed(2);
   };
+
+  React.useEffect(() => {
+    if (open && invoiceId) {
+      setFormData((prev) =>
+        prev.invoiceId === invoiceId ? prev : { ...prev, invoiceId },
+      );
+    }
+  }, [open, invoiceId]);
+
+  React.useEffect(() => {
+    if (open && invoices.length > 0 && formData.invoiceId && !formData.amount) {
+      const amount = getInvoiceAmount(formData.invoiceId);
+      if (amount) {
+        setFormData((prev) => ({ ...prev, amount }));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, invoices, formData.invoiceId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,9 +155,11 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="h-9 gap-1.5 text-xs font-semibold shadow-2xs">
-          <Plus className="w-3.5 h-3.5" /> {t("pay_processPayment")}
-        </Button>
+        {trigger ?? (
+          <Button className="h-9 gap-1.5 text-xs font-semibold shadow-2xs">
+            <Plus className="w-3.5 h-3.5" /> {t("pay_processPayment")}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
@@ -155,15 +178,15 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
                 setFormData({
                   ...formData,
                   invoiceId: value,
-                  amount: getInvoiceAmount(),
+                  amount: getInvoiceAmount(value),
                 });
               }}
               options={invoices.map((invoice) => ({
                 value: invoice.id,
-                label: `${invoice.invoiceNumber} - $${(
+                label: `${invoice.invoiceNumber} - ${formatMoney(
                   Number(invoice.total ?? 0) -
-                  Number(invoice.amountPaid ?? 0)
-                ).toFixed(2)}`,
+                    Number(invoice.amountPaid ?? 0),
+                )}`,
               }))}
               placeholder={t("pay_selectInvoice")}
               triggerClassName="h-9 text-xs"

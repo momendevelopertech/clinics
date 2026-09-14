@@ -123,8 +123,11 @@ export function GenerateDocumentDialog({ onSuccess }: { onSuccess?: () => void }
       });
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
+        const missing = Array.isArray(data.missing) ? (data.missing as string[]) : null;
         throw new Error(
-          data.missing ? `Missing: ${(data.missing as string[]).join(", ")}` : data.error || "Generate failed",
+          missing && missing.length > 0
+            ? `Missing: ${missing.map((k) => t(FIELD_KEYS[k] ?? k)).join(", ")}`
+            : data.error || "Generate failed",
         );
       }
       if (response.headers.get("X-Document-Persisted") === "0") {
@@ -180,16 +183,20 @@ export function GenerateDocumentDialog({ onSuccess }: { onSuccess?: () => void }
               </div>
             ) : null}
           </div>
-          {visibleFields.map((f) => (
+          {visibleFields.map((f) => {
+            const isRequired = template?.requiredFields?.includes(f) ?? false;
+            return (
             <div key={f} className="gap-2 flex flex-col">
-              <Label>{t(FIELD_KEYS[f] ?? f)}</Label>
+              <Label>{t(FIELD_KEYS[f] ?? f)} {isRequired ? "*" : `(${t("common_optional")})`}</Label>
               <Input
                 value={fields[f] ?? ""}
                 onChange={(e) => setFields({ ...fields, [f]: e.target.value })}
                 className="h-9"
+                aria-required={isRequired ? true : undefined}
               />
             </div>
-          ))}
+            );
+          })}
         </div>
         <div className="flex justify-end gap-2 mt-2">
           <Button variant="outline" onClick={() => setOpen(false)} disabled={saving} className="h-9">

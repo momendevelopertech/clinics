@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SearchableSelect } from "@/components/ui/searchable-select";
+import { toast } from "sonner";
 import { useLocale } from "@/components/locale/locale-provider";
 import { isSoapEmpty, prefillSoap } from "@/lib/clinical-templates";
 import { PermissionDenied } from "@/components/ui/permission-denied";
@@ -15,6 +16,8 @@ import { AiAssistCard } from "@/components/encounters/ai-assist-card";
 import { NewPrescriptionDialog } from "@/components/prescriptions/new-prescription-dialog";
 
 export type SoapNote = { subjective: string; objective: string; assessment: string; plan: string };
+
+const EMPTY_SOAP: SoapNote = { subjective: "", objective: "", assessment: "", plan: "" };
 
 type Patient = { id: string; firstName: string; lastName: string; mrn: string };
 type Encounter = {
@@ -34,7 +37,12 @@ export function EncountersWorkspace() {
   const [selectedId, setSelectedId] = useState("");
   const [templates, setTemplates] = useState<Array<{ id: string; name: string; specialty: string | null; subjective: string | null; objective: string | null; assessment: string | null; plan: string | null }>>([]);
   const [templateId, setTemplateId] = useState("");
-  const [soap, setSoap] = useState<SoapNote>({ subjective: "", objective: "", assessment: "", plan: "" });
+  const [soapDrafts, setSoapDrafts] = useState<Record<string, SoapNote>>({});
+  const soapFor = (id: string): SoapNote => soapDrafts[id] ?? EMPTY_SOAP;
+  const setSoapFor = (id: string, value: SoapNote) =>
+    setSoapDrafts((prev) => ({ ...prev, [id]: value }));
+  const updateSoapFor = (id: string, patch: Partial<SoapNote>) =>
+    setSoapDrafts((prev) => ({ ...prev, [id]: { ...(prev[id] ?? EMPTY_SOAP), ...patch } }));
   const [tplName, setTplName] = useState("");
   const [tplSpecialty, setTplSpecialty] = useState("");
   const [error, setError] = useState("");
@@ -54,24 +62,14 @@ export function EncountersWorkspace() {
 
   useEffect(() => {
     let cancelled = false;
-    async function loadInitialData() {
-      const [patientsResponse, encountersResponse, templatesResponse] = await Promise.all([fetch("/api/patients"), fetch("/api/encounters"), fetch("/api/clinical-templates")]);
-      if (patientsResponse.status === 403 || encountersResponse.status === 403) {
-        if (!cancelled) setForbidden(true);
-        return;
-      }
-      if (!patientsResponse.ok || !encountersResponse.ok) throw new Error(t("enc_loadError"));
-      if (!cancelled) {
-        setPatients((await patientsResponse.json()) as Patient[]);
-        setEncounters((await encountersResponse.json()) as Encounter[]);
-        if (templatesResponse.ok) setTemplates(await templatesResponse.json());
-      }
-    }
-    void loadInitialData().catch((reason: unknown) => {
+    // Intentional fetch-on-mount: loads workspace data once. The cancelled
+    // flag guards the async continuation, so this is not a render-loop setState.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void refresh().catch((reason: unknown) => {
       if (!cancelled) setError(reason instanceof Error ? reason.message : t("enc_loadError"));
     });
     return () => { cancelled = true; };
-  }, [t]);
+  }, [refresh, t]);
 
   const startEncounter = async () => {
     if (!patientId) return;
@@ -83,38 +81,44 @@ export function EncountersWorkspace() {
     if (!response.ok) throw new Error(t("enc_startError"));
     setPatientId("");
     await refresh();
+    toast.success(t("common_added"));
   };
 
-  const applyTemplate = (id: string) => {
+  const applyTemplate = (encounterId: string, id: string) => {
     setTemplateId(id);
     const tpl = templates.find((entry) => entry.id === id);
-    if (tpl) setSoap((prev) => prefillSoap(prev, tpl));
+    if (tpl) setSoapFor(encounterId, prefillSoap(soapFor(encounterId), tpl));
   };
 
   const addSoapNote = async () => {
-    if (!selectedId || isSoapEmpty(soap)) return;
+    if (!selectedId) return;
+    const draft = soapFor(selectedId);
+    if (isSoapEmpty(draft)) return;
     const response = await fetch(`/api/encounters/${selectedId}/notes`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ noteType: "soap", ...soap }),
+      body: JSON.stringify({ noteType: "soap", ...draft }),
     });
     if (!response.ok) throw new Error(t("enc_noteError"));
-    setSoap({ subjective: "", objective: "", assessment: "", plan: "" });
+    setSoapFor(selectedId, { ...EMPTY_SOAP });
     setTemplateId("");
     await refresh();
+    toast.success(t("common_added"));
   };
 
   const saveTemplate = async () => {
-    if (!tplName.trim() || isSoapEmpty(soap)) return;
+    const draft = selectedId ? soapFor(selectedId) : EMPTY_SOAP;
+    if (!tplName.trim() || isSoapEmpty(draft)) return;
     const response = await fetch("/api/clinical-templates", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: tplName.trim(), specialty: tplSpecialty.trim() || null, ...soap }),
+      body: JSON.stringify({ name: tplName.trim(), specialty: tplSpecialty.trim() || null, ...draft }),
     });
     if (!response.ok) throw new Error(t("enc_tplSaveError"));
     setTplName("");
     setTplSpecialty("");
     await refresh();
+    toast.success(t("common_saved"));
   };
 
   const deleteTemplate = async (id: string) => {
@@ -123,6 +127,7 @@ export function EncountersWorkspace() {
     if (!response.ok) throw new Error(t("enc_tplDeleteError"));
     if (templateId === id) setTemplateId("");
     await refresh();
+    toast.success(t("common_deleted"));
   };
 
   const complete = async (id: string) => {
@@ -133,6 +138,7 @@ export function EncountersWorkspace() {
     });
     if (!response.ok) throw new Error(t("enc_completeError"));
     await refresh();
+    toast.success(t("common_saved"));
   };
 
   if (forbidden) {
@@ -210,7 +216,7 @@ export function EncountersWorkspace() {
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <SearchableSelect
                       value={selectedId === encounter.id ? templateId : ""}
-                      onValueChange={(value) => { setSelectedId(encounter.id); applyTemplate(value); }}
+                      onValueChange={(value) => { setSelectedId(encounter.id); applyTemplate(encounter.id, value); }}
                       options={[
                         { value: "", label: t("enc_tplSelect") },
                         ...templates.map((tpl) => ({
@@ -223,13 +229,13 @@ export function EncountersWorkspace() {
                     />
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_soapSubjective")}</Label><Textarea value={selectedId === encounter.id ? soap.subjective : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, subjective: event.target.value }); }} placeholder={t("enc_soapSubjective")} /></div>
-                    <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_soapObjective")}</Label><Textarea value={selectedId === encounter.id ? soap.objective : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, objective: event.target.value }); }} placeholder={t("enc_soapObjective")} /></div>
-                    <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_soapAssessment")}</Label><Textarea value={selectedId === encounter.id ? soap.assessment : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, assessment: event.target.value }); }} placeholder={t("enc_soapAssessment")} /></div>
-                    <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_soapPlan")}</Label><Textarea value={selectedId === encounter.id ? soap.plan : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, plan: event.target.value }); }} placeholder={t("enc_soapPlan")} /></div>
+                    <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_soapSubjective")}</Label><Textarea value={soapFor(encounter.id).subjective} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); updateSoapFor(encounter.id, { subjective: event.target.value }); }} placeholder={t("enc_soapSubjective")} /></div>
+                    <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_soapObjective")}</Label><Textarea value={soapFor(encounter.id).objective} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); updateSoapFor(encounter.id, { objective: event.target.value }); }} placeholder={t("enc_soapObjective")} /></div>
+                    <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_soapAssessment")}</Label><Textarea value={soapFor(encounter.id).assessment} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); updateSoapFor(encounter.id, { assessment: event.target.value }); }} placeholder={t("enc_soapAssessment")} /></div>
+                    <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_soapPlan")}</Label><Textarea value={soapFor(encounter.id).plan} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); updateSoapFor(encounter.id, { plan: event.target.value }); }} placeholder={t("enc_soapPlan")} /></div>
                   </div>
-                  <div><Button variant="outline" size="sm" onClick={() => void addSoapNote().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_noteError")))}><FileText className="mr-1.5 h-4 w-4" />{t("enc_addNote")}</Button></div>
-                  <AiAssistCard encounterId={encounter.id} soap={soap} setSoap={setSoap} />
+                  <div className="flex items-center gap-2"><Button variant="outline" size="sm" onClick={() => void addSoapNote().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_noteError")))}><FileText className="mr-1.5 h-4 w-4" />{t("enc_addNote")}</Button>{!isSoapEmpty(soapFor(encounter.id)) ? <span aria-hidden="true" className="h-2 w-2 rounded-full bg-warning" /> : null}</div>
+                  <AiAssistCard encounterId={encounter.id} soap={soapFor(encounter.id)} setSoap={(value) => setSoapFor(encounter.id, value)} />
                   <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-border p-3 bg-muted-bg">
                     <div><p className="text-sm font-semibold text-foreground">{t("rx_cardTitle")}</p><p className="text-xs text-muted-foreground">{t("rx_cardDesc")}</p></div>
                     <NewPrescriptionDialog

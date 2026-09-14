@@ -28,6 +28,7 @@ import { PatientProfileSheet } from "@/components/patients/patient-profile-sheet
 import { MergePatientsDialog } from "@/components/patients/merge-patients-dialog"
 import { AddPatientDialog } from "@/components/patients/add-patient-dialog"
 import { DataPagination } from "@/components/ui/data-pagination"
+import { EmptyState } from "@/components/ui/loading"
 import { paginate } from "@/lib/pagination"
 import { useLocale } from "@/components/locale/locale-provider"
 import { FeatureTip } from "@/components/feature-tips/feature-tip"
@@ -43,7 +44,8 @@ function PatientsPageContent() {
   const statusLabel = (status: string) => {
     const s = status.toLowerCase()
     if (s === "active") return t("patients_active")
-    if (s === "inactive" || s === "archived") return t("patients_archived")
+    if (s === "inactive") return t("patients_inactive")
+    if (s === "archived") return t("patients_archived")
     return status
   }
 
@@ -52,13 +54,15 @@ function PatientsPageContent() {
     setSearchQuery(query)
   }, [searchParams])
 
-  const handleExport = () => {
-    toast.success(t("patients_exporting"))
+  const resetFilters = () => {
+    setSearchQuery("")
+    setStatusFilter("all")
+    setPage(1)
   }
 
   const filteredPatients = patients.filter(patient => {
     const searchStr = searchQuery.toLowerCase();
-    return (statusFilter === "all" || patient.status === statusFilter) && (
+    return (statusFilter === "all" || patient.status.toLowerCase() === statusFilter.toLowerCase()) && (
       patient.firstName.toLowerCase().includes(searchStr) ||
       patient.lastName.toLowerCase().includes(searchStr) ||
       patient.mrn.toLowerCase().includes(searchStr) ||
@@ -70,6 +74,30 @@ function PatientsPageContent() {
   const pageCount = Math.max(1, Math.ceil(filteredPatients.length / PAGE_SIZE))
   const visiblePage = Math.min(page, pageCount)
   const pagedPatients = paginate(filteredPatients, visiblePage, PAGE_SIZE)
+
+  const handleExport = () => {
+    const csv = [
+      [t("patients_colPatient"), t("patients_colMrn"), t("patients_colStatus"), t("patients_colContact"), t("patients_colRegDate")],
+      ...filteredPatients.map((p) => [
+        `${p.firstName} ${p.lastName}`,
+        p.mrn,
+        statusLabel(p.status),
+        `${p.phone} ${p.email}`,
+        new Date(p.regDate).toLocaleDateString(),
+      ]),
+    ]
+      .map((row) => row.map((cell) => `"${cell}"`).join(","))
+      .join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `patients-${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    toast.success(t("common_success"));
+  }
 
   return (
     <div className="flex flex-col gap-6 w-full h-full">
@@ -117,7 +145,7 @@ function PatientsPageContent() {
              </div>
          </div>
          <div className="p-0 overflow-x-auto">
-             <table className="w-full text-left text-xs">
+             <table className="w-full text-start text-xs">
                  <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                      <tr>
                          <th className="px-4 py-3">{t("patients_colPatient")}</th>
@@ -129,7 +157,19 @@ function PatientsPageContent() {
                      </tr>
                  </thead>
                  <tbody className="divide-y divide-border text-foreground">
-                     {pagedPatients
+                     {filteredPatients.length === 0 ? (
+                       <tr>
+                         <td colSpan={6} className="px-0 py-4">
+                           <EmptyState title={t("common_noResults")} />
+                           <div className="flex justify-center pb-4">
+                             <Button variant="outline" size="sm" onClick={resetFilters} className="h-8 px-3 text-xs font-semibold">
+                               {t("common_resetFilters")}
+                             </Button>
+                           </div>
+                         </td>
+                       </tr>
+                     ) : (
+                     pagedPatients
                        .map((patient: Patient) => (
                          <tr key={patient.id} className="hover:bg-muted/40 transition-colors">
                              <td className="px-4 py-3">
@@ -147,7 +187,7 @@ function PatientsPageContent() {
                              </td>
                              <td className="px-4 py-3 font-mono text-muted-foreground">{patient.mrn}</td>
                              <td className="px-4 py-3">
-                                 <span className={patient.status === "Active" ? "px-2 py-0.5 bg-success-bg text-success-text border border-success/30 rounded-full text-[10px] font-semibold" : "px-2 py-0.5 bg-muted-bg text-muted-foreground border border-border rounded-full text-[10px] font-semibold"}>
+                                 <span className={patient.status.toLowerCase() === "active" ? "px-2 py-0.5 bg-success-bg text-success-text border border-success/30 rounded-full text-[10px] font-semibold" : "px-2 py-0.5 bg-muted-bg text-muted-foreground border border-border rounded-full text-[10px] font-semibold"}>
                                      {statusLabel(patient.status)}
                                  </span>
                              </td>
@@ -176,7 +216,7 @@ function PatientsPageContent() {
                                  </FeatureTip>
                                </td>
                          </tr>
-                     ))}
+                     )))}
                  </tbody>
              </table>
          </div>

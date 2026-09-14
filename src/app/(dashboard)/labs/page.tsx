@@ -297,7 +297,7 @@ export default function LabResultsPage() {
               <p className="text-muted-foreground">{t("labs_empty")}</p>
             </div>
           ) : (
-            <table className="w-full text-sm text-left">
+            <table className="w-full text-sm text-start">
               <thead className="bg-muted-bg text-muted-foreground font-semibold text-xs uppercase tracking-wider">
                 <tr>
                   <th className="px-6 py-3.5 border-b border-border">{t("labs_colPatient")}</th>

@@ -31,8 +31,24 @@ export default function DashboardPage() {
   const isDoctor = roles.includes("Doctor");
   const isReception = roles.includes("Care Coordinator");
 
-  const [today] = React.useState(() => new Date().toISOString().split("T")[0]);
-  const [now] = React.useState(() => Date.now());
+  const [today, setToday] = React.useState(() => new Date().toISOString().split("T")[0]);
+  const [now, setNow] = React.useState(() => Date.now());
+
+  React.useEffect(() => {
+    const refreshDate = () => {
+      setToday(new Date().toISOString().split("T")[0]);
+      setNow(Date.now());
+    };
+    const atMidnight = new Date();
+    atMidnight.setHours(24, 0, 0, 0);
+    const msToMidnight = Math.max(0, atMidnight.getTime() - Date.now());
+    const midnightTimer = window.setTimeout(refreshDate, msToMidnight);
+    const guard = window.setInterval(refreshDate, 60_000);
+    return () => {
+      window.clearTimeout(midnightTimer);
+      window.clearInterval(guard);
+    };
+  }, []);
   const cancelledStatus = (status: string) => status?.toLowerCase() === "cancelled";
   const noShowStatus = (status: string) =>
     status?.toLowerCase() === "no_show" ||
@@ -107,6 +123,7 @@ export default function DashboardPage() {
       detail: `${activePatients} ${t("dash_active")}`,
       icon: Users,
       color: "cyan",
+      href: "/patients",
     },
     {
       name: t("dash_appointmentsToday"),
@@ -114,6 +131,7 @@ export default function DashboardPage() {
       detail: `${upcomingAppointments.length} ${t("dash_upcoming")}`,
       icon: Calendar,
       color: "emerald",
+      href: "/queue",
     },
     {
       name: t("dash_activeEncounters"),
@@ -121,6 +139,7 @@ export default function DashboardPage() {
       detail: `${confirmedCount} ${t("appts_statusConfirmed")}`,
       icon: Activity,
       color: "violet",
+      href: "/queue",
     },
     {
       name: t("dash_cancelledToday"),
@@ -128,6 +147,7 @@ export default function DashboardPage() {
       detail: `${noShowToday} ${t("dash_noShow")}`,
       icon: Bell,
       color: "amber",
+      href: "/queue",
     },
   ];
 
@@ -287,10 +307,10 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat) => (
+          <Link key={stat.name} href={stat.href} className="block h-full">
           <motion.div
             variants={itemVariants}
-            key={stat.name}
-            className="group relative overflow-hidden rounded-lg border border-border bg-card p-5 shadow-2xs transition hover:border-primary/40"
+            className="group relative h-full overflow-hidden rounded-lg border border-border bg-card p-5 shadow-2xs transition hover:border-primary/40"
           >
             <div className="flex items-start justify-between">
               <div>
@@ -313,6 +333,7 @@ export default function DashboardPage() {
               {stat.detail}
             </div>
           </motion.div>
+          </Link>
         ))}
       </div>
 
@@ -411,8 +432,12 @@ export default function DashboardPage() {
                   const name = patient ? `${patient.firstName} ${patient.lastName}` : "—";
 
                   return (
-                    <div
+                    <Link
                       key={appointment.id}
+                      href={`/patients/${appointment.patientId}`}
+                      className="block"
+                    >
+                    <div
                       className="flex items-center justify-between rounded-md border border-border/50 bg-muted-bg p-2.5 transition-colors hover:bg-muted/50"
                     >
                       <div>
@@ -441,6 +466,7 @@ export default function DashboardPage() {
                       {!appointment.status && "—"}
                       </span>
                     </div>
+                    </Link>
                   );
                 })
               )}
@@ -461,7 +487,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-start text-xs">
             <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               <tr>
                 <th className="px-4 py-3">{t("dash_name")}</th>

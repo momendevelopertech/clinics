@@ -58,7 +58,7 @@ export function ForgotPasswordForm({ t }: ForgotPasswordFormProps) {
           </div>
         ) : (
           <>
-            <div className="space-y-1.5 text-center sm:text-left">
+            <div className="space-y-1.5 text-center sm:text-start">
               <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
                 {t["forgot_title"]}
               </p>

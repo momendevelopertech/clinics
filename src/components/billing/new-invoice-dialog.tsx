@@ -43,6 +43,7 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
     dueDate: "",
     couponCode: "",
   });
+  const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
 
   React.useEffect(() => {
     if (open) {
@@ -62,19 +63,23 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
     e.preventDefault();
 
     if (!formData.patientId) {
+      setFieldErrors({ patientId: "Select a patient" });
       toast.error("Select a patient");
       return;
     }
     const unitPrice = Number(formData.unitPrice);
     if (formData.unitPrice === "" || !Number.isFinite(unitPrice) || unitPrice < 0) {
+      setFieldErrors({ unitPrice: "Enter a valid unit price" });
       toast.error("Enter a valid unit price");
       return;
     }
     const quantity = Number(formData.quantity);
     if (!Number.isInteger(quantity) || quantity <= 0) {
+      setFieldErrors({ quantity: "Quantity must be a positive whole number" });
       toast.error("Quantity must be a positive whole number");
       return;
     }
+    setFieldErrors({});
 
     try {
       setLoading(true);
@@ -141,17 +146,25 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
             <Label htmlFor="invoice-patient" className="text-xs font-semibold">Patient *</Label>
             <SearchableSelect
               value={formData.patientId}
-              onValueChange={(value) =>
-                setFormData({ ...formData, patientId: value })
-              }
+              onValueChange={(value) => {
+                setFormData({ ...formData, patientId: value });
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.patientId;
+                  return next;
+                });
+              }}
               options={patients.map((patient) => ({
                 value: patient.id,
                 label: `${patient.firstName} ${patient.lastName}`,
               }))}
               placeholder="Select a patient"
-              triggerClassName="h-9 text-xs"
+              triggerClassName={`h-9 text-xs${fieldErrors.patientId ? " border-destructive" : ""}`}
               id="invoice-patient"
             />
+            {fieldErrors.patientId ? (
+              <p className="text-xs text-destructive mt-1">{fieldErrors.patientId}</p>
+            ) : null}
           </div>
 
           <div className="gap-1.5 flex flex-col">
@@ -167,34 +180,54 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="gap-1.5 flex flex-col">
-              <Label htmlFor="invoice-quantity" className="text-xs font-semibold">Quantity</Label>
+              <Label htmlFor="invoice-quantity" className="text-xs font-semibold">Quantity *</Label>
               <Input
                 id="invoice-quantity"
                 type="number"
                 min="1"
                 step="1"
                 value={formData.quantity}
-                onChange={(e) =>
-                  setFormData({ ...formData, quantity: e.target.value })
-                }
-                className="h-9 text-xs"
+                onChange={(e) => {
+                  setFormData({ ...formData, quantity: e.target.value });
+                  setFieldErrors((prev) => {
+                    const next = { ...prev };
+                    delete next.quantity;
+                    return next;
+                  });
+                }}
+                aria-required="true"
+                aria-invalid={fieldErrors.quantity ? true : undefined}
+                className={`h-9 text-xs${fieldErrors.quantity ? " border-destructive" : ""}`}
               />
+              {fieldErrors.quantity ? (
+                <p className="text-xs text-destructive mt-1">{fieldErrors.quantity}</p>
+              ) : null}
             </div>
             <div className="gap-1.5 flex flex-col">
-              <Label htmlFor="invoice-price" className="text-xs font-semibold">Unit Price ($)</Label>
+              <Label htmlFor="invoice-price" className="text-xs font-semibold">Unit Price ($) *</Label>
               <Input
                 id="invoice-price"
                 type="number"
                 min="0"
                 step="0.01"
                 value={formData.unitPrice}
-                onChange={(e) =>
-                  setFormData({ ...formData, unitPrice: e.target.value })
-                }
-                className="h-9 text-xs"
+                onChange={(e) => {
+                  setFormData({ ...formData, unitPrice: e.target.value });
+                  setFieldErrors((prev) => {
+                    const next = { ...prev };
+                    delete next.unitPrice;
+                    return next;
+                  });
+                }}
+                aria-required="true"
+                aria-invalid={fieldErrors.unitPrice ? true : undefined}
+                className={`h-9 text-xs${fieldErrors.unitPrice ? " border-destructive" : ""}`}
               />
+              {fieldErrors.unitPrice ? (
+                <p className="text-xs text-destructive mt-1">{fieldErrors.unitPrice}</p>
+              ) : null}
             </div>
           </div>
 

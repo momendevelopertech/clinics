@@ -123,11 +123,11 @@ export function AppointmentsCalendar({
 
   const statusStyles: Record<string, string> = {
     Confirmed:
-      "bg-accent-blue-bg border-l-accent-blue-text text-accent-blue-text",
+      "bg-accent-blue-bg border-s-accent-blue-text text-accent-blue-text",
     "In Waiting Room":
-      "bg-warning-bg border-l-warning-text text-warning-text",
+      "bg-warning-bg border-s-warning-text text-warning-text",
     Scheduled:
-      "bg-primary/10 border-l-primary text-foreground",
+      "bg-primary/10 border-s-primary text-foreground",
   };
 
   return (
@@ -147,7 +147,7 @@ export function AppointmentsCalendar({
             className="h-8 w-8 rounded-md shrink-0"
             aria-label="Previous week"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
           </Button>
           <Button
             variant="outline"
@@ -156,7 +156,7 @@ export function AppointmentsCalendar({
             className="h-8 w-8 rounded-md shrink-0"
             aria-label="Next week"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 rtl:rotate-180" />
           </Button>
           <h3 className="text-base font-semibold text-foreground min-w-[220px]">
             {weekDays[0].toLocaleDateString("en-US", {
@@ -232,7 +232,7 @@ export function AppointmentsCalendar({
                         const patientName = apt.patient ?? "Unknown Patient";
                         const style =
                           statusStyles[apt.status] ??
-                          "bg-muted border-l-muted-foreground text-foreground";
+                          "bg-muted border-s-muted-foreground text-foreground";
 
                         return (
                           <motion.div
@@ -242,7 +242,7 @@ export function AppointmentsCalendar({
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.96 }}
                             className={cn(
-                              "rounded-md border-l-[3px] p-2.5 cursor-pointer transition-all",
+                              "rounded-md border-s-[3px] p-2.5 cursor-pointer transition-all",
                               "hover:shadow-xs focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring",
                               style
                             )}

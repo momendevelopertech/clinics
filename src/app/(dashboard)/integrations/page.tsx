@@ -241,10 +241,10 @@ export default function IntegrationsPage() {
               <table className="w-full min-w-[640px] text-sm">
                 <thead className="bg-muted-bg text-muted-foreground font-medium">
                   <tr>
-                    <th className="px-4 py-3 text-left">{t("common_name")}</th>
-                    <th className="px-4 py-3 text-left">{t("int_colPrefix")}</th>
-                    <th className="px-4 py-3 text-left">{t("common_status")}</th>
-                    <th className="px-4 py-3 text-left">{t("common_actions")}</th>
+                    <th className="px-4 py-3 text-start">{t("common_name")}</th>
+                    <th className="px-4 py-3 text-start">{t("int_colPrefix")}</th>
+                    <th className="px-4 py-3 text-start">{t("common_status")}</th>
+                    <th className="px-4 py-3 text-start">{t("common_actions")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border text-foreground">
@@ -340,10 +340,10 @@ export default function IntegrationsPage() {
               <table className="w-full min-w-[640px] text-sm">
                 <thead className="bg-muted-bg text-muted-foreground font-medium">
                   <tr>
-                    <th className="px-4 py-3 text-left">URL</th>
-                    <th className="px-4 py-3 text-left">{t("int_colEvents")}</th>
-                    <th className="px-4 py-3 text-left">{t("common_status")}</th>
-                    <th className="px-4 py-3 text-left">{t("common_actions")}</th>
+                    <th className="px-4 py-3 text-start">URL</th>
+                    <th className="px-4 py-3 text-start">{t("int_colEvents")}</th>
+                    <th className="px-4 py-3 text-start">{t("common_status")}</th>
+                    <th className="px-4 py-3 text-start">{t("common_actions")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border text-foreground">

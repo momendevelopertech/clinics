@@ -150,7 +150,7 @@ export default async function HomePage() {
                 <div className="grid size-11 place-content-center rounded-md bg-primary/10 text-primary">
                   <stat.icon className="h-5 w-5" />
                 </div>
-                <div className="text-left">
+                <div className="text-start">
                   <p className="text-2xl font-semibold leading-none">{stat.value}</p>
                   <p className="mt-1 text-xs font-medium text-muted-foreground">{stat.label}</p>
                 </div>

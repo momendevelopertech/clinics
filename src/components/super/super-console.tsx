@@ -388,7 +388,7 @@ function OrganizationsSection({
           <p className="p-12 text-center text-sm text-muted-foreground">{t["super_noOrgs"]}</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px] text-left text-sm">
+            <table className="w-full min-w-[900px] text-start text-sm">
               <thead>
                 <tr className="border-b border-border text-xs uppercase tracking-widest text-muted-foreground">
                   <th className="px-5 py-3">{t["super_orgs"]}</th>
@@ -503,7 +503,7 @@ function BillingSection({ orgs, t, busyId, act, plans }: { orgs: OrgRow[]; t: Di
       <div><h2 className="text-xl font-semibold text-foreground">{t["super_sectionBilling"]}</h2><p className="text-sm text-muted-foreground">{t["super_billingHelp"]}</p></div>
       <div className="overflow-hidden rounded-lg border border-border bg-card">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] text-left text-sm">
+          <table className="w-full min-w-[760px] text-start text-sm">
             <thead><tr className="border-b border-border text-xs uppercase tracking-widest text-muted-foreground"><th className="px-5 py-3">{t["super_orgs"]}</th><th className="px-5 py-3">{t["super_plan"]}</th><th className="px-5 py-3">{t["super_setPlan"]}</th></tr></thead>
             <tbody className="divide-y divide-border/50">
               {orgs.map((org) => <tr key={org.id}><td className="px-5 py-4 font-semibold text-foreground">{org.name}</td><td className="px-5 py-4 capitalize text-foreground">{org.plan}</td><td className="px-5 py-4"><div className="flex flex-wrap gap-1.5">{plans.map((plan) => <button key={plan.code} disabled={busyId !== null} onClick={() => void act(`/api/super/orgs/${org.id}/plan`, { plan: plan.code })} className={`rounded-full px-3 py-1 text-xs font-semibold capitalize transition disabled:opacity-50 ${org.plan === plan.code ? "bg-primary text-primary-foreground" : "border border-border bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground"}`}>{plan.nameEn ?? plan.code}</button>)}</div></td></tr>)}
@@ -520,7 +520,7 @@ function AuditSection({ audit, t }: { audit: AuditRow[]; t: Dictionary }) {
     <section className="mt-6 space-y-4">
       <div><h2 className="text-xl font-semibold text-foreground">{t["super_sectionAudit"]}</h2><p className="text-sm text-muted-foreground">{t["super_auditHelp"]}</p></div>
       <div className="overflow-hidden rounded-lg border border-border bg-card">
-        {audit.length === 0 ? <p className="p-12 text-center text-sm text-muted-foreground">{t["super_noAudit"]}</p> : <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-left text-sm"><thead><tr className="border-b border-border text-xs uppercase tracking-widest text-muted-foreground"><th className="px-5 py-3">{t["super_date"]}</th><th className="px-5 py-3">{t["super_action"]}</th><th className="px-5 py-3">{t["super_target"]}</th><th className="px-5 py-3">{t["super_actor"]}</th></tr></thead><tbody className="divide-y divide-border/50">{audit.map((log) => <tr key={log.id}><td className="px-5 py-4 text-xs text-muted-foreground">{new Date(log.createdAt).toLocaleString()}</td><td className="px-5 py-4"><span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">{log.action}</span></td><td className="px-5 py-4"><div className="font-semibold text-foreground">{log.entityType.replace("platform_", "")}</div><div className="text-xs text-muted-foreground">{log.organization.name}</div></td><td className="px-5 py-4 text-xs text-muted-foreground">{log.user?.name ?? log.user?.email ?? "System"}</td></tr>)}</tbody></table></div>}
+        {audit.length === 0 ? <p className="p-12 text-center text-sm text-muted-foreground">{t["super_noAudit"]}</p> : <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-start text-sm"><thead><tr className="border-b border-border text-xs uppercase tracking-widest text-muted-foreground"><th className="px-5 py-3">{t["super_date"]}</th><th className="px-5 py-3">{t["super_action"]}</th><th className="px-5 py-3">{t["super_target"]}</th><th className="px-5 py-3">{t["super_actor"]}</th></tr></thead><tbody className="divide-y divide-border/50">{audit.map((log) => <tr key={log.id}><td className="px-5 py-4 text-xs text-muted-foreground">{new Date(log.createdAt).toLocaleString()}</td><td className="px-5 py-4"><span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">{log.action}</span></td><td className="px-5 py-4"><div className="font-semibold text-foreground">{log.entityType.replace("platform_", "")}</div><div className="text-xs text-muted-foreground">{log.organization.name}</div></td><td className="px-5 py-4 text-xs text-muted-foreground">{log.user?.name ?? log.user?.email ?? "System"}</td></tr>)}</tbody></table></div>}
       </div>
     </section>
   );

@@ -483,7 +483,7 @@ export function PlansManager({ t }: { t: Dictionary }) {
       ) : (
         <div className="surface-panel overflow-hidden rounded-lg border border-border shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[980px] text-left text-sm">
+            <table className="w-full min-w-[980px] text-start text-sm">
               <thead>
                 <tr className="border-b border-border text-xs uppercase tracking-widest text-muted-foreground bg-muted/30">
                   <th className="px-4 py-3" />

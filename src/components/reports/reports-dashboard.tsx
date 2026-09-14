@@ -14,6 +14,7 @@ import {
 import type { Dictionary } from "@/lib/i18n/locale";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { buildMonthlyCsv } from "@/lib/report-export";
+import { formatMoney } from "@/lib/format-money";
 import { Button } from "@/components/ui/button";
 
 type ReportData = {
@@ -262,7 +263,7 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
                   <div key={row.name} className="flex items-center justify-between gap-3 text-xs rounded-md bg-muted-bg/50 px-3 py-2">
                     <span className="font-semibold text-foreground">{row.name}</span>
                     <span className="font-mono text-muted-foreground">
-                      {row.count} · <strong className="text-foreground">${row.revenue.toFixed(2)}</strong>
+                      {row.count} · <strong className="text-foreground">{formatMoney(row.revenue)}</strong>
                     </span>
                   </div>
                 ))
@@ -278,7 +279,7 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
                   <Wallet className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-xl font-bold font-mono tracking-tight text-foreground">${data.summary.revenue.toFixed(2)}</p>
+                  <p className="text-xl font-bold font-mono tracking-tight text-foreground">{formatMoney(data.summary.revenue)}</p>
                   <p className="text-xs text-muted-foreground">{t["reports_revenue"]}</p>
                 </div>
               </div>
@@ -289,7 +290,7 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
                   <Wallet className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-xl font-bold font-mono tracking-tight text-foreground">${data.summary.outstanding.toFixed(2)}</p>
+                  <p className="text-xl font-bold font-mono tracking-tight text-foreground">{formatMoney(data.summary.outstanding)}</p>
                   <p className="text-xs text-muted-foreground">{t["reports_outstanding"]}</p>
                 </div>
               </div>
@@ -300,7 +301,7 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
                   <Wallet className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-xl font-bold font-mono tracking-tight text-foreground">${(data.summary.expenses ?? 0).toFixed(2)}</p>
+                  <p className="text-xl font-bold font-mono tracking-tight text-foreground">{formatMoney(data.summary.expenses ?? 0)}</p>
                   <p className="text-xs text-muted-foreground">{t["reports_expenses"]}</p>
                 </div>
               </div>
@@ -311,7 +312,7 @@ export function ReportsDashboard({ t }: { t: Dictionary }) {
                   <Wallet className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-xl font-bold font-mono tracking-tight text-foreground">${(data.summary.net ?? 0).toFixed(2)}</p>
+                  <p className="text-xl font-bold font-mono tracking-tight text-foreground">{formatMoney(data.summary.net ?? 0)}</p>
                   <p className="text-xs text-muted-foreground">{t["reports_net"]}</p>
                 </div>
               </div>

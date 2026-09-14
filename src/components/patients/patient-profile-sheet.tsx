@@ -1,7 +1,7 @@
 "use client"
 import * as React from "react"
 import Link from "next/link"
-import { Phone, Mail, MapPin, Activity, Calendar, AlertCircle, Droplet, User, FileText, ArchiveRestore } from "lucide-react"
+import { Phone, Mail, MapPin, Activity, Calendar, AlertCircle, Droplet, User, FileText, ArchiveRestore, Copy, ChevronDown, ChevronUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import { Patient } from "@/context/MedicalContext"
@@ -16,6 +16,17 @@ interface PatientProfileSheetProps {
 export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileSheetProps) {
   const { t } = useLocale()
   const [updatingStatus, setUpdatingStatus] = React.useState(false)
+  const [allergiesExpanded, setAllergiesExpanded] = React.useState(false)
+  const allergiesTruncated = patient.allergies.length > 15
+
+  const copyPhone = async () => {
+    try {
+      await navigator.clipboard.writeText(patient.phone)
+      toast.success(t("common_success"))
+    } catch {
+      toast.error(t("common_error"))
+    }
+  }
 
   const toggleArchive = async () => {
     setUpdatingStatus(true)
@@ -37,7 +48,8 @@ export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileS
   const statusLabel = (status: string) => {
     const s = status.toLowerCase()
     if (s === "active") return t("patients_active")
-    if (s === "inactive" || s === "archived") return t("patients_archived")
+    if (s === "inactive") return t("patients_inactive")
+    if (s === "archived") return t("patients_archived")
     return status
   }
 
@@ -84,9 +96,19 @@ export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileS
             <div className="bg-critical-bg p-3 rounded-lg border border-critical/30 flex flex-col items-center justify-center text-center">
               <AlertCircle className="w-5 h-5 text-destructive mb-1" />
               <span className="text-[10px] uppercase font-semibold text-critical-text tracking-wider">{t("profile_allergies")}</span>
-              <span className="text-sm font-bold text-critical-text truncate w-full" title={patient.allergies}>
-                {patient.allergies.length > 15 ? patient.allergies.substring(0, 15) + '...' : patient.allergies}
-              </span>
+              <button
+                type="button"
+                onClick={() => setAllergiesExpanded((v) => !v)}
+                className="flex w-full items-center justify-center gap-1 text-sm font-bold text-critical-text"
+                title={patient.allergies}
+              >
+                <span className={allergiesExpanded ? "break-words" : "truncate"}>
+                  {allergiesExpanded || !allergiesTruncated ? patient.allergies : patient.allergies.substring(0, 15) + '...'}
+                </span>
+                {allergiesTruncated ? (
+                  allergiesExpanded ? <ChevronUp className="h-3.5 w-3.5 shrink-0" /> : <ChevronDown className="h-3.5 w-3.5 shrink-0" />
+                ) : null}
+              </button>
             </div>
             <div className="bg-success-bg p-3 rounded-lg border border-success/30 flex flex-col items-center justify-center text-center">
               <Activity className="w-5 h-5 text-success-text mb-1" />
@@ -117,8 +139,11 @@ export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileS
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-muted-foreground font-medium">{t("profile_phone")}</p>
-                    <p className="text-sm font-medium text-foreground truncate">{patient.phone}</p>
+                    <a href={`tel:${patient.phone}`} className="text-sm font-medium text-foreground truncate hover:text-primary hover:underline">{patient.phone}</a>
                   </div>
+                  <Button variant="ghost" size="sm" onClick={copyPhone} className="h-7 w-7 shrink-0 p-0" aria-label={t("profile_phone")}>
+                    <Copy className="h-3.5 w-3.5" />
+                  </Button>
                 </div>
                 <div className="flex items-center gap-3 p-3 hover:bg-muted/50 rounded-md transition-colors">
                   <div className="w-8 h-8 rounded-md bg-muted-bg flex items-center justify-center text-muted-foreground shrink-0">
@@ -126,7 +151,11 @@ export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileS
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-muted-foreground font-medium">{t("profile_email")}</p>
-                    <p className="text-sm font-medium text-foreground truncate">{patient.email || t("profile_noEmail")}</p>
+                    {patient.email ? (
+                      <a href={`mailto:${patient.email}`} className="block text-sm font-medium text-foreground truncate hover:text-primary hover:underline">{patient.email}</a>
+                    ) : (
+                      <p className="text-sm font-medium text-foreground truncate">{t("profile_noEmail")}</p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 hover:bg-muted/50 rounded-md transition-colors">
@@ -164,7 +193,7 @@ export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileS
               {t("profile_completeRecord")}
             </Button>
           </Link>
-          <Link href="/appointments" className="w-full">
+          <Link href={`/appointments?patientId=${patient.id}`} className="w-full">
             <Button variant="outline" className="w-full">
               <Calendar className="w-4 h-4 mr-2" />
               {t("profile_schedule")}

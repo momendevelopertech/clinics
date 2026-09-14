@@ -2,11 +2,12 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { CalendarCheck2, ClipboardList, Stethoscope, Users } from "lucide-react";
+import { CalendarCheck2, ClipboardList, Play, Stethoscope, Users } from "lucide-react";
 import Link from "next/link";
 import { useMedical } from "@/context/MedicalContext";
 import { useRoles } from "@/context/RoleContext";
 import { useLocale } from "@/components/locale/locale-provider";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { logClientError } from "@/lib/client-logger";
 
@@ -194,6 +195,12 @@ export function DoctorBoard() {
                     <span className={statusChip(appointment.status)}>
                       {appointment.status ?? "—"}
                     </span>
+                    <Button size="sm" variant="outline" className="h-7 shrink-0 px-2 text-xs" asChild>
+                      <Link href={`/patients/${appointment.patientId}`}>
+                        <Play className="mr-1 h-3 w-3" />
+                        {t("common_start")}
+                      </Link>
+                    </Button>
                   </div>
                 );
               })}

@@ -43,6 +43,7 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
     performedAt: "",
     reportUrl: "",
   });
+  const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
 
   const fetchPatients = React.useCallback(async () => {
     try {
@@ -66,9 +67,14 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
     e.preventDefault();
 
     if (!formData.patientId || !formData.testName) {
+      const errors: Record<string, string> = {};
+      if (!formData.patientId) errors.patientId = t("labs_requiredFields");
+      if (!formData.testName) errors.testName = t("labs_requiredFields");
+      setFieldErrors(errors);
       toast.error(t("labs_requiredFields"));
       return;
     }
+    setFieldErrors({});
 
     try {
       setLoading(true);
@@ -129,9 +135,14 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
               <Label htmlFor="patient">{t("labs_patientRequired")}</Label>
               <SearchableSelect
                 value={formData.patientId}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, patientId: value })
-                }
+                onValueChange={(value) => {
+                  setFormData({ ...formData, patientId: value });
+                  setFieldErrors((prev) => {
+                    const next = { ...prev };
+                    delete next.patientId;
+                    return next;
+                  });
+                }}
                 options={patients.map((patient) => ({
                   value: patient.id,
                   label: `${patient.firstName} ${patient.lastName}`,
@@ -139,6 +150,9 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
                 placeholder={t("labs_selectPatient")}
                 id="patient"
               />
+              {fieldErrors.patientId ? (
+                <p className="text-xs text-destructive mt-1">{fieldErrors.patientId}</p>
+              ) : null}
             </div>
 
             <div className="gap-1.5 flex flex-col">
@@ -147,10 +161,21 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
                 id="test-name"
                 placeholder={t("labs_testNamePh")}
                 value={formData.testName}
-                onChange={(e) =>
-                  setFormData({ ...formData, testName: e.target.value })
-                }
+                onChange={(e) => {
+                  setFormData({ ...formData, testName: e.target.value });
+                  setFieldErrors((prev) => {
+                    const next = { ...prev };
+                    delete next.testName;
+                    return next;
+                  });
+                }}
+                aria-required="true"
+                aria-invalid={fieldErrors.testName ? true : undefined}
+                className={fieldErrors.testName ? "border-destructive" : undefined}
               />
+              {fieldErrors.testName ? (
+                <p className="text-xs text-destructive mt-1">{fieldErrors.testName}</p>
+              ) : null}
             </div>
           </div>
 

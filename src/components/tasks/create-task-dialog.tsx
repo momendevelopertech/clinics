@@ -41,6 +41,7 @@ export function CreateTaskDialog({ onSuccess }: CreateTaskDialogProps) {
     dueDate: "",
     patientId: "",
   });
+  const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
 
   React.useEffect(() => {
     if (open) {
@@ -60,9 +61,11 @@ export function CreateTaskDialog({ onSuccess }: CreateTaskDialogProps) {
     e.preventDefault();
 
     if (!formData.title.trim()) {
+      setFieldErrors({ title: "Task title is required" });
       toast.error("Task title is required");
       return;
     }
+    setFieldErrors({});
 
     try {
       setLoading(true);
@@ -119,11 +122,22 @@ export function CreateTaskDialog({ onSuccess }: CreateTaskDialogProps) {
             <Input
               id="task-title"
               value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
+              onChange={(e) => {
+                setFormData({ ...formData, title: e.target.value });
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.title;
+                  return next;
+                });
+              }}
               placeholder="Call patient about lab results"
+              aria-required="true"
+              aria-invalid={fieldErrors.title ? true : undefined}
+              className={fieldErrors.title ? "border-destructive" : undefined}
             />
+            {fieldErrors.title ? (
+              <p className="text-xs text-destructive mt-1">{fieldErrors.title}</p>
+            ) : null}
           </div>
 
           <div className="gap-2 flex flex-col">

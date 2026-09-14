@@ -143,7 +143,7 @@ export function FullScreenCalendar({
               size="icon"
               aria-label={t("calendar_prevMonth")}
             >
-              <ChevronLeftIcon size={16} strokeWidth={2} aria-hidden="true" />
+              <ChevronLeftIcon size={16} strokeWidth={2} aria-hidden="true" className="rtl:rotate-180" />
             </Button>
             <Button
               onClick={goToToday}
@@ -159,7 +159,7 @@ export function FullScreenCalendar({
               size="icon"
               aria-label={t("calendar_nextMonth")}
             >
-              <ChevronRightIcon size={16} strokeWidth={2} aria-hidden="true" />
+              <ChevronRightIcon size={16} strokeWidth={2} aria-hidden="true" className="rtl:rotate-180" />
             </Button>
           </div>
 

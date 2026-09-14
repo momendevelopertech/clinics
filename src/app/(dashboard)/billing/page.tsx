@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   DollarSign,
@@ -21,6 +22,8 @@ import { FeatureNotConfiguredBanner } from "@/components/ui/feature-not-configur
 import { useFeatureConfig } from "@/hooks/use-feature-config";
 import { NewInvoiceDialog } from "@/components/billing/new-invoice-dialog";
 import { InstallmentPlansDialog } from "@/components/billing/installment-plans-dialog";
+import { PaymentDialog } from "@/components/billing/payment-dialog";
+import { formatMoney } from "@/lib/format-money";
 import { UpgradePrompt } from "@/components/plan/upgrade-prompt";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -35,6 +38,8 @@ export default function BillingPage() {
     status: string;
     totalAmount: { toString: () => string };
     amountPaid: { toString: () => string };
+    currency?: string | null;
+    dueDate?: string | null;
     patient?: { firstName: string; lastName: string };
   }>>([]);
   const [loading, setLoading] = React.useState(true);
@@ -112,6 +117,8 @@ export default function BillingPage() {
       status: string;
       totalAmount: { toString: () => string };
       amountPaid: { toString: () => string };
+      currency?: string | null;
+      dueDate?: string | null;
       patient?: { firstName: string; lastName: string };
     }>>("/api/billing/invoices")
       .then((data) => { if (data) setInvoices(Array.isArray(data) ? data : []); })
@@ -127,6 +134,11 @@ export default function BillingPage() {
     const parsed = parseFloat(String(value));
     return Number.isFinite(parsed) ? parsed : 0;
   };
+
+  const invoiceCurrency = (inv: { currency?: string | null }) =>
+    inv.currency || "USD";
+
+  const isOverdue = (inv: { status: string }) => inv.status === "overdue";
 
   const closedStatuses = new Set(["paid", "void"]);
   const collected = invoices.reduce(
@@ -172,14 +184,21 @@ export default function BillingPage() {
     void: t("billing_statusVoid"),
   };
 
-  const filteredInvoices = invoices.filter((inv) => {
-    const matchesStatus = statusFilter === "all" || inv.status === statusFilter;
-    const query = searchQuery.toLowerCase();
-    const matchesSearch =
-      inv.invoiceNumber.toLowerCase().includes(query) ||
-      (inv.patient ? `${inv.patient.firstName} ${inv.patient.lastName}`.toLowerCase().includes(query) : false);
-    return matchesStatus && matchesSearch;
-  });
+  const filteredInvoices = invoices
+    .filter((inv) => {
+      const matchesStatus =
+        statusFilter === "all" || inv.status === statusFilter;
+      const query = searchQuery.toLowerCase();
+      const matchesSearch =
+        inv.invoiceNumber.toLowerCase().includes(query) ||
+        (inv.patient
+          ? `${inv.patient.firstName} ${inv.patient.lastName}`
+              .toLowerCase()
+              .includes(query)
+          : false);
+      return matchesStatus && matchesSearch;
+    })
+    .sort((a, b) => Number(isOverdue(b)) - Number(isOverdue(a)));
 
   const PAGE_SIZE = 10;
   const pageCount = Math.max(1, Math.ceil(filteredInvoices.length / PAGE_SIZE));
@@ -202,7 +221,10 @@ export default function BillingPage() {
           <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("billing_title")}</h1>
           <p className="text-xs text-muted-foreground">{t("billing_invoices")}</p>
         </div>
-        <NewInvoiceDialog onSuccess={loadInvoices} />
+        <div className="flex items-center gap-2">
+          <NewInvoiceDialog onSuccess={loadInvoices} />
+          <PaymentDialog onSuccess={loadInvoices} />
+        </div>
       </div>
 
       <FeatureTip tipId="billing-summary">
@@ -216,7 +238,7 @@ export default function BillingPage() {
               <div className="rounded-md bg-success-bg p-2 text-success-text border border-success/30">
                 <DollarSign className="w-4 h-4" />
               </div>
-              <span className="text-2xl font-bold tracking-tight text-foreground">${collected.toLocaleString()}</span>
+              <span className="text-2xl font-bold tracking-tight text-foreground">{formatMoney(collected)}</span>
             </div>
           </CardContent>
         </Card>
@@ -229,7 +251,7 @@ export default function BillingPage() {
               <div className="rounded-md bg-warning-bg p-2 text-warning-text border border-warning/30">
                 <DollarSign className="w-4 h-4" />
               </div>
-              <span className="text-2xl font-bold tracking-tight text-foreground">${outstanding.toLocaleString()}</span>
+              <span className="text-2xl font-bold tracking-tight text-foreground">{formatMoney(outstanding)}</span>
             </div>
           </CardContent>
         </Card>
@@ -296,33 +318,67 @@ export default function BillingPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-xs text-left">
+              <table className="w-full text-xs text-start">
                 <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   <tr>
                     <th className="px-4 py-3">{t("billing_colInvoice")}</th>
                     <th className="px-4 py-3">{t("billing_colPatient")}</th>
                     <th className="px-4 py-3">{t("billing_colTotal")}</th>
+                    <th className="px-4 py-3">{t("common_paid")}</th>
+                    <th className="px-4 py-3">{t("common_balance")}</th>
+                    <th className="px-4 py-3">{t("eq_dueAt")}</th>
                     <th className="px-4 py-3">{t("billing_colStatus")}</th>
                     <th className="px-4 py-3">{t("common_actions")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border text-foreground">
                   {pagedInvoices.map((inv) => (
-                    <tr key={inv.id} className="transition-colors hover:bg-muted/40">
+                    <tr
+                      key={inv.id}
+                      className={`transition-colors ${
+                        isOverdue(inv)
+                          ? "bg-critical-bg/50 border-l-4 border-l-destructive hover:bg-critical-bg/80"
+                          : "hover:bg-muted/40"
+                      }`}
+                    >
                       <td className="px-4 py-3 font-mono font-bold">{inv.invoiceNumber}</td>
                       <td className="px-4 py-3 font-semibold">
                         {inv.patient ? `${inv.patient.firstName} ${inv.patient.lastName}` : "—"}
                       </td>
-                      <td className="px-4 py-3 font-mono font-medium">${inv.totalAmount?.toString?.() ?? "0"}</td>
+                      <td className="px-4 py-3 font-mono font-medium">{formatMoney(toAmount(inv.totalAmount), invoiceCurrency(inv))}</td>
+                      <td className="px-4 py-3 font-mono font-medium">{formatMoney(toAmount(inv.amountPaid), invoiceCurrency(inv))}</td>
+                      <td className="px-4 py-3 font-mono font-medium">{formatMoney(Math.max(0, toAmount(inv.totalAmount) - toAmount(inv.amountPaid)), invoiceCurrency(inv))}</td>
+                      <td className="px-4 py-3 text-muted-foreground">
+                        {inv.dueDate ? new Date(inv.dueDate).toLocaleDateString() : "—"}
+                      </td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${statusColor[inv.status] ?? "bg-muted-bg text-muted-foreground border border-border"}`}>
                           {statusLabel[inv.status] ?? inv.status}
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        {!closedStatuses.has(inv.status) ? (
-                          <InstallmentPlansDialog invoiceId={inv.id} onSuccess={loadInvoices} />
-                        ) : null}
+                        <div className="flex flex-wrap items-center gap-2">
+                          {!closedStatuses.has(inv.status) ? (
+                            <>
+                              <PaymentDialog
+                                invoiceId={inv.id}
+                                onSuccess={loadInvoices}
+                                trigger={
+                                  <Button className="h-7 px-2.5 text-xs font-semibold shadow-2xs">
+                                    {t("common_payNow")}
+                                  </Button>
+                                }
+                              />
+                              <InstallmentPlansDialog invoiceId={inv.id} onSuccess={loadInvoices} />
+                            </>
+                          ) : null}
+                          <Link
+                            href={`/print/receipt/${inv.id}`}
+                            className="text-xs font-semibold text-primary hover:underline"
+                          >
+                            {t("common_receipt")}
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -351,7 +407,7 @@ export default function BillingPage() {
               <p className="text-xs text-muted-foreground mt-0.5">{t("exp_subtitle")}</p>
             </div>
             <span className="font-mono text-sm font-bold text-foreground">
-              {t("exp_total")}: ${expTotal.toFixed(2)}
+              {t("exp_total")}: {formatMoney(expTotal)}
             </span>
           </div>
         </CardHeader>
@@ -381,24 +437,24 @@ export default function BillingPage() {
             <p className="py-6 text-center text-xs text-muted-foreground">{t("exp_empty")}</p>
           ) : (
             <div className="overflow-x-auto rounded-md border border-border">
-              <table className="w-full text-xs text-left">
+              <table className="w-full text-xs text-start">
                 <thead className="border-b border-border bg-muted-bg text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   <tr>
                     <th className="px-4 py-2.5">{t("exp_category")}</th>
                     <th className="px-4 py-2.5">{t("exp_amount")}</th>
                     <th className="px-4 py-2.5">{t("exp_date")}</th>
                     <th className="px-4 py-2.5">{t("exp_notes")}</th>
-                    <th className="px-4 py-2.5 text-right">{t("common_actions")}</th>
+                    <th className="px-4 py-2.5 text-end">{t("common_actions")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border text-foreground">
                   {expenses.slice(0, 20).map((e) => (
                     <tr key={e.id} className="transition-colors hover:bg-muted/40">
                       <td className="px-4 py-2.5 font-medium">{expCatLabel(e.category)}</td>
-                      <td className="px-4 py-2.5 font-mono font-bold">${Number(e.amount).toFixed(2)}</td>
+                      <td className="px-4 py-2.5 font-mono font-bold">{formatMoney(Number(e.amount))}</td>
                       <td className="px-4 py-2.5 text-muted-foreground">{new Date(e.spentAt).toLocaleDateString()}</td>
                       <td className="px-4 py-2.5 text-muted-foreground">{e.notes ?? "—"}</td>
-                      <td className="px-4 py-2.5 text-right">
+                      <td className="px-4 py-2.5 text-end">
                         <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleDeleteExpense(e.id)}>
                           <Trash2 className="w-3.5 h-3.5 mr-1" />{t("exp_delete")}
                         </Button>

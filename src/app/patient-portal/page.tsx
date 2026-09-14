@@ -32,6 +32,7 @@ import { toast } from "sonner";
 import { FilePreviewDialog } from "@/components/ui/file-preview-dialog";
 import { useVitalsStream } from "@/hooks/use-vitals-stream";
 import { logClientError } from "@/lib/client-logger";
+import { formatMoney } from "@/lib/format-money";
 import { shouldShowJoinLink } from "@/lib/telehealth";
 import { PortalIntakeCard } from "@/components/portal/portal-intake-card";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -254,6 +255,26 @@ export default function PatientPortalPage() {
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const invoiceStatusLabel = (status: string) => {
+    const key =
+      status === "draft"
+        ? "billing_statusDraft"
+        : status === "sent"
+          ? "billing_statusSent"
+          : status === "partially_paid"
+            ? "billing_statusPartiallyPaid"
+            : status === "paid"
+              ? "billing_statusPaid"
+              : status === "overdue"
+                ? "billing_statusOverdue"
+                : status === "void"
+                  ? "billing_statusVoid"
+                  : null;
+    if (!key) return status;
+    const label = t(key);
+    return label === key ? status : label;
   };
 
   const submitRating = async (appointmentId: string) => {
@@ -774,25 +795,33 @@ export default function PatientPortalPage() {
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="font-medium text-foreground">{inv.invoiceNumber}</p>
-                        <p className="text-sm text-muted-foreground">{inv.status}</p>
+                        <p className="text-sm text-muted-foreground">{invoiceStatusLabel(inv.status)}</p>
                       </div>
-                      <div className="text-left rtl:text-right">
+                      <div className="text-start rtl:text-end">
                         <p className="font-medium text-foreground">
-                          {t("portal_balance")}: {inv.balance}
+                          {t("billing_colTotal")}: {formatMoney(inv.totalAmount)}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {inv.amountPaid}/{inv.totalAmount}
+                          {t("common_paid")}: {formatMoney(inv.amountPaid)}
+                        </p>
+                        <p className="font-medium text-foreground">
+                          {t("portal_balance")}: {formatMoney(inv.balance)}
                         </p>
                         {inv.balance > 0 && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="mt-2 h-8"
-                            disabled={workingId === `pay-${inv.id}`}
-                            onClick={() => payInvoice(inv.id)}
-                          >
-                            <CreditCard className="h-3.5 w-3.5 mr-1" />{t("portal_payNow")}
-                          </Button>
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="mt-2 h-8"
+                              disabled={workingId === `pay-${inv.id}`}
+                              onClick={() => payInvoice(inv.id)}
+                            >
+                              <CreditCard className="h-3.5 w-3.5 mr-1" />{t("portal_payNow")}
+                            </Button>
+                            <p className="mt-1.5 text-xs text-muted-foreground">
+                              {t("portal_payRedirectNotice")}
+                            </p>
+                          </>
                         )}
                       </div>
                     </div>

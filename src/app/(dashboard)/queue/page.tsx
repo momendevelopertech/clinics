@@ -1,5 +1,5 @@
 "use client";
-import { Ban, Check, Phone } from "lucide-react";
+import { Ban, Check, Loader2, Phone } from "lucide-react";
 
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
+import { TableSkeleton } from "@/components/ui/loading";
 
 type QueueItem = {
   id: string;
@@ -23,7 +24,8 @@ export default function QueuePage() {
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [error, setError] = useState("");
   const [forbidden, setForbidden] = useState(false);
-  const [acting, setActing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     const response = await fetch("/api/queue");
@@ -37,15 +39,24 @@ export default function QueuePage() {
 
   useEffect(() => {
     let cancelled = false;
-    void load().catch((reason: unknown) => {
-      if (!cancelled) setError(reason instanceof Error ? reason.message : t("queue_loadError"));
-    });
+    setLoading(true);
+    void load()
+      .catch((reason: unknown) => {
+        if (!cancelled) setError(reason instanceof Error ? reason.message : t("queue_loadError"));
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
     return () => { cancelled = true; };
   }, [load, t]);
 
+  const successKey = (action: "call-next" | "complete" | "no-show") =>
+    action === "call-next" ? "common_callNext" : action === "complete" ? "common_saved" : "common_updated";
+
   const runAction = async (action: "call-next" | "complete" | "no-show", appointmentId?: string) => {
+    const rowKey = appointmentId ?? "call-next-all";
     try {
-      setActing(true);
+      setBusyId(rowKey);
       setError("");
       const response = await fetch("/api/queue/actions", {
         method: "POST",
@@ -61,13 +72,14 @@ export default function QueuePage() {
         throw new Error(data.error || t("queue_actionError"));
       }
       await load();
+      toast.success(t(successKey(action)));
     } catch (reason: unknown) {
       const message = reason instanceof Error ? reason.message : t("queue_actionError");
       setError(message);
       toast.error(message);
       logClientError("Queue action failed", reason);
     } finally {
-      setActing(false);
+      setBusyId(null);
     }
   };
 
@@ -90,11 +102,14 @@ export default function QueuePage() {
           <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("queue_title")}</h1>
           <p className="text-xs text-muted-foreground">{t("queue_subtitle")}</p>
         </div>
-        <Button onClick={() => runAction("call-next")} disabled={acting} className="h-9 gap-2 text-xs font-semibold shadow-2xs">
-          <Phone className="h-4 w-4" />{t("queue_callNext")}
+        <Button onClick={() => runAction("call-next")} disabled={busyId === "call-next-all"} className="h-9 gap-2 text-xs font-semibold shadow-2xs">
+          {busyId === "call-next-all" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Phone className="h-4 w-4" />}{t("queue_callNext")}
         </Button>
       </div>
       {error ? <p className="text-xs font-semibold text-destructive">{error}</p> : null}
+      {loading ? (
+        <TableSkeleton rows={5} columns={3} />
+      ) : (
       <div className="space-y-3">
         {queue.map((item) => (
           <div key={item.id} className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-4 shadow-2xs">
@@ -104,22 +119,22 @@ export default function QueuePage() {
               <div className="mt-2.5 flex gap-2">
                 {item.status === "arrived" ? (
                   <>
-                    <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" disabled={acting} onClick={() => runAction("call-next", item.id)}>
-                      <Phone className="mr-1 h-3.5 w-3.5" />{t("queue_callNext")}
+                    <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" disabled={busyId === item.id} onClick={() => runAction("call-next", item.id)}>
+                      {busyId === item.id ? <Loader2 className="me-1 h-3.5 w-3.5 animate-spin" /> : <Phone className="me-1 h-3.5 w-3.5" />}{t("queue_callNext")}
                     </Button>
-                    <Button size="sm" variant="ghost" className="h-7 px-2.5 text-xs text-destructive hover:text-destructive hover:bg-destructive/10" disabled={acting} onClick={() => runAction("no-show", item.id)}>
-                      <Ban className="mr-1 h-3.5 w-3.5" />{t("queue_noShow")}
+                    <Button size="sm" variant="ghost" className="h-7 px-2.5 text-xs text-destructive hover:text-destructive hover:bg-destructive/10" disabled={busyId === item.id} onClick={() => runAction("no-show", item.id)}>
+                      {busyId === item.id ? <Loader2 className="me-1 h-3.5 w-3.5 animate-spin" /> : <Ban className="me-1 h-3.5 w-3.5" />}{t("queue_noShow")}
                     </Button>
                   </>
                 ) : null}
                 {item.status === "in_progress" ? (
-                  <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" disabled={acting} onClick={() => runAction("complete", item.id)}>
-                    <Check className="mr-1 h-3.5 w-3.5" />{t("queue_complete")}
+                  <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" disabled={busyId === item.id} onClick={() => runAction("complete", item.id)}>
+                    {busyId === item.id ? <Loader2 className="me-1 h-3.5 w-3.5 animate-spin" /> : <Check className="me-1 h-3.5 w-3.5" />}{t("queue_complete")}
                   </Button>
                 ) : null}
               </div>
             </div>
-            <div className="text-right">
+            <div className="text-end">
               <FeatureTip tipId="queue-token">
                 <span>
                   <p className="font-mono text-base font-bold text-foreground">{item.tokenNumber ?? "—"}</p>
@@ -131,6 +146,7 @@ export default function QueuePage() {
         ))}
         {!queue.length && !error ? <p className="py-8 text-center text-xs text-muted-foreground">{t("queue_empty")}</p> : null}
       </div>
+      )}
     </div>
   );
 }

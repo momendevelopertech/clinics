@@ -31,24 +31,34 @@ export function IntakeFormsManager() {
   const { t } = useLocale();
   const [forms, setForms] = React.useState<IntakeForm[]>([]);
   const [name, setName] = React.useState("");
+  const [nameHint, setNameHint] = React.useState<string | null>(null);
   const [fieldForm, setFieldForm] = React.useState<Record<string, { label: string; kind: string; required: boolean }>>({});
+  const [fieldHints, setFieldHints] = React.useState<Record<string, string>>({});
+  const [loadError, setLoadError] = React.useState<string | null>(null);
   const [responses, setResponses] = React.useState<Record<string, Array<{ patientName: string; answers: string; createdAt: string }>>>({});
 
   const load = React.useCallback(async () => {
     try {
       const r = await fetch("/api/intake-forms");
-      if (r.ok) setForms(await r.json());
+      if (!r.ok) throw new Error("load failed");
+      setForms(await r.json());
+      setLoadError(null);
     } catch (error) {
+      setLoadError(t("intake_error"));
       logClientError("Intake forms load failed", error);
     }
-  }, []);
+  }, [t]);
 
   React.useEffect(() => {
     void load();
   }, [load]);
 
   const createForm = async () => {
-    if (!name.trim()) return;
+    if (!name.trim()) {
+      setNameHint(t("common_required"));
+      return;
+    }
+    setNameHint(null);
     try {
       const r = await fetch("/api/intake-forms", {
         method: "POST",
@@ -61,6 +71,7 @@ export function IntakeFormsManager() {
       }
       if (!r.ok) throw new Error("create failed");
       setName("");
+      toast.success(t("common_added"));
       await load();
     } catch (error) {
       toast.error(t("intake_error"));
@@ -70,7 +81,15 @@ export function IntakeFormsManager() {
 
   const addField = async (formId: string) => {
     const f = fieldForm[formId] ?? { label: "", kind: "text", required: false };
-    if (!f.label.trim()) return;
+    if (!f.label.trim()) {
+      setFieldHints((prev) => ({ ...prev, [formId]: t("common_required") }));
+      return;
+    }
+    setFieldHints((prev) => {
+      const next = { ...prev };
+      delete next[formId];
+      return next;
+    });
     try {
       const r = await fetch(`/api/intake-forms/${formId}/fields`, {
         method: "POST",
@@ -79,6 +98,7 @@ export function IntakeFormsManager() {
       });
       if (!r.ok) throw new Error("field failed");
       setFieldForm({ ...fieldForm, [formId]: { label: "", kind: "text", required: false } });
+      toast.success(t("common_added"));
       await load();
     } catch (error) {
       toast.error(t("intake_error"));
@@ -113,10 +133,16 @@ export function IntakeFormsManager() {
 
   return (
     <div className="space-y-4">
+      {loadError ? (
+        <p className="text-xs text-destructive">{loadError}</p>
+      ) : null}
       <div className="flex gap-2">
-        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("intake_formName")} className="h-9" />
+        <Input value={name} onChange={(e) => { setName(e.target.value); if (nameHint) setNameHint(null); }} placeholder={t("intake_formName")} className="h-9" aria-required="true" />
         <Button onClick={createForm} disabled={!name.trim()} className="h-9"><Plus className="h-4 w-4 mr-1" />{t("intake_createForm")}</Button>
       </div>
+      {nameHint ? (
+        <p className="text-xs text-destructive mt-1">{nameHint}</p>
+      ) : null}
       {forms.map((form) => (
         <div key={form.id} className="rounded-lg border border-border bg-card p-4 space-y-3 shadow-sm">
           <div className="flex items-center justify-between">
@@ -139,9 +165,10 @@ export function IntakeFormsManager() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 border-t border-border pt-3">
             <Input
               value={fieldForm[form.id]?.label ?? ""}
-              onChange={(e) => setF(form.id, { label: e.target.value })}
+              onChange={(e) => { setF(form.id, { label: e.target.value }); setFieldHints((prev) => { const next = { ...prev }; delete next[form.id]; return next; }); }}
               placeholder={t("intake_fieldLabel")}
               className="h-9"
+              aria-required="true"
             />
             <SearchableSelect
               value={fieldForm[form.id]?.kind ?? "text"}
@@ -156,8 +183,11 @@ export function IntakeFormsManager() {
               />
               {t("intake_required")}
             </label>
-            <Button size="sm" onClick={() => addField(form.id)} className="h-9">{t("intake_addField")}</Button>
+            <Button size="sm" onClick={() => addField(form.id)} disabled={!(fieldForm[form.id]?.label ?? "").trim()} className="h-9">{t("intake_addField")}</Button>
           </div>
+          {fieldHints[form.id] ? (
+            <p className="text-xs text-destructive mt-1">{fieldHints[form.id]}</p>
+          ) : null}
         </div>
       ))}
     </div>

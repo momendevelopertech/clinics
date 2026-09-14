@@ -5,6 +5,7 @@ import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
+import { useLocale } from "@/components/locale/locale-provider";
 import type { UploadPurpose } from "@/lib/validations/uploads";
 
 type ImageUploadPurpose = Extract<UploadPurpose, "avatar" | "clinic_logo" | "patient_photo">;
@@ -34,6 +35,7 @@ export function CloudinaryImageUpload({
 }: CloudinaryImageUploadProps) {
   const [loading, setLoading] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const { t } = useLocale();
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -75,7 +77,7 @@ export function CloudinaryImageUpload({
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={currentUrl}
-          alt=""
+          alt={t("settings_yourAvatar")}
           className="h-16 w-16 rounded-full object-cover border"
         />
       ) : (

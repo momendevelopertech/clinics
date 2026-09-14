@@ -51,12 +51,12 @@ function AccountTable({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[400px] text-left text-xs rtl:text-right">
+      <table className="w-full min-w-[400px] text-start text-xs rtl:text-end">
         <thead className="bg-muted-bg text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
           <tr>
             <th className="px-3 py-2.5 font-semibold">{t["auth_demoRole"]}</th>
             <th className="px-3 py-2.5 font-semibold">{t["auth_staffEmail"]}</th>
-            <th className="px-3 py-2.5 text-right font-semibold rtl:text-left">
+            <th className="px-3 py-2.5 text-end font-semibold rtl:text-start">
               <span className="sr-only">{t["auth_fastLogin"]}</span>
             </th>
           </tr>
@@ -66,7 +66,7 @@ function AccountTable({
             <tr key={row.id} className="hover:bg-muted/50 transition-colors">
               <td className="px-3 py-2.5 font-semibold text-foreground">{row.role}</td>
               <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">{row.email}</td>
-              <td className="px-3 py-2.5 text-right rtl:text-left">
+              <td className="px-3 py-2.5 text-end rtl:text-start">
                 <DemoQuickLogin email={row.email} password={password} label={t["auth_fastLogin"]} />
               </td>
             </tr>

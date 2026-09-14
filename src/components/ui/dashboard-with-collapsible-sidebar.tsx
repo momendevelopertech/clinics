@@ -164,7 +164,7 @@ function CollapsibleSidebar({
   planModules?: Record<string, boolean> | null;
   orgName?: string;
 }) {
-  const { t } = useLocale();
+  const { t, dir } = useLocale();
   const { appointments } = useMedical();
   const { get } = useFeatureConfig();
 
@@ -343,7 +343,7 @@ function CollapsibleSidebar({
                   </span>
                 </div>
               </div>
-              <span className="w-2 h-2 rounded-full bg-success-text shrink-0" title="Connected" />
+              <span className="w-2 h-2 rounded-full bg-success-text shrink-0" title={t("common_connected")} aria-label={t("common_connected")} role="status" />
             </div>
           ) : (
             <div className="flex justify-center">
@@ -378,7 +378,7 @@ function CollapsibleSidebar({
         {open ? (
           <div className="flex items-center justify-between text-[11px] text-muted-foreground px-1">
             <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-success-text animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-success-text animate-pulse" aria-hidden="true" />
               <span>{t("shell_serverOnline")}</span>
             </div>
             <span className="font-mono text-[10px] bg-muted px-1.5 py-0.5 rounded-sm">RT-24ms</span>
@@ -394,12 +394,12 @@ function CollapsibleSidebar({
           className="w-full h-8 justify-center rounded-md border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
         >
           <ChevronRight className={cn("h-4 w-4 transition-transform", open ? "rotate-180" : "")} />
-          {open ? <span className="ml-1.5 text-xs font-medium">{t("header_collapse")}</span> : null}
+          {open ? <span className="ms-1.5 text-xs font-medium">{t("header_collapse")}</span> : null}
         </Button>
       </div>
     </aside>
     <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
-      <SheetContent side="left" className="overflow-y-auto p-0 md:hidden bg-sidebar text-sidebar-foreground w-72">
+      <SheetContent side={dir === "rtl" ? "right" : "left"} className="overflow-y-auto p-0 md:hidden bg-sidebar text-sidebar-foreground w-72">
         <div className="h-16 px-4 flex items-center gap-3 border-b border-border bg-sidebar">
           <div className="grid size-9 shrink-0 place-content-center rounded-md bg-primary text-primary-foreground shadow-xs">
             <Activity className="h-5 w-5" />
@@ -493,13 +493,15 @@ function NavLink({
           ) : null}
         </div>
       ) : locked ? (
-        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-warning-text">
+        <span className="absolute end-2 top-1/2 -translate-y-1/2 text-warning-text" aria-label={t("nav_locked")} role="status">
           <Lock className="h-3 w-3" />
         </span>
       ) : notConfigured ? (
         <span
           title={t("cfg_badge")}
-          className="absolute right-2 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-warning-text"
+          aria-label={t("cfg_badge")}
+          role="status"
+          className="absolute end-2 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-warning-text"
         />
       ) : null}
     </Link>
@@ -747,7 +749,7 @@ function DashboardHeader({
                     type="button"
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={() => openSearchResult(result.href)}
-                    className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors hover:bg-muted"
+                    className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-start transition-colors hover:bg-muted"
                   >
                     <div className="grid size-8 shrink-0 place-content-center rounded-md bg-primary/10 text-primary">
                       <result.icon className="h-4 w-4" />
@@ -835,12 +837,12 @@ function DashboardHeader({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="h-9 rounded-md border border-border bg-card px-2 text-left hover:bg-muted transition-colors flex items-center gap-2"
+                className="h-9 rounded-md border border-border bg-card px-2 text-start hover:bg-muted transition-colors flex items-center gap-2"
               >
                 <div className="grid size-6 place-content-center rounded-full bg-primary text-primary-foreground font-semibold text-[11px]">
                   <User className="h-3.5 w-3.5" />
                 </div>
-                <div className="hidden text-left sm:block">
+                <div className="hidden text-start sm:block">
                   <p className="text-xs font-semibold text-foreground leading-none">{t("shell_accountStaff")}</p>
                   <p className="text-[10px] text-muted-foreground leading-none mt-0.5">{orgName ?? t("shell_defaultOrgName")}</p>
                 </div>
@@ -866,7 +868,7 @@ function DashboardHeader({
                   void handleLogout();
                 }}
               >
-                <LogOut className="mr-2 h-3.5 w-3.5" />
+                <LogOut className="me-2 h-3.5 w-3.5" />
                 {isLoggingOut ? `${t("header_logout")}...` : t("header_logout")}
               </DropdownMenuItem>
             </DropdownMenuContent>

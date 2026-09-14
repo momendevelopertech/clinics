@@ -115,11 +115,11 @@ export default function AuditPage() {
               <table className="w-full text-sm">
                 <thead className="bg-muted-bg/60 text-muted-foreground">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium">{t("audit_colTime")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("audit_colUser")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("audit_colAction")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("audit_colEntity")}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t("audit_colId")}</th>
+                    <th className="px-4 py-3 text-start font-medium">{t("audit_colTime")}</th>
+                    <th className="px-4 py-3 text-start font-medium">{t("audit_colUser")}</th>
+                    <th className="px-4 py-3 text-start font-medium">{t("audit_colAction")}</th>
+                    <th className="px-4 py-3 text-start font-medium">{t("audit_colEntity")}</th>
+                    <th className="px-4 py-3 text-start font-medium">{t("audit_colId")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">

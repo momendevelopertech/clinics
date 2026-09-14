@@ -78,10 +78,11 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
           <DialogDescription>{t("camp_createDesc")}</DialogDescription>
         </DialogHeader>
 
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         <div className="space-y-4">
           {/* Campaign Name */}
           <div>
-            <Label htmlFor="name">{t("camp_colName")}</Label>
+            <Label htmlFor="name">{t("camp_colName")} *</Label>
             <Input
               id="name"
               placeholder={t("camp_namePlaceholder")}
@@ -89,12 +90,13 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
+              aria-required="true"
             />
           </div>
 
           {/* Campaign Type */}
           <div>
-            <Label htmlFor="type">{t("camp_type")}</Label>
+            <Label htmlFor="type">{t("camp_type")} *</Label>
             <SearchableSelect
               value={formData.type}
               onValueChange={(value) =>
@@ -131,13 +133,14 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
         </div>
 
         <div className="flex gap-2 justify-end mt-6">
-          <Button variant="outline" onClick={() => setOpen(false)} className="h-9">
+          <Button type="button" variant="outline" onClick={() => setOpen(false)} className="h-9">
             <X className="h-4 w-4 mr-1" />{t("common_cancel")}
           </Button>
-          <Button onClick={handleSubmit} disabled={loading} className="h-9">
+          <Button type="submit" disabled={loading} className="h-9">
             <Plus className="h-4 w-4 mr-1" />{loading ? t("camp_creating") : t("camp_create")}
           </Button>
         </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

@@ -43,6 +43,7 @@ export function AddCommunicationDialog({
     content: "",
     scheduledFor: "",
   });
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   async function loadPatients() {
     try {
@@ -60,15 +61,17 @@ export function AddCommunicationDialog({
   }
 
   async function handleSubmit() {
-    if (
-      !formData.patientId ||
-      !formData.channel ||
-      !formData.type ||
-      !formData.content
-    ) {
+    const errors: Record<string, string> = {};
+    if (!formData.patientId) errors.patientId = t("comm_fillRequired");
+    if (!formData.channel) errors.channel = t("comm_fillRequired");
+    if (!formData.type) errors.type = t("comm_fillRequired");
+    if (!formData.content) errors.content = t("comm_fillRequired");
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
       toast.error(t("comm_fillRequired"));
       return;
     }
+    setFieldErrors({});
 
     try {
       setLoading(true);
@@ -115,15 +118,21 @@ export function AddCommunicationDialog({
           <DialogDescription>{t("comm_sendDesc")}</DialogDescription>
         </DialogHeader>
 
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         <div className="space-y-4">
           {/* Patient Selection */}
           <div>
-            <Label htmlFor="patient">{t("common_patient")}</Label>
+            <Label htmlFor="patient">{t("common_patient")} *</Label>
             <SearchableSelect
               value={formData.patientId}
-              onValueChange={(value) =>
-                setFormData({ ...formData, patientId: value })
-              }
+              onValueChange={(value) => {
+                setFormData({ ...formData, patientId: value });
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.patientId;
+                  return next;
+                });
+              }}
               options={
                 patientLoading
                   ? [{ value: "loading", label: t("common_loading"), disabled: true }]
@@ -135,16 +144,24 @@ export function AddCommunicationDialog({
               placeholder={t("common_selectPatient")}
               id="patient"
             />
+            {fieldErrors.patientId ? (
+              <p className="text-xs text-destructive mt-1">{fieldErrors.patientId}</p>
+            ) : null}
           </div>
 
           {/* Channel Selection */}
           <div>
-            <Label htmlFor="channel">{t("comm_channel")}</Label>
+            <Label htmlFor="channel">{t("comm_channel")} *</Label>
             <SearchableSelect
               value={formData.channel}
-              onValueChange={(value) =>
-                setFormData({ ...formData, channel: value })
-              }
+              onValueChange={(value) => {
+                setFormData({ ...formData, channel: value });
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.channel;
+                  return next;
+                });
+              }}
               options={[
                 { value: "sms", label: t("comm_channel_sms") },
                 { value: "email", label: t("comm_channel_email") },
@@ -152,16 +169,24 @@ export function AddCommunicationDialog({
               ]}
               id="channel"
             />
+            {fieldErrors.channel ? (
+              <p className="text-xs text-destructive mt-1">{fieldErrors.channel}</p>
+            ) : null}
           </div>
 
           {/* Type Selection */}
           <div>
-            <Label htmlFor="type">{t("comm_messageType")}</Label>
+            <Label htmlFor="type">{t("comm_messageType")} *</Label>
             <SearchableSelect
               value={formData.type}
-              onValueChange={(value) =>
-                setFormData({ ...formData, type: value })
-              }
+              onValueChange={(value) => {
+                setFormData({ ...formData, type: value });
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.type;
+                  return next;
+                });
+              }}
               options={[
                 { value: "reminder", label: t("comm_type_reminder") },
                 { value: "campaign", label: t("comm_type_campaign") },
@@ -170,20 +195,34 @@ export function AddCommunicationDialog({
               ]}
               id="type"
             />
+            {fieldErrors.type ? (
+              <p className="text-xs text-destructive mt-1">{fieldErrors.type}</p>
+            ) : null}
           </div>
 
           {/* Message Content */}
           <div>
-            <Label htmlFor="content">{t("comm_content")}</Label>
+            <Label htmlFor="content">{t("comm_content")} *</Label>
             <Textarea
               id="content"
               placeholder={t("comm_contentPlaceholder")}
               value={formData.content}
-              onChange={(e) =>
-                setFormData({ ...formData, content: e.target.value })
-              }
+              onChange={(e) => {
+                setFormData({ ...formData, content: e.target.value });
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.content;
+                  return next;
+                });
+              }}
               rows={4}
+              aria-required="true"
+              aria-invalid={fieldErrors.content ? true : undefined}
+              className={fieldErrors.content ? "border-destructive" : undefined}
             />
+            {fieldErrors.content ? (
+              <p className="text-xs text-destructive mt-1">{fieldErrors.content}</p>
+            ) : null}
             <p className="text-xs text-muted-foreground mt-1">
               {t("comm_characters").replace(
                 "{count}",
@@ -211,13 +250,14 @@ export function AddCommunicationDialog({
         </div>
 
         <div className="flex gap-2 justify-end mt-6">
-          <Button variant="outline" onClick={() => setOpen(false)} className="h-9">
+          <Button type="button" variant="outline" onClick={() => setOpen(false)} className="h-9">
             <X className="h-4 w-4 mr-1" />{t("common_cancel")}
           </Button>
-          <Button onClick={handleSubmit} disabled={loading} className="h-9">
+          <Button type="submit" disabled={loading} className="h-9">
             <Send className="h-4 w-4 mr-1" />{loading ? t("comm_sending") : t("comm_send")}
           </Button>
         </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

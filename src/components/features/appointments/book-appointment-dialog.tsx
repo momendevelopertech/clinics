@@ -31,7 +31,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/components/locale/locale-provider";
 
-import type { Patient } from "@/context/MedicalContext";
+import type { Appointment, Patient } from "@/context/MedicalContext";
+import { useMedical } from "@/context/MedicalContext";
 
 const buildBookAppointmentSchema = (t: (key: string) => string) =>
   z.object({
@@ -40,6 +41,7 @@ const buildBookAppointmentSchema = (t: (key: string) => string) =>
     date: z.string().min(1, t("book_requireDate")),
     time: z.string().min(1, t("book_requireTime")),
     type: z.string().min(1, t("book_requireType")),
+    duration: z.string(),
   });
 
 type BookAppointmentFormValues = z.infer<
@@ -54,9 +56,24 @@ const APPOINTMENT_TYPES = [
   { value: "Telehealth" },
 ];
 
+const DURATION_OPTIONS = ["15 min", "30 min", "45 min", "60 min"];
+
+const parseDurationMinutes = (duration?: string | null) => {
+  const minutes = Number.parseInt(duration ?? "", 10);
+  return Number.isFinite(minutes) && minutes > 0 ? minutes : 30;
+};
+
+const parseTimeMinutes = (time?: string | null) => {
+  const match = /^(\d{1,2}):(\d{2})/.exec(time ?? "");
+  if (!match) return null;
+  return Number(match[1]) * 60 + Number(match[2]);
+};
+
 interface BookAppointmentDialogProps {
   patients: Patient[];
   providers: { id: string; name: string }[];
+  appointments?: Appointment[];
+  initialPatientId?: string;
   onBook: (data: {
     patientId: string;
     providerId: string;
@@ -74,6 +91,8 @@ interface BookAppointmentDialogProps {
 export function BookAppointmentDialog({
   patients,
   providers,
+  appointments: appointmentsProp,
+  initialPatientId,
   onBook,
   trigger,
   open: controlledOpen,
@@ -85,6 +104,10 @@ export function BookAppointmentDialog({
   const setOpen = isControlled ? controlledOnOpenChange : setInternalOpen;
 
   const { t } = useLocale();
+  const { appointments: contextAppointments } = useMedical();
+  const appointments = appointmentsProp ?? contextAppointments;
+
+  const todayStr = React.useMemo(() => new Date().toISOString().split("T")[0], []);
 
   const bookAppointmentSchema = React.useMemo(
     () => buildBookAppointmentSchema(t),
@@ -110,6 +133,7 @@ export function BookAppointmentDialog({
       date: "",
       time: "",
       type: "",
+      duration: "30 min",
     },
   });
   const selectedPatientId = useWatch({
@@ -124,13 +148,48 @@ export function BookAppointmentDialog({
     control: form.control,
     name: "type",
   });
+  const selectedDate = useWatch({
+    control: form.control,
+    name: "date",
+  });
+  const selectedTime = useWatch({
+    control: form.control,
+    name: "time",
+  });
+  const selectedDuration = useWatch({
+    control: form.control,
+    name: "duration",
+  });
+
+  React.useEffect(() => {
+    if (open && initialPatientId) {
+      form.setValue("patientId", initialPatientId);
+    }
+  }, [open, initialPatientId, form]);
+
+  const hasConflict = React.useMemo(() => {
+    const start = parseTimeMinutes(selectedTime);
+    if (!selectedProvider || !selectedDate || start === null) return false;
+    const duration = parseDurationMinutes(selectedDuration);
+    const end = start + duration;
+    return appointments.some((appointment) => {
+      if (appointment.providerId !== selectedProvider) return false;
+      if (appointment.date !== selectedDate) return false;
+      const status = appointment.status?.toLowerCase();
+      if (status === "cancelled") return false;
+      const existingStart = parseTimeMinutes(appointment.time);
+      if (existingStart === null) return false;
+      const existingEnd = existingStart + parseDurationMinutes(appointment.duration);
+      return start < existingEnd && existingStart < end;
+    });
+  }, [appointments, selectedProvider, selectedDate, selectedTime, selectedDuration]);
 
   const onSubmit = (data: BookAppointmentFormValues) => {
     const { provider, ...appointmentData } = data;
     onBook({
       ...appointmentData,
       providerId: provider,
-      duration: "30 min",
+      duration: data.duration || "30 min",
       status: "Scheduled",
     });
     setOpen(false);
@@ -237,6 +296,7 @@ export function BookAppointmentDialog({
                         <Input
                           id="date"
                           type="date"
+                          min={todayStr}
                           {...form.register("date")}
                           className="h-9 pr-8"
                         />
@@ -295,6 +355,33 @@ export function BookAppointmentDialog({
                       </p>
                     )}
                   </div>
+
+                  {/* Duration */}
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="duration"
+                      className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2"
+                    >
+                      <Clock className="w-3.5 h-3.5 text-primary" />
+                      {t("rx_duration")}
+                    </Label>
+                    <SearchableSelect
+                      value={selectedDuration}
+                      onValueChange={(v) => form.setValue("duration", v)}
+                      options={DURATION_OPTIONS.map((option) => ({
+                        value: option,
+                        label: option,
+                      }))}
+                      placeholder={t("rx_duration")}
+                      triggerClassName="w-full h-9"
+                    />
+                  </div>
+
+                  {hasConflict ? (
+                    <p className="text-xs font-semibold text-warning-text">
+                      {t("appt_conflict")}
+                    </p>
+                  ) : null}
                 </motion.div>
               </AnimatePresence>
             </div>
