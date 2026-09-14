@@ -71,13 +71,25 @@ function RoleIcon({ name, className }: { name: string; className?: string }) {
   return <Icon className={className ?? "h-4 w-4"} aria-hidden="true" />;
 }
 
-export function RolesGuideClient() {
+export function RolesGuideClient({
+  hiddenRoleIds = [],
+  hideBackend = false,
+}: {
+  /** Roles to exclude (e.g. platform-internal Super Admin on the public page). */
+  hiddenRoleIds?: string[];
+  /** Hide the internal "backend" row (implementation details for the public page). */
+  hideBackend?: boolean;
+} = {}) {
   const { t, lang } = useLocale();
-  const [activeId, setActiveId] = React.useState(ROLES_GUIDE[0]?.id ?? "");
+  const visibleRoles = React.useMemo(
+    () => ROLES_GUIDE.filter((r) => !hiddenRoleIds.includes(r.id)),
+    [hiddenRoleIds],
+  );
+  const [activeId, setActiveId] = React.useState(visibleRoles[0]?.id ?? "");
   const [query, setQuery] = React.useState("");
   const [openTask, setOpenTask] = React.useState<string | null>(null);
 
-  const role = ROLES_GUIDE.find((r) => r.id === activeId) ?? ROLES_GUIDE[0];
+  const role = visibleRoles.find((r) => r.id === activeId) ?? visibleRoles[0];
   const modules = React.useMemo(() => (role ? getRoleModules(role) : []), [role]);
 
   const tasks = React.useMemo(() => {
@@ -130,7 +142,7 @@ export function RolesGuideClient() {
 
       {/* Mobile: horizontal role tabs */}
       <div className="flex gap-2 overflow-x-auto pb-1 md:hidden">
-        {ROLES_GUIDE.map((r) => (
+        {visibleRoles.map((r) => (
           <button
             key={r.id}
             type="button"
@@ -152,7 +164,7 @@ export function RolesGuideClient() {
         {/* Desktop side panel */}
         <aside className="hidden md:block">
           <div className="surface-panel sticky top-4 rounded-[24px] border border-white/60 p-3 dark:border-white/6">
-            {ROLES_GUIDE.map((r) => (
+            {visibleRoles.map((r) => (
               <button
                 key={r.id}
                 type="button"
@@ -254,10 +266,12 @@ export function RolesGuideClient() {
                             </li>
                           ))}
                         </ol>
+                        {hideBackend ? null : (
                         <p className="mt-3 flex gap-2 text-sm">
                           <Settings className="h-4 w-4 shrink-0 text-muted-foreground" />
                           <span><span className="font-semibold">{t("rg_backend")}: </span><span className="text-muted-foreground">{task.backend[lang]}</span></span>
                         </p>
+                        )}
                         <p className="mt-2 flex gap-2 text-sm">
                           <Eye className="h-4 w-4 shrink-0 text-muted-foreground" />
                           <span><span className="font-semibold">{t("rg_result")}: </span><span className="text-muted-foreground">{task.result[lang]}</span></span>

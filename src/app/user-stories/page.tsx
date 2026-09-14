@@ -1,45 +1,18 @@
 import Link from "next/link";
-import {
-  Activity,
-  ArrowRight,
-  Bell,
-  Check,
-  Crown,
-  HeartPulse,
-  Pill,
-  ShieldCheck,
-  Stethoscope,
-  Users,
-  Wallet,
-} from "lucide-react";
-import { ROLES_GUIDE, getRoleModules } from "@/lib/roles-guide-data";
-import { getDictionary, getLocale } from "@/lib/i18n/server";
+import { Activity, ArrowRight, Users } from "lucide-react";
+import { RolesGuideClient } from "@/components/roles-guide/roles-guide-client";
+import { getDictionary } from "@/lib/i18n/server";
 import { LanguageSwitcher } from "@/components/locale/language-switcher";
 
-const ROLE_ICONS: Record<string, React.ElementType> = {
-  Crown,
-  Stethoscope,
-  HeartPulse,
-  Bell,
-  Wallet,
-  Pill,
-  Users,
-  ShieldCheck,
-};
-
 /**
- * /user-stories — PUBLIC marketing page (no login required).
- * Shows a safe marketing subset of ROLES_GUIDE: role name, profile,
- * available-module count, and sample task titles.
- * Internal details (backend behavior, file paths, boundaries) and the
- * Super Admin role stay exclusive to the guarded /roles-guide page.
+ * /user-stories — PUBLIC interactive User Stories page (no login required).
+ * Full guide experience (role sidebar + search + accordion tasks) over the
+ * same ROLES_GUIDE data as the internal /roles-guide page, minus
+ * platform-internal content: the Super Admin role and the "backend"
+ * implementation row stay exclusive to /roles-guide (Owner + Super Admin).
  */
 export default async function UserStoriesPage() {
   const t = await getDictionary();
-  const lang = await getLocale();
-
-  // Super Admin is platform-internal — never marketed on the public page.
-  const roles = ROLES_GUIDE.filter((r) => r.id !== "super-admin");
 
   return (
     <main className="min-h-screen">
@@ -87,49 +60,10 @@ export default async function UserStoriesPage() {
         </div>
       </section>
 
-      {/* Role cards */}
+      {/* Interactive guide: role sidebar + search + accordion tasks */}
       <section className="px-4 py-14 sm:px-6">
-        <div className="mx-auto grid max-w-6xl gap-4 md:grid-cols-2">
-          {roles.map((role) => {
-            const Icon = ROLE_ICONS[role.icon] ?? Users;
-            const modules = getRoleModules(role);
-            const available = modules.filter((m) => m.available).length;
-            const sampleTasks = role.tasks.slice(0, 4);
-            return (
-              <article
-                key={role.id}
-                className="rounded-[28px] border border-white/55 surface-panel p-6"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="grid size-12 shrink-0 place-content-center rounded-[16px] bg-primary/10 text-primary">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <h2 className="truncate text-lg font-semibold">{role.name[lang]}</h2>
-                    <p className="text-xs font-medium text-muted-foreground">
-                      {available} · {t["userStories_modules"]}
-                    </p>
-                  </div>
-                </div>
-                <p className="mt-4 text-sm leading-7 text-muted-foreground">
-                  {role.profile[lang]}
-                </p>
-                <h3 className="mt-4 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  {t["userStories_sampleTasks"]}
-                </h3>
-                <ul className="mt-3 space-y-2">
-                  {sampleTasks.map((task) => (
-                    <li key={task.id} className="flex items-start gap-2 text-sm">
-                      <span className="mt-0.5 grid size-5 shrink-0 place-content-center rounded-full bg-emerald-500/12 text-emerald-700 dark:text-emerald-300">
-                        <Check className="h-3 w-3" />
-                      </span>
-                      <span className="leading-6">{task.title[lang]}</span>
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            );
-          })}
+        <div className="mx-auto max-w-6xl">
+          <RolesGuideClient hiddenRoleIds={["super-admin"]} hideBackend />
         </div>
       </section>
 
