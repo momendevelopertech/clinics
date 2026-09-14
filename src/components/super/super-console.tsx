@@ -282,7 +282,7 @@ export function SuperConsole({ t }: { t: Dictionary }) {
               type="button"
               onClick={() => void handleLogout()}
               disabled={isLoggingOut}
-              className="inline-flex items-center gap-2 rounded-md border border-critical-border bg-critical-bg px-3 py-2 text-sm font-semibold text-critical-text shadow-xs transition hover:bg-critical-border/20 disabled:cursor-wait disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-md border border-critical/30 bg-critical-bg px-3 py-2 text-sm font-semibold text-critical-text shadow-xs transition hover:bg-critical/20 disabled:cursor-wait disabled:opacity-60"
             >
               <LogOut className="h-4 w-4" />
               {isLoggingOut ? `${t["header_logout"]}...` : t["header_logout"]}
@@ -291,7 +291,7 @@ export function SuperConsole({ t }: { t: Dictionary }) {
         </header>
 
         {error ? (
-          <p className="mt-6 rounded-lg border border-critical-border bg-critical-bg px-4 py-3 text-sm text-critical-text">
+          <p className="mt-6 rounded-lg border border-critical/30 bg-critical-bg px-4 py-3 text-sm text-critical-text">
             {error}
           </p>
         ) : null}
@@ -542,5 +542,5 @@ function SettingsSection({ settings, setSettings, saving, save, t, plans }: { se
 }
 
 function ActionButton({ children, onClick, disabled, variant, icon }: { children: React.ReactNode; onClick: () => void; disabled: boolean; variant: "success" | "danger"; icon: React.ReactNode }) {
-  return <button disabled={disabled} onClick={onClick} className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition disabled:opacity-50 ${variant === "success" ? "bg-primary text-primary-foreground hover:bg-primary/90" : "border border-critical-border bg-critical-bg text-critical-text hover:bg-critical-border/20"}`}>{icon}{children}</button>;
+  return <button disabled={disabled} onClick={onClick} className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition disabled:opacity-50 ${variant === "success" ? "bg-primary text-primary-foreground hover:bg-primary/90" : "border border-critical/30 bg-critical-bg text-critical-text hover:bg-critical/20"}`}>{icon}{children}</button>;
 }

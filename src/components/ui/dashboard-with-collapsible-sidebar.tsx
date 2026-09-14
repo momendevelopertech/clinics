@@ -480,13 +480,13 @@ function NavLink({
             {item.label}
           </span>
           {locked ? (
-            <span className="shrink-0 rounded-sm bg-warning-bg border border-warning-border px-1.5 py-0.5 text-[10px] font-medium text-warning-text">
+            <span className="shrink-0 rounded-sm bg-warning-bg border border-warning/30 px-1.5 py-0.5 text-[10px] font-medium text-warning-text">
               <Lock className="h-3 w-3 inline" />
             </span>
           ) : notConfigured ? (
             <span
               title={t("cfg_badge")}
-              className="shrink-0 rounded-sm bg-warning-bg border border-warning-border px-1.5 py-0.5 text-[10px] font-semibold text-warning-text"
+              className="shrink-0 rounded-sm bg-warning-bg border border-warning/30 px-1.5 py-0.5 text-[10px] font-semibold text-warning-text"
             >
               {t("cfg_badge")}
             </span>

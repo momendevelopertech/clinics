@@ -228,10 +228,10 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
       </header>
 
       {error ? (
-        <p className="rounded-lg border border-critical-border bg-critical-bg px-4 py-3 text-sm text-critical-text">{error}</p>
+        <p className="rounded-lg border border-critical/30 bg-critical-bg px-4 py-3 text-sm text-critical-text">{error}</p>
       ) : null}
       {message ? (
-        <p className="rounded-lg border border-success-border bg-success-bg px-4 py-3 text-sm font-medium text-success-text">{message}</p>
+        <p className="rounded-lg border border-success/30 bg-success-bg px-4 py-3 text-sm font-medium text-success-text">{message}</p>
       ) : null}
 
       {/* Plan + subscription */}
@@ -258,7 +258,7 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
             </p>
           ) : null}
           {data.org.upgradeRequestedPlan ? (
-            <div className="mt-3 rounded-lg border border-accent-blue-border bg-accent-blue-bg p-3 text-sm text-accent-blue-text">
+            <div className="mt-3 rounded-lg border border-accent-blue/30 bg-accent-blue-bg p-3 text-sm text-accent-blue-text">
               {t["plan_upgradeRequested"]} → <span className="font-semibold">{data.org.upgradeRequestedPlan}</span>
               {data.org.upgradeNote ? (
                 <p className="mt-1 text-xs">{data.org.upgradeNote}</p>
@@ -274,7 +274,7 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
                 <button
                   disabled={busy !== null}
                   onClick={() => void run(`/api/super/orgs/${orgId}/upgrade`, "POST", { approve: false })}
-                  className="inline-flex items-center gap-1 rounded-md border border-critical-border bg-critical-bg px-2.5 py-1.5 text-xs font-semibold text-critical-text hover:bg-critical-border/20 disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-md border border-critical/30 bg-critical-bg px-2.5 py-1.5 text-xs font-semibold text-critical-text hover:bg-critical/20 disabled:opacity-50"
                 >
                   <X className="h-3.5 w-3.5" /> {t["plan_decline"]}
                 </button>
@@ -383,7 +383,7 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
                     if (!window.confirm(t["common_confirmAction"])) return;
                     void run(`/api/super/orgs/${orgId}/override/${override.id}`, "DELETE");
                   }}
-                  className="grid size-8 place-content-center rounded-md border border-critical-border text-critical-text hover:bg-critical-bg disabled:opacity-40"
+                  className="grid size-8 place-content-center rounded-md border border-critical/30 text-critical-text hover:bg-critical-bg disabled:opacity-40"
                   aria-label={t["plans_archive"]}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
