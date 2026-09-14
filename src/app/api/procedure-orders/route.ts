@@ -13,15 +13,27 @@ export async function GET(request: Request) {
     assertOrgScope(organizationId);
     const moduleAuthz = await requireModulePermission(organizationId, "encounters");
     if (moduleAuthz.response) return moduleAuthz.response;
-    const patientId = new URL(request.url).searchParams.get("patientId");
+    const url = new URL(request.url);
+    const patientId = url.searchParams.get("patientId");
+    const status = url.searchParams.get("status");
+    const todayOnly = url.searchParams.get("today") === "true";
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
     const orders = await prisma.procedureOrder.findMany({
-      where: { organizationId, ...(patientId ? { patientId } : {}) },
+      where: {
+        organizationId,
+        ...(patientId ? { patientId } : {}),
+        ...(status ? { status } : {}),
+        ...(todayOnly ? { createdAt: { gte: start } } : {}),
+      },
       include: {
         patient: { select: { firstName: true, lastName: true } },
         serviceCatalog: { select: { code: true, name: true, price: true } },
+        performer: { select: { id: true, name: true } },
         documents: { select: { id: true, name: true, type: true, mimeType: true, createdAt: true } },
       },
       orderBy: { createdAt: "desc" },
+      take: 100,
     });
     return NextResponse.json(orders);
   } catch (error) {

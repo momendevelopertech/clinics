@@ -10,6 +10,7 @@ import { PermissionDenied } from "@/components/ui/permission-denied";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { TableSkeleton } from "@/components/ui/loading";
 import { RecordVitalsDialog } from "@/components/encounters/record-vitals-dialog";
+import { TodayProceduresCard } from "@/components/encounters/today-procedures-card";
 
 type QueueItem = {
   id: string;
@@ -119,6 +120,7 @@ export default function QueuePage() {
         </Button>
       </div>
       {error ? <p className="text-xs font-semibold text-destructive">{error}</p> : null}
+      <TodayProceduresCard />
       {loading ? (
         <TableSkeleton rows={5} columns={3} />
       ) : (

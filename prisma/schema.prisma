@@ -201,6 +201,7 @@ model User {
   labOrders              LabOrder[]         @relation("LabOrderAuthor")
   reviewedLabResults     LabResult[]        @relation("LabResultReviewer")
   procedureOrders        ProcedureOrder[]   @relation("ProcedureOrderAuthor")
+  performedProcedures    ProcedureOrder[]   @relation("ProcedurePerformer")
   notifications          Notification[]
   pushSubscriptions      PushSubscription[]
   shifts                 Shift[]
@@ -1218,6 +1219,9 @@ model ProcedureOrder {
   scheduledAt      DateTime?
   notes            String?
   completedAt      DateTime?
+  performedByRole  String?
+  performedByUserId String?
+  performer        User?           @relation("ProcedurePerformer", fields: [performedByUserId], references: [id])
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   documents        Document[]

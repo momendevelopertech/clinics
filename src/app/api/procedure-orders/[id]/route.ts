@@ -26,7 +26,21 @@ export async function PATCH(request: Request, context: Context) {
     const existing = await prisma.procedureOrder.findFirst({ where: { id, organizationId } });
     if (!existing) return NextResponse.json({ error: "Procedure order not found" }, { status: 404 });
     if (existing.status === "cancelled" || existing.status === "completed") return NextResponse.json({ error: "Final procedure orders cannot be changed" }, { status: 409 });
-    const updated = await prisma.procedureOrder.update({ where: { id }, data: { status: parsed.data.status, notes: parsed.data.notes ?? existing.notes, completedAt: parsed.data.status === "completed" ? new Date() : null } });
+    // G6: whoever completes the procedure is recorded as the performer
+    // (server-derived from session — Nurse flow: execute + close).
+    const performer =
+      parsed.data.status === "completed"
+        ? await prisma.user.findFirst({ where: { id: authz.userId }, select: { id: true, role: true } })
+        : null;
+    const updated = await prisma.procedureOrder.update({
+      where: { id },
+      data: {
+        status: parsed.data.status,
+        notes: parsed.data.notes ?? existing.notes,
+        completedAt: parsed.data.status === "completed" ? new Date() : null,
+        ...(performer ? { performedByUserId: performer.id, performedByRole: performer.role ?? "staff" } : {}),
+      },
+    });
     await createAuditLog({ organizationId, userId: authz.userId, action: "UPDATE", entityType: "ProcedureOrder", entityId: id, beforeState: JSON.stringify(existing), afterState: JSON.stringify(updated) });
     return NextResponse.json(updated);
   } catch (error) {
