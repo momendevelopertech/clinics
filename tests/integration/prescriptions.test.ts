@@ -174,14 +174,17 @@ describeDb("prescription convenience features (integration)", () => {
         });
 
 // Other staff only see shared templates (or their own, which they have
-// none of here) — the personal template never leaks.
+// none of here) — the personal template never leaks. Scoped to this test's
+// stamp: the org may already hold seeded shared templates (G9 seed).
 const asOther = await tx.prescriptionTemplate.findMany({
   where: {
     organizationId: orgA,
     OR: [{ isShared: true }, { createdById: other.id }],
   },
 });
-expect(asOther.map((tpl) => tpl.id)).toEqual([shared.id]);
+const asOtherIds = asOther.map((tpl) => tpl.id);
+expect(asOtherIds).toContain(shared.id);
+expect(asOtherIds).not.toContain(personal.id);
 
         // Another org can never reach an orgA template by id.
         if (orgB) {
