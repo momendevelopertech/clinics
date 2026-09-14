@@ -163,8 +163,15 @@ export function EncountersWorkspace() {
       body: JSON.stringify({ status: "completed" }),
     });
     if (!response.ok) throw new Error(t("enc_completeError"));
+    const data = (await response.json().catch(() => null)) as {
+      autoInvoice?: { invoiceNumber: string; totalAmount: string } | null;
+    } | null;
     await refresh();
-    toast.success(t("common_saved"));
+    toast.success(
+      data?.autoInvoice
+        ? `${t("common_saved")} · ${t("billing_title")}: ${data.autoInvoice.invoiceNumber}`
+        : t("common_saved"),
+    );
   };
 
   if (forbidden) {

@@ -4,6 +4,7 @@ import { getOrgId, assertOrgScope } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { encounterUpdateSchema } from "@/lib/validations";
+import { createAutoInvoiceForEncounter } from "@/lib/auto-invoice";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -22,6 +23,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       return NextResponse.json({ error: "Completed encounters cannot be reopened" }, { status: 409 });
     }
     if (existing.status === parsed.data.status) return NextResponse.json(existing);
+    const closing = existing.status !== "completed" && parsed.data.status === "completed";
     const updated = await prisma.$transaction(async (tx) => {
       const encounter = await tx.encounter.update({
         where: { id },
@@ -30,7 +32,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       await tx.auditLog.create({
         data: { organizationId, userId: authz.userId, action: "UPDATE", entityType: "Encounter", entityId: id, beforeState: JSON.stringify(existing), afterState: JSON.stringify(encounter) },
       });
-      return encounter;
+      // G7: closing the visit auto-generates the invoice (consultation +
+      // procedures + dispensed-meds info lines). Idempotent, never fails close.
+      const autoInvoice = closing
+        ? await createAutoInvoiceForEncounter(tx, { organizationId, userId: authz.userId, encounterId: id })
+        : null;
+      return { encounter, autoInvoice };
     });
     return NextResponse.json(updated);
   } catch {
