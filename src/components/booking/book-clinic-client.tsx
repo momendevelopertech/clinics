@@ -42,6 +42,7 @@ export function BookClinicClient({ orgSlug }: { orgSlug: string }) {
   const [booking, setBooking] = React.useState(false);
   const [selected, setSelected] = React.useState("");
   const [missing, setMissing] = React.useState(false);
+  const [ticket, setTicket] = React.useState<{ id: string; start: string; provider: string } | null>(null);
 
   const load = React.useCallback(async () => {
     setLoading(true);
@@ -91,8 +92,15 @@ export function BookClinicClient({ orgSlug }: { orgSlug: string }) {
         return;
       }
       if (!response.ok) throw new Error(payload.error || "Booking failed");
+      const appt = payload.appointment ?? payload;
+      setTicket({
+        id: appt.id ?? "",
+        start: appt.startTime ?? selected,
+        provider: active.name ?? "",
+      });
       toast.success(t("portal_bookSuccess"));
       setSelected("");
+      load();
       load();
     } catch (error) {
       logClientError("Patient self-booking failed", error);
@@ -180,6 +188,23 @@ export function BookClinicClient({ orgSlug }: { orgSlug: string }) {
           >
             <CalendarPlus className="h-4 w-4 mr-1" />{t("portal_confirmBooking")}
           </Button>
+
+          {ticket ? (
+            <div className="rounded-lg border border-success/30 bg-success-bg p-4 text-sm">
+              <p className="font-semibold text-success-text">{t("portal_bookTicketTitle")}</p>
+              <p className="mt-1 text-success-text">
+                {ticket.provider} · {new Date(ticket.start).toLocaleString(lang === "ar" ? "ar-EG" : "en-US")}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button type="button" size="sm" variant="outline" asChild>
+                  <a href="/patient-portal">{t("portal_bookTicketPortal")}</a>
+                </Button>
+                <Button type="button" size="sm" variant="ghost" onClick={() => setTicket(null)}>
+                  {t("portal_bookTicketMore")}
+                </Button>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </main>

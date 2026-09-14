@@ -61,6 +61,8 @@ export default function PatientPortalPage() {
   const [rescheduleSlot, setRescheduleSlot] = React.useState("");
   const [workingId, setWorkingId] = React.useState<string | null>(null);
   const [labResults, setLabResults] = React.useState<Array<{ id: string; testName: string; resultValue: string | null; unit: string | null; status: string }>>([]);
+  const [prescriptions, setPrescriptions] = React.useState<Array<{ id: string; medicationName: string; dosage: string | null; frequency: string | null; duration: string | null; instructions: string | null; status: string; prescriber: string | null; createdAt: string; items: Array<{ medicationName: string; dosage: string | null; frequency: string | null; duration: string | null; instructions: string | null }> }>>([]);
+  const [visits, setVisits] = React.useState<Array<{ id: string; date: string; provider: string | null; diagnoses: Array<{ code: string; name: string }>; followUps: Array<{ dueDate: string; reason: string; status: string }>; prescriptionsCount: number }>>([]);
   const [overviewVital, setOverviewVital] = React.useState<VitalSnapshot | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [isLoggingOut, setIsLoggingOut] = React.useState(false);
@@ -84,11 +86,13 @@ export default function PatientPortalPage() {
       setOrgSlug(overview.organizationSlug ?? null);
       setAppointments(overview.appointments);
 
-      // Documents/invoices/consents are best-effort: failure must not log out.
-      const [docsRes, invRes, consRes] = await Promise.all([
+      // Documents/invoices/consents/prescriptions/visits are best-effort: failure must not log out.
+      const [docsRes, invRes, consRes, rxRes, visitsRes] = await Promise.all([
         fetch("/api/patient-portal/documents").catch(() => null),
         fetch("/api/patient-portal/invoices").catch(() => null),
         fetch("/api/patient-portal/consents").catch(() => null),
+        fetch("/api/patient-portal/prescriptions").catch(() => null),
+        fetch("/api/patient-portal/visits").catch(() => null),
       ]);
       if (docsRes?.ok) {
         const docs = await docsRes.json().catch(() => null);
@@ -101,6 +105,14 @@ export default function PatientPortalPage() {
       if (consRes?.ok) {
         const cons = await consRes.json().catch(() => null);
         if (cons) setConsents(cons.consents ?? []);
+      }
+      if (rxRes?.ok) {
+        const rx = await rxRes.json().catch(() => null);
+        if (rx) setPrescriptions(rx.prescriptions ?? []);
+      }
+      if (visitsRes?.ok) {
+        const v = await visitsRes.json().catch(() => null);
+        if (v) setVisits(v.visits ?? []);
       }
       setLabResults(overview.labResults);
       setOverviewVital(overview.latestVital);
@@ -371,8 +383,7 @@ export default function PatientPortalPage() {
               <Button
                 variant="outline"
                 className="justify-start h-9"
-                disabled
-                title={t("portal_comingSoon")}
+                onClick={() => scrollToSection("portal-visits")}
               >
                 <FileText className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t("portal_viewMedicalRecords")}
               </Button>
@@ -387,8 +398,7 @@ export default function PatientPortalPage() {
               <Button
                 variant="outline"
                 className="justify-start h-9"
-                disabled
-                title={t("portal_comingSoon")}
+                onClick={() => scrollToSection("portal-vitals")}
               >
                 <Heart className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t("portal_viewHealthSummary")}
               </Button>
@@ -428,7 +438,7 @@ export default function PatientPortalPage() {
           </Card>
         </div>
 
-        <Card className="mb-6 border-border bg-card shadow-sm">
+        <Card id="portal-vitals" className="mb-6 border-border bg-card shadow-sm">
           <CardHeader>
             <div className="flex items-center justify-between gap-4">
               <div>
@@ -830,6 +840,108 @@ export default function PatientPortalPage() {
               </div>
             ) : (
               <p className="text-muted-foreground text-center py-4">{t("portal_noInvoices")}</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Prescriptions (G10) */}
+        <Card className="mb-6 border-border bg-card shadow-sm" id="portal-prescriptions">
+          <CardHeader>
+            <CardTitle>{t("portal_prescriptions")}</CardTitle>
+            <CardDescription>{t("portal_prescriptionsDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p className="text-muted-foreground">{t("portal_loading")}</p>
+            ) : prescriptions.length > 0 ? (
+              <div className="space-y-3">
+                {prescriptions.map((rx) => (
+                  <div key={rx.id} className="border border-border rounded-lg p-3 bg-card">
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="min-w-0">
+                        <p className="font-medium text-foreground">{rx.medicationName}</p>
+                        <p className="text-sm text-muted-foreground ltr-on-rtl">
+                          {[rx.dosage, rx.frequency, rx.duration].filter(Boolean).join(" · ")}
+                        </p>
+                        {rx.instructions ? (
+                          <p className="text-sm text-muted-foreground">{rx.instructions}</p>
+                        ) : null}
+                        {rx.items.length > 0 ? (
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            +{rx.items.length} {t("portal_moreItems")}
+                          </p>
+                        ) : null}
+                      </div>
+                      <div className="text-end shrink-0">
+                        <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-muted-bg text-muted-foreground">
+                          {rx.status}
+                        </span>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {rx.prescriber ?? ""} · {new Date(rx.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-center py-4">{t("portal_noPrescriptions")}</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Visit history (G10) */}
+        <Card className="mb-6 border-border bg-card shadow-sm" id="portal-visits">
+          <CardHeader>
+            <CardTitle>{t("portal_visits")}</CardTitle>
+            <CardDescription>{t("portal_visitsDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p className="text-muted-foreground">{t("portal_loading")}</p>
+            ) : visits.length > 0 ? (
+              <div className="space-y-3">
+                {visits.map((v) => (
+                  <div key={v.id} className="border border-border rounded-lg p-3 bg-card">
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="min-w-0">
+                        <p className="font-medium text-foreground">
+                          {new Date(v.date).toLocaleDateString()}
+                          {v.provider ? ` · ${v.provider}` : ""}
+                        </p>
+                        {v.diagnoses.length > 0 ? (
+                          <p className="text-sm text-muted-foreground">
+                            {v.diagnoses.map((d) => d.name).join("، ")}
+                          </p>
+                        ) : null}
+                        {v.followUps.filter((f) => f.status !== "completed").map((f, i) => (
+                          <p key={i} className="mt-1 text-xs font-medium text-primary">
+                            {t("portal_followUpDue")}: {new Date(f.dueDate).toLocaleDateString()} — {f.reason}
+                          </p>
+                        ))}
+                      </div>
+                      {v.prescriptionsCount > 0 ? (
+                        <button
+                          type="button"
+                          onClick={() => scrollToSection("portal-prescriptions")}
+                          className="text-xs text-primary hover:underline shrink-0"
+                        >
+                          {t("portal_hasPrescriptions").replace("{n}", String(v.prescriptionsCount))}
+                        </button>
+                      ) : null}
+                    </div>
+                    {orgSlug ? (
+                      <Button variant="outline" size="sm" className="mt-2 h-8" asChild>
+                        <Link href={`/book/${orgSlug}`}>
+                          <Calendar className="w-3.5 h-3.5 mr-1" />{t("portal_bookFollowUp")}
+                        </Link>
+                      </Button>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-center py-4">{t("portal_noVisits")}</p>
             )}
           </CardContent>
         </Card>
