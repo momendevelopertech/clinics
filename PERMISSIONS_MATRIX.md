@@ -93,7 +93,7 @@
 | الإعدادات/الطاقم/التكاملات | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | G13: `page-guards requireClinicPage(Owner)` + proxy + `requireOwner` API (إدراج الطاقم محمي من الـ enumeration) |
 | الخطة والاشتراك (عيادة) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | `plan/page.tsx requireOwner` + entitlements |
 | منصة السوبر (عيادات/خطط/تدقيق) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | `requireSuperAdmin` المزدوج (RBAC + `user.role==superAdmin` + active) — E2E حي؛ `platform-admin` مستثناة من التعديل |
-| صفحة الديمو | 🔀 dev فقط | 🔀 | 🔀 | 🔀 | 🔀 | 🔀 | 🔀 | ❌ | G15: `demo-accounts` → `notFound()` إنتاجيًا إلا `ALLOW_DEMO_ACCOUNTS=true` |
+| صفحة الديمو | 🔀 عامة (بيانات تجريبية فقط) | 🔀 | 🔀 | 🔀 | 🔀 | 🔀 | 🔀 | ❌ | `/demo-accounts` صفحة public تعرض حسابات الديمو الاصطناعية فقط (`@example.test`) — مقصودة للتجربة |
 
 ## 10) مصفوفة الوحدات الافتراضية (المرجع الوحيد: `src/lib/permissions.ts:34`)
 
