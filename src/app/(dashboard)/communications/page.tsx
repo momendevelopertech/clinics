@@ -11,13 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { MessageCircle, Mail, MessageSquare, Phone } from "lucide-react";
 import { AddCommunicationDialog } from "@/components/communications/add-communication-dialog";
 import { DataPagination } from "@/components/ui/data-pagination";
@@ -257,44 +251,34 @@ export default function CommunicationsPage() {
             }}
             className="flex-1 h-9"
           />
-          <Select
+          <SearchableSelect
             value={channelFilter || "all"}
             onValueChange={handleChannelChange}
-          >
-            <SelectTrigger className="w-40 h-9">
-              <SelectValue placeholder={t("comm_allChannels")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t("comm_allChannels")}</SelectItem>
-              <SelectItem value="sms">{t("comm_channel_sms")}</SelectItem>
-              <SelectItem value="email">{t("comm_channel_email")}</SelectItem>
-              <SelectItem value="whatsapp">
-                {t("comm_channel_whatsapp")}
-              </SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "all", label: t("comm_allChannels") },
+              { value: "sms", label: t("comm_channel_sms") },
+              { value: "email", label: t("comm_channel_email") },
+              { value: "whatsapp", label: t("comm_channel_whatsapp") },
+            ]}
+            placeholder={t("comm_allChannels")}
+            triggerClassName="w-40 h-9"
+          />
           <FeatureTip tipId="communications-async">
             <span className="inline-flex">
-              <Select
+              <SearchableSelect
                 value={statusFilter || "all"}
                 onValueChange={handleStatusChange}
-              >
-                <SelectTrigger className="w-40 h-9">
-                  <SelectValue placeholder={t("comm_allStatus")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("comm_allStatus")}</SelectItem>
-                  <SelectItem value="pending">{t("comm_status_pending")}</SelectItem>
-                  <SelectItem value="sent">{t("comm_status_sent")}</SelectItem>
-                  <SelectItem value="delivered">
-                    {t("comm_status_delivered")}
-                  </SelectItem>
-                  <SelectItem value="failed">{t("comm_failed")}</SelectItem>
-                  <SelectItem value="scheduled">
-                    {t("comm_status_scheduled")}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+                options={[
+                  { value: "all", label: t("comm_allStatus") },
+                  { value: "pending", label: t("comm_status_pending") },
+                  { value: "sent", label: t("comm_status_sent") },
+                  { value: "delivered", label: t("comm_status_delivered") },
+                  { value: "failed", label: t("comm_failed") },
+                  { value: "scheduled", label: t("comm_status_scheduled") },
+                ]}
+                placeholder={t("comm_allStatus")}
+                triggerClassName="w-40 h-9"
+              />
             </span>
           </FeatureTip>
         </FilterBar>

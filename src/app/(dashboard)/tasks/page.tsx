@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { MessageSquare } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -119,25 +119,22 @@ export default function TasksPage() {
                 setPage(1);
               }}
             />
-            <Select
+            <SearchableSelect
               value={statusFilter}
               onValueChange={(value) => {
                 setStatusFilter(value);
                 setPage(1);
               }}
-            >
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder={t("tasks_filterStatus")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("common_all")}</SelectItem>
-                {Object.keys(statusColor).map((status) => (
-                  <SelectItem key={status} value={status}>
-                    {status}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              options={[
+                { value: "all", label: t("common_all") },
+                ...Object.keys(statusColor).map((status) => ({
+                  value: status,
+                  label: status,
+                })),
+              ]}
+              placeholder={t("tasks_filterStatus")}
+              triggerClassName="w-full sm:w-48"
+            />
           </div>
         </CardHeader>
         <CardContent>

@@ -13,14 +13,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
 
@@ -133,23 +127,18 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="gap-1.5 flex flex-col">
               <Label htmlFor="patient">{t("labs_patientRequired")}</Label>
-              <Select
+              <SearchableSelect
                 value={formData.patientId}
                 onValueChange={(value) =>
                   setFormData({ ...formData, patientId: value })
                 }
-              >
-                <SelectTrigger id="patient">
-                  <SelectValue placeholder={t("labs_selectPatient")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {patients.map((patient) => (
-                    <SelectItem key={patient.id} value={patient.id}>
-                      {patient.firstName} {patient.lastName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                options={patients.map((patient) => ({
+                  value: patient.id,
+                  label: `${patient.firstName} ${patient.lastName}`,
+                }))}
+                placeholder={t("labs_selectPatient")}
+                id="patient"
+              />
             </div>
 
             <div className="gap-1.5 flex flex-col">
@@ -206,24 +195,19 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="gap-1.5 flex flex-col">
               <Label htmlFor="status">{t("common_status")}</Label>
-              <Select
+              <SearchableSelect
                 value={formData.status}
                 onValueChange={(value) =>
                   setFormData({ ...formData, status: value })
                 }
-              >
-                <SelectTrigger id="status">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pending">{t("labs_pending")}</SelectItem>
-                  <SelectItem value="completed">
-                    {t("labs_completed")}
-                  </SelectItem>
-                  <SelectItem value="abnormal">{t("labs_abnormal")}</SelectItem>
-                  <SelectItem value="reviewed">{t("labs_reviewed")}</SelectItem>
-                </SelectContent>
-              </Select>
+                options={[
+                  { value: "pending", label: t("labs_pending") },
+                  { value: "completed", label: t("labs_completed") },
+                  { value: "abnormal", label: t("labs_abnormal") },
+                  { value: "reviewed", label: t("labs_reviewed") },
+                ]}
+                id="status"
+              />
             </div>
 
             <div className="gap-1.5 flex flex-col">

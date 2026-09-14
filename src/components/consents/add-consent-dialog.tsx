@@ -19,13 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
 
@@ -152,44 +146,36 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="gap-2 flex flex-col">
             <Label htmlFor="patient">{t("common_patientRequired")}</Label>
-            <Select
+            <SearchableSelect
               value={formData.patientId}
               onValueChange={(value) =>
                 setFormData({ ...formData, patientId: value })
               }
-            >
-              <SelectTrigger id="patient" className="h-9">
-                <SelectValue placeholder={t("common_selectPatient")} />
-              </SelectTrigger>
-              <SelectContent>
-                {patients.map((patient) => (
-                  <SelectItem key={patient.id} value={patient.id}>
-                    {patient.firstName} {patient.lastName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              options={patients.map((patient) => ({
+                value: patient.id,
+                label: `${patient.firstName} ${patient.lastName}`,
+              }))}
+              placeholder={t("common_selectPatient")}
+              triggerClassName="h-9"
+              id="patient"
+            />
           </div>
 
           <div className="gap-2 flex flex-col">
             <Label htmlFor="consent-type">{t("consent_colType")} *</Label>
-            <Select
+            <SearchableSelect
               value={formData.consentType}
               onValueChange={(value) =>
                 setFormData({ ...formData, consentType: value })
               }
-            >
-              <SelectTrigger id="consent-type" className="h-9">
-                <SelectValue placeholder={t("consent_selectType")} />
-              </SelectTrigger>
-              <SelectContent>
-                {CONSENT_TYPE_OPTIONS.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {t(CONSENT_TYPE_KEYS[type])}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              options={CONSENT_TYPE_OPTIONS.map((type) => ({
+                value: type,
+                label: t(CONSENT_TYPE_KEYS[type]),
+              }))}
+              placeholder={t("consent_selectType")}
+              triggerClassName="h-9"
+              id="consent-type"
+            />
           </div>
 
           <div className="gap-2 flex flex-col">

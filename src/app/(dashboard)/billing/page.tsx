@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -267,25 +267,23 @@ export default function BillingPage() {
                   setPage(1);
                 }}
               />
-              <Select
+              <SearchableSelect
                 value={statusFilter}
                 onValueChange={(value) => {
                   setStatusFilter(value);
                   setPage(1);
                 }}
-              >
-                <SelectTrigger className="h-9 w-full sm:w-44 bg-card text-xs border-input">
-                  <SelectValue placeholder={t("billing_filterStatus")} />
-                </SelectTrigger>
-                <SelectContent className="text-xs">
-                  <SelectItem value="all">{t("common_all")}</SelectItem>
-                  {Object.keys(statusLabel).map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {statusLabel[status] ?? status}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                options={[
+                  { value: "all", label: t("common_all") },
+                  ...Object.keys(statusLabel).map((status) => ({
+                    value: status,
+                    label: statusLabel[status] ?? status,
+                  })),
+                ]}
+                placeholder={t("billing_filterStatus")}
+                triggerClassName="h-9 w-full sm:w-44 bg-card text-xs border-input"
+                contentClassName="text-xs"
+              />
             </div>
           </div>
         </CardHeader>
@@ -361,14 +359,7 @@ export default function BillingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
             <div className="gap-1.5 flex flex-col">
               <Label className="text-xs font-semibold">{t("exp_category")}</Label>
-              <Select value={expForm.category} onValueChange={(v) => setExpForm({ ...expForm, category: v })}>
-                <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent className="text-xs">
-                  {["rent", "salaries", "supplies", "utilities", "marketing", "other"].map((c) => (
-                    <SelectItem key={c} value={c}>{expCatLabel(c)}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect value={expForm.category} onValueChange={(v) => setExpForm({ ...expForm, category: v })} options={["rent", "salaries", "supplies", "utilities", "marketing", "other"].map((c) => ({ value: c, label: expCatLabel(c) }))} triggerClassName="h-9 text-xs" contentClassName="text-xs" />
             </div>
             <div className="gap-1.5 flex flex-col">
               <Label className="text-xs font-semibold">{t("exp_amount")}</Label>

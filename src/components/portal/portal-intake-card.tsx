@@ -14,6 +14,7 @@ import {
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 
 interface IntakeField {
   id: string;
@@ -94,11 +95,17 @@ export function PortalIntakeCard() {
     }
     if (field.kind === "boolean") {
       return (
-        <select className="h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" {...common}>
-          <option value="">—</option>
-          <option value="yes">Yes / نعم</option>
-          <option value="no">No / لا</option>
-        </select>
+        <SearchableSelect
+          value={value}
+          onValueChange={(v) => setAnswer(formId, field.key, v)}
+          options={[
+            { value: "", label: "—" },
+            { value: "yes", label: "Yes / نعم" },
+            { value: "no", label: "No / لا" },
+          ]}
+          placeholder="—"
+          triggerClassName="h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground"
+        />
       );
     }
     if (field.kind === "choice") {
@@ -109,12 +116,16 @@ export function PortalIntakeCard() {
         options = [];
       }
       return (
-        <select className="h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" {...common}>
-          <option value="">—</option>
-          {options.map((o) => (
-            <option key={o} value={o}>{o}</option>
-          ))}
-        </select>
+        <SearchableSelect
+          value={value}
+          onValueChange={(v) => setAnswer(formId, field.key, v)}
+          options={[
+            { value: "", label: "—" },
+            ...options.map((o) => ({ value: o, label: o })),
+          ]}
+          placeholder="—"
+          triggerClassName="h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground"
+        />
       );
     }
     return (

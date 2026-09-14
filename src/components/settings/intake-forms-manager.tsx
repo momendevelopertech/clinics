@@ -5,13 +5,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -149,17 +143,12 @@ export function IntakeFormsManager() {
               placeholder={t("intake_fieldLabel")}
               className="h-9"
             />
-            <Select
+            <SearchableSelect
               value={fieldForm[form.id]?.kind ?? "text"}
               onValueChange={(v) => setF(form.id, { kind: v })}
-            >
-              <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {KINDS.map((k) => (
-                  <SelectItem key={k} value={k}>{k}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              options={KINDS.map((k) => ({ value: k, label: k }))}
+              triggerClassName="h-9"
+            />
             <label className="flex items-center gap-2 text-sm text-foreground">
               <Checkbox
                 checked={fieldForm[form.id]?.required ?? false}

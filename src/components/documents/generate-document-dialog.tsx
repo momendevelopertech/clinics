@@ -13,13 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -167,52 +161,22 @@ export function GenerateDocumentDialog({ onSuccess }: { onSuccess?: () => void }
           <div className="grid grid-cols-2 gap-3">
             <div className="gap-2 flex flex-col">
               <Label>{t("doc_genTemplate")}</Label>
-              <Select value={templateId} onValueChange={(v) => { setTemplateId(v); setFields({}); }}>
-                <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {templates.map((x) => (
-                    <SelectItem key={x.id} value={x.id}>{tplLabel(x.id)}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect value={templateId} onValueChange={(v) => { setTemplateId(v); setFields({}); }} options={templates.map((x) => ({ value: x.id, label: tplLabel(x.id) }))} triggerClassName="h-9" />
             </div>
             <div className="gap-2 flex flex-col">
               <Label>{t("doc_genPatient")}</Label>
-              <Select value={patientId} onValueChange={(v) => { setPatientId(v); setEncounterId(""); setLabOrderId(""); }}>
-                <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {patients.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>{p.firstName} {p.lastName}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect value={patientId} onValueChange={(v) => { setPatientId(v); setEncounterId(""); setLabOrderId(""); }} options={patients.map((p) => ({ value: p.id, label: `${p.firstName} ${p.lastName}` }))} triggerClassName="h-9" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="gap-2 flex flex-col">
               <Label>{t("doc_genEncounter")}</Label>
-              <Select value={encounterId} onValueChange={setEncounterId}>
-                <SelectTrigger className="h-9"><SelectValue placeholder={t("doc_genNoEncounter")} /></SelectTrigger>
-                <SelectContent>
-                  {encounters.map((e) => (
-                    <SelectItem key={e.id} value={e.id}>
-                      {new Date(e.startTime).toLocaleDateString()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect value={encounterId} onValueChange={setEncounterId} options={encounters.map((e) => ({ value: e.id, label: new Date(e.startTime).toLocaleDateString() }))} placeholder={t("doc_genNoEncounter")} triggerClassName="h-9" />
             </div>
             {template?.needsLabOrder ? (
               <div className="gap-2 flex flex-col">
                 <Label>{t("doc_genLabOrder")}</Label>
-                <Select value={labOrderId} onValueChange={setLabOrderId}>
-                  <SelectTrigger className="h-9"><SelectValue placeholder={t("doc_genNoOrder")} /></SelectTrigger>
-                  <SelectContent>
-                    {orders.map((o) => (
-                      <SelectItem key={o.id} value={o.id}>{o.testName}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableSelect value={labOrderId} onValueChange={setLabOrderId} options={orders.map((o) => ({ value: o.id, label: o.testName }))} placeholder={t("doc_genNoOrder")} triggerClassName="h-9" />
               </div>
             ) : null}
           </div>

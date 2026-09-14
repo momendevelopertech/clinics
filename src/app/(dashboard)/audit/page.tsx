@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -85,25 +85,22 @@ export default function AuditPage() {
                 setPage(1);
               }}
             />
-            <Select
+            <SearchableSelect
               value={actionFilter}
               onValueChange={(value) => {
                 setActionFilter(value);
                 setPage(1);
               }}
-            >
-              <SelectTrigger className="w-full sm:w-48 h-9">
-                <SelectValue placeholder={t("audit_filterAction")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("common_all")}</SelectItem>
-                {Object.keys(actionColor).map((action) => (
-                  <SelectItem key={action} value={action}>
-                    {action}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              options={[
+                { value: "all", label: t("common_all") },
+                ...Object.keys(actionColor).map((action) => ({
+                  value: action,
+                  label: action,
+                })),
+              ]}
+              placeholder={t("audit_filterAction")}
+              triggerClassName="w-full sm:w-48 h-9"
+            />
           </div>
         </CardHeader>
         <CardContent className="p-5">

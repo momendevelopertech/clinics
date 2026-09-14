@@ -26,13 +26,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -189,24 +183,16 @@ export function BookAppointmentDialog({
                       <User className="w-3.5 h-3.5 text-primary" />
                       {t("book_patient")}
                     </Label>
-                    <Select
-                      onValueChange={(v) => form.setValue("patientId", v)}
+                    <SearchableSelect
                       value={selectedPatientId}
-                    >
-                      <SelectTrigger className="w-full h-9">
-                        <SelectValue placeholder={t("book_selectPatient")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {patients.map((p) => (
-                          <SelectItem
-                            key={p.id}
-                            value={p.id}
-                          >
-                            {p.firstName} {p.lastName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      onValueChange={(v) => form.setValue("patientId", v)}
+                      options={patients.map((p) => ({
+                        value: p.id,
+                        label: `${p.firstName} ${p.lastName}`,
+                      }))}
+                      placeholder={t("book_selectPatient")}
+                      triggerClassName="w-full h-9"
+                    />
                     {form.formState.errors.patientId && (
                       <p className="text-xs text-destructive">
                         {form.formState.errors.patientId.message}
@@ -223,24 +209,13 @@ export function BookAppointmentDialog({
                       <Stethoscope className="w-3.5 h-3.5 text-primary" />
                       {t("appts_provider")}
                     </Label>
-                    <Select
-                      onValueChange={(v) => form.setValue("provider", v)}
+                    <SearchableSelect
                       value={selectedProvider}
-                    >
-                      <SelectTrigger className="w-full h-9">
-                        <SelectValue placeholder={t("book_selectProvider")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {providers.map((p) => (
-                          <SelectItem
-                            key={p.id}
-                            value={p.id}
-                          >
-                            {p.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      onValueChange={(v) => form.setValue("provider", v)}
+                      options={providers.map((p) => ({ value: p.id, label: p.name }))}
+                      placeholder={t("book_selectProvider")}
+                      triggerClassName="w-full h-9"
+                    />
                     {form.formState.errors.provider && (
                       <p className="text-xs text-destructive">
                         {form.formState.errors.provider.message}
@@ -304,24 +279,16 @@ export function BookAppointmentDialog({
                     >
                       {t("book_type")}
                     </Label>
-                    <Select
-                      onValueChange={(v) => form.setValue("type", v)}
+                    <SearchableSelect
                       value={selectedType}
-                    >
-                      <SelectTrigger className="w-full h-9">
-                        <SelectValue placeholder={t("book_selectType")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {APPOINTMENT_TYPES.map((typeOpt) => (
-                          <SelectItem
-                            key={typeOpt.value}
-                            value={typeOpt.value}
-                          >
-                            {apptTypeLabel(typeOpt.value)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      onValueChange={(v) => form.setValue("type", v)}
+                      options={APPOINTMENT_TYPES.map((typeOpt) => ({
+                        value: typeOpt.value,
+                        label: apptTypeLabel(typeOpt.value),
+                      }))}
+                      placeholder={t("book_selectType")}
+                      triggerClassName="w-full h-9"
+                    />
                     {form.formState.errors.type && (
                       <p className="text-xs text-destructive">
                         {form.formState.errors.type.message}

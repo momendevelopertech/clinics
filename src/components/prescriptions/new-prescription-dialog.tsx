@@ -26,13 +26,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -457,18 +451,16 @@ export function NewPrescriptionDialog({
             {defaultPatientLabel ? (
               <Input value={patientLabel} disabled />
             ) : (
-              <Select value={patientId} onValueChange={setPatientId}>
-                <SelectTrigger id="rx-patient">
-                  <SelectValue placeholder={t("rx_selectPatient")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {patients.map((patient) => (
-                    <SelectItem key={patient.id} value={patient.id}>
-                      {patient.firstName} {patient.lastName} - {patient.mrn}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect
+                value={patientId}
+                onValueChange={setPatientId}
+                options={patients.map((patient) => ({
+                  value: patient.id,
+                  label: `${patient.firstName} ${patient.lastName} - ${patient.mrn}`,
+                }))}
+                placeholder={t("rx_selectPatient")}
+                id="rx-patient"
+              />
             )}
           </div>
 

@@ -13,13 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -96,14 +90,11 @@ export function BookFromWaitlistDialog({
         <div className="flex flex-col gap-4">
           <div className="gap-2 flex flex-col">
             <Label>{t("wl_provider")}</Label>
-            <Select value={providerId} onValueChange={setProviderId}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {providers.map((p) => (
-                  <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <SearchableSelect
+              value={providerId}
+              onValueChange={setProviderId}
+              options={providers.map((p) => ({ value: p.id, label: p.name }))}
+            />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="gap-2 flex flex-col">

@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import { AddConsentDialog } from "@/components/consents/add-consent-dialog";
 import { DataPagination } from "@/components/ui/data-pagination";
+import { FilePreviewDialog } from "@/components/ui/file-preview-dialog";
 import { FilterBar } from "@/components/ui/filter-bar";
 import {
   EmptyState,
@@ -52,6 +53,7 @@ export default function ConsentsPage() {
   const [error, setError] = React.useState(false);
   const [grantedFilter, setGrantedFilter] = React.useState<string | null>(null);
   const [page, setPage] = React.useState(1);
+  const [preview, setPreview] = React.useState<{ title: string; url: string } | null>(null);
   const { forbidden, setForbidden } = usePermissionState();
 
   const fetchConsents = React.useCallback(async () => {
@@ -147,6 +149,14 @@ export default function ConsentsPage() {
 
   return (
     <div className="flex flex-col gap-6 w-full h-full">
+      <FilePreviewDialog
+        open={preview !== null}
+        onOpenChange={(next) => {
+          if (!next) setPreview(null);
+        }}
+        title={preview?.title ?? ""}
+        url={preview?.url ?? null}
+      />
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground mb-1">
@@ -317,14 +327,18 @@ export default function ConsentsPage() {
                     </td>
                     <td className="px-6 py-4 hidden md:table-cell">
                       {consent.documentUrl ? (
-                        <a
-                          href={consent.documentUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setPreview({
+                              title: `${consent.patientName} — ${consent.consentType}`,
+                              url: consent.documentUrl as string,
+                            })
+                          }
                           className="text-primary hover:underline"
                         >
                           {t("common_view")}
-                        </a>
+                        </button>
                       ) : (
                         <span className="text-muted-foreground">-</span>
                       )}

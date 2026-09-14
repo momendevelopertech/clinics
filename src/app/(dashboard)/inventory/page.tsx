@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Package, AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -170,25 +170,23 @@ export default function InventoryPage() {
                   setPage(1);
                 }}
               />
-              <Select
+              <SearchableSelect
                 value={categoryFilter}
                 onValueChange={(value) => {
                   setCategoryFilter(value);
                   setPage(1);
                 }}
-              >
-                <SelectTrigger className="h-9 w-full sm:w-44 bg-card text-xs border-input">
-                  <SelectValue placeholder={t("inv_filterCategory")} />
-                </SelectTrigger>
-                <SelectContent className="text-xs">
-                  <SelectItem value="all">{t("common_all")}</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                options={[
+                  { value: "all", label: t("common_all") },
+                  ...categories.map((category) => ({
+                    value: category,
+                    label: category,
+                  })),
+                ]}
+                placeholder={t("inv_filterCategory")}
+                triggerClassName="h-9 w-full sm:w-44 bg-card text-xs border-input"
+                contentClassName="text-xs"
+              />
             </div>
           </div>
         </CardHeader>

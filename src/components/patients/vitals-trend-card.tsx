@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { logClientError } from "@/lib/client-logger";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import type { Dictionary } from "@/lib/i18n/locale";
 
 interface TrendPoint {
@@ -84,18 +85,16 @@ export function VitalsTrendCard({
     <div className="rounded-lg border border-border bg-card p-4 shadow-xs">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm font-semibold text-foreground">{t["trend_title"]}</p>
-        <select
-          className="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+        <SearchableSelect
           value={metric}
-          onChange={(e) => setMetric(e.target.value)}
-          aria-label={t["trend_metric"]}
-        >
-          {METRICS.map((m) => (
-            <option key={m} value={m}>
-              {t[`trend_${m}`] ?? m}
-            </option>
-          ))}
-        </select>
+          onValueChange={setMetric}
+          options={METRICS.map((m) => ({
+            value: m,
+            label: String(t[`trend_${m}`] ?? m),
+          }))}
+          ariaLabel={String(t["trend_metric"])}
+          triggerClassName="h-9 w-auto min-w-44 rounded-md border border-input bg-background px-3 text-sm text-foreground"
+        />
       </div>
       {points.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground">{t["trend_empty"]}</p>

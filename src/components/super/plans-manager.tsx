@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n/locale";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 
 type PlanRow = {
   id: string;
@@ -355,14 +356,16 @@ export function PlansManager({ t }: { t: Dictionary }) {
               />
             </Field>
             <Field label={t["plans_billingCycle"]}>
-              <select
+              <SearchableSelect
                 value={editing.billingCycle}
-                onChange={(event) => setEditing({ ...editing, billingCycle: event.target.value })}
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-              >
-                <option value="monthly">Monthly</option>
-                <option value="yearly">Yearly</option>
-              </select>
+                onValueChange={(v) => setEditing({ ...editing, billingCycle: v })}
+                options={[
+                  { value: "monthly", label: "Monthly" },
+                  { value: "yearly", label: "Yearly" },
+                ]}
+                placeholder={t["plans_billingCycle"]}
+                triggerClassName="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+              />
             </Field>
             <Field label={t["plans_displayOrder"]}>
               <input
@@ -382,30 +385,30 @@ export function PlansManager({ t }: { t: Dictionary }) {
               />
             </Field>
             <Field label={t["plans_upgradeTarget"]}>
-              <select
+              <SearchableSelect
                 value={editing.upgradeTargetId}
-                onChange={(event) => setEditing({ ...editing, upgradeTargetId: event.target.value })}
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-              >
-                <option value="">—</option>
-                {plans
-                  .filter((plan) => plan.id !== editing.id)
-                  .map((plan) => (
-                    <option key={plan.id} value={plan.id}>
-                      {plan.code} — {plan.nameEn}
-                    </option>
-                  ))}
-              </select>
+                onValueChange={(v) => setEditing({ ...editing, upgradeTargetId: v })}
+                options={[
+                  { value: "", label: "—" },
+                  ...plans
+                    .filter((plan) => plan.id !== editing.id)
+                    .map((plan) => ({ value: plan.id, label: `${plan.code} — ${plan.nameEn}` })),
+                ]}
+                placeholder="—"
+                triggerClassName="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+              />
             </Field>
             <Field label={t["plans_status"]}>
-              <select
+              <SearchableSelect
                 value={editing.status}
-                onChange={(event) => setEditing({ ...editing, status: event.target.value })}
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-              >
-                <option value="active">Active</option>
-                <option value="archived">Archived</option>
-              </select>
+                onValueChange={(v) => setEditing({ ...editing, status: v })}
+                options={[
+                  { value: "active", label: "Active" },
+                  { value: "archived", label: "Archived" },
+                ]}
+                placeholder={t["plans_status"]}
+                triggerClassName="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+              />
             </Field>
             <div className="flex items-end gap-6 pb-1">
               <Toggle

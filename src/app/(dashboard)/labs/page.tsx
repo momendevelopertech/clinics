@@ -23,6 +23,7 @@ import { AddLabResultDialog } from "@/components/labs/add-lab-result-dialog";
 import { AddLabOrderDialog } from "@/components/labs/add-lab-order-dialog";
 import { LabOrdersSection } from "@/components/labs/lab-orders-section";
 import { DataPagination } from "@/components/ui/data-pagination";
+import { FilePreviewDialog } from "@/components/ui/file-preview-dialog";
 import { paginate } from "@/lib/pagination";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -51,6 +52,7 @@ export default function LabResultsPage() {
   const [loading, setLoading] = React.useState(true);
   const [statusFilter, setStatusFilter] = React.useState<string | null>(null);
   const [page, setPage] = React.useState(1);
+  const [preview, setPreview] = React.useState<{ title: string; url: string } | null>(null);
   const { forbidden, setForbidden } = usePermissionState();
 
   const fetchLabResults = React.useCallback(async () => {
@@ -171,6 +173,14 @@ export default function LabResultsPage() {
 
   return (
     <div className="flex flex-col gap-6 w-full h-full">
+      <FilePreviewDialog
+        open={preview !== null}
+        onOpenChange={(next) => {
+          if (!next) setPreview(null);
+        }}
+        title={preview?.title ?? ""}
+        url={preview?.url ?? null}
+      />
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground mb-1 flex items-center">
@@ -367,23 +377,23 @@ export default function LabResultsPage() {
                     </td>
                     <td className="px-6 py-4">
                       {result.reportUrl ? (
-                        <a
-                          href={result.reportUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={
+                            isHighlightedRow(result.status)
+                              ? "h-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                              : "h-8"
+                          }
+                          onClick={() =>
+                            setPreview({
+                              title: `${result.patientName} — ${result.testName}`,
+                              url: result.reportUrl as string,
+                            })
+                          }
                         >
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className={
-                              isHighlightedRow(result.status)
-                                ? "h-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                                : "h-8"
-                            }
-                          >
-                            <Eye className="mr-1.5 h-4 w-4" />{t("labs_viewReport")}
-                          </Button>
-                        </a>
+                          <Eye className="mr-1.5 h-4 w-4" />{t("labs_viewReport")}
+                        </Button>
                       ) : (
                         <span
                           className={

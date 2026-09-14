@@ -29,13 +29,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 ;
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -206,21 +200,13 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="gender">{t("addPatient_gender")}</Label>
-                    <Select
+                    <SearchableSelect
                       value={form.watch("gender") ?? ""}
                       onValueChange={(v) => form.setValue("gender", v || undefined)}
-                    >
-                      <SelectTrigger id="gender">
-                        <SelectValue placeholder={t("addPatient_select")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {GENDERS.map((g) => (
-                          <SelectItem key={g} value={g}>
-                            {genderLabel(g)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      options={GENDERS.map((g) => ({ value: g, label: genderLabel(g) }))}
+                      placeholder={t("addPatient_select")}
+                      id="gender"
+                    />
                   </div>
                 </div>
               </div>
@@ -312,21 +298,13 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="bloodType">{t("addPatient_bloodType")}</Label>
-                    <Select
+                    <SearchableSelect
                       value={form.watch("bloodType") ?? ""}
                       onValueChange={(v) => form.setValue("bloodType", v || undefined)}
-                    >
-                      <SelectTrigger id="bloodType">
-                        <SelectValue placeholder={t("addPatient_select")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {BLOOD_TYPES.map((b) => (
-                          <SelectItem key={b} value={b}>
-                            {bloodLabel(b)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      options={BLOOD_TYPES.map((b) => ({ value: b, label: bloodLabel(b) }))}
+                      placeholder={t("addPatient_select")}
+                      id="bloodType"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="primaryCareProvider" className="flex items-center gap-1">

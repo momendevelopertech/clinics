@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { useLocale } from "@/components/locale/locale-provider";
 import { logClientError } from "@/lib/client-logger";
@@ -72,44 +72,39 @@ export function AddLabOrderDialog({ onSuccess }: { onSuccess: () => void }) {
         <form onSubmit={submit} className="flex flex-col gap-4 pt-2">
           <div className="flex flex-col gap-1.5">
             <Label>{t("labs_patientRequired")}</Label>
-            <Select value={form.patientId} onValueChange={(value) => setForm({ ...form, patientId: value })}>
-              <SelectTrigger>
-                <SelectValue placeholder={t("labs_selectPatient")} />
-              </SelectTrigger>
-              <SelectContent>
-                {patients.map((patient) => (
-                  <SelectItem key={patient.id} value={patient.id}>
-                    {patient.firstName} {patient.lastName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <SearchableSelect
+              value={form.patientId}
+              onValueChange={(value) => setForm({ ...form, patientId: value })}
+              options={patients.map((patient) => ({
+                value: patient.id,
+                label: `${patient.firstName} ${patient.lastName}`,
+              }))}
+              placeholder={t("labs_selectPatient")}
+            />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label>{t("labs_orderType")}</Label>
-              <Select value={form.orderType} onValueChange={(value) => setForm({ ...form, orderType: value })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="lab">{t("labs_typeLab")}</SelectItem>
-                  <SelectItem value="imaging">{t("labs_typeImaging")}</SelectItem>
-                </SelectContent>
-              </Select>
+              <SearchableSelect
+                value={form.orderType}
+                onValueChange={(value) => setForm({ ...form, orderType: value })}
+                options={[
+                  { value: "lab", label: t("labs_typeLab") },
+                  { value: "imaging", label: t("labs_typeImaging") },
+                ]}
+              />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label>{t("labs_priority")}</Label>
-              <Select value={form.priority} onValueChange={(value) => setForm({ ...form, priority: value })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="routine">{t("labs_routine")}</SelectItem>
-                  <SelectItem value="urgent">{t("labs_urgent")}</SelectItem>
-                  <SelectItem value="stat">{t("labs_stat")}</SelectItem>
-                </SelectContent>
-              </Select>
+              <SearchableSelect
+                value={form.priority}
+                onValueChange={(value) => setForm({ ...form, priority: value })}
+                options={[
+                  { value: "routine", label: t("labs_routine") },
+                  { value: "urgent", label: t("labs_urgent") },
+                  { value: "stat", label: t("labs_stat") },
+                ]}
+              />
             </div>
           </div>
           <div className="flex flex-col gap-1.5">

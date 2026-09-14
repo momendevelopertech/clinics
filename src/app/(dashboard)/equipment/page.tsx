@@ -11,13 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -221,25 +215,22 @@ export default function EquipmentPage() {
                 setPage(1);
               }}
             />
-            <Select
+            <SearchableSelect
               value={statusFilter}
               onValueChange={(v) => {
                 setStatusFilter(v);
                 setPage(1);
               }}
-            >
-              <SelectTrigger className="w-full sm:w-48 h-9">
-                <SelectValue placeholder={t("common_status")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("common_all")}</SelectItem>
-                {EQUIPMENT_STATUSES.map((s) => (
-                  <SelectItem key={s} value={s}>
-                    {t(`eq_status_${s}`) === `eq_status_${s}` ? s : t(`eq_status_${s}`)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              options={[
+                { value: "all", label: t("common_all") },
+                ...EQUIPMENT_STATUSES.map((s) => ({
+                  value: s,
+                  label: t(`eq_status_${s}`) === `eq_status_${s}` ? s : t(`eq_status_${s}`),
+                })),
+              ]}
+              placeholder={t("common_status")}
+              triggerClassName="w-full sm:w-48 h-9"
+            />
           </div>
         </CardHeader>
         <CardContent>
@@ -323,33 +314,11 @@ export default function EquipmentPage() {
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="grid gap-2">
                 <Label>{t("common_type")}</Label>
-                <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v })}>
-                  <SelectTrigger className="h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {EQUIPMENT_TYPES.map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {s}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableSelect value={form.type} onValueChange={(v) => setForm({ ...form, type: v })} options={EQUIPMENT_TYPES.map((s) => ({ value: s, label: s }))} triggerClassName="h-9" />
               </div>
               <div className="grid gap-2">
                 <Label>{t("common_status")}</Label>
-                <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
-                  <SelectTrigger className="h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {EQUIPMENT_STATUSES.map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {t(`eq_status_${s}`) === `eq_status_${s}` ? s : t(`eq_status_${s}`)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableSelect value={form.status} onValueChange={(v) => setForm({ ...form, status: v })} options={EQUIPMENT_STATUSES.map((s) => ({ value: s, label: t(`eq_status_${s}`) === `eq_status_${s}` ? s : t(`eq_status_${s}`) }))} triggerClassName="h-9" />
               </div>
             </div>
             <div className="grid gap-2">
@@ -405,33 +374,11 @@ export default function EquipmentPage() {
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="grid gap-2">
                     <Label>{t("common_type")}</Label>
-                    <Select value={maintForm.type} onValueChange={(v) => setMaintForm({ ...maintForm, type: v })}>
-                      <SelectTrigger className="h-9">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {MAINT_TYPES.map((s) => (
-                          <SelectItem key={s} value={s}>
-                            {s}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <SearchableSelect value={maintForm.type} onValueChange={(v) => setMaintForm({ ...maintForm, type: v })} options={MAINT_TYPES.map((s) => ({ value: s, label: s }))} triggerClassName="h-9" />
                   </div>
                   <div className="grid gap-2">
                     <Label>{t("common_status")}</Label>
-                    <Select value={maintForm.status} onValueChange={(v) => setMaintForm({ ...maintForm, status: v })}>
-                      <SelectTrigger className="h-9">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {MAINT_STATUSES.map((s) => (
-                          <SelectItem key={s} value={s}>
-                            {s}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <SearchableSelect value={maintForm.status} onValueChange={(v) => setMaintForm({ ...maintForm, status: v })} options={MAINT_STATUSES.map((s) => ({ value: s, label: s }))} triggerClassName="h-9" />
                   </div>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">

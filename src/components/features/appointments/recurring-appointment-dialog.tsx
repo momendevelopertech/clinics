@@ -17,14 +17,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { logClientError } from "@/lib/client-logger";
 
@@ -135,22 +129,19 @@ export function RecurringAppointmentDialog({
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="gap-2 flex flex-col">
             <Label htmlFor="frequency">Frequency *</Label>
-            <Select
+            <SearchableSelect
               value={formData.frequency}
               onValueChange={(value) =>
                 setFormData({ ...formData, frequency: value })
               }
-            >
-              <SelectTrigger id="frequency">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="daily">Daily</SelectItem>
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="biweekly">Every 2 Weeks</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
-              </SelectContent>
-            </Select>
+              options={[
+                { value: "daily", label: "Daily" },
+                { value: "weekly", label: "Weekly" },
+                { value: "biweekly", label: "Every 2 Weeks" },
+                { value: "monthly", label: "Monthly" },
+              ]}
+              id="frequency"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">

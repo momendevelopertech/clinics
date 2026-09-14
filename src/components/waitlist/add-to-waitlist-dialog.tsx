@@ -19,13 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
 
@@ -119,23 +113,18 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="gap-2 flex flex-col">
             <Label htmlFor="patient">{t("wl_patientRequired")}</Label>
-            <Select
+            <SearchableSelect
               value={formData.patientId}
               onValueChange={(value) =>
                 setFormData({ ...formData, patientId: value })
               }
-            >
-              <SelectTrigger id="patient">
-                <SelectValue placeholder={t("wl_selectPatient")} />
-              </SelectTrigger>
-              <SelectContent>
-                {patients.map((patient) => (
-                  <SelectItem key={patient.id} value={patient.id}>
-                    {patient.firstName} {patient.lastName} - {patient.mrn}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              options={patients.map((patient) => ({
+                value: patient.id,
+                label: `${patient.firstName} ${patient.lastName} - ${patient.mrn}`,
+              }))}
+              placeholder={t("wl_selectPatient")}
+              id="patient"
+            />
           </div>
 
           <div className="gap-2 flex flex-col">

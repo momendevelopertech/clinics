@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { useLocale } from "@/components/locale/locale-provider";
 import { isSoapEmpty, prefillSoap } from "@/lib/clinical-templates";
 import { PermissionDenied } from "@/components/ui/permission-denied";
@@ -162,10 +163,20 @@ export function EncountersWorkspace() {
         <FeatureTip tipId="encounters-charting">
           <div className="grid flex-1 gap-2">
             <Label htmlFor="encounter-patient">{t("enc_patient")}</Label>
-            <select id="encounter-patient" className="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" value={patientId} onChange={(event) => setPatientId(event.target.value)}>
-              <option value="">{t("enc_selectPatient")}</option>
-              {patients.map((patient) => <option key={patient.id} value={patient.id}>{patient.firstName} {patient.lastName} · {patient.mrn}</option>)}
-            </select>
+            <SearchableSelect
+              id="encounter-patient"
+              value={patientId}
+              onValueChange={setPatientId}
+              options={[
+                { value: "", label: t("enc_selectPatient") },
+                ...patients.map((patient) => ({
+                  value: patient.id,
+                  label: `${patient.firstName} ${patient.lastName} · ${patient.mrn}`,
+                })),
+              ]}
+              placeholder={t("enc_selectPatient")}
+              triggerClassName="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground"
+            />
           </div>
           </FeatureTip>
           <Button onClick={() => void startEncounter().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("enc_startError")))}><Plus className="mr-1.5 h-4 w-4" />{t("enc_start")}</Button>
@@ -197,10 +208,19 @@ export function EncountersWorkspace() {
               {encounter.status === "in_progress" ? (
                 <div className="mt-3 flex flex-col gap-3">
                   <div className="flex flex-col gap-2 sm:flex-row">
-                    <select className="h-9 flex-1 rounded-md border border-input bg-background px-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" value={selectedId === encounter.id ? templateId : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); applyTemplate(event.target.value); }}>
-                      <option value="">{t("enc_tplSelect")}</option>
-                      {templates.map((tpl) => <option key={tpl.id} value={tpl.id}>{tpl.name}{tpl.specialty ? ` · ${tpl.specialty}` : ""}</option>)}
-                    </select>
+                    <SearchableSelect
+                      value={selectedId === encounter.id ? templateId : ""}
+                      onValueChange={(value) => { setSelectedId(encounter.id); applyTemplate(value); }}
+                      options={[
+                        { value: "", label: t("enc_tplSelect") },
+                        ...templates.map((tpl) => ({
+                          value: tpl.id,
+                          label: tpl.specialty ? `${tpl.name} · ${tpl.specialty}` : tpl.name,
+                        })),
+                      ]}
+                      placeholder={t("enc_tplSelect")}
+                      triggerClassName="flex-1 h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground"
+                    />
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div className="grid gap-1.5"><Label className="text-xs font-semibold">{t("enc_soapSubjective")}</Label><Textarea value={selectedId === encounter.id ? soap.subjective : ""} onFocus={() => setSelectedId(encounter.id)} onChange={(event) => { setSelectedId(encounter.id); setSoap({ ...soap, subjective: event.target.value }); }} placeholder={t("enc_soapSubjective")} /></div>

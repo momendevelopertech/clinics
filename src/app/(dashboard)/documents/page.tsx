@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DataPagination } from "@/components/ui/data-pagination";
+import { FilePreviewDialog } from "@/components/ui/file-preview-dialog";
 import { FilterBar } from "@/components/ui/filter-bar";
 import {
   EmptyState,
@@ -90,6 +91,7 @@ export default function DocumentsPage() {
   const [error, setError] = React.useState(false);
   const [typeFilter, setTypeFilter] = React.useState<string | null>(null);
   const [page, setPage] = React.useState(1);
+  const [preview, setPreview] = React.useState<{ title: string; url: string } | null>(null);
   const { forbidden, setForbidden } = usePermissionState();
   const { get } = useFeatureConfig();
   const cloudinary = get("cloudinary");
@@ -185,6 +187,14 @@ export default function DocumentsPage() {
       {cloudinary && !cloudinary.configured ? (
         <FeatureNotConfiguredBanner feature="cloudinary" missingEnvVars={cloudinary.missing} />
       ) : null}
+      <FilePreviewDialog
+        open={preview !== null}
+        onOpenChange={(next) => {
+          if (!next) setPreview(null);
+        }}
+        title={preview?.title ?? ""}
+        url={preview?.url ?? null}
+      />
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground mb-1">
@@ -338,15 +348,19 @@ export default function DocumentsPage() {
                     </td>
                     <td className="px-6 py-4">
                       {isExternalUrl(document.storageKey) ? (
-                        <a
-                          href={document.downloadUrl ?? document.storageKey}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8"
+                          onClick={() =>
+                            setPreview({
+                              title: document.name,
+                              url: document.downloadUrl ?? document.storageKey,
+                            })
+                          }
                         >
-                          <Button variant="ghost" size="sm" className="h-8">
-                            <Eye className="h-3.5 w-3.5 mr-1" />{t("common_view")}
-                          </Button>
-                        </a>
+                          <Eye className="h-3.5 w-3.5 mr-1" />{t("common_view")}
+                        </Button>
                       ) : (
                         <span className="text-xs text-muted-foreground">
                           {t("common_noFile")}

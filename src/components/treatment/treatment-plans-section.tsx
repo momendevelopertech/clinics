@@ -3,13 +3,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import type { Dictionary } from "@/lib/i18n/locale";
@@ -229,14 +223,12 @@ export function TreatmentPlansSection({
                   </div>
                 ))}
                 <div className="flex gap-2 pt-1">
-                  <Select value={stepKind} onValueChange={setStepKind}>
-                    <SelectTrigger className="w-36 h-9"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {STEP_KINDS.map((k) => (
-                        <SelectItem key={k} value={k}>{k}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <SearchableSelect
+                    value={stepKind}
+                    onValueChange={setStepKind}
+                    options={STEP_KINDS.map((k) => ({ value: k, label: k }))}
+                    triggerClassName="w-36 h-9"
+                  />
                   <Input
                     value={stepTitle}
                     onChange={(e) => setStepTitle(e.target.value)}

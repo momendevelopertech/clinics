@@ -13,13 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -81,18 +75,16 @@ export function MergePatientsDialog({ patient, patients, onSuccess }: MergePatie
         </DialogHeader>
         <div className="grid gap-2 py-2">
           <Label htmlFor={`merge-survivor-${patient.id}`}>{t("patients_mergeSurvivor")}</Label>
-          <Select value={survivorId} onValueChange={setSurvivorId}>
-            <SelectTrigger id={`merge-survivor-${patient.id}`}>
-              <SelectValue placeholder={t("patients_mergeSurvivorPlaceholder")} />
-            </SelectTrigger>
-            <SelectContent className="max-h-64">
-              {candidates.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.firstName} {c.lastName} · {c.mrn}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <SearchableSelect
+            value={survivorId}
+            onValueChange={setSurvivorId}
+            options={candidates.map((c) => ({
+              value: c.id,
+              label: `${c.firstName} ${c.lastName} · ${c.mrn}`,
+            }))}
+            placeholder={t("patients_mergeSurvivorPlaceholder")}
+            id={`merge-survivor-${patient.id}`}
+          />
         </div>
         <DialogFooter className="gap-2">
           <Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>

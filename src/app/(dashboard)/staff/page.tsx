@@ -12,13 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
   CalendarPlus,
   Check,
@@ -206,27 +200,11 @@ export default function StaffPage() {
             <div className="flex flex-col gap-4">
               <div className="gap-2 flex flex-col">
                 <Label>{t("staff_member")}</Label>
-                <Select value={assignUser} onValueChange={setAssignUser}>
-                  <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {staff.map((s) => (
-                      <SelectItem key={s.id} value={s.id}>
-                        {s.name ?? s.email}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableSelect value={assignUser} onValueChange={setAssignUser} options={staff.map((s) => ({ value: s.id, label: s.name ?? s.email }))} triggerClassName="h-9" />
               </div>
               <div className="gap-2 flex flex-col">
                 <Label>{t("staff_role")}</Label>
-                <Select value={assignRole} onValueChange={setAssignRole}>
-                  <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {roles.map((r) => (
-                      <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableSelect value={assignRole} onValueChange={setAssignRole} options={roles.map((r) => ({ value: r.id, label: r.name }))} triggerClassName="h-9" />
               </div>
               <div className="flex justify-end">
                 <Button onClick={handleAssign} disabled={!assignUser || !assignRole} className="h-9 gap-1.5">
@@ -243,15 +221,7 @@ export default function StaffPage() {
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-semibold text-foreground">{t("staff_directory")}</CardTitle>
             <div className="flex gap-3">
-              <Select value={branchFilter} onValueChange={(v) => { setBranchFilter(v); void loadStaff(v); }}>
-                <SelectTrigger className="w-48 h-9"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("staff_allBranches")}</SelectItem>
-                  {branches.map((b) => (
-                    <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect value={branchFilter} onValueChange={(v) => { setBranchFilter(v); void loadStaff(v); }} options={[{ value: "all", label: t("staff_allBranches") }, ...branches.map((b) => ({ value: b.id, label: b.name }))]} triggerClassName="w-48 h-9" />
             </div>
           </div>
         </CardHeader>
@@ -312,14 +282,7 @@ export default function StaffPage() {
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 border-t border-border pt-4">
               <div className="gap-2 flex flex-col">
                 <Label className="text-xs">{t("staff_weekday")}</Label>
-                <Select value={shiftForm.weekday} onValueChange={(v) => setShiftForm({ ...shiftForm, weekday: v })}>
-                  <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {WEEKDAY_KEYS.map((k, i) => (
-                      <SelectItem key={k} value={String(i)}>{t(k)}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableSelect value={shiftForm.weekday} onValueChange={(v) => setShiftForm({ ...shiftForm, weekday: v })} options={WEEKDAY_KEYS.map((k, i) => ({ value: String(i), label: t(k) }))} triggerClassName="h-9" />
               </div>
               <div className="gap-2 flex flex-col">
                 <Label className="text-xs">{t("staff_from")}</Label>
@@ -331,14 +294,7 @@ export default function StaffPage() {
               </div>
               <div className="gap-2 flex flex-col">
                 <Label className="text-xs">{t("staff_branch")}</Label>
-                <Select value={shiftForm.branchId} onValueChange={(v) => setShiftForm({ ...shiftForm, branchId: v })}>
-                  <SelectTrigger className="h-9"><SelectValue placeholder="—" /></SelectTrigger>
-                  <SelectContent>
-                    {branches.map((b) => (
-                      <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableSelect value={shiftForm.branchId} onValueChange={(v) => setShiftForm({ ...shiftForm, branchId: v })} options={branches.map((b) => ({ value: b.id, label: b.name }))} placeholder="—" triggerClassName="h-9" />
               </div>
               <div className="flex items-end">
                 <Button onClick={handleAddShift} className="h-9 w-full gap-1.5"><CalendarPlus className="h-4 w-4" />{t("staff_addShift")}</Button>

@@ -10,13 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Plus,
@@ -125,78 +119,57 @@ export function AddCommunicationDialog({
           {/* Patient Selection */}
           <div>
             <Label htmlFor="patient">{t("common_patient")}</Label>
-            <Select
+            <SearchableSelect
               value={formData.patientId}
               onValueChange={(value) =>
                 setFormData({ ...formData, patientId: value })
               }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={t("common_selectPatient")} />
-              </SelectTrigger>
-              <SelectContent>
-                {patientLoading ? (
-                  <SelectItem value="loading" disabled>
-                    {t("common_loading")}
-                  </SelectItem>
-                ) : (
-                  patients.map((patient) => (
-                    <SelectItem key={patient.id} value={patient.id}>
-                      {patient.firstName} {patient.lastName}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
+              options={
+                patientLoading
+                  ? [{ value: "loading", label: t("common_loading"), disabled: true }]
+                  : patients.map((patient) => ({
+                      value: patient.id,
+                      label: `${patient.firstName} ${patient.lastName}`,
+                    }))
+              }
+              placeholder={t("common_selectPatient")}
+              id="patient"
+            />
           </div>
 
           {/* Channel Selection */}
           <div>
             <Label htmlFor="channel">{t("comm_channel")}</Label>
-            <Select
+            <SearchableSelect
               value={formData.channel}
               onValueChange={(value) =>
                 setFormData({ ...formData, channel: value })
               }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="sms">{t("comm_channel_sms")}</SelectItem>
-                <SelectItem value="email">{t("comm_channel_email")}</SelectItem>
-                <SelectItem value="whatsapp">
-                  {t("comm_channel_whatsapp")}
-                </SelectItem>
-              </SelectContent>
-            </Select>
+              options={[
+                { value: "sms", label: t("comm_channel_sms") },
+                { value: "email", label: t("comm_channel_email") },
+                { value: "whatsapp", label: t("comm_channel_whatsapp") },
+              ]}
+              id="channel"
+            />
           </div>
 
           {/* Type Selection */}
           <div>
             <Label htmlFor="type">{t("comm_messageType")}</Label>
-            <Select
+            <SearchableSelect
               value={formData.type}
               onValueChange={(value) =>
                 setFormData({ ...formData, type: value })
               }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="reminder">
-                  {t("comm_type_reminder")}
-                </SelectItem>
-                <SelectItem value="campaign">
-                  {t("comm_type_campaign")}
-                </SelectItem>
-                <SelectItem value="notification">
-                  {t("comm_type_notification")}
-                </SelectItem>
-                <SelectItem value="survey">{t("comm_type_survey")}</SelectItem>
-              </SelectContent>
-            </Select>
+              options={[
+                { value: "reminder", label: t("comm_type_reminder") },
+                { value: "campaign", label: t("comm_type_campaign") },
+                { value: "notification", label: t("comm_type_notification") },
+                { value: "survey", label: t("comm_type_survey") },
+              ]}
+              id="type"
+            />
           </div>
 
           {/* Message Content */}

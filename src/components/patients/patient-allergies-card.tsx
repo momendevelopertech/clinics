@@ -4,13 +4,7 @@ import * as React from "react";
 import { AlertTriangle, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import type { Dictionary } from "@/lib/i18n/locale";
@@ -168,18 +162,15 @@ export function PatientAllergiesCard({
           placeholder={t["allergy_allergen"]}
           className="h-9"
         />
-        <Select value={severity} onValueChange={setSeverity}>
-          <SelectTrigger className="h-9">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {SEVERITY_KEYS.map((s) => (
-              <SelectItem key={s.value} value={s.value}>
-                {t[s.label as keyof Dictionary]}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <SearchableSelect
+          value={severity}
+          onValueChange={setSeverity}
+          options={SEVERITY_KEYS.map((s) => ({
+            value: s.value,
+            label: t[s.label as keyof Dictionary],
+          }))}
+          triggerClassName="h-9"
+        />
         <Input
           value={reaction}
           onChange={(e) => setReaction(e.target.value)}

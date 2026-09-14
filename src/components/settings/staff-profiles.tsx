@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { displayRoleName } from "@/lib/role-labels";
 
 type Staff = {
@@ -73,10 +73,7 @@ export function StaffProfiles({ t }: { t: (key: string) => string }) {
             </div>
             <div className="flex items-center gap-3">
               <span className="text-xs text-muted-foreground">{member.specialty ?? t("settings_specialtyUnset")}</span>
-              <Select value={member.userRoles[0]?.role.id} onValueChange={(roleId) => void assignRole(member.id, roleId)}>
-                <SelectTrigger className="w-40 h-9 bg-background"><SelectValue placeholder={t("settings_selectRole")} /></SelectTrigger>
-                <SelectContent>{roles.map((role) => <SelectItem key={role.id} value={role.id}>{displayRoleName(role.name)}</SelectItem>)}</SelectContent>
-              </Select>
+              <SearchableSelect value={member.userRoles[0]?.role.id ?? ""} onValueChange={(roleId) => void assignRole(member.id, roleId)} options={roles.map((role) => ({ value: role.id, label: displayRoleName(role.name) }))} placeholder={t("settings_selectRole")} triggerClassName="w-40 h-9 bg-background" />
             </div>
           </div>
           <p className="mt-2 text-xs text-muted-foreground border-t border-border pt-2">

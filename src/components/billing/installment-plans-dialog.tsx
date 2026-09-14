@@ -13,13 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -178,25 +172,11 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
           </div>
           <div className="gap-1.5 flex flex-col">
             <Label className="text-xs font-semibold">{t("inst_frequency")}</Label>
-            <Select value={frequency} onValueChange={setFrequency}>
-              <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent className="text-xs">
-                <SelectItem value="monthly">{t("inst_monthly")}</SelectItem>
-                <SelectItem value="weekly">{t("inst_weekly")}</SelectItem>
-              </SelectContent>
-            </Select>
+            <SearchableSelect value={frequency} onValueChange={setFrequency} options={[{ value: "monthly", label: t("inst_monthly") }, { value: "weekly", label: t("inst_weekly") }]} triggerClassName="h-9 text-xs" contentClassName="text-xs" />
           </div>
           <div className="gap-1.5 flex flex-col">
             <Label className="text-xs font-semibold">{t("inst_method")}</Label>
-            <Select value={method} onValueChange={setMethod}>
-              <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent className="text-xs">
-                <SelectItem value="cash">{t("pay_method_cash")}</SelectItem>
-                <SelectItem value="transfer">{t("pay_method_transfer")}</SelectItem>
-                <SelectItem value="check">{t("pay_method_check")}</SelectItem>
-                <SelectItem value="insurance">{t("pay_method_insurance")}</SelectItem>
-              </SelectContent>
-            </Select>
+            <SearchableSelect value={method} onValueChange={setMethod} options={[{ value: "cash", label: t("pay_method_cash") }, { value: "transfer", label: t("pay_method_transfer") }, { value: "check", label: t("pay_method_check") }, { value: "insurance", label: t("pay_method_insurance") }]} triggerClassName="h-9 text-xs" contentClassName="text-xs" />
           </div>
           <div className="gap-1.5 flex flex-col col-span-2">
             <Label className="text-xs font-semibold">{t("inst_downPayment")}</Label>

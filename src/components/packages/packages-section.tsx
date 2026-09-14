@@ -12,13 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -145,29 +139,27 @@ export function PackagesSection() {
             <div className="flex flex-col gap-4">
               <div className="gap-2 flex flex-col">
                 <Label>{t("pkg_title")}</Label>
-                <Select value={assignPkg} onValueChange={setAssignPkg}>
-                  <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {packages.filter((p) => p.active).map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        {p.name} · {p.totalSessions}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableSelect
+                  value={assignPkg}
+                  onValueChange={setAssignPkg}
+                  options={packages.filter((p) => p.active).map((p) => ({
+                    value: p.id,
+                    label: `${p.name} · ${p.totalSessions}`,
+                  }))}
+                  triggerClassName="h-9"
+                />
               </div>
               <div className="gap-2 flex flex-col">
                 <Label>{t("pkg_patient")}</Label>
-                <Select value={assignPatient} onValueChange={setAssignPatient}>
-                  <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {patients.map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        {p.firstName} {p.lastName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableSelect
+                  value={assignPatient}
+                  onValueChange={setAssignPatient}
+                  options={patients.map((p) => ({
+                    value: p.id,
+                    label: `${p.firstName} ${p.lastName}`,
+                  }))}
+                  triggerClassName="h-9"
+                />
               </div>
               <div className="flex justify-end">
                 <Button onClick={handleAssign} disabled={!assignPkg || !assignPatient} className="h-9 gap-1.5">

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n/locale";
 import type { LimitUsage } from "@/lib/entitlements/types";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 
 type DetailPayload = {
   org: {
@@ -396,15 +397,17 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
         <div className="mt-4 grid gap-3 rounded-lg border border-border bg-muted/30 p-4 sm:grid-cols-2 lg:grid-cols-4">
           <label className="block">
             <span className="mb-1 block text-xs font-semibold">{t["clinic_overrideKind"]}</span>
-            <select
+            <SearchableSelect
               value={overrideForm.kind}
-              onChange={(event) => setOverrideForm({ ...overrideForm, kind: event.target.value })}
-              className="w-full rounded-md border border-border bg-background px-2.5 py-2 text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
-            >
-              <option value="module_override">module_override</option>
-              <option value="feature_override">feature_override</option>
-              <option value="limit_override">limit_override</option>
-            </select>
+              onValueChange={(v) => setOverrideForm({ ...overrideForm, kind: v })}
+              options={[
+                { value: "module_override", label: "module_override" },
+                { value: "feature_override", label: "feature_override" },
+                { value: "limit_override", label: "limit_override" },
+              ]}
+              placeholder={t["clinic_overrideKind"]}
+              triggerClassName="w-full rounded-md border border-border bg-background px-2.5 py-2 text-sm text-foreground"
+            />
           </label>
           <label className="block">
             <span className="mb-1 block text-xs font-semibold">{t["clinic_moduleKey"]}</span>

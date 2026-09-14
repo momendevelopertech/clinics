@@ -10,13 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
   Plus,
   X,
@@ -101,43 +95,37 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
           {/* Campaign Type */}
           <div>
             <Label htmlFor="type">{t("camp_type")}</Label>
-            <Select
+            <SearchableSelect
               value={formData.type}
               onValueChange={(value) =>
                 setFormData({ ...formData, type: value })
               }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="drip">{t("camp_drip")}</SelectItem>
-                <SelectItem value="broadcast">{t("camp_broadcast")}</SelectItem>
-              </SelectContent>
-            </Select>
+              options={[
+                { value: "drip", label: t("camp_drip") },
+                { value: "broadcast", label: t("camp_broadcast") },
+              ]}
+              id="type"
+            />
             <p className="text-xs text-muted-foreground mt-1">{t("camp_typeHelp")}</p>
           </div>
 
           {/* Trigger Type (optional) */}
           <div>
             <Label htmlFor="triggerType">{t("camp_triggerType")}</Label>
-            <Select
+            <SearchableSelect
               value={formData.triggerType}
               onValueChange={(value) =>
                 setFormData({ ...formData, triggerType: value })
               }
-            >
-              <SelectTrigger className="h-9">
-                <SelectValue placeholder={t("camp_triggerPlaceholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">{t("camp_noTrigger")}</SelectItem>
-                <SelectItem value="post_visit">{t("camp_afterVisit")}</SelectItem>
-                <SelectItem value="chronic_care">
-                  {t("camp_chronicCare")}
-                </SelectItem>
-              </SelectContent>
-            </Select>
+              options={[
+                { value: "", label: t("camp_noTrigger") },
+                { value: "post_visit", label: t("camp_afterVisit") },
+                { value: "chronic_care", label: t("camp_chronicCare") },
+              ]}
+              placeholder={t("camp_triggerPlaceholder")}
+              triggerClassName="h-9"
+              id="triggerType"
+            />
             <p className="text-xs text-muted-foreground mt-1">{t("camp_triggerHelp")}</p>
           </div>
         </div>

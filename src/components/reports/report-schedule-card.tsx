@@ -4,13 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { FeatureNotConfiguredBanner } from "@/components/ui/feature-not-configured-banner";
@@ -128,14 +122,7 @@ export function ReportScheduleCard({ t }: { t: Dictionary }) {
         </div>
         <div className="gap-1.5 flex flex-col">
           <Label className="text-xs font-semibold">{t["reports_schedRecipient"]}</Label>
-          <Select value={recipient} onValueChange={setRecipient}>
-            <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent className="text-xs">
-              {staff.map((s) => (
-                <SelectItem key={s.id} value={s.id}>{s.name ?? s.email}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <SearchableSelect value={recipient} onValueChange={setRecipient} options={staff.map((s) => ({ value: s.id, label: s.name ?? s.email }))} triggerClassName="h-9 text-xs" contentClassName="text-xs" />
         </div>
         <div className="flex items-end">
           <Button onClick={create} disabled={!recipient} className="h-9 w-full text-xs font-semibold shadow-2xs gap-1.5">

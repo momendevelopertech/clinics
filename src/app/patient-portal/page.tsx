@@ -29,6 +29,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
+import { FilePreviewDialog } from "@/components/ui/file-preview-dialog";
 import { useVitalsStream } from "@/hooks/use-vitals-stream";
 import { logClientError } from "@/lib/client-logger";
 import { shouldShowJoinLink } from "@/lib/telehealth";
@@ -52,6 +53,7 @@ export default function PatientPortalPage() {
   const [documents, setDocuments] = React.useState<Array<{ id: string; name: string; type: string; url: string }>>([]);
   const [invoices, setInvoices] = React.useState<Array<{ id: string; invoiceNumber: string; status: string; totalAmount: number; amountPaid: number; balance: number }>>([]);
   const [consents, setConsents] = React.useState<Array<{ type: string; granted: boolean; signedAt: string | null }>>([]);
+  const [preview, setPreview] = React.useState<{ title: string; url: string } | null>(null);
   const [reschedulingId, setReschedulingId] = React.useState<string | null>(null);
   const [rescheduleDate, setRescheduleDate] = React.useState("");
   const [rescheduleSlots, setRescheduleSlots] = React.useState<Array<{ start: string; end: string }>>([]);
@@ -289,6 +291,14 @@ export default function PatientPortalPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <FilePreviewDialog
+        open={preview !== null}
+        onOpenChange={(next) => {
+          if (!next) setPreview(null);
+        }}
+        title={preview?.title ?? ""}
+        url={preview?.url ?? null}
+      />
       {/* Header */}
       <div className="bg-card border-b border-border shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
@@ -731,14 +741,13 @@ export default function PatientPortalPage() {
                         <p className="font-medium truncate text-foreground">{doc.name}</p>
                         <p className="text-sm text-muted-foreground">{doc.type}</p>
                       </div>
-                      <a
-                        href={doc.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => setPreview({ title: doc.name, url: doc.url })}
                         className="text-sm text-primary hover:underline shrink-0"
                       >
-                        {doc.type}
-                      </a>
+                        {t("common_view")}
+                      </button>
                     </div>
                   </div>
                 ))}

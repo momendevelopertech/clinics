@@ -6,13 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -130,19 +124,17 @@ export function BookClinicClient({ orgSlug }: { orgSlug: string }) {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
               <Label htmlFor="book-provider">{t("portal_pickProvider")}</Label>
-              <Select value={providerId} onValueChange={setProviderId}>
-                <SelectTrigger id="book-provider" className="h-9">
-                  <SelectValue placeholder={t("portal_pickProvider")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {providers.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      {p.name ?? p.id}
-                      {p.specialty ? ` · ${p.specialty}` : ""}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect
+                value={providerId}
+                onValueChange={setProviderId}
+                options={providers.map((p) => ({
+                  value: p.id,
+                  label: `${p.name ?? p.id}${p.specialty ? ` · ${p.specialty}` : ""}`,
+                }))}
+                placeholder={t("portal_pickProvider")}
+                triggerClassName="h-9"
+                id="book-provider"
+              />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="book-date">{t("portal_pickDate")}</Label>

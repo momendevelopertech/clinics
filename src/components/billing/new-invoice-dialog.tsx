@@ -17,13 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 
@@ -145,23 +139,19 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 py-2">
           <div className="gap-1.5 flex flex-col">
             <Label htmlFor="invoice-patient" className="text-xs font-semibold">Patient *</Label>
-            <Select
+            <SearchableSelect
               value={formData.patientId}
               onValueChange={(value) =>
                 setFormData({ ...formData, patientId: value })
               }
-            >
-              <SelectTrigger id="invoice-patient" className="h-9 text-xs">
-                <SelectValue placeholder="Select a patient" />
-              </SelectTrigger>
-              <SelectContent className="text-xs">
-                {patients.map((patient) => (
-                  <SelectItem key={patient.id} value={patient.id}>
-                    {patient.firstName} {patient.lastName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              options={patients.map((patient) => ({
+                value: patient.id,
+                label: `${patient.firstName} ${patient.lastName}`,
+              }))}
+              placeholder="Select a patient"
+              triggerClassName="h-9 text-xs"
+              id="invoice-patient"
+            />
           </div>
 
           <div className="gap-1.5 flex flex-col">

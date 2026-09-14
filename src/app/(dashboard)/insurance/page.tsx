@@ -13,13 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { canTransitionClaim } from "@/lib/insurance";
@@ -270,48 +264,42 @@ export default function InsurancePage() {
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
             <div className="grid gap-2 w-full sm:w-64">
               <Label>{t("common_patient")}</Label>
-              <Select
+              <SearchableSelect
                 value={patientFilter}
                 onValueChange={(v) => {
                   setPatientFilter(v);
                   setPage(1);
                 }}
-              >
-                <SelectTrigger className="h-9">
-                  <SelectValue placeholder={t("common_all")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("common_all")}</SelectItem>
-                  {patients.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      {p.firstName} {p.lastName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                options={[
+                  { value: "all", label: t("common_all") },
+                  ...patients.map((p) => ({
+                    value: p.id,
+                    label: `${p.firstName} ${p.lastName}`,
+                  })),
+                ]}
+                placeholder={t("common_all")}
+                triggerClassName="h-9"
+              />
             </div>
             {tab === "claims" ? (
               <div className="grid gap-2 w-full sm:w-48">
                 <Label>{t("common_status")}</Label>
-                <Select
+                <SearchableSelect
                   value={statusFilter}
                   onValueChange={(v) => {
                     setStatusFilter(v);
                     setPage(1);
                   }}
-                >
-                  <SelectTrigger className="h-9">
-                    <SelectValue placeholder={t("common_all")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t("common_all")}</SelectItem>
-                    {CLAIM_STATUSES.map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {t(`ins_claim_${s}`)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  options={[
+                    { value: "all", label: t("common_all") },
+                    ...CLAIM_STATUSES.map((s) => ({
+                      value: s,
+                      label: t(`ins_claim_${s}`),
+                    })),
+                  ]}
+                  placeholder={t("common_all")}
+                  triggerClassName="h-9"
+                />
               </div>
             ) : null}
           </div>
@@ -409,21 +397,16 @@ export default function InsurancePage() {
                         <td className="px-4 py-3">
                           {nextOptions.length > 0 ? (
                             <div className="flex flex-wrap items-center gap-2">
-                              <Select
+                              <SearchableSelect
                                 value={advancing[c.id] ?? ""}
                                 onValueChange={(v) => setAdvancing((prev) => ({ ...prev, [c.id]: v }))}
-                              >
-                                <SelectTrigger className="w-36 h-8 text-xs">
-                                  <SelectValue placeholder={t("ins_colAdvance")} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {nextOptions.map((s) => (
-                                    <SelectItem key={s} value={s}>
-                                      {t(`ins_claim_${s}`) === `ins_claim_${s}` ? s : t(`ins_claim_${s}`)}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                                options={nextOptions.map((s) => ({
+                                  value: s,
+                                  label: t(`ins_claim_${s}`) === `ins_claim_${s}` ? s : t(`ins_claim_${s}`),
+                                }))}
+                                placeholder={t("ins_colAdvance")}
+                                triggerClassName="w-36 h-8 text-xs"
+                              />
                               {advancing[c.id] === "paid" ? (
                                 <Input
                                   type="number"
@@ -472,18 +455,7 @@ export default function InsurancePage() {
           <CardContent className="grid gap-3">
             <div className="grid gap-2">
               <Label>{t("common_patientRequired")}</Label>
-              <Select value={policyForm.patientId} onValueChange={(v) => setPolicyForm({ ...policyForm, patientId: v })}>
-                <SelectTrigger className="h-9">
-                  <SelectValue placeholder={t("common_selectPatient")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {patients.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      {p.firstName} {p.lastName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect value={policyForm.patientId} onValueChange={(v) => setPolicyForm({ ...policyForm, patientId: v })} options={patients.map((p) => ({ value: p.id, label: `${p.firstName} ${p.lastName}` }))} placeholder={t("common_selectPatient")} triggerClassName="h-9" />
             </div>
             <div className="grid gap-2">
               <Label>{t("ins_colProvider")}</Label>
@@ -503,15 +475,7 @@ export default function InsurancePage() {
             </div>
             <div className="grid gap-2">
               <Label>{t("common_type")}</Label>
-              <Select value={policyForm.type} onValueChange={(v) => setPolicyForm({ ...policyForm, type: v })}>
-                <SelectTrigger className="h-9">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="primary">{t("ins_type_primary")}</SelectItem>
-                  <SelectItem value="secondary">{t("ins_type_secondary")}</SelectItem>
-                </SelectContent>
-              </Select>
+              <SearchableSelect value={policyForm.type} onValueChange={(v) => setPolicyForm({ ...policyForm, type: v })} options={[{ value: "primary", label: t("ins_type_primary") }, { value: "secondary", label: t("ins_type_secondary") }]} triggerClassName="h-9" />
             </div>
             <div>
               <Button
@@ -532,18 +496,7 @@ export default function InsurancePage() {
           <CardContent className="grid gap-3">
             <div className="grid gap-2">
               <Label>{t("common_patientRequired")}</Label>
-              <Select value={claimForm.patientId} onValueChange={(v) => setClaimForm({ ...claimForm, patientId: v })}>
-                <SelectTrigger className="h-9">
-                  <SelectValue placeholder={t("common_selectPatient")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {patients.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      {p.firstName} {p.lastName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect value={claimForm.patientId} onValueChange={(v) => setClaimForm({ ...claimForm, patientId: v })} options={patients.map((p) => ({ value: p.id, label: `${p.firstName} ${p.lastName}` }))} placeholder={t("common_selectPatient")} triggerClassName="h-9" />
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="grid gap-2">

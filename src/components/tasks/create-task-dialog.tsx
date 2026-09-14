@@ -14,13 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 
@@ -147,23 +141,18 @@ export function CreateTaskDialog({ onSuccess }: CreateTaskDialogProps) {
           <div className="grid grid-cols-2 gap-3">
             <div className="gap-2 flex flex-col">
               <Label htmlFor="task-priority">Priority</Label>
-              <Select
+              <SearchableSelect
                 value={formData.priority}
                 onValueChange={(value) =>
                   setFormData({ ...formData, priority: value })
                 }
-              >
-                <SelectTrigger id="task-priority">
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  {priorities.map((priority) => (
-                    <SelectItem key={priority} value={priority}>
-                      {priority}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                options={priorities.map((priority) => ({
+                  value: priority,
+                  label: priority,
+                }))}
+                placeholder="Select priority"
+                id="task-priority"
+              />
             </div>
             <div className="gap-2 flex flex-col">
               <Label htmlFor="task-due">Due Date</Label>
@@ -180,23 +169,18 @@ export function CreateTaskDialog({ onSuccess }: CreateTaskDialogProps) {
 
           <div className="gap-2 flex flex-col">
             <Label htmlFor="task-patient">Patient (optional)</Label>
-            <Select
+            <SearchableSelect
               value={formData.patientId}
               onValueChange={(value) =>
                 setFormData({ ...formData, patientId: value })
               }
-            >
-              <SelectTrigger id="task-patient">
-                <SelectValue placeholder="No patient linked" />
-              </SelectTrigger>
-              <SelectContent>
-                {patients.map((patient) => (
-                  <SelectItem key={patient.id} value={patient.id}>
-                    {patient.firstName} {patient.lastName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              options={patients.map((patient) => ({
+                value: patient.id,
+                label: `${patient.firstName} ${patient.lastName}`,
+              }))}
+              placeholder="No patient linked"
+              id="task-patient"
+            />
           </div>
 
           <div className="flex gap-2 justify-end">

@@ -18,13 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { getClientErrorMessage, logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
 
@@ -155,7 +149,7 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 py-2">
           <div className="gap-1.5 flex flex-col">
             <Label htmlFor="invoice" className="text-xs font-semibold">{t("pay_invoiceLabel")}</Label>
-            <Select
+            <SearchableSelect
               value={formData.invoiceId}
               onValueChange={(value) => {
                 setFormData({
@@ -164,22 +158,18 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
                   amount: getInvoiceAmount(),
                 });
               }}
-            >
-              <SelectTrigger id="invoice" className="h-9 text-xs">
-                <SelectValue placeholder={t("pay_selectInvoice")} />
-              </SelectTrigger>
-              <SelectContent className="text-xs">
-                {invoices.map((invoice) => (
-                  <SelectItem key={invoice.id} value={invoice.id}>
-                    {invoice.invoiceNumber} - $
-                    {(
-                      Number(invoice.total ?? 0) -
-                      Number(invoice.amountPaid ?? 0)
-                    ).toFixed(2)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              options={invoices.map((invoice) => ({
+                value: invoice.id,
+                label: `${invoice.invoiceNumber} - $${(
+                  Number(invoice.total ?? 0) -
+                  Number(invoice.amountPaid ?? 0)
+                ).toFixed(2)}`,
+              }))}
+              placeholder={t("pay_selectInvoice")}
+              triggerClassName="h-9 text-xs"
+              contentClassName="text-xs"
+              id="invoice"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -202,45 +192,43 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
 
             <div className="gap-1.5 flex flex-col">
               <Label htmlFor="currency" className="text-xs font-semibold">{t("pay_currencyLabel")}</Label>
-              <Select
+              <SearchableSelect
                 value={formData.currency}
                 onValueChange={(value) =>
                   setFormData({ ...formData, currency: value })
                 }
-              >
-                <SelectTrigger id="currency" className="h-9 text-xs">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="text-xs">
-                  <SelectItem value="usd">USD</SelectItem>
-                  <SelectItem value="eur">EUR</SelectItem>
-                  <SelectItem value="gbp">GBP</SelectItem>
-                  <SelectItem value="cad">CAD</SelectItem>
-                </SelectContent>
-              </Select>
+                options={[
+                  { value: "usd", label: "USD" },
+                  { value: "eur", label: "EUR" },
+                  { value: "gbp", label: "GBP" },
+                  { value: "cad", label: "CAD" },
+                ]}
+                triggerClassName="h-9 text-xs"
+                contentClassName="text-xs"
+                id="currency"
+              />
             </div>
           </div>
 
           <div className="gap-1.5 flex flex-col">
             <Label htmlFor="method" className="text-xs font-semibold">{t("pay_methodLabel")}</Label>
-            <Select
+            <SearchableSelect
               value={formData.method}
               onValueChange={(value) =>
                 setFormData({ ...formData, method: value })
               }
-            >
-              <SelectTrigger id="method" className="h-9 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="text-xs">
-                <SelectItem value="card">{t("pay_method_card")}</SelectItem>
-                <SelectItem value="online">{t("pay_method_online")}</SelectItem>
-                <SelectItem value="cash">{t("pay_method_cash")}</SelectItem>
-                <SelectItem value="transfer">{t("pay_method_transfer")}</SelectItem>
-                <SelectItem value="check">{t("pay_method_check")}</SelectItem>
-                <SelectItem value="insurance">{t("pay_method_insurance")}</SelectItem>
-              </SelectContent>
-            </Select>
+              options={[
+                { value: "card", label: t("pay_method_card") },
+                { value: "online", label: t("pay_method_online") },
+                { value: "cash", label: t("pay_method_cash") },
+                { value: "transfer", label: t("pay_method_transfer") },
+                { value: "check", label: t("pay_method_check") },
+                { value: "insurance", label: t("pay_method_insurance") },
+              ]}
+              triggerClassName="h-9 text-xs"
+              contentClassName="text-xs"
+              id="method"
+            />
           </div>
 
           <div className="gap-1.5 flex flex-col">

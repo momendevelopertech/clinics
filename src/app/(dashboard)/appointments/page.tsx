@@ -7,7 +7,6 @@ import {
   Calendar as CalendarIcon,
   CalendarDays,
   Clock,
-  Filter,
   List,
   Pencil,
   Save,
@@ -25,13 +24,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { toast } from "sonner"
 
 import { useMedical, Appointment } from "@/context/MedicalContext"
@@ -42,6 +34,7 @@ import {
   FullScreenCalendar,
   type CalendarEvent,
 } from "@/components/ui/fullscreen-calendar"
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { DataPagination } from "@/components/ui/data-pagination"
 import { paginate } from "@/lib/pagination"
 import { useLocale } from "@/components/locale/locale-provider"
@@ -120,18 +113,14 @@ function EditAppointmentDialog({
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="edit-provider">{t("appts_provider")}</Label>
-              <Select value={provider || providerOptions[0]} onValueChange={setProvider}>
-                <SelectTrigger id="edit-provider" className="w-full">
-                  <SelectValue placeholder={t("appts_selectProvider")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {providerOptions.map((p) => (
-                    <SelectItem key={p} value={p}>
-                      {p}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect
+                value={provider || providerOptions[0]}
+                onValueChange={setProvider}
+                options={providerOptions.map((p) => ({ value: p, label: p }))}
+                placeholder={t("appts_selectProvider")}
+                triggerClassName="w-full"
+                id="edit-provider"
+              />
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="grid gap-2">
@@ -145,21 +134,22 @@ function EditAppointmentDialog({
             </div>
             <div className="grid gap-2">
               <Label htmlFor="edit-status">{t("appts_status")}</Label>
-              <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger id="edit-status">
-                  <SelectValue placeholder={t("appts_apptStatus")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="scheduled">{t("appts_statusScheduled")}</SelectItem>
-                  <SelectItem value="confirmed">{t("appts_statusConfirmed")}</SelectItem>
-                  <SelectItem value="waiting">{t("appts_statusWaitingRoom")}</SelectItem>
-                  <SelectItem value="pending">{t("appts_statusPending")}</SelectItem>
-                  <SelectItem value="in_progress">{t("appts_statusInProgress")}</SelectItem>
-                  <SelectItem value="completed">{t("appts_statusCompleted")}</SelectItem>
-                  <SelectItem value="cancelled">{t("appts_cancel")}</SelectItem>
-                  <SelectItem value="no_show">{t("appts_statusNoShow")}</SelectItem>
-                </SelectContent>
-              </Select>
+              <SearchableSelect
+                value={status}
+                onValueChange={setStatus}
+                options={[
+                  { value: "scheduled", label: t("appts_statusScheduled") },
+                  { value: "confirmed", label: t("appts_statusConfirmed") },
+                  { value: "waiting", label: t("appts_statusWaitingRoom") },
+                  { value: "pending", label: t("appts_statusPending") },
+                  { value: "in_progress", label: t("appts_statusInProgress") },
+                  { value: "completed", label: t("appts_statusCompleted") },
+                  { value: "cancelled", label: t("appts_cancel") },
+                  { value: "no_show", label: t("appts_statusNoShow") },
+                ]}
+                placeholder={t("appts_apptStatus")}
+                id="edit-status"
+              />
             </div>
           </div>
           <DialogFooter>
@@ -362,26 +352,21 @@ function AppointmentsPageContent() {
                 />
               </div>
               <div className="flex gap-2">
-                  <Select
+                  <SearchableSelect
                     value={providerFilter}
                     onValueChange={(value) => {
                       setProviderFilter(value)
                       setPage(1)
                     }}
-                  >
-                    <SelectTrigger className="w-[180px] h-9 rounded-md bg-card text-xs border-input" aria-label={t("appts_allProviders")}>
-                      <Filter className="w-3.5 h-3.5 mr-1.5" />
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-md shadow-lg text-xs">
-                      <SelectItem value="all">{t("appts_allProviders")}</SelectItem>
-                      {providers.map((provider) => (
-                        <SelectItem key={provider.id} value={provider.name}>
-                          {provider.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    options={[
+                      { value: "all", label: t("appts_allProviders") },
+                      ...providers.map((provider) => ({ value: provider.name, label: provider.name })),
+                    ]}
+                    placeholder={t("appts_allProviders")}
+                    triggerClassName="w-[180px] h-9 rounded-md bg-card text-xs border-input"
+                    contentClassName="text-xs"
+                    ariaLabel={t("appts_allProviders")}
+                  />
                  <FeatureTip tipId="appointments-views">
                  <div className="bg-muted-bg rounded-md p-1 flex gap-1" role="tablist" aria-label={t("appts_viewMode")}>
                      <button
