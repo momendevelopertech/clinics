@@ -28,8 +28,13 @@ function currentPermission(): NotificationPermission {
 }
 
 export function usePushNotifications() {
-  const [isSupported] = useState(isPushSupported);
-  const [permission] = useState<NotificationPermission>(currentPermission);
+  const [isSupported, setIsSupported] = useState(false);
+  const [permission, setPermission] = useState<NotificationPermission>("default");
+
+  useEffect(() => {
+    setIsSupported(isPushSupported());
+    setPermission(currentPermission());
+  }, []);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
 
