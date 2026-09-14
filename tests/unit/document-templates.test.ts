@@ -1,12 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
+import type { ReactNode } from "react";
 
 vi.mock("@react-pdf/renderer", () => ({
   renderToBuffer: vi.fn(async () => Buffer.from("%PDF-1.4\n" + "x".repeat(1024))),
-  Document: ({ children }: any) => children,
-  Page: ({ children }: any) => children,
-  Text: ({ children }: any) => children,
-  View: ({ children }: any) => children,
-  StyleSheet: { create: (styles: any) => styles },
+  Document: ({ children }: { children?: ReactNode }) => children,
+  Page: ({ children }: { children?: ReactNode }) => children,
+  Text: ({ children }: { children?: ReactNode }) => children,
+  View: ({ children }: { children?: ReactNode }) => children,
+  StyleSheet: { create: <T,>(styles: T) => styles },
   Font: { register: vi.fn() },
 }));
 

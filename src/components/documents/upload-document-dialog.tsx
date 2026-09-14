@@ -76,13 +76,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
     file: null as File | null,
   });
 
-  React.useEffect(() => {
-    if (open) {
-      fetchPatients();
-    }
-  }, [open]);
-
-  const fetchPatients = async () => {
+  const fetchPatients = React.useCallback(async () => {
     try {
       const response = await fetch("/api/patients");
       if (!response.ok) throw new Error("Failed to fetch patients");
@@ -92,7 +86,13 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
       toast.error(t("common_loadPatientsError"));
       logClientError("Upload document patient lookup failed", error);
     }
-  };
+  }, [t]);
+
+  React.useEffect(() => {
+    if (open) {
+      fetchPatients();
+    }
+  }, [fetchPatients, open]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

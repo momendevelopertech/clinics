@@ -191,7 +191,7 @@ export default function DashboardPage() {
     });
 
     return items.slice(0, 5);
-  }, [appointments, patients, t, upcomingAppointments]);
+  }, [patients, t, upcomingAppointments]);
 
   const containerVariants = {
     hidden: { opacity: 0 },

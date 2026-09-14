@@ -42,7 +42,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import {
   DropdownMenu,

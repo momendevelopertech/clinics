@@ -132,10 +132,10 @@ function MedicationNameInput({
     }
   }, []);
 
-  const scheduleLoad = (query: string) => {
+  const scheduleLoad = React.useCallback((query: string) => {
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
     debounceRef.current = window.setTimeout(() => void load(query), 200);
-  };
+  }, [load]);
 
   React.useEffect(() => {
     if (open) {
@@ -145,7 +145,7 @@ function MedicationNameInput({
     return () => {
       if (debounceRef.current) window.clearTimeout(debounceRef.current);
     };
-  }, [open]);
+  }, [open, value, load, scheduleLoad]);
 
   const apply = (item: FavoriteItem) => {
     onChange(item.medicationName);
@@ -261,18 +261,7 @@ export function NewPrescriptionDialog({
   const [templateShared, setTemplateShared] = React.useState(false);
   const [savingTemplate, setSavingTemplate] = React.useState(false);
 
-  React.useEffect(() => {
-    if (open) {
-      fetchPatients();
-      void fetchTemplates();
-      setWarnings([]);
-      if (initialLines && initialLines.length > 0) {
-        setLines(toMedLines(initialLines));
-      }
-    }
-  }, [open]);
-
-  const fetchPatients = async () => {
+  const fetchPatients = React.useCallback(async () => {
     try {
       const response = await fetch("/api/patients");
       if (!response.ok) throw new Error("Failed to fetch patients");
@@ -282,7 +271,7 @@ export function NewPrescriptionDialog({
       toast.error(t("rx_loadPatientsError"));
       logClientError("Prescription patient lookup failed", error);
     }
-  };
+  }, [t]);
 
   const fetchTemplates = React.useCallback(async () => {
     try {
@@ -294,6 +283,24 @@ export function NewPrescriptionDialog({
       logClientError("Prescription templates fetch failed", error);
     }
   }, []);
+
+  const initialLinesRef = React.useRef(initialLines);
+
+  React.useEffect(() => {
+    initialLinesRef.current = initialLines;
+  });
+
+  React.useEffect(() => {
+    if (open) {
+      fetchPatients();
+      void fetchTemplates();
+      setWarnings([]);
+      const seeded = initialLinesRef.current;
+      if (seeded && seeded.length > 0) {
+        setLines(toMedLines(seeded));
+      }
+    }
+  }, [open, fetchPatients, fetchTemplates]);
 
   const applyTemplate = (tpl: TemplateItem) => {
     const filledCount = lines.filter((line) => line.medicationName.trim().length > 0).length;

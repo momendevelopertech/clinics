@@ -49,11 +49,7 @@ export default function WaitlistPage() {
   const [page, setPage] = React.useState(1);
   const { forbidden, setForbidden } = usePermissionState();
 
-  React.useEffect(() => {
-    fetchWaitlist();
-  }, []);
-
-  const fetchWaitlist = async () => {
+  const fetchWaitlist = React.useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch("/api/waitlist");
@@ -70,7 +66,11 @@ export default function WaitlistPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setForbidden, t]);
+
+  React.useEffect(() => {
+    fetchWaitlist();
+  }, [fetchWaitlist]);
 
   const handleExport = () => {
     const csv = [

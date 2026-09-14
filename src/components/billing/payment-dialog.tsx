@@ -55,13 +55,7 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
   });
   const isManual = formData.method !== "card" && formData.method !== "online";
 
-  React.useEffect(() => {
-    if (open) {
-      fetchInvoices();
-    }
-  }, [open]);
-
-  const fetchInvoices = async () => {
+  const fetchInvoices = React.useCallback(async () => {
     try {
       const response = await fetch("/api/billing/invoices");
       if (!response.ok) throw new Error("Failed to fetch invoices");
@@ -74,7 +68,13 @@ export function PaymentDialog({ invoiceId, onSuccess }: PaymentDialogProps) {
       toast.error(t("pay_failedLoad"));
       logClientError("Payment dialog invoice fetch failed", error);
     }
-  };
+  }, [t]);
+
+  React.useEffect(() => {
+    if (open) {
+      fetchInvoices();
+    }
+  }, [fetchInvoices, open]);
 
   const getInvoiceAmount = () => {
     if (!formData.invoiceId) return "";

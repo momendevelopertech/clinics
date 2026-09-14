@@ -53,11 +53,7 @@ export default function LabResultsPage() {
   const [page, setPage] = React.useState(1);
   const { forbidden, setForbidden } = usePermissionState();
 
-  React.useEffect(() => {
-    fetchLabResults();
-  }, []);
-
-  const fetchLabResults = async () => {
+  const fetchLabResults = React.useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch("/api/labs");
@@ -74,7 +70,11 @@ export default function LabResultsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setForbidden, t]);
+
+  React.useEffect(() => {
+    fetchLabResults();
+  }, [fetchLabResults]);
 
   const handleExport = () => {
     const csv = [

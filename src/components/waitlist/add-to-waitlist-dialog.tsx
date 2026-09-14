@@ -51,13 +51,7 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
     notes: "",
   });
 
-  React.useEffect(() => {
-    if (open) {
-      fetchPatients();
-    }
-  }, [open]);
-
-  const fetchPatients = async () => {
+  const fetchPatients = React.useCallback(async () => {
     try {
       const response = await fetch("/api/patients");
       if (!response.ok) throw new Error("Failed to fetch patients");
@@ -67,7 +61,13 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
       toast.error(t("common_loadPatientsError"));
       logClientError("Waitlist patient lookup failed", error);
     }
-  };
+  }, [t]);
+
+  React.useEffect(() => {
+    if (open) {
+      fetchPatients();
+    }
+  }, [fetchPatients, open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

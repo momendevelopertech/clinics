@@ -68,6 +68,7 @@ export default function PatientSummaryPage() {
             <p className="text-sm text-muted-foreground">MRN: {summary.mrn ?? "—"}</p>
           </div>
           {summary.qrUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img src={summary.qrUrl} alt="Patient QR code" className="h-28 w-28 rounded-md border border-border bg-white p-2" />
           ) : null}
         </div>

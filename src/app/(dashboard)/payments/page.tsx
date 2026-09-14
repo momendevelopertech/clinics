@@ -64,11 +64,7 @@ export default function PaymentsPage() {
   const { get } = useFeatureConfig();
   const stripe = get("stripe");
 
-  React.useEffect(() => {
-    fetchPayments();
-  }, []);
-
-  const fetchPayments = async () => {
+  const fetchPayments = React.useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch("/api/payments");
@@ -85,7 +81,11 @@ export default function PaymentsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setForbidden, t]);
+
+  React.useEffect(() => {
+    fetchPayments();
+  }, [fetchPayments]);
 
   const handleExport = () => {
     const csv = [

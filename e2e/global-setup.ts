@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "fs";
 import { join } from "path";
-import { chromium, type Browser, type FullConfig } from "@playwright/test";
+import { chromium, type Browser } from "@playwright/test";
 
 const AUTH_DIR = join(import.meta.dirname, ".auth");
 
@@ -40,7 +40,7 @@ async function loginAndSave(browser: Browser, account: RoleAccount) {
   await context.close();
 }
 
-export default async function globalSetup(_config: FullConfig) {
+export default async function globalSetup() {
   mkdirSync(AUTH_DIR, { recursive: true });
 
   const browser = await chromium.launch();
