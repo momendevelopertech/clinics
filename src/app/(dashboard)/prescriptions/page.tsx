@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { NewPrescriptionDialog } from "@/components/prescriptions/new-prescription-dialog";
+import { DispenseDialog } from "@/components/prescriptions/dispense-dialog";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { logClientError } from "@/lib/client-logger";
@@ -40,7 +41,7 @@ interface PrescriptionRow {
   status: string;
   sentToPharmacy: boolean;
   createdAt: string;
-  items: { id: string }[];
+  items: { id: string; medicationName?: string; dosage?: string | null }[];
 }
 
 export default function PrescriptionsPage() {
@@ -297,6 +298,17 @@ export default function PrescriptionsPage() {
                         </Button>
                         {rx.status === "active" ? (
                           <>
+                            <DispenseDialog
+                              prescriptionId={rx.id}
+                              lines={[
+                                { medicationName: rx.medicationName },
+                                ...rx.items
+                                  .filter((it) => it.medicationName)
+                                  .map((it) => ({ medicationName: it.medicationName as string, dosage: it.dosage })),
+                              ]}
+                              patientLabel={`${rx.patient.firstName} ${rx.patient.lastName}`}
+                              onDone={() => void fetchPrescriptions()}
+                            />
                             <Button
                               variant="outline"
                               size="sm"
