@@ -458,6 +458,8 @@ export const ar: Dictionary = {
   landing_navPricing: "الباقات",
   landing_navSignIn: "تسجيل الدخول",
   landing_navStartFree: "ابدأ مجاناً",
+  landing_navUsers: "اليوزرز والصلاحيات",
+  landing_ctaUserStories: "شوف كل اليوزرز وصلاحياتهم",
   landing_badge: "منصة عيادات شاملة",
   landing_heroTitle: "أدر يوم عيادتك، لا أوراقها",
   landing_heroSubtitle: "المرضى والمواعيد والجلسات والوصفات والفواتير والمخزون والتحليلات — كل ذلك في مساحة عمل واحدة نظيفة.",

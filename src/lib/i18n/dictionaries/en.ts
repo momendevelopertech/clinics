@@ -457,6 +457,8 @@ export const en: Dictionary = {
   landing_navPricing: "Pricing",
   landing_navSignIn: "Sign in",
   landing_navStartFree: "Start free",
+  landing_navUsers: "Users & Permissions",
+  landing_ctaUserStories: "See All Users & Permissions",
   landing_badge: "All-in-one clinic platform",
   landing_heroTitle: "Run your clinic's day, not its paperwork",
   landing_heroSubtitle: "Patients, appointments, encounters, prescriptions, billing, inventory, and analytics — one clean workspace built for real clinic flow.",
