@@ -1,17 +1,21 @@
 import Link from "next/link";
 import { Activity, ArrowRight, Users } from "lucide-react";
-import { RolesGuideClient } from "@/components/roles-guide/roles-guide-client";
+import { auth } from "@/auth";
+import { PublicUserStories } from "@/components/user-stories/public-user-stories-client";
 import { getDictionary } from "@/lib/i18n/server";
 import { LanguageSwitcher } from "@/components/locale/language-switcher";
 
 /**
- * /user-stories — PUBLIC interactive User Stories page (no login required).
- * Full guide experience (role sidebar + search + accordion tasks) over the
- * same ROLES_GUIDE data as the internal /roles-guide page, minus
- * platform-internal content: the Super Admin role and the "backend"
- * implementation row stay exclusive to /roles-guide (Owner + Super Admin).
+ * /user-stories — PUBLIC onboarding page (no login required, and logged-in
+ * users are welcome too: no forced redirect, the header just adapts).
+ * Renders the human-only projection of the roles guide: everyday language,
+ * per-role stories, live plan data when logged in — zero API/file jargon.
  */
 export default async function UserStoriesPage() {
+  const session = await auth();
+  const isLoggedIn = Boolean(session?.user);
+  const roles = session?.user?.roles ?? [];
+  const dashboardHref = roles.includes("Super Admin") ? "/super" : "/dashboard";
   const t = await getDictionary();
 
   return (
@@ -28,18 +32,29 @@ export default async function UserStoriesPage() {
 
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
-            <Link
-              href="/login"
-              className="hidden px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:text-primary sm:block"
-            >
-              {t["landing_navSignIn"]}
-            </Link>
-            <Link
-              href="/signup"
-              className="rounded-[14px] bg-linear-to-r from-primary to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
-            >
-              {t["landing_navStartFree"]}
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href={dashboardHref}
+                className="rounded-[14px] bg-linear-to-r from-primary to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+              >
+                {t["nav_dashboard"]}
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="hidden px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:text-primary sm:block"
+                >
+                  {t["landing_navSignIn"]}
+                </Link>
+                <Link
+                  href="/signup"
+                  className="rounded-[14px] bg-linear-to-r from-primary to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+                >
+                  {t["landing_navStartFree"]}
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -60,10 +75,10 @@ export default async function UserStoriesPage() {
         </div>
       </section>
 
-      {/* Interactive guide: role sidebar + search + accordion tasks */}
+      {/* Onboarding guide: role stories + search + everyday tasks */}
       <section className="px-4 py-14 sm:px-6">
         <div className="mx-auto max-w-6xl">
-          <RolesGuideClient hiddenRoleIds={["super-admin"]} hideBackend />
+          <PublicUserStories />
         </div>
       </section>
 
@@ -77,19 +92,31 @@ export default async function UserStoriesPage() {
             {t["userStories_ctaBody"]}
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/signup"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-[18px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
-            >
-              {t["userStories_ctaSignup"]}
-              <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-            </Link>
-            <Link
-              href="/login"
-              className="inline-flex h-12 items-center justify-center rounded-[18px] border border-white/60 bg-white/70 px-6 text-sm font-semibold text-foreground shadow-sm transition hover:bg-white dark:border-white/6 dark:bg-white/[0.04]"
-            >
-              {t["userStories_ctaLogin"]}
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href={dashboardHref}
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-[18px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+              >
+                {t["nav_dashboard"]}
+                <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/signup"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-[18px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+                >
+                  {t["userStories_ctaSignup"]}
+                  <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+                </Link>
+                <Link
+                  href="/login"
+                  className="inline-flex h-12 items-center justify-center rounded-[18px] border border-white/60 bg-white/70 px-6 text-sm font-semibold text-foreground shadow-sm transition hover:bg-white dark:border-white/6 dark:bg-white/[0.04]"
+                >
+                  {t["userStories_ctaLogin"]}
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </section>

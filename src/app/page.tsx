@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import {
   Activity,
   ArrowRight,
@@ -26,9 +25,13 @@ import { PlanPricing } from "@/components/landing/plan-pricing";
 export default async function HomePage() {
   const session = await auth();
 
-  if (session?.user) {
-    redirect("/dashboard");
-  }
+  // Landing is public for everyone (chosen behavior): logged-in users can
+  // still visit it — the header/CTAs below simply point them to their
+  // workspace instead of login/signup. Works for every role because the
+  // landing itself is role-agnostic; role gating lives in src/proxy.ts.
+  const isLoggedIn = Boolean(session?.user);
+  const roles = session?.user?.roles ?? [];
+  const dashboardHref = roles.includes("Super Admin") ? "/super" : "/dashboard";
 
   const t = await getDictionary();
 
@@ -67,18 +70,29 @@ export default async function HomePage() {
 
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
-            <Link
-              href="/login"
-              className="hidden px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:text-primary sm:block"
-            >
-              {t["landing_navSignIn"]}
-            </Link>
-            <Link
-              href="/signup"
-              className="rounded-[14px] bg-linear-to-r from-primary to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
-            >
-              {t["landing_navStartFree"]}
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href={dashboardHref}
+                className="rounded-[14px] bg-linear-to-r from-primary to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+              >
+                {t["nav_dashboard"]}
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="hidden px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:text-primary sm:block"
+                >
+                  {t["landing_navSignIn"]}
+                </Link>
+                <Link
+                  href="/signup"
+                  className="rounded-[14px] bg-linear-to-r from-primary to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+                >
+                  {t["landing_navStartFree"]}
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -97,19 +111,31 @@ export default async function HomePage() {
             {t["landing_heroSubtitle"]}
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/signup"
-              className="inline-flex h-13 items-center justify-center gap-2 rounded-[18px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
-            >
-              {t["landing_heroCta"]}
-              <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-            </Link>
-            <Link
-              href="/login"
-              className="inline-flex h-13 items-center justify-center rounded-[18px] border border-white/60 bg-white/70 px-6 text-sm font-semibold text-foreground shadow-sm transition hover:bg-white dark:border-white/6 dark:bg-white/[0.04]"
-            >
-              {t["landing_heroCtaSecondary"]}
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href={dashboardHref}
+                className="inline-flex h-13 items-center justify-center gap-2 rounded-[18px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+              >
+                {t["nav_dashboard"]}
+                <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/signup"
+                  className="inline-flex h-13 items-center justify-center gap-2 rounded-[18px] bg-linear-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
+                >
+                  {t["landing_heroCta"]}
+                  <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+                </Link>
+                <Link
+                  href="/login"
+                  className="inline-flex h-13 items-center justify-center rounded-[18px] border border-white/60 bg-white/70 px-6 text-sm font-semibold text-foreground shadow-sm transition hover:bg-white dark:border-white/6 dark:bg-white/[0.04]"
+                >
+                  {t["landing_heroCtaSecondary"]}
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Stats strip */}
@@ -256,8 +282,14 @@ export default async function HomePage() {
           </div>
           <p>{t["landing_footerTagline"]}</p>
           <div className="flex items-center gap-4">
-            <Link href="/login" className="hover:text-foreground">{t["landing_navSignIn"]}</Link>
-            <Link href="/signup" className="hover:text-foreground">{t["landing_navStartFree"]}</Link>
+            {isLoggedIn ? (
+              <Link href={dashboardHref} className="hover:text-foreground">{t["nav_dashboard"]}</Link>
+            ) : (
+              <>
+                <Link href="/login" className="hover:text-foreground">{t["landing_navSignIn"]}</Link>
+                <Link href="/signup" className="hover:text-foreground">{t["landing_navStartFree"]}</Link>
+              </>
+            )}
           </div>
         </div>
       </footer>
