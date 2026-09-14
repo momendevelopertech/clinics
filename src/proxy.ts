@@ -6,6 +6,7 @@ import { resolveRateLimitRule, takeRateLimitToken } from "@/lib/rate-limit";
 const PUBLIC_PAGE_PREFIXES = [
   "/",
   "/login",
+  "/user-stories",
   "/demo-accounts",
   "/patient-login",
   "/patient-portal",

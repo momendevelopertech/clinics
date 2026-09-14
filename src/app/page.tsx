@@ -60,7 +60,7 @@ export default async function HomePage() {
             <a href="#demo" className="transition-colors hover:text-foreground">
               {t["landing_demoTitle"]}
             </a>
-            <a href="/roles-guide" className="transition-colors hover:text-foreground">
+            <a href="/user-stories" className="transition-colors hover:text-foreground">
               {t["landing_navUsers"]}
             </a>
           </nav>
@@ -194,7 +194,7 @@ export default async function HomePage() {
         {/* CTA: See all users & permissions */}
         <div className="mt-8 text-center">
           <Link
-            href="/roles-guide"
+            href="/user-stories"
             className="inline-flex h-13 items-center justify-center gap-2 rounded-[18px] bg-gradient-to-r from-primary to-cyan-500 px-6 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:translate-y-[-1px]"
           >
             {t["landing_ctaUserStories"]}
