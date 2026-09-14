@@ -25,20 +25,19 @@ export function ClinicShowcase({ t }: { t: Dictionary }) {
       {CLINICS.map((clinic) => (
         <div
           key={clinic.code}
-          className="group relative overflow-hidden rounded-[28px] border border-white/55 surface-panel p-6 transition hover:-translate-y-0.5 dark:border-white/6"
+          className="group relative overflow-hidden rounded-lg border border-border surface-panel p-6 transition hover:-translate-y-0.5 shadow-sm"
         >
-          <div className={`absolute inset-x-0 top-0 h-1 bg-linear-to-r ${clinic.gradient}`} />
           <div className="flex items-start justify-between gap-3">
-            <div className={`grid size-12 place-content-center rounded-[18px] bg-linear-to-br ${clinic.gradient} text-sm font-bold text-white shadow-lg`}>
+            <div className="grid size-11 place-content-center rounded-md bg-primary text-sm font-bold text-primary-foreground shadow-sm">
               {clinic.code}
             </div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-success-bg px-2.5 py-1 text-xs font-semibold text-success-text">
               <ShieldCheck className="h-3.5 w-3.5" />
               {t["sub_statusactive"]}
             </span>
           </div>
 
-          <h3 className="mt-5 text-base font-semibold leading-snug">{clinic.name}</h3>
+          <h3 className="mt-5 text-base font-semibold leading-snug text-foreground">{clinic.name}</h3>
           <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
             <MapPin className="h-3.5 w-3.5" />
             <span dir="auto">{clinic.location}</span>
@@ -58,7 +57,7 @@ export function ClinicShowcase({ t }: { t: Dictionary }) {
               <div
                 key={index}
                 style={{ height: `${height}%` }}
-                className="flex-1 rounded-[3px] bg-primary/20 transition group-hover:bg-primary/40"
+                className="flex-1 rounded-sm bg-primary/20 transition group-hover:bg-primary/40"
               />
             ))}
           </div>

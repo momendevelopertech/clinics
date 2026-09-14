@@ -288,7 +288,7 @@ export function FeatureTipsProvider({ children }: { children: React.ReactNode })
                 role="region"
                 aria-labelledby={`feature-tip-title-${shownTipId}`}
                 aria-roledescription={t("featureTip_label")}
-                className="pointer-events-auto fixed z-[9999] w-[20rem] max-w-[calc(100vw-2rem)] rounded-2xl border border-white/60 bg-popover/95 p-4 text-popover-foreground shadow-2xl shadow-black/10 backdrop-blur-xl dark:border-white/10"
+                className="pointer-events-auto fixed z-[9999] w-[20rem] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-popover p-4 text-popover-foreground shadow-md"
                 style={{
                   top: position ? `${position.top}px` : 0,
                   left: position ? `${position.left}px` : 0,
@@ -303,7 +303,7 @@ export function FeatureTipsProvider({ children }: { children: React.ReactNode })
                   <span
                     aria-hidden
                     className={cn(
-                      "absolute size-3 rotate-45 border border-white/60 bg-popover/95 dark:border-white/10",
+                      "absolute size-3 rotate-45 border border-border bg-popover",
                       position.placement === "top" && "top-full -mt-1.5 border-t-0 border-l-0",
                       position.placement === "bottom" && "bottom-full -mb-1.5 border-b-0 border-r-0",
                       position.placement === "left" && "left-full -ml-1.5 border-t-0 border-r-0",
@@ -316,7 +316,7 @@ export function FeatureTipsProvider({ children }: { children: React.ReactNode })
                   />
                 ) : null}
                 <div className="flex items-start gap-3">
-                  <div className="grid size-9 shrink-0 place-content-center rounded-xl bg-primary/10 text-primary">
+                  <div className="grid size-9 shrink-0 place-content-center rounded-md bg-primary/10 text-primary">
                     {shownDefinition.icon ? (
                       <shownDefinition.icon className="h-4 w-4" aria-hidden />
                     ) : (
@@ -338,7 +338,7 @@ export function FeatureTipsProvider({ children }: { children: React.ReactNode })
                     type="button"
                     onClick={() => dismiss(shownTipId)}
                     aria-label={t("featureTip_close")}
-                    className="grid size-7 shrink-0 place-content-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                    className="grid size-7 shrink-0 place-content-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                   >
                     <X className="h-4 w-4" aria-hidden />
                   </button>
@@ -347,7 +347,7 @@ export function FeatureTipsProvider({ children }: { children: React.ReactNode })
                   <button
                     type="button"
                     onClick={() => dismiss(shownTipId)}
-                    className="inline-flex h-8 items-center gap-1.5 rounded-[5px] bg-primary px-3 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                    className="inline-flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                   >
                     {t("featureTip_gotIt")}
                   </button>

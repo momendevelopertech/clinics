@@ -85,7 +85,7 @@ export function TelehealthLinkDialog({
           <Button variant="outline" onClick={() => setOpen(false)} disabled={saving} className="h-9 text-xs">
             <X className="mr-1 h-3.5 w-3.5" />{t("common_cancel")}
           </Button>
-          <Button onClick={handleSave} disabled={saving} className="h-9 bg-primary hover:bg-[#115E59] text-white text-xs shadow-2xs">
+          <Button onClick={handleSave} disabled={saving} className="h-9 text-xs">
             <Save className="mr-1 h-3.5 w-3.5" />{t("common_save")}
           </Button>
         </div>

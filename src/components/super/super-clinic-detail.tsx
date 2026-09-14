@@ -171,7 +171,7 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
 
   if (loading) {
     return (
-      <div className="surface-panel flex items-center justify-center gap-2 rounded-[28px] p-12 text-muted-foreground">
+      <div className="flex items-center justify-center gap-2 rounded-lg border border-border bg-card p-12 text-muted-foreground">
         <Loader2 className="h-5 w-5 animate-spin" />
         <span className="text-sm">{t["common_loading"]}</span>
       </div>
@@ -180,7 +180,7 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
 
   if (!data) {
     return (
-      <div className="surface-panel rounded-[28px] p-12 text-center text-sm text-muted-foreground">
+      <div className="rounded-lg border border-border bg-card p-12 text-center text-sm text-muted-foreground">
         {error ?? t["common_error"]}
       </div>
     );
@@ -188,18 +188,18 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
 
   const statusBadge =
     data.org.status === "active" ? (
-      <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">{t["super_activeOrg"]}</span>
+      <span className="rounded-full bg-success-bg px-2.5 py-1 text-xs font-semibold text-success-text">{t["super_activeOrg"]}</span>
     ) : data.org.status === "suspended" ? (
-      <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700 dark:bg-red-500/15 dark:text-red-300">{t["super_suspendedOrg"]}</span>
+      <span className="rounded-full bg-critical-bg px-2.5 py-1 text-xs font-semibold text-critical-text">{t["super_suspendedOrg"]}</span>
     ) : (
-      <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">{t["super_pendingOrg"]}</span>
+      <span className="rounded-full bg-warning-bg px-2.5 py-1 text-xs font-semibold text-warning-text">{t["super_pendingOrg"]}</span>
     );
 
   return (
     <div className="space-y-5">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="grid size-11 place-content-center rounded-[16px] bg-linear-to-br from-cyan-500 via-teal-500 to-emerald-500 text-white shadow-lg shadow-cyan-500/20">
+          <div className="grid size-11 place-content-center rounded-lg bg-primary text-primary-foreground shadow-xs">
             <Building2 className="h-5 w-5" />
           </div>
           <div>
@@ -211,7 +211,7 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
         <div className="flex items-center gap-2">
           <Link
             href="/super"
-            className="inline-flex items-center gap-2 rounded-[14px] border border-white/60 bg-white/70 px-3 py-2 text-sm font-semibold text-muted-foreground shadow-sm transition hover:text-foreground dark:border-white/6 dark:bg-white/[0.04]"
+            className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm font-semibold text-muted-foreground shadow-xs transition hover:bg-muted hover:text-foreground"
           >
             <X className="h-4 w-4" />
             {t["super_backToConsole"]}
@@ -219,7 +219,7 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
           <button
             onClick={() => void load()}
             disabled={loading}
-            className="grid size-10 place-content-center rounded-[14px] border border-white/60 bg-white/70 text-muted-foreground shadow-sm transition hover:text-foreground dark:border-white/6 dark:bg-white/[0.04] disabled:opacity-50"
+            className="grid size-10 place-content-center rounded-md border border-border bg-card text-muted-foreground shadow-xs transition hover:bg-muted hover:text-foreground disabled:opacity-50"
             aria-label={t["super_refresh"]}
           >
             <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
@@ -228,22 +228,22 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
       </header>
 
       {error ? (
-        <p className="rounded-[16px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/25 dark:bg-red-500/10 dark:text-red-300">{error}</p>
+        <p className="rounded-lg border border-critical-border bg-critical-bg px-4 py-3 text-sm text-critical-text">{error}</p>
       ) : null}
       {message ? (
-        <p className="rounded-[16px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 dark:border-emerald-500/25 dark:bg-emerald-500/10 dark:text-emerald-300">{message}</p>
+        <p className="rounded-lg border border-success-border bg-success-bg px-4 py-3 text-sm font-medium text-success-text">{message}</p>
       ) : null}
 
       {/* Plan + subscription */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+        <div className="rounded-lg border border-border bg-card p-6">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">{t["plans_title"]}</p>
           <div className="mt-3 flex items-center justify-between">
             <span className="text-xl font-semibold">
               {data.entitlements.plan.nameEn || data.org.plan}
             </span>
             {data.entitlements.source === "overridden" ? (
-              <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
+              <span className="rounded-full bg-warning-bg px-2.5 py-1 text-xs font-semibold text-warning-text">
                 {t["clinic_overridden"]}
               </span>
             ) : null}
@@ -258,7 +258,7 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
             </p>
           ) : null}
           {data.org.upgradeRequestedPlan ? (
-            <div className="mt-3 rounded-[16px] border border-cyan-200 bg-cyan-50/70 p-3 text-sm text-cyan-800 dark:border-cyan-400/20 dark:bg-cyan-400/8 dark:text-cyan-200">
+            <div className="mt-3 rounded-lg border border-accent-blue-border bg-accent-blue-bg p-3 text-sm text-accent-blue-text">
               {t["plan_upgradeRequested"]} → <span className="font-semibold">{data.org.upgradeRequestedPlan}</span>
               {data.org.upgradeNote ? (
                 <p className="mt-1 text-xs">{data.org.upgradeNote}</p>
@@ -267,14 +267,14 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
                 <button
                   disabled={busy !== null}
                   onClick={() => void run(`/api/super/orgs/${orgId}/upgrade`, "POST", { approve: true })}
-                  className="inline-flex items-center gap-1 rounded-[10px] bg-emerald-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-md bg-primary px-2.5 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                 >
                   <Check className="h-3.5 w-3.5" /> {t["plan_approve"]}
                 </button>
                 <button
                   disabled={busy !== null}
                   onClick={() => void run(`/api/super/orgs/${orgId}/upgrade`, "POST", { approve: false })}
-                  className="inline-flex items-center gap-1 rounded-[10px] bg-red-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-md border border-critical-border bg-critical-bg px-2.5 py-1.5 text-xs font-semibold text-critical-text hover:bg-critical-border/20 disabled:opacity-50"
                 >
                   <X className="h-3.5 w-3.5" /> {t["plan_decline"]}
                 </button>
@@ -292,8 +292,8 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
                   onClick={() => void run(`/api/super/orgs/${orgId}/plan`, "POST", { plan: plan.code })}
                   className={`rounded-full px-3 py-1 text-xs font-semibold capitalize transition disabled:opacity-50 ${
                     data.org.plan === plan.code
-                      ? "bg-primary text-white"
-                      : "border border-white/60 bg-white/60 text-muted-foreground hover:text-foreground dark:border-white/10 dark:bg-white/[0.04]"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-border bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}
                 >
                   {plan.code}
@@ -304,7 +304,7 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
         </div>
 
         {/* Usage */}
-        <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+        <div className="rounded-lg border border-border bg-card p-6">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">{t["plan_usage"]}</p>
           <div className="mt-4 space-y-3.5">
             {data.limitUsage.map((entry) => (
@@ -315,9 +315,9 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
                     {entry.unlimited ? "∞" : `${entry.used.toLocaleString()} / ${entry.limit.toLocaleString()}`}
                   </span>
                 </div>
-                <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-white/70 dark:bg-white/[0.06]">
+                <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-muted">
                   <div
-                    className={`h-full rounded-full ${entry.percent >= 90 ? "bg-red-500" : entry.percent >= 70 ? "bg-amber-500" : "bg-emerald-500"}`}
+                    className={`h-full rounded-full ${entry.percent >= 90 ? "bg-critical-text" : entry.percent >= 70 ? "bg-warning-text" : "bg-success-text"}`}
                     style={{ width: `${entry.unlimited ? 0 : entry.percent}%` }}
                   />
                 </div>
@@ -332,16 +332,16 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
       </div>
 
       {/* Module matrix */}
-      <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+      <div className="rounded-lg border border-border bg-card p-6">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">{t["clinic_modules"]}</p>
         <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {moduleList.map((module) => {
             const enabled = data.entitlements.modules[module] === true;
             return (
-              <div key={module} className="flex items-center justify-between rounded-[12px] bg-white/50 px-3 py-2 text-sm dark:bg-white/[0.03]">
+              <div key={module} className="flex items-center justify-between rounded-md border border-border/50 bg-muted/40 px-3 py-2 text-sm">
                 <span className="capitalize">{t[`nav_${module}` as keyof Dictionary] ?? module}</span>
                 {enabled ? (
-                  <Check className="h-4 w-4 text-emerald-500" />
+                  <Check className="h-4 w-4 text-success-text" />
                 ) : (
                   <Minus className="h-4 w-4 text-muted-foreground" />
                 )}
@@ -352,7 +352,7 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
       </div>
 
       {/* Overrides */}
-      <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+      <div className="rounded-lg border border-border bg-card p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">{t["clinic_overrides"]}</p>
           <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
@@ -362,12 +362,12 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
 
         <div className="mt-4 space-y-2">
           {data.overrides.length === 0 ? (
-            <p className="rounded-[14px] bg-white/45 p-4 text-center text-sm text-muted-foreground dark:bg-white/[0.03]">
+            <p className="rounded-md border border-border/50 bg-muted/40 p-4 text-center text-sm text-muted-foreground">
               {t["clinic_noOverrides"]}
             </p>
           ) : (
             data.overrides.map((override) => (
-              <div key={override.id} className="flex items-center justify-between gap-3 rounded-[14px] border border-white/60 bg-white/50 p-3 text-sm dark:border-white/8 dark:bg-white/[0.03]">
+              <div key={override.id} className="flex items-center justify-between gap-3 rounded-md border border-border bg-card p-3 text-sm">
                 <div>
                   <p className="font-mono text-xs">
                     {override.kind} · {override.moduleKey ?? override.featureKey}
@@ -383,7 +383,7 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
                     if (!window.confirm(t["common_confirmAction"])) return;
                     void run(`/api/super/orgs/${orgId}/override/${override.id}`, "DELETE");
                   }}
-                  className="grid size-8 place-content-center rounded-[10px] border border-red-200 text-red-600 hover:bg-red-50 disabled:opacity-40 dark:border-red-400/20 dark:hover:bg-red-400/10"
+                  className="grid size-8 place-content-center rounded-md border border-critical-border text-critical-text hover:bg-critical-bg disabled:opacity-40"
                   aria-label={t["plans_archive"]}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -393,13 +393,13 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
           )}
         </div>
 
-        <div className="mt-4 grid gap-3 rounded-[18px] border border-white/55 bg-white/40 p-4 sm:grid-cols-2 lg:grid-cols-4 dark:border-white/6 dark:bg-white/[0.02]">
+        <div className="mt-4 grid gap-3 rounded-lg border border-border bg-muted/30 p-4 sm:grid-cols-2 lg:grid-cols-4">
           <label className="block">
             <span className="mb-1 block text-xs font-semibold">{t["clinic_overrideKind"]}</span>
             <select
               value={overrideForm.kind}
               onChange={(event) => setOverrideForm({ ...overrideForm, kind: event.target.value })}
-              className="w-full rounded-[10px] border border-white/60 bg-white/70 px-2.5 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"
+              className="w-full rounded-md border border-border bg-background px-2.5 py-2 text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
             >
               <option value="module_override">module_override</option>
               <option value="feature_override">feature_override</option>
@@ -411,7 +411,7 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
             <input
               value={overrideForm.moduleKey}
               onChange={(event) => setOverrideForm({ ...overrideForm, moduleKey: event.target.value })}
-              className="w-full rounded-[10px] border border-white/60 bg-white/70 px-2.5 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"
+              className="w-full rounded-md border border-border bg-background px-2.5 py-2 text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
             />
           </label>
           <label className="block">
@@ -419,7 +419,7 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
             <input
               value={overrideForm.featureKey}
               onChange={(event) => setOverrideForm({ ...overrideForm, featureKey: event.target.value })}
-              className="w-full rounded-[10px] border border-white/60 bg-white/70 px-2.5 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"
+              className="w-full rounded-md border border-border bg-background px-2.5 py-2 text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
             />
           </label>
           <label className="block">
@@ -427,7 +427,7 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
             <input
               value={overrideForm.reason}
               onChange={(event) => setOverrideForm({ ...overrideForm, reason: event.target.value })}
-              className="w-full rounded-[10px] border border-white/60 bg-white/70 px-2.5 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"
+              className="w-full rounded-md border border-border bg-background px-2.5 py-2 text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
             />
           </label>
           <label className="block sm:col-span-2 lg:col-span-4">
@@ -437,12 +437,12 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
                 value={overrideForm.valueJson}
                 onChange={(event) => setOverrideForm({ ...overrideForm, valueJson: event.target.value })}
                 spellCheck={false}
-                className="w-full rounded-[10px] border border-white/60 bg-white/70 px-2.5 py-2 font-mono text-xs dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full rounded-md border border-border bg-background px-2.5 py-2 font-mono text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
               />
               <button
                 onClick={() => void createOverride()}
                 disabled={busy !== null || (!overrideForm.moduleKey && !overrideForm.featureKey)}
-                className="inline-flex items-center gap-1.5 rounded-[10px] bg-primary px-3.5 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
               >
                 <Plus className="h-4 w-4" />
                 {t["clinic_addOverride"]}
@@ -454,11 +454,11 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
 
       {/* Staff + branches */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+        <div className="rounded-lg border border-border bg-card p-6">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">{t["super_staff"]}</p>
           <div className="mt-3 space-y-1.5">
             {data.staff.map((member) => (
-              <div key={member.id} className="flex items-center justify-between rounded-[12px] bg-white/50 px-3 py-2 text-sm dark:bg-white/[0.03]">
+              <div key={member.id} className="flex items-center justify-between rounded-md border border-border/50 bg-muted/40 px-3 py-2 text-sm">
                 <div>
                   <p className="font-medium">{member.name ?? member.email}</p>
                   <p className="text-xs text-muted-foreground">{member.email}</p>
@@ -470,17 +470,17 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
             ))}
           </div>
         </div>
-        <div className="surface-panel rounded-[24px] border border-white/55 p-6 dark:border-white/6">
+        <div className="rounded-lg border border-border bg-card p-6">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">{t["super_branches"]}</p>
           <div className="mt-3 space-y-1.5">
             {data.branches.map((branch) => (
-              <div key={branch.id} className="flex items-center justify-between rounded-[12px] bg-white/50 px-3 py-2 text-sm dark:bg-white/[0.03]">
+              <div key={branch.id} className="flex items-center justify-between rounded-md border border-border/50 bg-muted/40 px-3 py-2 text-sm">
                 <p className="font-medium">{branch.name}</p>
                 <span className="text-xs text-muted-foreground capitalize">{branch.status}</span>
               </div>
             ))}
             {data.branches.length === 0 ? (
-              <p className="rounded-[12px] bg-white/40 p-4 text-center text-sm text-muted-foreground dark:bg-white/[0.02]">
+              <p className="rounded-md border border-border/50 bg-muted/40 p-4 text-center text-sm text-muted-foreground">
                 {t["clinic_noBranches"]}
               </p>
             ) : null}
@@ -498,8 +498,8 @@ export function SuperClinicDetail({ t }: { t: Dictionary }) {
 
 function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="flex items-center gap-2 rounded-[12px] bg-white/50 px-3 py-2 text-sm dark:bg-white/[0.03]">
-      <div className="grid size-8 place-content-center rounded-[10px] bg-primary/10 text-primary">{icon}</div>
+    <div className="flex items-center gap-2 rounded-md border border-border/50 bg-muted/40 px-3 py-2 text-sm">
+      <div className="grid size-8 place-content-center rounded-md bg-primary/10 text-primary">{icon}</div>
       <div className="min-w-0">
         <p className="truncate text-xs text-muted-foreground">{label}</p>
         <p className="truncate font-semibold">{value}</p>

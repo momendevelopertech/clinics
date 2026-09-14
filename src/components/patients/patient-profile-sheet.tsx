@@ -45,7 +45,7 @@ export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileS
     <SheetContent className="overflow-y-auto w-full sm:max-w-md md:sm:max-w-lg lg:max-w-xl border-l border-border bg-card p-0">
       <SheetTitle className="sr-only">{t("profile_title").replace("{names}", `${patient.firstName} ${patient.lastName}`)}</SheetTitle>
       <SheetDescription className="sr-only">{t("profile_desc")}</SheetDescription>
-      <div className="h-28 w-full bg-[#0F766E] relative" />
+      <div className="h-28 w-full bg-primary relative" />
 
       <div className="px-6 pb-6 relative -mt-10">
         <div className="flex justify-between items-end mb-4">

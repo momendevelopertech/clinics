@@ -164,7 +164,7 @@ function EditAppointmentDialog({
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onCancel} className="h-9 text-xs"><X />{t("common_cancel")}</Button>
-            <Button type="submit" className="h-9 bg-primary hover:bg-[#115E59] text-white shadow-2xs text-xs"><Save />{t("appts_saveChanges")}</Button>
+            <Button type="submit" className="h-9 text-xs"><Save />{t("appts_saveChanges")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

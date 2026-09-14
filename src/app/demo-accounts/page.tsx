@@ -175,7 +175,7 @@ export default async function DemoAccountsPage() {
 
         <Link
           href="/login"
-          className="mt-4 inline-flex items-center gap-2 rounded-md bg-primary hover:bg-[#115E59] px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors"
+          className="mt-4 inline-flex items-center gap-2 rounded-md bg-primary hover:bg-primary/90 px-4 py-2 text-xs font-semibold text-primary-foreground shadow-xs transition-colors"
         >
           <Building2 className="h-4 w-4" />
           {t["auth_staffPortal"]}

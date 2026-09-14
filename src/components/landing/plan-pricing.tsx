@@ -100,10 +100,10 @@ export async function PlanPricing({ t }: { t: Dictionary }) {
             return (
               <div
                 key={plan.code}
-                className={`surface-panel relative flex flex-col rounded-[28px] border p-6 ${
+                className={`surface-panel relative flex flex-col rounded-lg border p-6 shadow-sm ${
                   popular
-                    ? "border-primary/40 shadow-lg shadow-primary/10"
-                    : "border-white/55 dark:border-white/6"
+                    ? "border-primary/50 shadow-md"
+                    : "border-border"
                 }`}
               >
                 {popular ? (
@@ -111,10 +111,10 @@ export async function PlanPricing({ t }: { t: Dictionary }) {
                     {t["landing_pricingPopular"]}
                   </span>
                 ) : null}
-                <div className="grid size-12 place-content-center rounded-[16px] bg-primary/10 text-primary">
+                <div className="grid size-11 place-content-center rounded-md bg-primary/10 text-primary">
                   <PlanIcon code={plan.code} />
                 </div>
-                <h3 className="mt-4 text-xl font-semibold">
+                <h3 className="mt-4 text-xl font-semibold text-foreground">
                   {lang === "ar" ? plan.nameAr : plan.nameEn}
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -133,21 +133,21 @@ export async function PlanPricing({ t }: { t: Dictionary }) {
                       <Check
                         className={`mt-0.5 h-4 w-4 shrink-0 ${
                           highlight.unlimited
-                            ? "text-amber-500"
-                            : "text-emerald-600"
+                            ? "text-warning-text"
+                            : "text-success-text"
                         }`}
                       />
-                      <span className="text-foreground/80">{highlight.label}</span>
+                      <span className="text-foreground">{highlight.label}</span>
                     </li>
                   ))}
                 </ul>
                 <div className="mt-6">
                   <Link
                     href="/signup"
-                    className={`inline-flex h-11 w-full items-center justify-center gap-2 rounded-[16px] text-sm font-semibold transition hover:translate-y-[-1px] ${
+                    className={`inline-flex h-9 w-full items-center justify-center gap-2 rounded-md text-sm font-semibold transition hover:opacity-90 ${
                       plan.code === "free"
-                        ? "border border-white/60 bg-white/70 text-foreground shadow-sm hover:bg-white dark:border-white/6 dark:bg-white/[0.04]"
-                        : "bg-linear-to-r from-primary to-cyan-500 text-white shadow-lg shadow-cyan-500/20"
+                        ? "border border-border bg-card text-foreground shadow-sm hover:bg-muted"
+                        : "bg-primary text-primary-foreground shadow-sm"
                     }`}
                   >
                     {plan.code === "free"

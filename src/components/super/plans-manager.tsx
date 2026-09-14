@@ -234,11 +234,11 @@ export function PlansManager({ t }: { t: Dictionary }) {
 
   const badge = (status: string) =>
     status === "active" ? (
-      <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+      <span className="rounded-full bg-success-bg px-2.5 py-1 text-xs font-semibold text-success-text">
         {t["super_activeOrg"]}
       </span>
     ) : (
-      <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
+      <span className="rounded-full bg-warning-bg px-2.5 py-1 text-xs font-semibold text-warning-text">
         {t["plans_archived"]}
       </span>
     );
@@ -247,18 +247,18 @@ export function PlansManager({ t }: { t: Dictionary }) {
     <div className="space-y-5">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="grid size-11 place-content-center rounded-[16px] bg-linear-to-br from-cyan-500 via-teal-500 to-emerald-500 text-white shadow-lg shadow-cyan-500/20">
+          <div className="grid size-11 place-content-center rounded-md bg-primary text-primary-foreground shadow-sm">
             <Lock className="h-5 w-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-semibold tracking-[-0.03em]">{t["plans_title"]}</h1>
+            <h1 className="text-2xl font-semibold tracking-[-0.03em] text-foreground">{t["plans_title"]}</h1>
             <p className="text-sm text-muted-foreground">{t["plans_subtitle"]}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Link
             href="/super"
-            className="inline-flex items-center gap-2 rounded-[14px] border border-white/60 bg-white/70 px-3 py-2 text-sm font-semibold text-muted-foreground shadow-sm transition hover:text-foreground dark:border-white/6 dark:bg-white/[0.04]"
+            className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm font-semibold text-muted-foreground shadow-sm transition hover:text-foreground hover:bg-muted"
           >
             <X className="h-4 w-4" />
             {t["super_backToConsole"]}
@@ -266,14 +266,14 @@ export function PlansManager({ t }: { t: Dictionary }) {
           <button
             onClick={() => void load()}
             disabled={loading}
-            className="grid size-10 place-content-center rounded-[14px] border border-white/60 bg-white/70 text-muted-foreground shadow-sm transition hover:text-foreground dark:border-white/6 dark:bg-white/[0.04] disabled:opacity-50"
+            className="grid size-9 place-content-center rounded-md border border-border bg-card text-muted-foreground shadow-sm transition hover:text-foreground hover:bg-muted disabled:opacity-50"
             aria-label={t["super_refresh"]}
           >
             <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           </button>
           <button
             onClick={startCreate}
-            className="inline-flex items-center gap-2 rounded-[14px] bg-primary px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary/90"
+            className="inline-flex h-9 items-center gap-2 rounded-md bg-primary px-3.5 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
           >
             <Plus className="h-4 w-4" />
             {t["plans_newPlan"]}
@@ -282,25 +282,25 @@ export function PlansManager({ t }: { t: Dictionary }) {
       </header>
 
       {error ? (
-        <p className="rounded-[16px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/25 dark:bg-red-500/10 dark:text-red-300">
+        <p className="rounded-md border border-critical-text/20 bg-critical-bg px-4 py-3 text-sm text-critical-text">
           {error}
         </p>
       ) : null}
       {message ? (
-        <p className="rounded-[16px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 dark:border-emerald-500/25 dark:bg-emerald-500/10 dark:text-emerald-300">
+        <p className="rounded-md border border-success-text/20 bg-success-bg px-4 py-3 text-sm font-medium text-success-text">
           {message}
         </p>
       ) : null}
 
       {editing ? (
-        <div className="surface-panel rounded-[28px] border border-white/55 p-6 dark:border-white/6">
+        <div className="surface-panel rounded-lg border border-border p-6 shadow-sm">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">
+            <h2 className="text-lg font-semibold text-foreground">
               {editing.id ? t["plans_editPlan"] : t["plans_newPlan"]}
             </h2>
             <button
               onClick={() => setEditing(null)}
-              className="grid size-9 place-content-center rounded-[12px] border border-white/60 text-muted-foreground hover:text-foreground dark:border-white/8"
+              className="grid size-8 place-content-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted"
               aria-label={t["common_close"]}
             >
               <X className="h-4 w-4" />
@@ -312,14 +312,14 @@ export function PlansManager({ t }: { t: Dictionary }) {
                 value={editing.code}
                 onChange={(event) => setEditing({ ...editing, code: event.target.value })}
                 disabled={Boolean(editing.id)}
-                className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04] disabled:opacity-50"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm disabled:opacity-50"
               />
             </Field>
             <Field label={t["plans_nameEn"]}>
               <input
                 value={editing.nameEn}
                 onChange={(event) => setEditing({ ...editing, nameEn: event.target.value })}
-                className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               />
             </Field>
             <Field label={t["plans_nameAr"]}>
@@ -327,14 +327,14 @@ export function PlansManager({ t }: { t: Dictionary }) {
                 value={editing.nameAr}
                 onChange={(event) => setEditing({ ...editing, nameAr: event.target.value })}
                 dir="rtl"
-                className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               />
             </Field>
             <Field label={t["plans_descriptionEn"]}>
               <input
                 value={editing.descriptionEn}
                 onChange={(event) => setEditing({ ...editing, descriptionEn: event.target.value })}
-                className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               />
             </Field>
             <Field label={t["plans_descriptionAr"]}>
@@ -342,7 +342,7 @@ export function PlansManager({ t }: { t: Dictionary }) {
                 value={editing.descriptionAr}
                 onChange={(event) => setEditing({ ...editing, descriptionAr: event.target.value })}
                 dir="rtl"
-                className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               />
             </Field>
             <Field label={t["plans_price"]}>
@@ -351,14 +351,14 @@ export function PlansManager({ t }: { t: Dictionary }) {
                 min={0}
                 value={editing.price}
                 onChange={(event) => setEditing({ ...editing, price: event.target.value })}
-                className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               />
             </Field>
             <Field label={t["plans_billingCycle"]}>
               <select
                 value={editing.billingCycle}
                 onChange={(event) => setEditing({ ...editing, billingCycle: event.target.value })}
-                className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               >
                 <option value="monthly">Monthly</option>
                 <option value="yearly">Yearly</option>
@@ -369,7 +369,7 @@ export function PlansManager({ t }: { t: Dictionary }) {
                 type="number"
                 value={editing.displayOrder}
                 onChange={(event) => setEditing({ ...editing, displayOrder: event.target.value })}
-                className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               />
             </Field>
             <Field label={t["plans_trialDays"]}>
@@ -378,14 +378,14 @@ export function PlansManager({ t }: { t: Dictionary }) {
                 min={0}
                 value={editing.trialDays}
                 onChange={(event) => setEditing({ ...editing, trialDays: event.target.value })}
-                className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               />
             </Field>
             <Field label={t["plans_upgradeTarget"]}>
               <select
                 value={editing.upgradeTargetId}
                 onChange={(event) => setEditing({ ...editing, upgradeTargetId: event.target.value })}
-                className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               >
                 <option value="">—</option>
                 {plans
@@ -401,7 +401,7 @@ export function PlansManager({ t }: { t: Dictionary }) {
               <select
                 value={editing.status}
                 onChange={(event) => setEditing({ ...editing, status: event.target.value })}
-                className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 text-sm dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               >
                 <option value="active">Active</option>
                 <option value="archived">Archived</option>
@@ -425,7 +425,7 @@ export function PlansManager({ t }: { t: Dictionary }) {
                 onChange={(event) => setEditing({ ...editing, modulesJson: event.target.value })}
                 rows={4}
                 spellCheck={false}
-                className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 font-mono text-xs dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 font-mono text-xs"
               />
             </Field>
             <Field label={t["plans_featuresJson"]} hint={t["plans_jsonHint"]}>
@@ -434,7 +434,7 @@ export function PlansManager({ t }: { t: Dictionary }) {
                 onChange={(event) => setEditing({ ...editing, featuresJson: event.target.value })}
                 rows={4}
                 spellCheck={false}
-                className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 font-mono text-xs dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 font-mono text-xs"
               />
             </Field>
             <Field label={t["plans_downgradeTargets"]} hint={t["plans_jsonHint"]}>
@@ -445,21 +445,21 @@ export function PlansManager({ t }: { t: Dictionary }) {
                 }
                 rows={4}
                 spellCheck={false}
-                className="w-full rounded-[12px] border border-white/60 bg-white/70 px-3 py-2 font-mono text-xs dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 font-mono text-xs"
               />
             </Field>
           </div>
           <div className="mt-5 flex justify-end gap-2">
             <button
               onClick={() => setEditing(null)}
-              className="rounded-[12px] border border-white/60 bg-white/60 px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground dark:border-white/8 dark:bg-white/[0.03]"
+              className="rounded-md border border-border bg-card px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted"
             >
               <X className="h-4 w-4" />{t["common_cancel"]}
             </button>
             <button
               onClick={() => void saveForm()}
               disabled={saving}
-              className="inline-flex items-center gap-2 rounded-[12px] bg-primary px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+              className="inline-flex h-9 items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-60"
             >
               <Save className="h-4 w-4" />
               {saving ? t["common_saving"] : t["common_save"]}
@@ -469,20 +469,20 @@ export function PlansManager({ t }: { t: Dictionary }) {
       ) : null}
 
       {loading ? (
-        <div className="surface-panel flex items-center justify-center gap-2 rounded-[28px] p-12 text-muted-foreground">
+        <div className="surface-panel flex items-center justify-center gap-2 rounded-lg border border-border p-12 text-muted-foreground shadow-sm">
           <Loader2 className="h-5 w-5 animate-spin" />
           <span className="text-sm">{t["common_loading"]}</span>
         </div>
       ) : plans.length === 0 ? (
-        <div className="surface-panel rounded-[28px] p-12 text-center text-sm text-muted-foreground">
+        <div className="surface-panel rounded-lg border border-border p-12 text-center text-sm text-muted-foreground shadow-sm">
           {t["plans_noPlans"]}
         </div>
       ) : (
-        <div className="surface-panel overflow-hidden rounded-[28px] border border-white/55 dark:border-white/6">
+        <div className="surface-panel overflow-hidden rounded-lg border border-border shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[980px] text-left text-sm">
               <thead>
-                <tr className="border-b border-white/55 text-xs uppercase tracking-widest text-muted-foreground dark:border-white/6">
+                <tr className="border-b border-border text-xs uppercase tracking-widest text-muted-foreground bg-muted/30">
                   <th className="px-4 py-3" />
                   <th className="px-4 py-3">{t["plans_plan"]}</th>
                   <th className="px-4 py-3">{t["plans_price"]}</th>
@@ -493,17 +493,17 @@ export function PlansManager({ t }: { t: Dictionary }) {
                   <th className="px-4 py-3">{t["plans_actions"]}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/45 dark:divide-white/5">
+              <tbody className="divide-y divide-border">
                 {[...plans]
                   .sort((a, b) => a.displayOrder - b.displayOrder)
                   .map((plan) => (
-                    <tr key={plan.id} className="align-middle hover:bg-white/40 dark:hover:bg-white/[0.03]">
+                    <tr key={plan.id} className="align-middle hover:bg-muted/40">
                       <td className="px-2 py-3">
                         <div className="flex flex-col items-center gap-1">
                           <button
                             onClick={() => void move(plan, -1)}
                             disabled={busy !== null}
-                            className="grid size-7 place-content-center rounded-[9px] text-muted-foreground hover:bg-white/70 dark:hover:bg-white/[0.06] disabled:opacity-40"
+                            className="grid size-7 place-content-center rounded-sm text-muted-foreground hover:bg-muted disabled:opacity-40"
                             aria-label={t["plans_moveUp"]}
                           >
                             <ArrowUp className="h-3.5 w-3.5" />
@@ -511,7 +511,7 @@ export function PlansManager({ t }: { t: Dictionary }) {
                           <button
                             onClick={() => void move(plan, 1)}
                             disabled={busy !== null}
-                            className="grid size-7 place-content-center rounded-[9px] text-muted-foreground hover:bg-white/70 dark:hover:bg-white/[0.06] disabled:opacity-40"
+                            className="grid size-7 place-content-center rounded-sm text-muted-foreground hover:bg-muted disabled:opacity-40"
                             aria-label={t["plans_moveDown"]}
                           >
                             <ArrowDown className="h-3.5 w-3.5" />
@@ -520,7 +520,7 @@ export function PlansManager({ t }: { t: Dictionary }) {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="grid size-9 place-content-center rounded-[12px] bg-primary/10 text-primary">
+                          <div className="grid size-9 place-content-center rounded-md bg-primary/10 text-primary">
                             <Building2 className="h-4 w-4" />
                           </div>
                           <div>
@@ -532,12 +532,12 @@ export function PlansManager({ t }: { t: Dictionary }) {
                                 </span>
                               ) : null}
                             </div>
-                            <div className="text-sm font-semibold">{plan.nameEn}</div>
+                            <div className="text-sm font-semibold text-foreground">{plan.nameEn}</div>
                             <div className="text-xs text-muted-foreground">{plan.nameAr}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3 font-semibold">
+                      <td className="px-4 py-3 font-semibold text-foreground">
                         ${typeof plan.price === "number" ? plan.price.toLocaleString() : Number(plan.price).toLocaleString()}
                       </td>
                       <td className="px-4 py-3 capitalize">{plan.billingCycle}</td>
@@ -549,7 +549,7 @@ export function PlansManager({ t }: { t: Dictionary }) {
                           {badge(plan.status)}
                           <button
                             onClick={() => startEdit(plan)}
-                            className="grid size-8 place-content-center rounded-[10px] border border-white/60 text-muted-foreground transition hover:text-foreground dark:border-white/8"
+                            className="grid size-8 place-content-center rounded-md border border-border text-muted-foreground transition hover:text-foreground hover:bg-muted"
                             aria-label={t["plans_editPlan"]}
                           >
                             <Pencil className="h-3.5 w-3.5" />
@@ -557,7 +557,7 @@ export function PlansManager({ t }: { t: Dictionary }) {
                           <button
                             onClick={() => void run(`/api/super/plans/${plan.id}/duplicate`, "POST")}
                             disabled={busy !== null}
-                            className="grid size-8 place-content-center rounded-[10px] border border-white/60 text-muted-foreground transition hover:text-foreground dark:border-white/8 disabled:opacity-40"
+                            className="grid size-8 place-content-center rounded-md border border-border text-muted-foreground transition hover:text-foreground hover:bg-muted disabled:opacity-40"
                             aria-label={t["plans_duplicate"]}
                           >
                             <Copy className="h-3.5 w-3.5" />
@@ -565,10 +565,10 @@ export function PlansManager({ t }: { t: Dictionary }) {
                           <button
                             onClick={() => void toggleStatus(plan)}
                             disabled={busy !== null}
-                            className="grid size-8 place-content-center rounded-[10px] border border-white/60 text-muted-foreground transition hover:text-foreground dark:border-white/8 disabled:opacity-40"
+                            className="grid size-8 place-content-center rounded-md border border-border text-muted-foreground transition hover:text-foreground hover:bg-muted disabled:opacity-40"
                             aria-label={t["plans_archive"]}
                           >
-                            {plan.status === "active" ? <Trash2 className="h-3.5 w-3.5" /> : <Check className="h-3.5 w-3.5 text-emerald-600" />}
+                            {plan.status === "active" ? <Trash2 className="h-3.5 w-3.5" /> : <Check className="h-3.5 w-3.5 text-success-text" />}
                           </button>
                         </div>
                       </td>

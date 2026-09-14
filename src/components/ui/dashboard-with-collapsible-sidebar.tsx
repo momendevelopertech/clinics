@@ -343,11 +343,11 @@ function CollapsibleSidebar({
                   </span>
                 </div>
               </div>
-              <span className="w-2 h-2 rounded-full bg-[#10B981] shrink-0" title="Connected" />
+              <span className="w-2 h-2 rounded-full bg-success-text shrink-0" title="Connected" />
             </div>
           ) : (
             <div className="flex justify-center">
-              <span className="rounded-[4px] bg-primary/15 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-primary" title={`${t("shell_todayVisits")}: ${todayVisits}`}>
+              <span className="rounded-sm bg-primary/15 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-primary" title={`${t("shell_todayVisits")}: ${todayVisits}`}>
                 {todayVisits}
               </span>
             </div>
@@ -378,10 +378,10 @@ function CollapsibleSidebar({
         {open ? (
           <div className="flex items-center justify-between text-[11px] text-muted-foreground px-1">
             <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-success-text animate-pulse" />
               <span>{t("shell_serverOnline")}</span>
             </div>
-            <span className="font-mono text-[10px] bg-muted px-1.5 py-0.5 rounded-[4px]">RT-24ms</span>
+            <span className="font-mono text-[10px] bg-muted px-1.5 py-0.5 rounded-sm">RT-24ms</span>
           </div>
         ) : null}
 
@@ -456,20 +456,20 @@ function NavLink({
       className={cn(
         "group flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors",
         locked
-          ? "text-amber-700 hover:bg-amber-50"
+          ? "text-warning-text hover:bg-warning-bg"
           : isSelected
-            ? "bg-[#ECFDF5] text-[#0F766E] font-semibold shadow-2xs border-r-2 border-[#0F766E] rtl:border-r-0 rtl:border-l-2"
-            : "text-[#64748B] hover:bg-[#F1F5F9] hover:text-[#0F172A]",
+            ? "bg-primary/10 text-primary font-semibold border-r-2 border-primary rtl:border-r-0 rtl:border-l-2"
+            : "text-muted-foreground hover:bg-muted hover:text-foreground",
       )}
     >
       <div
         className={cn(
           "grid size-7 shrink-0 place-content-center rounded-sm transition-colors",
           locked
-            ? "bg-amber-100/80 text-amber-600"
+            ? "bg-warning-bg text-warning-text"
             : isSelected
-              ? "text-[#0F766E]"
-              : "text-[#64748B] group-hover:text-[#0F172A]",
+              ? "text-primary"
+              : "text-muted-foreground group-hover:text-foreground",
         )}
       >
         <Icon className={cn("h-4 w-4", locked && "opacity-80")} />
@@ -480,26 +480,26 @@ function NavLink({
             {item.label}
           </span>
           {locked ? (
-            <span className="shrink-0 rounded-[4px] bg-[#FFFBEB] border border-[#F59E0B]/30 px-1.5 py-0.5 text-[10px] font-medium text-[#92400E]">
+            <span className="shrink-0 rounded-sm bg-warning-bg border border-warning-border px-1.5 py-0.5 text-[10px] font-medium text-warning-text">
               <Lock className="h-3 w-3 inline" />
             </span>
           ) : notConfigured ? (
             <span
               title={t("cfg_badge")}
-              className="shrink-0 rounded-[4px] bg-[#FFFBEB] border border-[#F59E0B]/30 px-1.5 py-0.5 text-[10px] font-semibold text-[#92400E]"
+              className="shrink-0 rounded-sm bg-warning-bg border border-warning-border px-1.5 py-0.5 text-[10px] font-semibold text-warning-text"
             >
               {t("cfg_badge")}
             </span>
           ) : null}
         </div>
       ) : locked ? (
-        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-amber-500">
+        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-warning-text">
           <Lock className="h-3 w-3" />
         </span>
       ) : notConfigured ? (
         <span
           title={t("cfg_badge")}
-          className="absolute right-2 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-amber-500"
+          className="absolute right-2 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-warning-text"
         />
       ) : null}
     </Link>

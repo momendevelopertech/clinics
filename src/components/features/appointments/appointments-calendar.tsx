@@ -123,11 +123,11 @@ export function AppointmentsCalendar({
 
   const statusStyles: Record<string, string> = {
     Confirmed:
-      "bg-blue-500/10 border-l-blue-500 dark:border-l-blue-400 text-blue-800 dark:text-blue-200",
+      "bg-accent-blue-bg border-l-accent-blue-text text-accent-blue-text",
     "In Waiting Room":
-      "bg-amber-500/10 border-l-amber-500 dark:border-l-amber-400 text-amber-800 dark:text-amber-200",
+      "bg-warning-bg border-l-warning-text text-warning-text",
     Scheduled:
-      "bg-violet-500/10 border-l-violet-500 dark:border-l-violet-400 text-violet-800 dark:text-violet-200",
+      "bg-primary/10 border-l-primary text-foreground",
   };
 
   return (
@@ -138,13 +138,13 @@ export function AppointmentsCalendar({
       className="flex flex-col h-full min-h-[400px]"
     >
       {/* Navigation header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 border-b border-neutral-200 dark:border-neutral-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="icon"
             onClick={goPrev}
-            className="h-8 w-8 rounded-[5px] shrink-0 hover:bg-violet-50 dark:hover:bg-violet-950/30 hover:border-violet-300 dark:hover:border-violet-800 transition-colors"
+            className="h-8 w-8 rounded-md shrink-0"
             aria-label="Previous week"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -153,12 +153,12 @@ export function AppointmentsCalendar({
             variant="outline"
             size="icon"
             onClick={goNext}
-            className="h-8 w-8 rounded-[5px] shrink-0 hover:bg-violet-50 dark:hover:bg-violet-950/30 hover:border-violet-300 dark:hover:border-violet-800 transition-colors"
+            className="h-8 w-8 rounded-md shrink-0"
             aria-label="Next week"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
-          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-50 min-w-[220px]">
+          <h3 className="text-base font-semibold text-foreground min-w-[220px]">
             {weekDays[0].toLocaleDateString("en-US", {
               month: "short",
               day: "numeric",
@@ -175,7 +175,7 @@ export function AppointmentsCalendar({
           variant="outline"
           size="sm"
           onClick={goToday}
-          className="rounded-[5px] self-start sm:self-center border-violet-200 dark:border-violet-800 hover:bg-violet-50 dark:hover:bg-violet-950/30 hover:border-violet-300"
+          className="rounded-md self-start sm:self-center"
         >
           <CalendarIcon className="h-4 w-4 mr-2" />
           Today
@@ -196,21 +196,21 @@ export function AppointmentsCalendar({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 className={cn(
-                  "flex flex-col rounded-[5px] border min-h-[280px] overflow-hidden",
+                  "flex flex-col rounded-md border min-h-[280px] overflow-hidden",
                   isToday
-                    ? "border-violet-300 dark:border-violet-700 bg-violet-50/30 dark:bg-violet-950/20 shadow-sm shadow-violet-200/30 dark:shadow-violet-900/20"
-                    : "border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/50"
+                    ? "border-primary bg-primary/5 shadow-xs"
+                    : "border-border bg-card"
                 )}
               >
                 <div
                   className={cn(
                     "px-3 py-2.5 text-center font-medium text-sm border-b shrink-0",
                     isToday
-                      ? "bg-violet-100 dark:bg-violet-900/40 text-violet-800 dark:text-violet-200 border-violet-200/50 dark:border-violet-800/50"
-                      : "bg-neutral-50 dark:bg-neutral-800/50 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-800"
+                      ? "bg-primary/10 text-primary border-primary/20"
+                      : "bg-muted/40 text-foreground border-border"
                   )}
                 >
-                  <div className="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-500">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
                     {DAY_NAMES[d.getDay()]}
                   </div>
                   <div className="text-lg font-semibold mt-0.5">{d.getDate()}</div>
@@ -222,7 +222,7 @@ export function AppointmentsCalendar({
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="flex flex-col items-center justify-center h-24 text-neutral-400 dark:text-neutral-500 text-xs"
+                        className="flex flex-col items-center justify-center h-24 text-muted-foreground text-xs"
                       >
                         <CalendarIcon className="h-8 w-8 mb-2 opacity-50" strokeWidth={1.5} />
                         <span>No appointments</span>
@@ -232,7 +232,7 @@ export function AppointmentsCalendar({
                         const patientName = apt.patient ?? "Unknown Patient";
                         const style =
                           statusStyles[apt.status] ??
-                          "bg-neutral-100 dark:bg-neutral-800 border-l-neutral-400 text-neutral-800 dark:text-neutral-200";
+                          "bg-muted border-l-muted-foreground text-foreground";
 
                         return (
                           <motion.div
@@ -242,8 +242,8 @@ export function AppointmentsCalendar({
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.96 }}
                             className={cn(
-                              "rounded-[5px] border-l-[3px] p-2.5 cursor-pointer transition-all",
-                              "hover:shadow-md hover:ring-2 hover:ring-violet-400/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500",
+                              "rounded-md border-l-[3px] p-2.5 cursor-pointer transition-all",
+                              "hover:shadow-xs focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring",
                               style
                             )}
                             onClick={() => onEdit?.(apt)}
@@ -256,7 +256,7 @@ export function AppointmentsCalendar({
                               }
                             }}
                           >
-                            <div className="flex items-center gap-1.5 text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                            <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
                               <Clock className="h-3 w-3 shrink-0" strokeWidth={2.5} />
                               {apt.time}
                               <span className="text-[10px] font-normal opacity-75">
@@ -267,7 +267,7 @@ export function AppointmentsCalendar({
                               <User className="h-3 w-3 shrink-0" strokeWidth={2.5} />
                               {patientName}
                             </div>
-                            <div className="flex items-center gap-1.5 text-[11px] text-neutral-600 dark:text-neutral-400 truncate mt-0.5">
+                            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground truncate mt-0.5">
                               <Stethoscope className="h-3 w-3 shrink-0" strokeWidth={2.5} />
                               {apt.provider}
                             </div>

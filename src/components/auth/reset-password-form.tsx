@@ -65,7 +65,7 @@ export function ResetPasswordForm({
           <div className="mt-6">
             <Link
               href="/login"
-              className="inline-flex h-9 items-center justify-center rounded-md bg-primary hover:bg-[#115E59] px-5 text-xs font-semibold text-white transition-colors shadow-2xs"
+              className="inline-flex h-9 items-center justify-center rounded-md bg-primary hover:bg-primary/90 px-5 text-xs font-semibold text-primary-foreground transition-colors shadow-xs"
             >
               {t["auth_backToLogin"]}
             </Link>
@@ -86,7 +86,7 @@ export function ResetPasswordForm({
           <div className="mt-6">
             <Link
               href="/forgot-password"
-              className="inline-flex h-9 items-center justify-center rounded-md bg-primary hover:bg-[#115E59] px-5 text-xs font-semibold text-white transition-colors shadow-2xs"
+              className="inline-flex h-9 items-center justify-center rounded-md bg-primary hover:bg-primary/90 px-5 text-xs font-semibold text-primary-foreground transition-colors shadow-xs"
             >
               {t["forgot_title"]}
             </Link>
@@ -144,7 +144,7 @@ export function ResetPasswordForm({
           ) : null}
 
           <button
-            className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-primary hover:bg-[#115E59] px-4 text-xs font-semibold text-white transition-colors shadow-2xs disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+            className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-primary hover:bg-primary/90 px-4 text-xs font-semibold text-primary-foreground transition-colors shadow-xs disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
             disabled={state === "submitting"}
             type="submit"
           >

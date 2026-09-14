@@ -43,7 +43,7 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8 sm:px-6 lg:px-8">
       <div className="grid w-full max-w-5xl overflow-hidden rounded-lg border border-border bg-card shadow-xl lg:grid-cols-[1fr_1fr]">
-        <section className="relative hidden min-h-[600px] flex-col justify-between border-r border-border bg-[#0F766E] p-8 text-white lg:flex">
+        <section className="relative hidden min-h-[600px] flex-col justify-between border-r border-border bg-primary p-8 text-primary-foreground lg:flex">
           <div>
             <div className="flex items-center justify-between">
               <div className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-white/90">
@@ -179,7 +179,7 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
               ) : null}
 
               <button
-                className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-primary hover:bg-[#115E59] px-4 text-xs font-semibold text-white transition-colors shadow-2xs disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+                className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-primary hover:bg-primary/90 px-4 text-xs font-semibold text-primary-foreground transition-colors shadow-xs disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
                 disabled={isSubmitting}
                 type="submit"
               >

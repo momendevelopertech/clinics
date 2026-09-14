@@ -43,7 +43,7 @@ export function PendingServicesSection({ t }: { t: Dictionary }) {
 
   if (loading) {
     return (
-      <div className="surface-panel mt-6 flex items-center justify-center gap-2 rounded-[28px] p-12 text-muted-foreground">
+      <div className="surface-panel mt-6 flex items-center justify-center gap-2 rounded-lg border border-border p-12 text-muted-foreground shadow-sm">
         <Loader2 className="h-5 w-5 animate-spin" />
         <span className="text-sm">{tOf(t, "common_loading")}</span>
       </div>
@@ -60,13 +60,13 @@ export function PendingServicesSection({ t }: { t: Dictionary }) {
           return (
             <article
               key={service.id}
-              className="surface-panel rounded-[24px] border border-white/55 p-5 dark:border-white/6"
+              className="surface-panel rounded-lg border border-border p-5 shadow-sm"
             >
               <div className="flex items-start justify-between gap-3">
-                <h3 className="text-base font-semibold">
+                <h3 className="text-base font-semibold text-foreground">
                   {tOf(t, service.nameKey)}
                 </h3>
-                <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-white/60 bg-white/70 px-2.5 py-1 text-xs font-semibold text-muted-foreground dark:border-white/6 dark:bg-white/[0.04]">
+                <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-muted/40 px-2.5 py-1 text-xs font-semibold text-muted-foreground">
                   <span className={`size-1.5 rounded-full ${STATUS_DOT[state]}`} />
                   {tOf(t, STATUS_KEY[state])}
                 </span>
@@ -80,7 +80,7 @@ export function PendingServicesSection({ t }: { t: Dictionary }) {
               </p>
               {service.requiredVars.length > 0 ? (
                 <div className="mt-3">
-                  <p className="text-xs font-semibold">
+                  <p className="text-xs font-semibold text-foreground">
                     {tOf(t, "svc_required_vars")}:
                   </p>
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
@@ -88,7 +88,7 @@ export function PendingServicesSection({ t }: { t: Dictionary }) {
                       <code
                         key={name}
                         dir="ltr"
-                        className="rounded-[8px] border border-white/60 bg-white/70 px-2 py-0.5 font-mono text-[11px] dark:border-white/6 dark:bg-white/[0.04]"
+                        className="rounded-md border border-border bg-muted/50 px-2 py-0.5 font-mono text-[11px] text-foreground"
                       >
                         {name}
                       </code>

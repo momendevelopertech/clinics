@@ -21,15 +21,15 @@ export function OfflineIndicator() {
       <button
         onClick={() => setShowDetail(!showDetail)}
         className={cn(
-          "flex items-center gap-2 rounded-[16px] px-4 py-2.5 text-sm font-medium shadow-lg backdrop-blur-sm transition-all",
+          "flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium shadow-lg backdrop-blur-sm transition-all",
           !isOnline &&
-            "border border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300",
+            "border border-critical-text/20 bg-critical-bg text-critical-text",
           isOnline &&
             pendingCount > 0 &&
             !isSyncing &&
-            "border border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300",
+            "border border-warning-text/20 bg-warning-bg text-warning-text",
           isSyncing &&
-            "border border-cyan-200 bg-cyan-50 text-cyan-700 dark:border-cyan-800 dark:bg-cyan-950 dark:text-cyan-300"
+            "border border-accent-blue-text/20 bg-accent-blue-bg text-accent-blue-text"
         )}
       >
         {isSyncing ? (
@@ -49,15 +49,15 @@ export function OfflineIndicator() {
       </button>
 
       {showDetail && (
-        <div className="absolute bottom-full right-0 mb-2 w-72 rounded-[18px] border border-white/60 bg-white p-4 shadow-xl dark:border-white/6 dark:bg-neutral-900">
+        <div className="absolute bottom-full right-0 mb-2 w-72 rounded-md border border-border bg-card p-4 shadow-xl text-card-foreground">
           <div className="space-y-2 text-sm">
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Status</span>
               <span className="flex items-center gap-1.5 font-medium">
                 {isOnline ? (
-                  <Wifi className="h-3.5 w-3.5 text-emerald-500" />
+                  <Wifi className="h-3.5 w-3.5 text-success-text" />
                 ) : (
-                  <WifiOff className="h-3.5 w-3.5 text-red-500" />
+                  <WifiOff className="h-3.5 w-3.5 text-critical-text" />
                 )}
                 {isOnline ? "Connected" : "Disconnected"}
               </span>
@@ -71,7 +71,7 @@ export function OfflineIndicator() {
             {isSyncing && (
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Syncing</span>
-                <RefreshCw className="h-3.5 w-3.5 animate-spin text-cyan-500" />
+                <RefreshCw className="h-3.5 w-3.5 animate-spin text-accent-blue-text" />
               </div>
             )}
             {lastSyncTime && (

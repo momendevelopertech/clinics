@@ -63,7 +63,7 @@ export default function PatientLoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8 sm:px-6 lg:px-8">
       <div className="grid w-full max-w-5xl overflow-hidden rounded-lg border border-border bg-card shadow-xl lg:grid-cols-[1fr_1fr]">
-        <section className="hidden min-h-[600px] flex-col justify-between border-r border-border bg-[#0F766E] p-8 text-white lg:flex">
+        <section className="hidden min-h-[600px] flex-col justify-between border-r border-border bg-primary p-8 text-primary-foreground lg:flex">
           <div>
             <div className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-white/90">
               <Activity className="h-3.5 w-3.5" />
@@ -175,7 +175,7 @@ export default function PatientLoginPage() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="h-9 w-full rounded-md bg-primary hover:bg-[#115E59] text-xs font-semibold text-white shadow-2xs mt-2 cursor-pointer"
+                  className="h-9 w-full rounded-md text-xs font-semibold shadow-xs mt-2 cursor-pointer"
                 >
                   {loading ? t("portal_signingIn") : t("portal_openPortal")}
                 </Button>
