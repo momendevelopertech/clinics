@@ -168,7 +168,14 @@ export default function QueuePage() {
             </div>
           </div>
         ))}
-        {!queue.length && !error ? <p className="py-8 text-center text-xs text-muted-foreground">{t("queue_empty")}</p> : null}
+        {!queue.length && !error ? (
+          <div className="flex flex-col items-center gap-3 py-8 text-center">
+            <p className="text-xs text-muted-foreground">{t("queue_empty")}</p>
+            <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" asChild>
+              <a href="/appointments">{t("queue_emptyCta")}</a>
+            </Button>
+          </div>
+        ) : null}
       </div>
       )}
     </div>

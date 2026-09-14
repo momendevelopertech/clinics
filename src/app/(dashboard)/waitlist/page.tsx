@@ -272,9 +272,10 @@ export default function WaitlistPage() {
               <p className="text-muted-foreground">{t("wl_loading")}</p>
             </div>
           ) : filteredEntries.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-64 text-center">
-              <Calendar className="w-12 h-12 text-muted-foreground/40 mb-4" />
+            <div className="flex flex-col items-center justify-center gap-3 h-64 text-center">
+              <Calendar className="w-12 h-12 text-muted-foreground/40" />
               <p className="text-muted-foreground">{t("wl_empty")}</p>
+              <AddToWaitlistDialog onSuccess={fetchWaitlist} />
             </div>
           ) : (
             <table className="w-full text-sm text-start">

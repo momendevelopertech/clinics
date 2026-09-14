@@ -162,7 +162,10 @@ export function BookClinicClient({ orgSlug }: { orgSlug: string }) {
             {loading ? (
               <p className="text-sm text-muted-foreground">{t("portal_loading")}</p>
             ) : slots.length === 0 ? (
-              <p className="text-sm text-muted-foreground">{t("portal_noSlots")}</p>
+              <div className="flex flex-col gap-2">
+                <p className="text-sm text-muted-foreground">{t("portal_noSlots")}</p>
+                <p className="text-xs text-muted-foreground">{t("portal_noSlotsHint")}</p>
+              </div>
             ) : (
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {slots.map((s) => (

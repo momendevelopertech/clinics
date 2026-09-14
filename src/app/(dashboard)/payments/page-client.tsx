@@ -376,9 +376,12 @@ export default function PaymentsPageClient() {
               <p className="text-xs text-muted-foreground">{t("pay_loading")}</p>
             </div>
           ) : filteredPayments.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-64 text-center">
-              <DollarSign className="w-12 h-12 text-muted-foreground/40 mb-4" />
+            <div className="flex flex-col items-center justify-center gap-3 h-64 text-center">
+              <DollarSign className="w-12 h-12 text-muted-foreground/40" />
               <p className="text-xs text-muted-foreground">{t("pay_empty")}</p>
+              <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" asChild>
+                <a href="/billing">{t("pay_emptyCta")}</a>
+              </Button>
             </div>
           ) : (
             <table className="w-full text-xs text-start">

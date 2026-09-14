@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { ArrowLeft, Building2, ExternalLink, KeyRound } from "lucide-react";
 import { getDictionary } from "@/lib/i18n/server";
 import type { Dictionary } from "@/lib/i18n/locale";
@@ -78,6 +79,11 @@ function AccountTable({
 }
 
 export default async function DemoAccountsPage() {
+  // G15: demo credentials must never be public in production unless
+  // explicitly enabled (ALLOW_DEMO_ACCOUNTS=true).
+  if (process.env.NODE_ENV === "production" && process.env.ALLOW_DEMO_ACCOUNTS !== "true") {
+    notFound();
+  }
   const t = await getDictionary();
 
   return (
