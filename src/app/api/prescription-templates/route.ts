@@ -31,10 +31,20 @@ export async function GET(request: Request) {
     const specialty = searchParams.get("specialty")?.trim() ?? "";
     const mineOnly = searchParams.get("mine") === "true";
 
+    // G22 fix: private templates (isShared=false) are visible only to their
+    // author or Owner/Super Admin. Shared templates are visible org-wide.
+    const isOwner = context.roles.some((role: string) =>
+      ["owner", "superadmin", "super admin"].includes(role.toLowerCase()),
+    );
+
     const templates = await prisma.prescriptionTemplate.findMany({
       where: {
         organizationId: orgId,
-        ...(mineOnly ? { createdById: context.userId } : {}),
+        ...(mineOnly
+          ? { createdById: context.userId }
+          : isOwner
+            ? {}
+            : { OR: [{ isShared: true }, { createdById: context.userId }] }),
         ...(specialty ? { specialty: { equals: specialty, mode: "insensitive" as const } } : {}),
       },
       select: {

@@ -161,10 +161,28 @@ Tenant = `Organization` (الفروع الفيزيائية = `Branch`). كل ك�
 
 ---
 
-## 6) البوابة للمرحلة 2 (لا نبدأ قبل موافقتك)
+## 6) البوابة للمرحلة 2 (لا نبدأ قبل موافقتك))
 
 1. اعتماد هذا الملف + ترتيب الإصلاح: المقترح `G4 → G3 → G1/G2/G9 → G5/G8 → G7 → G10/G11 → G12/G13/G14/G15`.
 2. قرارك في G6 (فلو تمريضي للحقن/التطعيم: نصممه أم نستبعده موثقًا؟).
 3. بعد الموافقة: نبني الـ End-to-End Flows + الـ Seed (50-100 دواء + قوالب) + `TEST_REPORT.md` بالسيناريو الكامل، ثم `PERMISSIONS_MATRIX.md` و`USER_STORIES.md`.
 
 > راجع أيضًا (موجود مسبقًا ولا يغني عن هذا الملف): `user-stories-by-role.md` (سرد بشري غير تقني)، `SYSTEM_SIDEBAR_AUDIT.md` (تدقيق Sidebar فقط)، `PROJECT_AUDIT_REPORT.md` / `CRM_GAP_ANALYSIS.md` (تحليلات قديمة جزئية).
+
+---
+
+## 7) Gaps جديدة من مرحلة Data Provenance (2026-09-14 — التفاصيل `DATA_SOURCE_MAP.md`)
+
+| ID | الوصف | المكان بالضبط |
+|----|-------|----------------|
+| G17 | لا إنشاء حساب موظف: `user.create` الوحيد في كل الـ API هو التسجيل العام؛ زر `settings_addTeamMember` بلا Backend (المالك يُسند أدوارًا لموجودين فقط) | `src/app/api/signup/route.ts:212` + `dictionaries/en.ts:291` |
+| G18 | بند الفاتورة لا يختار من `ServiceCatalog` (وصف/سعر يدوي رغم دعم API لـ `serviceCatalogId`) | `new-invoice-dialog.tsx` + `src/app/api/billing/invoices/route.ts:86` |
+| G19 | `ServiceCatalog`/`ClinicalCatalog` بلا UI إدارة (قراءة فقط) + بلا تعديل/حذف API | `catalogs/page.tsx` + `src/app/api/catalogs/route.ts` |
+| G20 | APIs بلا زر UI: تعديل المريض، إلغاء الموافقة، تعديل فرع/غرفة، إلغاء التقسيط، إنشاء التشخيص (clinical-orders POST)، تعديل/حذف نماذج intake — الكوبونات خرجت (G27 UI) | routes في `DATA_SOURCE_MAP.md` أقسام (أ)(د)(و) |
+| G21 | `/locations` للاستقبال بينما API مالك فقط — زر يفشل 403 دائمًا | `locations/page.tsx` + `src/app/api/branches/route.ts` |
+| G22 | 🟡 FIXED 2026-09-14 | `PrescriptionTemplate.isShared` ignored by GET — private templates visible org-wide → GET now enforces `OR:[{isShared:true},{createdById}]` for non-Owners; Owner sees all | `src/app/api/prescription-templates/route.ts:34-53` (التفاصيل `DATA_SOURCE_MAP.md` §6) |
+| G23 | 🟡 DONE 2026-09-14 | No insurance provider catalog → new org-level `InsuranceProvider` model + Owner CRUD API + managed-list dropdown in policy form + rename cascade + 5 seeded providers | `prisma/schema.prisma` (`InsuranceProvider`) + `src/app/api/insurance/providers/` + `src/app/(dashboard)/insurance/page.tsx` |
+| G24 | 🟡 DONE 2026-09-14 | Lab `testName`/diagnosis free text, unused `ClinicalCatalog` → lab order/result pickers read `ClinicalCatalog(system=LAB)` via `ClinicalCatalogSelect`; 9 LAB entries seeded; diagnosis creation found API-only (no composer) — see G20 | `src/components/data-source/clinical-catalog-select.tsx` + `add-lab-order-dialog.tsx` + `add-lab-result-dialog.tsx` |
+| G25 | 🟢 DONE 2026-09-14 | `taskType` dead field → REVISED: field is load-bearing (cron writes `follow_up`); activated canonical dropdown (`follow_up/lab_review/claim_followup`) in `CreateTaskDialog`, now sent in POST | `src/components/tasks/create-task-dialog.tsx` + `src/app/api/cron/follow-up-escalation/route.ts:96` |
+| G26 | 🟢 | `MedicationFavorite` GET-only, auto-upsert side-effect, unmanageable by anyone → DECIDED: internal cache, no UI (documented) | `src/app/api/prescriptions/favorites/route.ts:13` + `prescriptions/route.ts:158` |
+| G27 | 🟢 DONE 2026-09-14 | `Coupon` API-only, zero UI → built `CouponsCard` in `/billing` (Biller+Owner, `billing:write`), click-to-toggle active | `src/components/billing/coupons-card.tsx` + `src/app/(dashboard)/billing/page-client.tsx` |

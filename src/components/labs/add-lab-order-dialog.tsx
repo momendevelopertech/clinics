@@ -13,6 +13,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { useLocale } from "@/components/locale/locale-provider";
 import { logClientError } from "@/lib/client-logger";
+import { ClinicalCatalogSelect } from "@/components/data-source/clinical-catalog-select";
 
 type Patient = { id: string; firstName: string; lastName: string };
 
@@ -123,26 +124,24 @@ export function AddLabOrderDialog({ onSuccess }: { onSuccess: () => void }) {
               />
             </div>
           </div>
-          <div className="flex flex-col gap-1.5">
-            <Label>{t("labs_testName")}</Label>
-            <Input
-              value={form.testName}
-              onChange={(event) => {
-                setForm({ ...form, testName: event.target.value });
-                setFieldErrors((prev) => {
-                  const next = { ...prev };
-                  delete next.testName;
-                  return next;
-                });
-              }}
-              aria-required="true"
-              aria-invalid={fieldErrors.testName ? true : undefined}
-              className={fieldErrors.testName ? "border-destructive" : undefined}
-            />
-            {fieldErrors.testName ? (
-              <p className="text-xs text-destructive mt-1">{fieldErrors.testName}</p>
-            ) : null}
-          </div>
+          <ClinicalCatalogSelect
+            system="LAB"
+            value={form.testName}
+            onValueChange={(value) => {
+              setForm({ ...form, testName: value });
+              setFieldErrors((prev) => {
+                const next = { ...prev };
+                delete next.testName;
+                return next;
+              });
+            }}
+            placeholder={t("labs_testNamePh")}
+            label={t("labs_testName")}
+            fallbackHint={t("ds_noLabCatalog")}
+          />
+          {fieldErrors.testName ? (
+            <p className="text-xs text-destructive mt-1">{fieldErrors.testName}</p>
+          ) : null}
           <div className="flex flex-col gap-1.5">
             <Label>{t("labs_indication")}</Label>
             <Input value={form.indication} onChange={(event) => setForm({ ...form, indication: event.target.value })} />

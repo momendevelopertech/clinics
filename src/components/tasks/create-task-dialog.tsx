@@ -30,6 +30,9 @@ interface CreateTaskDialogProps {
 
 const priorities = ["low", "medium", "high", "urgent"];
 
+// G25: canonical task types (schema comment + cron follow-up-escalation).
+const taskTypes = ["follow_up", "lab_review", "claim_followup"];
+
 export function CreateTaskDialog({ onSuccess }: CreateTaskDialogProps) {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -38,6 +41,7 @@ export function CreateTaskDialog({ onSuccess }: CreateTaskDialogProps) {
     title: "",
     description: "",
     priority: "medium",
+    taskType: "",
     dueDate: "",
     patientId: "",
   });
@@ -76,6 +80,7 @@ export function CreateTaskDialog({ onSuccess }: CreateTaskDialogProps) {
           title: formData.title.trim(),
           description: formData.description.trim() || null,
           priority: formData.priority || null,
+          taskType: formData.taskType || null,
           dueDate: formData.dueDate || null,
           patientId: formData.patientId || null,
         }),
@@ -88,6 +93,7 @@ export function CreateTaskDialog({ onSuccess }: CreateTaskDialogProps) {
         title: "",
         description: "",
         priority: "medium",
+        taskType: "",
         dueDate: "",
         patientId: "",
       });
@@ -179,6 +185,25 @@ export function CreateTaskDialog({ onSuccess }: CreateTaskDialogProps) {
                 }
               />
             </div>
+          </div>
+
+          <div className="gap-2 flex flex-col">
+            <Label htmlFor="task-type">Type</Label>
+            <SearchableSelect
+              value={formData.taskType}
+              onValueChange={(value) =>
+                setFormData({ ...formData, taskType: value })
+              }
+              options={[
+                { value: "", label: "—" },
+                ...taskTypes.map((type) => ({
+                  value: type,
+                  label: type,
+                })),
+              ]}
+              placeholder="Select type"
+              id="task-type"
+            />
           </div>
 
           <div className="gap-2 flex flex-col">

@@ -21,6 +21,7 @@ import { usePermissionState } from "@/hooks/use-permission-state";
 import { FeatureNotConfiguredBanner } from "@/components/ui/feature-not-configured-banner";
 import { useFeatureConfig } from "@/hooks/use-feature-config";
 import { NewInvoiceDialog } from "@/components/billing/new-invoice-dialog";
+import { CouponsCard } from "@/components/billing/coupons-card";
 import { InstallmentPlansDialog } from "@/components/billing/installment-plans-dialog";
 import { PaymentDialog } from "@/components/billing/payment-dialog";
 import { formatMoney } from "@/lib/format-money";
@@ -467,6 +468,7 @@ export default function BillingPageClient() {
           )}
         </CardContent>
       </Card>
+      <CouponsCard />
     </motion.div>
   );
 }

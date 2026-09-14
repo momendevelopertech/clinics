@@ -31,6 +31,8 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { DataSourceLink, ManagedHereNote } from "@/components/data-source/data-source-navigator";
+import { DATA_SOURCES } from "@/components/data-source/sources";
 import type { RxMedLine } from "@/lib/prescriptions";
 
 type PatientOption = {
@@ -581,6 +583,7 @@ export function NewPrescriptionDialog({
               <Bookmark className="me-2 h-4 w-4" />
               {t("rx_save_as_template")}
             </Button>
+            <ManagedHereNote label={t("ds_templateNote")} />
           </div>
 
           <div className="space-y-3">
@@ -608,7 +611,14 @@ export function NewPrescriptionDialog({
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="flex flex-col gap-1 sm:col-span-2">
-                    <Label className="text-xs font-semibold">{t("rx_medication")}</Label>
+                    <Label className="flex items-center gap-1 text-xs font-semibold">
+                      {t("rx_medication")}
+                      <DataSourceLink
+                        href={DATA_SOURCES["medication-stock"].href}
+                        pageRoles={DATA_SOURCES["medication-stock"].pageRoles}
+                        managerLabel={DATA_SOURCES["medication-stock"].managerLabel}
+                      />
+                    </Label>
                     <MedicationNameInput
                       value={line.medicationName}
                       onChange={(value) => updateLine(index, "medicationName", value)}

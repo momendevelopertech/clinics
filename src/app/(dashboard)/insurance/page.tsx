@@ -5,9 +5,11 @@ import { motion } from "framer-motion";
 import {
   Check,
   FileText,
+  Pencil,
   Plus,
   Search,
   ShieldCheck,
+  Trash2,
 } from "lucide-react";;
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,7 +20,10 @@ import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { canTransitionClaim } from "@/lib/insurance";
 import { useLocale } from "@/components/locale/locale-provider";
+import { useRoles } from "@/context/RoleContext";
 import { PermissionDenied } from "@/components/ui/permission-denied";
+import { DataSourceLink } from "@/components/data-source/data-source-navigator";
+import { DATA_SOURCES } from "@/components/data-source/sources";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { UpgradePrompt } from "@/components/plan/upgrade-prompt";
 import { toast } from "sonner";
@@ -33,6 +38,13 @@ type Policy = {
   policyNumber: string;
   groupNumber: string | null;
   type: string;
+};
+type Provider = {
+  id: string;
+  name: string;
+  contactPhone: string | null;
+  contactEmail: string | null;
+  active: boolean;
 };
 type Claim = {
   id: string;
@@ -52,11 +64,14 @@ const PAGE_SIZE = 10;
 
 export default function InsurancePage() {
   const { t } = useLocale();
+  const { roles } = useRoles();
+  const isOwner = roles.includes("Owner") || roles.includes("Super Admin");
   const { forbidden, guardedFetch } = usePermissionState();
   const [tab, setTab] = React.useState<"policies" | "claims">("policies");
   const [patients, setPatients] = React.useState<Patient[]>([]);
   const [policies, setPolicies] = React.useState<Policy[]>([]);
   const [claims, setClaims] = React.useState<Claim[]>([]);
+  const [providers, setProviders] = React.useState<Provider[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [patientFilter, setPatientFilter] = React.useState("all");
   const [statusFilter, setStatusFilter] = React.useState("all");
@@ -76,16 +91,19 @@ export default function InsurancePage() {
     invoiceId: "",
     amountClaimed: "",
   });
+  const [providerForm, setProviderForm] = React.useState({ name: "", contactPhone: "", contactEmail: "" });
+  const [editingProviderId, setEditingProviderId] = React.useState<string | null>(null);
   const [advancing, setAdvancing] = React.useState<Record<string, string>>({});
   const [amountPaid, setAmountPaid] = React.useState<Record<string, string>>({});
 
   const loadAll = React.useCallback(async () => {
     setLoading(true);
     try {
-      const [patientsData, policiesData, claimsData] = await Promise.all([
+      const [patientsData, policiesData, claimsData, providersData] = await Promise.all([
         guardedFetch<Patient[] | { patients: Patient[] }>("/api/patients"),
         guardedFetch<{ policies: Policy[] }>("/api/insurance/policies"),
         guardedFetch<{ claims: Claim[] }>("/api/insurance/claims"),
+        guardedFetch<{ providers: Provider[] }>("/api/insurance/providers"),
       ]);
       if (patientsData) {
         setPatients(
@@ -98,6 +116,7 @@ export default function InsurancePage() {
       }
       if (policiesData) setPolicies(policiesData.policies ?? []);
       if (claimsData) setClaims(claimsData.claims ?? []);
+      if (providersData) setProviders(providersData.providers ?? []);
     } catch (error) {
       logClientError("Insurance load failed", error);
     } finally {
@@ -114,6 +133,7 @@ export default function InsurancePage() {
     return p ? `${p.firstName} ${p.lastName}` : "—";
   };
 
+  const activeProviders = providers.filter((p) => p.active);
   const filteredPolicies = policies.filter(
     (p) => patientFilter === "all" || p.patientId === patientFilter,
   );
@@ -149,6 +169,57 @@ export default function InsurancePage() {
     } catch (error) {
       toast.error(t("common_error"));
       logClientError("Policy create failed", error);
+    }
+  }
+
+  async function saveProvider() {
+    if (!providerForm.name.trim()) {
+      toast.error(t("catalogs_required"));
+      return;
+    }
+    try {
+      const payload = {
+        name: providerForm.name.trim(),
+        contactPhone: providerForm.contactPhone.trim() || null,
+        contactEmail: providerForm.contactEmail.trim() || null,
+      };
+      if (editingProviderId) {
+        const r = await fetch(`/api/insurance/providers/${editingProviderId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!r.ok) throw new Error("update failed");
+        toast.success(t("ins_providerUpdated"));
+      } else {
+        const r = await fetch("/api/insurance/providers", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!r.ok) throw new Error("create failed");
+        toast.success(t("ins_providerCreated"));
+      }
+      setProviderForm({ name: "", contactPhone: "", contactEmail: "" });
+      setEditingProviderId(null);
+      await loadAll();
+    } catch (error) {
+      toast.error(t("common_error"));
+      logClientError("Provider save failed", error);
+    }
+  }
+
+  async function deleteProvider(id: string) {
+    if (!window.confirm(t("common_confirmDelete"))) return;
+    try {
+      const r = await fetch(`/api/insurance/providers/${id}`, { method: "DELETE" });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error("delete failed");
+      toast.success((data as { deactivated?: boolean }).deactivated ? t("ins_providerDeactivated") : t("common_deleted"));
+      await loadAll();
+    } catch (error) {
+      toast.error(t("common_error"));
+      logClientError("Provider delete failed", error);
     }
   }
 
@@ -447,6 +518,93 @@ export default function InsurancePage() {
         </CardContent>
       </Card>
 
+      <Card className="border-border bg-card shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-lg text-foreground">{t("ins_providers")}</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-3">
+          {!isOwner ? (
+            <p className="text-xs text-muted-foreground">{t("ins_ownerOnlyProviders")}</p>
+          ) : null}
+          {providers.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{t("ds_noProviders")}</p>
+          ) : (
+            <div className="grid gap-2 sm:grid-cols-2">
+              {providers.map((provider) => (
+                <div key={provider.id} className="flex items-center justify-between gap-2 rounded-md border border-border bg-background p-2.5 text-sm">
+                  <span>
+                    <span className="font-medium">{provider.name}</span>
+                    {!provider.active ? <span className="ms-2 text-[11px] text-muted-foreground">({t("ds_inactive")})</span> : null}
+                    {provider.contactPhone || provider.contactEmail ? (
+                      <span className="block text-xs text-muted-foreground">
+                        {[provider.contactPhone, provider.contactEmail].filter(Boolean).join(" · ")}
+                      </span>
+                    ) : null}
+                  </span>
+                  {isOwner ? (
+                    <span className="flex shrink-0 items-center gap-1">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 w-7 p-0"
+                        aria-label={t("common_edit")}
+                        onClick={() => {
+                          setProviderForm({
+                            name: provider.name,
+                            contactPhone: provider.contactPhone ?? "",
+                            contactEmail: provider.contactEmail ?? "",
+                          });
+                          setEditingProviderId(provider.id);
+                        }}
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 w-7 p-0 text-destructive"
+                        aria-label={t("common_delete")}
+                        onClick={() => void deleteProvider(provider.id)}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </span>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          )}
+          {isOwner ? (
+            <div className="grid gap-2 rounded-md border border-border bg-background p-3 sm:grid-cols-4">
+              <div className="grid gap-1">
+                <Label>{t("ins_colProvider")}</Label>
+                <Input value={providerForm.name} onChange={(e) => setProviderForm({ ...providerForm, name: e.target.value })} className="h-9" />
+              </div>
+              <div className="grid gap-1">
+                <Label>{t("common_phone")}</Label>
+                <Input value={providerForm.contactPhone} onChange={(e) => setProviderForm({ ...providerForm, contactPhone: e.target.value })} className="ltr-on-rtl h-9" />
+              </div>
+              <div className="grid gap-1">
+                <Label>{t("common_email")}</Label>
+                <Input value={providerForm.contactEmail} onChange={(e) => setProviderForm({ ...providerForm, contactEmail: e.target.value })} className="ltr-on-rtl h-9" />
+              </div>
+              <div className="flex items-end gap-2">
+                {editingProviderId ? (
+                  <Button type="button" variant="outline" className="h-9" onClick={() => { setProviderForm({ name: "", contactPhone: "", contactEmail: "" }); setEditingProviderId(null); }}>
+                    {t("common_cancel")}
+                  </Button>
+                ) : null}
+                <Button type="button" className="h-9" onClick={() => void saveProvider()}>
+                  <Plus className="h-4 w-4 mr-1" />{editingProviderId ? t("common_save") : t("common_add")}
+                </Button>
+              </div>
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
+
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="border-border bg-card shadow-sm">
           <CardHeader>
@@ -458,8 +616,28 @@ export default function InsurancePage() {
               <SearchableSelect value={policyForm.patientId} onValueChange={(v) => setPolicyForm({ ...policyForm, patientId: v })} options={patients.map((p) => ({ value: p.id, label: `${p.firstName} ${p.lastName}` }))} placeholder={t("common_selectPatient")} triggerClassName="h-9" />
             </div>
             <div className="grid gap-2">
-              <Label>{t("ins_colProvider")}</Label>
-              <Input value={policyForm.provider} onChange={(e) => setPolicyForm({ ...policyForm, provider: e.target.value })} className="h-9" />
+              <Label className="flex items-center gap-1">
+                {t("ds_providerFromList")}
+                <DataSourceLink
+                  href={DATA_SOURCES["insurance-provider"].href}
+                  pageRoles={DATA_SOURCES["insurance-provider"].pageRoles}
+                  managerLabel={DATA_SOURCES["insurance-provider"].managerLabel}
+                />
+              </Label>
+              {activeProviders.length > 0 ? (
+                <SearchableSelect
+                  value={policyForm.provider}
+                  onValueChange={(v) => setPolicyForm({ ...policyForm, provider: v })}
+                  options={activeProviders.map((p) => ({ value: p.name, label: p.name }))}
+                  placeholder={t("ds_pickProvider")}
+                  triggerClassName="h-9"
+                />
+              ) : (
+                <>
+                  <Input value={policyForm.provider} onChange={(e) => setPolicyForm({ ...policyForm, provider: e.target.value })} className="h-9" />
+                  <p className="text-[11px] text-warning-text">{t("ds_noProviders")}</p>
+                </>
+              )}
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="grid gap-2">

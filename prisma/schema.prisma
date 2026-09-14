@@ -40,6 +40,7 @@ model Organization {
   equipmentMaintenances EquipmentMaintenance[]
   invoices             Invoice[]
   insuranceClaims      InsuranceClaim[]
+  insuranceProviders   InsuranceProvider[]
   inventoryItems       InventoryItem[]
   campaigns            Campaign[]
   documents            Document[]
@@ -1037,6 +1038,23 @@ model InsuranceClaim {
   @@index([organizationId, status])
   @@index([patientId])
   @@index([invoiceId])
+}
+
+// G23: Owner-managed canonical insurance provider list (org-level).
+// Policies reference it by name; the dropdown in the policy form reads it.
+model InsuranceProvider {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  name           String
+  contactPhone   String?
+  contactEmail   String?
+  active         Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([organizationId, name])
+  @@index([organizationId, active])
 }
 
 model PricingTier {

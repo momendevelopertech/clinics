@@ -481,6 +481,12 @@ async function main() {
     { action: "pharmacy:write", resource: "pharmacy" },
     { action: "staff:read", resource: "staff" },
     { action: "staff:write", resource: "staff" },
+    // Owner Override (Phase B/D): explicit grants for managed catalogs so the
+    // Owner never depends on implicit bypasses. Write paths additionally
+    // enforce requireOwner at the API level.
+    { action: "catalogs:write", resource: "catalogs" },
+    { action: "insurance:read", resource: "insurance" },
+    { action: "insurance:write", resource: "insurance" },
   ], ownerModules);
   const doctorPermissions = withModulePermissions([
     { action: "patients:read", resource: "patients" },
@@ -1058,6 +1064,16 @@ async function main() {
     { system: "ICD10", code: "M54.5", name: "ألم أسفل الظهر", category: "عظام ومفاصل" },
     { system: "ICD10", code: "R51", name: "صداع", category: "أعصاب" },
     { system: "ICD10", code: "J30.4", name: "التهاب الأنف التحسسي", category: "حساسية" },
+    // G24: LAB-system entries feed the lab order/result pickers.
+    { system: "LAB", code: "CBC", name: "صورة دم كاملة", category: "تحاليل" },
+    { system: "LAB", code: "FBS", name: "سكر صائم", category: "تحاليل" },
+    { system: "LAB", code: "HBA1C", name: "سكر تراكمي HbA1c", category: "تحاليل" },
+    { system: "LAB", code: "LIPID", name: "دهون الدم", category: "تحاليل" },
+    { system: "LAB", code: "TSH", name: "هرمون الغدة الدرقية", category: "تحاليل" },
+    { system: "LAB", code: "URINE", name: "تحليل بول", category: "تحاليل" },
+    { system: "LAB", code: "VITD", name: "فيتامين د", category: "تحاليل" },
+    { system: "LAB", code: "CXR", name: "أشعة صدر", category: "أشعة" },
+    { system: "LAB", code: "ABDUS", name: "موجات فوق صوتية على البطن", category: "أشعة" },
   ];
 
   for (const c of clinicalCatalogData) {
@@ -1065,6 +1081,21 @@ async function main() {
       where: { organizationId_system_code: { organizationId: organization.id, system: c.system, code: c.code } },
       update: { ...c, active: true },
       create: { organizationId: organization.id, ...c, active: true },
+    });
+  }
+
+  // G23: canonical insurance providers (Owner-managed, org-level).
+  for (const p of [
+    { name: "Allianz Egypt", contactPhone: "19909", contactEmail: "info@allianz.com.eg" },
+    { name: "AXA Egypt", contactPhone: "19103", contactEmail: "info@axa.com.eg" },
+    { name: "MedNet Egypt", contactPhone: "16211", contactEmail: "info@mednet.com.eg" },
+    { name: "NextCare Egypt", contactPhone: "19829", contactEmail: "info@nextcare.com.eg" },
+    { name: "GlobeMed Egypt", contactPhone: "19324", contactEmail: "info@globemed.com.eg" },
+  ]) {
+    await prisma.insuranceProvider.upsert({
+      where: { organizationId_name: { organizationId: organization.id, name: p.name } },
+      update: { ...p, active: true },
+      create: { organizationId: organization.id, ...p, active: true },
     });
   }
 
@@ -2089,7 +2120,7 @@ async function main() {
   const pushAppointment = ({
     day,
     hour,
-    minute = 0,
+    minute,
     status,
     type,
     patientIndex,
@@ -2099,13 +2130,15 @@ async function main() {
     duration = 15,
   }) => {
     appointmentCounter += 1;
+    // Stagger minutes so (providerId, startTime) stays unique (DB unique index).
+    const startMinute = minute ?? (appointmentCounter * 7) % 60;
     bulkAppointmentSeedData.push({
       patientIndex,
       providerIndex,
       roomIndex: room,
       branchIndex: branch,
-      startTime: daysFromNow(day, hour, minute),
-      endTime: daysFromNow(day, hour, minute + duration),
+      startTime: daysFromNow(day, hour, startMinute),
+      endTime: daysFromNow(day, hour, startMinute + duration),
       appointmentType: type,
       status,
       notes: appointmentNotePool[appointmentCounter % appointmentNotePool.length],
@@ -2691,6 +2724,481 @@ async function main() {
       },
     });
   }
+
+  // ============== PHASE C: seed coverage (G9/G2) ==============
+// --- Phase C: ClinicalTemplate ---
+{
+  const templates = [
+    {
+      name: "Adult HTN follow-up (SOAP)",
+      specialty: "Internal Medicine",
+      noteType: "SOAP",
+      subjective: "Home BP readings, adherence, salt intake, headache/chest pain/dyspnea.",
+      objective: "Office BP x2, HR, weight, fundi/lungs/edema exam, recent creatinine/K.",
+      assessment: "Essential hypertension (I10), control status and target-organ review.",
+      plan: "Adjust dose, labs (creatinine, K), home BP log, return in 2-4 weeks.",
+      isDefault: true,
+    },
+    {
+      name: "Pediatric URI (SOAP)",
+      specialty: "Pediatrics",
+      noteType: "SOAP",
+      subjective: "Fever, cough, rhinorrhea, feeding, sick contacts, vaccination history.",
+      objective: "Temp, RR, SpO2, throat/ears/chest exam, hydration status.",
+      assessment: "Acute upper respiratory infection (J06.9), red-flag screen.",
+      plan: "Supportive care, fluids, antipyretic dosing by weight, return precautions.",
+      isDefault: false,
+    },
+    {
+      name: "Antenatal visit (SOAP)",
+      specialty: "Obstetrics",
+      noteType: "SOAP",
+      subjective: "Gestational age, fetal movement, contractions, headache/edema, prior visits.",
+      objective: "BP, weight, fundal height, fetal heart, urine protein if indicated.",
+      assessment: "Routine antenatal follow-up, risk-factor review.",
+      plan: "Iron/folate, next visit date, danger-sign counselling, labs as scheduled.",
+      isDefault: false,
+    },
+  ];
+  for (const t of templates) {
+    const existing = await prisma.clinicalTemplate.findFirst({
+      where: { organizationId: organization.id, name: t.name },
+    });
+    if (!existing) {
+      await prisma.clinicalTemplate.create({
+        data: { organizationId: organization.id, ...t },
+      });
+    }
+  }
+}
+
+// --- Phase C: PrescriptionTemplate ---
+{
+  const templates = [
+    {
+      name: "HTN maintenance (shared)",
+      specialty: "Internal Medicine",
+      isShared: true,
+      createdById: adminUser.id,
+      items: [
+        { medicationName: "Concor Cor 5mg", dosage: "5 mg", frequency: "Once daily morning", duration: "90 days", instructions: "After breakfast with water." },
+        { medicationName: "Atorvastatin 20mg", dosage: "20 mg", frequency: "Once nightly", duration: "60 days", instructions: "At bedtime." },
+      ],
+    },
+    {
+      name: "Diabetes maintenance (shared)",
+      specialty: "Internal Medicine",
+      isShared: true,
+      createdById: adminUser.id,
+      items: [
+        { medicationName: "Glucophage 500mg", dosage: "500 mg", frequency: "Twice daily", duration: "90 days", instructions: "With meals." },
+        { medicationName: "Atorvastatin 20mg", dosage: "20 mg", frequency: "Once nightly", duration: "60 days", instructions: "At bedtime." },
+      ],
+    },
+    {
+      name: "URI adult (private)",
+      specialty: "Internal Medicine",
+      isShared: false,
+      createdById: adminUser.id,
+      items: [
+        { medicationName: "Panadol Extra", dosage: "500 mg", frequency: "Every 8 hours as needed", duration: "5 days", instructions: "Max 3 g/day." },
+        { medicationName: "Zyrtec 10mg", dosage: "10 mg", frequency: "Once nightly", duration: "7 days", instructions: "For rhinorrhea/sneezing." },
+      ],
+    },
+    {
+      name: "Pediatric fever (private)",
+      specialty: "Pediatrics",
+      isShared: false,
+      createdById: fatmaDoctorUser.id,
+      items: [
+        { medicationName: "Panadol Syrup 120mg/5ml", dosage: "Weight-based", frequency: "Every 6 hours as needed", duration: "3 days", instructions: "Shake well; use measuring syringe." },
+      ],
+    },
+  ];
+  for (const t of templates) {
+    const existing = await prisma.prescriptionTemplate.findFirst({
+      where: { organizationId: organization.id, createdById: t.createdById, name: t.name },
+    });
+    if (!existing) {
+      await prisma.prescriptionTemplate.create({
+        data: { organizationId: organization.id, ...t },
+      });
+    }
+  }
+}
+
+// --- Phase C: Coupon ---
+{
+  const coupons = [
+    { code: "WELCOME10", kind: "percent", value: "10", active: true, expiresAt: daysFromNow(90, 23, 59) },
+    { code: "RAMADAN20", kind: "percent", value: "20", active: true, expiresAt: daysFromNow(60, 23, 59) },
+    { code: "FIXED50", kind: "fixed", value: "50", active: true, expiresAt: daysFromNow(30, 23, 59) },
+  ];
+  for (const c of coupons) {
+    await prisma.coupon.upsert({
+      where: { organizationId_code: { organizationId: organization.id, code: c.code } },
+      update: { kind: c.kind, value: c.value, active: c.active, expiresAt: c.expiresAt },
+      create: { organizationId: organization.id, ...c },
+    });
+  }
+}
+
+// --- Phase C: Shift ---
+{
+  const shifts = [
+    // Dr. Ahmed (internal medicine, Smouha main): Sat-Wed 10:00-22:00, weekday 0=Sunday
+    { userId: adminUser.id, branchId: mainBranch.id, weekday: 0, startTime: "10:00", endTime: "22:00", note: "Internal medicine clinic" },
+    { userId: adminUser.id, branchId: mainBranch.id, weekday: 1, startTime: "10:00", endTime: "22:00", note: "Internal medicine clinic" },
+    { userId: adminUser.id, branchId: mainBranch.id, weekday: 2, startTime: "10:00", endTime: "22:00", note: "Internal medicine clinic" },
+    { userId: adminUser.id, branchId: mainBranch.id, weekday: 3, startTime: "10:00", endTime: "22:00", note: "Internal medicine clinic" },
+    { userId: adminUser.id, branchId: mainBranch.id, weekday: 6, startTime: "10:00", endTime: "22:00", note: "Internal medicine clinic" },
+    // Dr. Fatma (pediatrics, Sidi Gaber): Sun-Thu 11:00-19:00
+    { userId: fatmaDoctorUser.id, branchId: branches[1].id, weekday: 0, startTime: "11:00", endTime: "19:00", note: "Pediatrics clinic" },
+    { userId: fatmaDoctorUser.id, branchId: branches[1].id, weekday: 1, startTime: "11:00", endTime: "19:00", note: "Pediatrics clinic" },
+    { userId: fatmaDoctorUser.id, branchId: branches[1].id, weekday: 2, startTime: "11:00", endTime: "19:00", note: "Pediatrics clinic" },
+    { userId: fatmaDoctorUser.id, branchId: branches[1].id, weekday: 3, startTime: "11:00", endTime: "19:00", note: "Pediatrics clinic" },
+    { userId: fatmaDoctorUser.id, branchId: branches[1].id, weekday: 4, startTime: "11:00", endTime: "19:00", note: "Pediatrics clinic" },
+    // Nurse + reception coverage at main branch
+    { userId: nurseUser.id, branchId: mainBranch.id, weekday: 6, startTime: "10:00", endTime: "18:00", note: "Triage and vitals" },
+    { userId: nurseUser.id, branchId: mainBranch.id, weekday: 1, startTime: "10:00", endTime: "18:00", note: "Triage and vitals" },
+    { userId: receptionistUser.id, branchId: mainBranch.id, weekday: 6, startTime: "10:00", endTime: "22:00", note: "Front desk" },
+    { userId: coordinatorUser.id, branchId: mainBranch.id, weekday: 0, startTime: "10:00", endTime: "18:00", note: "Care coordination" },
+  ];
+  for (const s of shifts) {
+    const existing = await prisma.shift.findFirst({
+      where: { organizationId: organization.id, userId: s.userId, weekday: s.weekday, startTime: s.startTime },
+    });
+    if (!existing) {
+      await prisma.shift.create({
+        data: { organizationId: organization.id, ...s },
+      });
+    }
+  }
+}
+
+// --- Phase C: ServicePackage ---
+{
+  const packages = [
+    {
+      name: "Diabetes quarterly bundle",
+      serviceCatalogId: serviceCatalogByCode["HBA1C"].id,
+      procedureName: "HbA1c + consultation bundle",
+      totalSessions: 4,
+      price: "1200",
+      active: true,
+    },
+    {
+      name: "Physiotherapy 8-session pack",
+      serviceCatalogId: serviceCatalogByCode["VISIT-SP"].id,
+      procedureName: "Physiotherapy sessions",
+      totalSessions: 8,
+      price: "2000",
+      active: true,
+    },
+  ];
+  for (const p of packages) {
+    const existing = await prisma.servicePackage.findFirst({
+      where: { organizationId: organization.id, name: p.name },
+    });
+    if (!existing) {
+      await prisma.servicePackage.create({
+        data: { organizationId: organization.id, ...p },
+      });
+    }
+  }
+}
+
+// --- Phase C: PatientPackage ---
+{
+  const diabetesPack = await prisma.servicePackage.findFirst({
+    where: { organizationId: organization.id, name: "Diabetes quarterly bundle" },
+  });
+  const patient = await prisma.patient.findFirst({
+    where: { organizationId: organization.id, mrn: "MRN-1003" },
+  });
+  if (diabetesPack && patient) {
+    const existing = await prisma.patientPackage.findFirst({
+      where: { organizationId: organization.id, patientId: patient.id, packageId: diabetesPack.id, status: "active" },
+    });
+    if (!existing) {
+      await prisma.patientPackage.create({
+        data: {
+          organizationId: organization.id,
+          patientId: patient.id,
+          packageId: diabetesPack.id,
+          sessionsTotal: diabetesPack.totalSessions,
+          sessionsUsed: 1,
+          status: "active",
+          pricePaid: "1200",
+        },
+      });
+    }
+  }
+}
+
+// --- Phase C: TreatmentPlan ---
+{
+  const patient = await prisma.patient.findFirst({
+    where: { organizationId: organization.id, mrn: "MRN-1001" },
+  });
+  const encounter = await prisma.encounter.findFirst({
+    where: { organizationId: organization.id, patientId: patient?.id },
+    orderBy: { startTime: "desc" },
+  });
+  if (patient) {
+    let plan = await prisma.treatmentPlan.findFirst({
+      where: { organizationId: organization.id, patientId: patient.id, title: "HTN control plan - Ahmed Sayed" },
+    });
+    if (!plan) {
+      plan = await prisma.treatmentPlan.create({
+        data: {
+          organizationId: organization.id,
+          patientId: patient.id,
+          encounterId: encounter?.id ?? null,
+          title: "HTN control plan - Ahmed Sayed",
+          notes: "Quarterly BP control: home log, labs, dose review.",
+          status: "active",
+        },
+      });
+    }
+    const steps = [
+      { kind: "prescription", title: "Continue Concor Cor 5mg daily", dueDate: daysFromNow(30, 9, 0), status: "pending" },
+      { kind: "followup", title: "Home BP log review in 2 weeks", dueDate: daysFromNow(14, 9, 0), status: "pending" },
+      { kind: "diagnosis", title: "Recheck creatinine/K after dose review", dueDate: daysFromNow(30, 9, 0), status: "pending" },
+    ];
+    for (const s of steps) {
+      const existing = await prisma.treatmentPlanStep.findFirst({
+        where: { planId: plan.id, title: s.title },
+      });
+      if (!existing) {
+        await prisma.treatmentPlanStep.create({
+          data: { planId: plan.id, ...s },
+        });
+      }
+    }
+  }
+}
+
+// --- Phase C: IntakeForm ---
+{
+  let form = await prisma.intakeForm.findFirst({
+    where: { organizationId: organization.id, name: "New patient registration" },
+  });
+  if (!form) {
+    form = await prisma.intakeForm.create({
+      data: {
+        organizationId: organization.id,
+        name: "New patient registration",
+        description: "First-visit registration for walk-in and booked patients.",
+        active: true,
+      },
+    });
+  }
+  const fields = [
+    { key: "national_id", label: "National ID", labelAr: "الرقم القومي", kind: "text", required: true, options: null, position: 0 },
+    { key: "chief_complaint", label: "Chief complaint", labelAr: "الشكوى الرئيسية", kind: "multiline", required: true, options: null, position: 1 },
+    { key: "chronic_diseases", label: "Chronic diseases", labelAr: "الأمراض المزمنة", kind: "choice", required: false, options: JSON.stringify(["None", "Hypertension", "Diabetes", "Asthma", "Other"]), position: 2 },
+    { key: "visit_date", label: "Preferred visit date", labelAr: "تاريخ الزيارة المفضل", kind: "date", required: false, options: null, position: 3 },
+  ];
+  for (const f of fields) {
+    await prisma.intakeField.upsert({
+      where: { formId_key: { formId: form.id, key: f.key } },
+      update: { label: f.label, labelAr: f.labelAr, kind: f.kind, required: f.required, options: f.options, position: f.position },
+      create: { formId: form.id, ...f },
+    });
+  }
+}
+
+// --- Phase C: Expense ---
+{
+  const expenses = [
+    { branchId: mainBranch.id, category: "rent", amount: "45000", spentAt: daysFromNow(-5, 10, 0), notes: "Smouha branch monthly rent - March quarter" },
+    { branchId: mainBranch.id, category: "salaries", amount: "120000", spentAt: daysFromNow(-3, 12, 0), notes: "Nursing and reception payroll" },
+    { branchId: mainBranch.id, category: "supplies", amount: "8500", spentAt: daysFromNow(-2, 11, 0), notes: "Syringes, gloves, alcohol restock" },
+    { branchId: mainBranch.id, category: "utilities", amount: "6200", spentAt: daysFromNow(-1, 11, 0), notes: "Electricity + water - Smouha" },
+  ];
+  for (const e of expenses) {
+    const existing = await prisma.expense.findFirst({
+      where: { organizationId: organization.id, category: e.category, amount: e.amount, notes: e.notes },
+    });
+    if (!existing) {
+      await prisma.expense.create({
+        data: { organizationId: organization.id, ...e },
+      });
+    }
+  }
+}
+
+// --- Phase C: Feedback ---
+{
+  const rows = [
+    { mrn: "MRN-1003", rating: 5, comment: "Excellent care, clear explanation of HbA1c plan.", source: "portal" },
+    { mrn: "MRN-1001", rating: 4, comment: "Good follow-up, waiting time a bit long.", source: "portal" },
+    { mrn: "MRN-1004", rating: 5, comment: "Echo scheduling was smooth, staff very helpful.", source: "staff" },
+  ];
+  for (const r of rows) {
+    const patient = await prisma.patient.findFirst({
+      where: { organizationId: organization.id, mrn: r.mrn },
+    });
+    if (!patient) continue;
+    const existing = await prisma.feedback.findFirst({
+      where: { organizationId: organization.id, patientId: patient.id, comment: r.comment },
+    });
+    if (!existing) {
+      await prisma.feedback.create({
+        data: {
+          organizationId: organization.id,
+          patientId: patient.id,
+          providerId: adminUser.id,
+          rating: r.rating,
+          comment: r.comment,
+          source: r.source,
+        },
+      });
+    }
+  }
+}
+
+// --- Phase C: ReportSchedule ---
+{
+  const existing = await prisma.reportSchedule.findFirst({
+    where: { organizationId: organization.id, frequency: "monthly", dayOfMonth: 1 },
+  });
+  if (!existing) {
+    await prisma.reportSchedule.create({
+      data: {
+        organizationId: organization.id,
+        frequency: "monthly",
+        dayOfMonth: 1,
+        recipients: JSON.stringify([ownerUser.id, billingUser.id]),
+        active: true,
+      },
+    });
+  }
+}
+
+// --- Phase C: EquipmentMaintenance ---
+{
+  const rows = [
+    { name: "جهاز أشعة إكس راي رقمي", type: "calibration", status: "completed", description: "Annual X-ray calibration", technician: "Eng. Tarek Nour", performedAt: daysFromNow(-20, 10, 0), dueAt: daysFromNow(345, 10, 0), cost: "3500", notes: "Passed QC, certificate filed." },
+    { name: "جهاز رسم قلب ECG", type: "calibration", status: "scheduled", description: "ECG calibration and electrode check", technician: "Eng. Mona Adel", performedAt: null, dueAt: daysFromNow(10, 10, 0), cost: "800", notes: "Scheduled with vendor." },
+  ];
+  for (const r of rows) {
+    const equipment = await prisma.equipment.findFirst({
+      where: { organizationId: organization.id, name: r.name },
+    });
+    if (!equipment) continue;
+    const existing = await prisma.equipmentMaintenance.findFirst({
+      where: { organizationId: organization.id, equipmentId: equipment.id, type: r.type, description: r.description },
+    });
+    if (!existing) {
+      const { name, ...rest } = r;
+      await prisma.equipmentMaintenance.create({
+        data: { organizationId: organization.id, equipmentId: equipment.id, ...rest },
+      });
+    }
+  }
+}
+
+// --- Phase C: PatientAllergy ---
+{
+  const rows = [
+    { mrn: "MRN-1001", allergen: "Penicillin", severity: "severe", reaction: "Rash and breathing difficulty", active: true },
+    { mrn: "MRN-1005", allergen: "Sulfa", severity: "moderate", reaction: "Skin rash", active: true },
+    { mrn: "MRN-1004", allergen: "Peanut", severity: "moderate", reaction: "Itching and swelling", active: true },
+  ];
+  for (const r of rows) {
+    const patient = await prisma.patient.findFirst({
+      where: { organizationId: organization.id, mrn: r.mrn },
+    });
+    if (!patient) continue;
+    const existing = await prisma.patientAllergy.findFirst({
+      where: { organizationId: organization.id, patientId: patient.id, allergen: r.allergen },
+    });
+    if (!existing) {
+      await prisma.patientAllergy.create({
+        data: { organizationId: organization.id, patientId: patient.id, allergen: r.allergen, severity: r.severity, reaction: r.reaction, active: r.active },
+      });
+    }
+  }
+}
+
+// --- Phase C: InstallmentPlan ---
+{
+  const invoice = await prisma.invoice.findFirst({
+    where: { organizationId: organization.id, invoiceNumber: "INV-2026-000101" },
+  });
+  if (invoice) {
+    let plan = await prisma.installmentPlan.findFirst({
+      where: { organizationId: organization.id, invoiceId: invoice.id, status: "active" },
+    });
+    if (!plan) {
+      plan = await prisma.installmentPlan.create({
+        data: {
+          organizationId: organization.id,
+          invoiceId: invoice.id,
+          patientId: invoice.patientId,
+          totalAmount: invoice.totalAmount,
+          downPayment: "300",
+          status: "active",
+          notes: "Remaining 320 EGP split into 3 monthly installments.",
+        },
+      });
+    }
+    const installments = [
+      { dueDate: daysFromNow(30, 12, 0), amount: "110", status: "pending" },
+      { dueDate: daysFromNow(60, 12, 0), amount: "110", status: "pending" },
+      { dueDate: daysFromNow(90, 12, 0), amount: "100", status: "pending" },
+    ];
+    for (const inst of installments) {
+      const existing = await prisma.installment.findFirst({
+        where: { planId: plan.id, dueDate: inst.dueDate, amount: inst.amount },
+      });
+      if (!existing) {
+        await prisma.installment.create({
+          data: { planId: plan.id, ...inst },
+        });
+      }
+    }
+  }
+}
+
+// --- Phase C: ApiKey ---
+{
+  const existing = await prisma.apiKey.findFirst({
+    where: { organizationId: organization.id, prefix: "ohcrm_demo" },
+  });
+  if (!existing) {
+    await prisma.apiKey.create({
+      data: {
+        organizationId: organization.id,
+        name: "Demo integration key",
+        prefix: "ohcrm_demo",
+        keyHash: "scrypt$demo$placeholder-hash-not-a-real-secret",
+        scopes: JSON.stringify(["appointments:read", "patients:read"]),
+        active: true,
+      },
+    });
+  }
+}
+
+// --- Phase C: Webhook ---
+{
+  const existing = await prisma.webhook.findFirst({
+    where: { organizationId: organization.id, url: "https://clinic.example.com/hooks/appointments" },
+  });
+  if (!existing) {
+    await prisma.webhook.create({
+      data: {
+        organizationId: organization.id,
+        url: "https://clinic.example.com/hooks/appointments",
+        secretHash: "scrypt$demo$placeholder-webhook-secret",
+        eventTypes: JSON.stringify(["appointment.created", "appointment.cancelled"]),
+        active: true,
+      },
+    });
+  }
+}
 
   console.log("Seeded demo staff accounts (all password = admin123):");
   console.log("  superadmin@acmeclinic.com - منصة (سوبر أدمن)");

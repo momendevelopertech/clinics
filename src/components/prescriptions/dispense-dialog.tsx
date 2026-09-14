@@ -17,6 +17,8 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { DataSourceLink } from "@/components/data-source/data-source-navigator";
+import { DATA_SOURCES } from "@/components/data-source/sources";
 
 type StockRow = {
   id: string;
@@ -145,18 +147,28 @@ export function DispenseDialog({
                 <p className="mt-1 text-xs text-warning-text">{t("rx_dispenseNoStock")}</p>
               ) : (
                 <div className="mt-2 grid grid-cols-[1fr_80px] gap-2">
-                  <SearchableSelect
-                    value={row.stockId}
-                    onValueChange={(v) =>
-                      setRows((prev) => prev.map((r, j) => (j === i ? { ...r, stockId: v } : r)))
-                    }
-                    options={row.stockOptions.map((o) => ({
-                      value: o.id,
-                      label: `${o.name} · ${o.outOfStock ? t("rx_stockOut") : `${o.quantity} ${o.unit ?? ""}`}`,
-                    }))}
-                    placeholder={t("rx_dispensePickStock")}
-                    triggerClassName="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground"
-                  />
+                  <div className="flex flex-col gap-1">
+                    <span className="flex items-center gap-1 text-[11px] font-semibold text-muted-foreground">
+                      {t("rx_dispensePickStock")}
+                      <DataSourceLink
+                        href={DATA_SOURCES["medication-stock"].href}
+                        pageRoles={DATA_SOURCES["medication-stock"].pageRoles}
+                        managerLabel={DATA_SOURCES["medication-stock"].managerLabel}
+                      />
+                    </span>
+                    <SearchableSelect
+                      value={row.stockId}
+                      onValueChange={(v) =>
+                        setRows((prev) => prev.map((r, j) => (j === i ? { ...r, stockId: v } : r)))
+                      }
+                      options={row.stockOptions.map((o) => ({
+                        value: o.id,
+                        label: `${o.name} · ${o.outOfStock ? t("rx_stockOut") : `${o.quantity} ${o.unit ?? ""}`}`,
+                      }))}
+                      placeholder={t("rx_dispensePickStock")}
+                      triggerClassName="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground"
+                    />
+                  </div>
                   <div className="flex flex-col gap-1">
                     <Label className="text-[11px] font-semibold">{t("print_qty")}</Label>
                     <Input

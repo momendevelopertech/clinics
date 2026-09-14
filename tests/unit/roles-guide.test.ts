@@ -3,7 +3,7 @@ import { CLINIC_MODULES, ROLE_MODULE_ACCESS } from "@/lib/permissions";
 import { ROLES_GUIDE, getRoleModules } from "@/lib/roles-guide-data";
 
 const EXPECTED_TASK_COUNTS: Record<string, number> = {
-  owner: 8,
+  owner: 10,
   "super-admin": 4,
   doctor: 14,
   nurse: 10,

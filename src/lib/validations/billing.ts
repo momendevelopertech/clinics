@@ -77,6 +77,14 @@ export const insuranceClaimUpdateSchema = z.object({
   denialReason: z.string().trim().max(1000).optional().nullable(),
 });
 
+// G23: Owner-managed canonical provider list (org-level).
+export const insuranceProviderSchema = z.object({
+  name: z.string().trim().min(1).max(160),
+  contactPhone: z.string().trim().max(40).optional().nullable(),
+  contactEmail: z.string().trim().email().max(160).optional().nullable(),
+  active: z.boolean().optional(),
+});
+
 export const couponCreateSchema = z.object({
   code: z.string().trim().min(2).max(40).toUpperCase(),
   kind: z.enum(["percent", "fixed"]),

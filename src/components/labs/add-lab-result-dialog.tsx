@@ -17,6 +17,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { ClinicalCatalogSelect } from "@/components/data-source/clinical-catalog-select";
 
 type PatientOption = {
   id: string;
@@ -156,22 +157,21 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
             </div>
 
             <div className="gap-1.5 flex flex-col">
-              <Label htmlFor="test-name">{t("labs_testName")}</Label>
-              <Input
+              <ClinicalCatalogSelect
                 id="test-name"
-                placeholder={t("labs_testNamePh")}
+                system="LAB"
                 value={formData.testName}
-                onChange={(e) => {
-                  setFormData({ ...formData, testName: e.target.value });
+                onValueChange={(value) => {
+                  setFormData({ ...formData, testName: value });
                   setFieldErrors((prev) => {
                     const next = { ...prev };
                     delete next.testName;
                     return next;
                   });
                 }}
-                aria-required="true"
-                aria-invalid={fieldErrors.testName ? true : undefined}
-                className={fieldErrors.testName ? "border-destructive" : undefined}
+                placeholder={t("labs_testNamePh")}
+                label={t("labs_testName")}
+                fallbackHint={t("ds_noLabCatalog")}
               />
               {fieldErrors.testName ? (
                 <p className="text-xs text-destructive mt-1">{fieldErrors.testName}</p>
