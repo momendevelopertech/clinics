@@ -51,12 +51,19 @@ export function PageHelpBanner({
     }
   }, [storageKey]);
 
-  if (dismissed) return null;
+  const rawTitle = directTitle ?? (titleKey ? t(titleKey) : pageKey ? t(`banner_${pageKey}_title`) : "");
+  const title = rawTitle.startsWith("banner_") ? "" : rawTitle;
 
-  const title = directTitle ?? (titleKey ? t(titleKey) : pageKey ? t(`banner_${pageKey}_title`) : "");
-  const description = directDescription ?? (descriptionKey ? t(descriptionKey) : pageKey ? t(`banner_${pageKey}_desc`) : "");
-  const targetRoles = directAudience ?? (targetRolesKey ? t(targetRolesKey) : pageKey ? t(`banner_${pageKey}_roles`) : "");
-  const actionHint = directActionHint ?? (actionHintKey ? t(actionHintKey) : pageKey ? t(`banner_${pageKey}_action`) : "");
+  const rawDescription = directDescription ?? (descriptionKey ? t(descriptionKey) : pageKey ? t(`banner_${pageKey}_desc`) : "");
+  const description = rawDescription.startsWith("banner_") ? "" : rawDescription;
+
+  const rawTargetRoles = directAudience ?? (targetRolesKey ? t(targetRolesKey) : pageKey ? t(`banner_${pageKey}_roles`) : "");
+  const targetRoles = rawTargetRoles.startsWith("banner_") ? "" : rawTargetRoles;
+
+  const rawActionHint = directActionHint ?? (actionHintKey ? t(actionHintKey) : pageKey ? t(`banner_${pageKey}_action`) : "");
+  const actionHint = rawActionHint.startsWith("banner_") ? "" : rawActionHint;
+
+  if (dismissed || !title) return null;
 
   const handleDismiss = () => {
     setDismissed(true);

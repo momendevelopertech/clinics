@@ -32,6 +32,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 import type { Appointment, Patient } from "@/context/MedicalContext";
 import { useMedical } from "@/context/MedicalContext";
@@ -188,6 +189,8 @@ export function BookAppointmentDialog({
     });
   }, [appointments, selectedProvider, selectedDate, selectedTime, selectedDuration]);
 
+  const { triggerGuidance } = usePostActionGuidance();
+
   const onSubmit = (data: BookAppointmentFormValues) => {
     const { provider, ...appointmentData } = data;
     onBook({
@@ -199,7 +202,7 @@ export function BookAppointmentDialog({
     });
     setOpen(false);
     form.reset();
-    toast.success(walkIn ? t("book_walkInSuccess") : t("book_success"));
+    triggerGuidance("appointment_booked", walkIn ? t("book_walkInSuccess") : t("book_success"));
   };
 
   return (

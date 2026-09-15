@@ -11,10 +11,11 @@ export async function GET(request: Request) {
   try {
     const orgId = await getOrgId();
     assertOrgScope(orgId);
-    const moduleAuthz = await requireModulePermission(orgId, "encounters");
-    if (moduleAuthz.response) return moduleAuthz.response;
     const authz = await requireAnyPermission(orgId, [
       { action: "encounters:read", resource: "encounters" },
+      { action: "patients:read", resource: "patients" },
+      { action: "appointments:read", resource: "appointments" },
+      { action: "queue:read", resource: "queue" },
     ]);
     if (authz.response) return authz.response;
 

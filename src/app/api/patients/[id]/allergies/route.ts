@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgId, assertOrgScope } from "@/lib/org";
 import { getCurrentUserId, hasPermission } from "@/lib/auth";
+import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
 import { createAuditLog } from "@/lib/audit";
 import { logServerError } from "@/lib/safe-logger";
@@ -15,11 +16,13 @@ export async function GET(
     const { id } = await params;
     const orgId = await getOrgId();
     assertOrgScope(orgId);
-    const moduleAuthz = await requireModulePermission(orgId, "encounters");
-    if (moduleAuthz.response) return moduleAuthz.response;
-    const userId = await getCurrentUserId(orgId);
-    const canRead = await hasPermission(userId, orgId, "encounters:read", "encounters");
-    if (!canRead) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const authz = await requireAnyPermission(orgId, [
+      { action: "patients:read", resource: "patients" },
+      { action: "encounters:read", resource: "encounters" },
+      { action: "appointments:read", resource: "appointments" },
+      { action: "queue:read", resource: "queue" },
+    ]);
+    if (authz.response) return authz.response;
 
     const patient = await prisma.patient.findFirst({
       where: { id, organizationId: orgId },

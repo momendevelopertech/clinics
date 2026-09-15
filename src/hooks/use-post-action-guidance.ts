@@ -9,6 +9,16 @@ export type PostActionType =
   | "inventory_item_added"
   | "waitlist_added"
   | "appointment_booked"
+  | "appointment_updated"
+  | "appointment_cancelled"
+  | "patient_created"
+  | "patient_updated"
+  | "prescription_created"
+  | "invoice_created"
+  | "payment_recorded"
+  | "equipment_added"
+  | "equipment_log_added"
+  | "staff_added"
   | "consent_added"
   | "branch_added"
   | "room_added"
@@ -35,6 +45,46 @@ export function usePostActionGuidance() {
         appointment_booked: {
           titleKey: "guidance_appointment_booked_title",
           hintKey: "guidance_appointment_booked_hint",
+        },
+        appointment_updated: {
+          titleKey: "guidance_appointment_updated_title",
+          hintKey: "guidance_appointment_updated_hint",
+        },
+        appointment_cancelled: {
+          titleKey: "guidance_appointment_cancelled_title",
+          hintKey: "guidance_appointment_cancelled_hint",
+        },
+        patient_created: {
+          titleKey: "guidance_patient_created_title",
+          hintKey: "guidance_patient_created_hint",
+        },
+        patient_updated: {
+          titleKey: "guidance_patient_created_title",
+          hintKey: "guidance_patient_created_hint",
+        },
+        prescription_created: {
+          titleKey: "guidance_prescription_created_title",
+          hintKey: "guidance_prescription_created_hint",
+        },
+        invoice_created: {
+          titleKey: "guidance_invoice_created_title",
+          hintKey: "guidance_invoice_created_hint",
+        },
+        payment_recorded: {
+          titleKey: "guidance_payment_recorded_title",
+          hintKey: "guidance_payment_recorded_hint",
+        },
+        equipment_added: {
+          titleKey: "guidance_equipment_added_title",
+          hintKey: "guidance_equipment_added_hint",
+        },
+        equipment_log_added: {
+          titleKey: "guidance_equipment_added_title",
+          hintKey: "guidance_equipment_added_hint",
+        },
+        staff_added: {
+          titleKey: "guidance_patient_created_title",
+          hintKey: "guidance_patient_created_hint",
         },
         consent_added: {
           titleKey: "guidance_consent_added_title",
