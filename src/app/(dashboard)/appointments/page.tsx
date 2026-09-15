@@ -41,6 +41,7 @@ import { useLocale } from "@/components/locale/locale-provider"
 import { cn } from "@/lib/utils"
 import { FeatureTip } from "@/components/feature-tips/feature-tip"
 import { ConfirmDialog } from "@/components/ui/confirm-dialog"
+import { PageHelpBanner } from "@/components/ui/page-help-banner"
 
 function toStatusValue(s: Appointment["status"]): string {
   if (s === "Confirmed") return "confirmed"
@@ -347,6 +348,8 @@ function AppointmentsPageContent() {
           }
         />
       </div>
+
+      <PageHelpBanner pageKey="appointments" />
 
       <div className="overflow-hidden rounded-lg border border-border bg-card shadow-2xs flex-1 flex flex-col">
          <div className="p-4 sm:px-6 border-b border-border bg-muted-bg flex flex-col sm:flex-row sm:items-center justify-between gap-4">

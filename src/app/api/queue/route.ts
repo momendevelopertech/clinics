@@ -14,14 +14,9 @@ export async function GET() {
       { action: "appointments:write", resource: "appointments" },
     ]);
     if (authz.response) return authz.response;
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(start);
-    end.setDate(end.getDate() + 1);
     const queue = await prisma.appointment.findMany({
       where: {
         organizationId,
-        startTime: { gte: start, lt: end },
         status: { in: ["arrived", "in_progress"] },
       },
       include: {

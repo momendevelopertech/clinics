@@ -15,6 +15,13 @@ import { checkPlanLimit } from "@/lib/plans";
 import { appointmentUpdateSchema, appointmentCreateSchema } from "@/lib/validations/appointment";
 import { isAppointmentTransitionAllowed } from "@/lib/appointments";
 
+function formatLocalDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 export async function GET() {
   try {
     const orgId = await getOrgId();
@@ -61,7 +68,7 @@ export async function GET() {
         provider: a.provider?.name ?? "Unknown Provider",
         roomId: a.roomId,
         room: a.room?.name ?? null,
-        date: a.startTime.toISOString().split("T")[0],
+        date: formatLocalDate(a.startTime),
         time: timeString,
         startTime: a.startTime.toISOString(),
         endTime: a.endTime.toISOString(),
@@ -128,8 +135,9 @@ export async function POST(request: Request) {
           {
             id: existing.id,
             patientId: existing.patientId,
+            providerId: existing.providerId,
             provider: existing.provider?.name,
-            date: existing.startTime.toISOString().split("T")[0],
+            date: formatLocalDate(existing.startTime),
             time: existing.startTime.toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
@@ -290,8 +298,9 @@ export async function POST(request: Request) {
       {
         id: appointment.id,
         patientId: appointment.patientId,
+        providerId: appointment.providerId,
         provider: appointment.provider?.name ?? "Unknown Provider",
-        date: appointment.startTime.toISOString().split("T")[0],
+        date: formatLocalDate(appointment.startTime),
         time: appointment.startTime.toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
@@ -452,8 +461,9 @@ export async function PATCH(request: Request) {
     return NextResponse.json({
       id: updated.id,
       patientId: updated.patientId,
+      providerId: updated.providerId,
       provider: updated.provider?.name,
-      date: updated.startTime.toISOString().split("T")[0],
+      date: formatLocalDate(updated.startTime),
       time: updated.startTime.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",

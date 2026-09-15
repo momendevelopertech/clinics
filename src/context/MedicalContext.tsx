@@ -106,7 +106,8 @@ export function MedicalProvider({ children }: { children: React.ReactNode }) {
       });
       if (res.ok) {
         const newApt = await res.json();
-        setAppointments((prev) => [...prev, newApt])
+        setAppointments((prev) => [...prev, newApt]);
+        void refetchAppointments();
       }
     } catch (error) {
       logClientError("Create appointment from medical context failed", error);
@@ -122,7 +123,8 @@ export function MedicalProvider({ children }: { children: React.ReactNode }) {
        });
        if (res.ok) {
          const updatedApt = await res.json();
-         setAppointments((prev) => prev.map(apt => apt.id === id ? { ...apt, ...updatedApt } : apt))
+         setAppointments((prev) => prev.map(apt => apt.id === id ? { ...apt, ...updatedApt } : apt));
+         void refetchAppointments();
        }
     } catch (error) {
        logClientError("Update appointment from medical context failed", error);
