@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import { Patient } from "@/context/MedicalContext"
 import { useLocale } from "@/components/locale/locale-provider"
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { toast } from "sonner"
 
 interface PatientProfileSheetProps {
@@ -15,6 +16,7 @@ interface PatientProfileSheetProps {
 
 export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileSheetProps) {
   const { t } = useLocale()
+  const { triggerGuidance } = usePostActionGuidance();
   const [updatingStatus, setUpdatingStatus] = React.useState(false)
   const [allergiesExpanded, setAllergiesExpanded] = React.useState(false)
   const allergiesTruncated = patient.allergies.length > 15
@@ -22,7 +24,7 @@ export function PatientProfileSheet({ patient, onStatusChange }: PatientProfileS
   const copyPhone = async () => {
     try {
       await navigator.clipboard.writeText(patient.phone)
-      toast.success(t("common_success"))
+      triggerGuidance("action_completed", t("common_success"))
     } catch {
       toast.error(t("common_error"))
     }

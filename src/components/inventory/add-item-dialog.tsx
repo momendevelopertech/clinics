@@ -72,8 +72,7 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
         throw new Error(await parseApiError(response, t("inv_addError") ?? "Failed to create item"));
       }
 
-      toast.success(t("inv_addSuccess") ?? "Item added");
-      triggerGuidance(isStockManaged ? "inventory_item_added" : "medicine_added");
+      triggerGuidance(isStockManaged ? "inventory_item_added" : "medicine_added", t("inv_addSuccess") ?? "Item added");
 
       setFormData({
         name: "",

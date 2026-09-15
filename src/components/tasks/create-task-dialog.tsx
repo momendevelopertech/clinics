@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +35,7 @@ const priorities = ["low", "medium", "high", "urgent"];
 const taskTypes = ["follow_up", "lab_review", "claim_followup"];
 
 export function CreateTaskDialog({ onSuccess }: CreateTaskDialogProps) {
+  const { triggerGuidance } = usePostActionGuidance();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [patients, setPatients] = React.useState<PatientOption[]>([]);
@@ -88,7 +90,7 @@ export function CreateTaskDialog({ onSuccess }: CreateTaskDialogProps) {
 
       if (!response.ok) throw new Error("Failed to create task");
 
-      toast.success("Task created successfully");
+      triggerGuidance("task_created", "Task created successfully");
       setFormData({
         title: "",
         description: "",

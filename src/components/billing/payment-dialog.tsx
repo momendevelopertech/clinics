@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { getClientErrorMessage, logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { formatMoney } from "@/lib/format-money";
 
 type InvoiceOption = {
@@ -39,6 +40,7 @@ interface PaymentDialogProps {
 
 export function PaymentDialog({ invoiceId, onSuccess, trigger }: PaymentDialogProps) {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [invoices, setInvoices] = React.useState<InvoiceOption[]>([]);
@@ -131,7 +133,8 @@ export function PaymentDialog({ invoiceId, onSuccess, trigger }: PaymentDialogPr
 
       const data = await response.json();
 
-      toast.success(
+      triggerGuidance(
+        "payment_recorded",
         isManual ? t("pay_recorded") : t("pay_intentCreated").replace("{id}", data.id),
       );
 

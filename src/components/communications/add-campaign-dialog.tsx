@@ -18,6 +18,7 @@ import {
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 interface AddCampaignDialogProps {
   onSuccess?: () => void;
@@ -25,6 +26,7 @@ interface AddCampaignDialogProps {
 
 export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -52,7 +54,7 @@ export function AddCampaignDialog({ onSuccess }: AddCampaignDialogProps) {
 
       if (!response.ok) throw new Error("Failed to create campaign");
 
-      toast.success(t("camp_createdSuccess"));
+      triggerGuidance("campaign_created", t("camp_createdSuccess"));
       setOpen(false);
       setFormData({ name: "", type: "drip", triggerType: "" });
       onSuccess?.();

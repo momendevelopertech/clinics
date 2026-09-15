@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { FeatureNotConfiguredBanner } from "@/components/ui/feature-not-configured-banner";
@@ -52,6 +53,7 @@ const EVENT_TYPES = [
 
 export default function IntegrationsPageClient() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const { forbidden, guardedFetch } = usePermissionState();
   const { get } = useFeatureConfig();
   const [keys, setKeys] = React.useState<ApiKey[]>([]);
@@ -95,7 +97,7 @@ export default function IntegrationsPageClient() {
       if (!r.ok) throw new Error(data?.error ?? "create failed");
       setFreshKey(data.apiKey as string);
       setKeyName("");
-      toast.success(t("common_success"));
+      triggerGuidance("action_completed", t("common_success"));
       await loadAll();
     } catch (error) {
       toast.error(t("common_error"));
@@ -108,7 +110,7 @@ export default function IntegrationsPageClient() {
     try {
       const r = await fetch(`/api/api-keys/${id}/revoke`, { method: "POST" });
       if (!r.ok) throw new Error("revoke failed");
-      toast.success(t("common_success"));
+      triggerGuidance("action_completed", t("common_success"));
       await loadAll();
     } catch (error) {
       toast.error(t("common_error"));
@@ -124,7 +126,7 @@ export default function IntegrationsPageClient() {
         body: JSON.stringify({ url: hookUrl, eventTypes: hookEvents }),
       });
       if (!r.ok) throw new Error("create failed");
-      toast.success(t("common_success"));
+      triggerGuidance("action_completed", t("common_success"));
       setHookUrl("");
       setHookEvents(["patient.created"]);
       await loadAll();
@@ -154,7 +156,7 @@ export default function IntegrationsPageClient() {
     try {
       const r = await fetch(`/api/webhooks/${id}`, { method: "DELETE" });
       if (!r.ok) throw new Error("delete failed");
-      toast.success(t("common_success"));
+      triggerGuidance("action_completed", t("common_success"));
       await loadAll();
     } catch (error) {
       toast.error(t("common_error"));
@@ -225,7 +227,7 @@ export default function IntegrationsPageClient() {
                 className="mt-2 h-8"
                 onClick={() => {
                   void navigator.clipboard.writeText(freshKey).catch(() => {});
-                  toast.success(t("common_success"));
+                  triggerGuidance("action_completed", t("common_success"));
                 }}
               >
                 <Copy className="h-3.5 w-3.5 mr-1" />{t("int_copy")}

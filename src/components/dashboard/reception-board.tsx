@@ -7,6 +7,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useMedical } from "@/context/MedicalContext";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { logClientError } from "@/lib/client-logger";
@@ -15,6 +16,7 @@ type Action = "check-in" | "check-out" | "no-show";
 
 export function ReceptionBoard() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const { appointments, patients, refetchAppointments } = useMedical();
   const [busy, setBusy] = React.useState<string | null>(null);
 
@@ -56,7 +58,7 @@ export function ReceptionBoard() {
       if (!r.ok) {
         toast.error(data.error || label);
       } else {
-        toast.success(label);
+        triggerGuidance("queue_status_updated", label);
         void refetchAppointments();
       }
     } catch (error) {

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { logClientError } from "@/lib/client-logger";
 import type { Dictionary } from "@/lib/i18n/locale";
 
@@ -31,6 +32,7 @@ export function TreatmentPlansSection({
   patientId: string;
   t: Dictionary;
 }) {
+  const { triggerGuidance } = usePostActionGuidance();
   const [plans, setPlans] = React.useState<Plan[]>([]);
   const [title, setTitle] = React.useState("");
   const [stepTitle, setStepTitle] = React.useState("");
@@ -137,7 +139,7 @@ export function TreatmentPlansSection({
         const data = await r.json();
         window.open(data.url, "_blank");
       }
-      toast.success(t["tp_printed"]);
+      triggerGuidance("prescription_created", t["tp_printed"]);
     } catch (error) {
       toast.error(t["tp_error"]);
       logClientError("Plan print failed", error);

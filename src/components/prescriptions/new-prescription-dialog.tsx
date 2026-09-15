@@ -31,6 +31,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { DataSourceLink, ManagedHereNote } from "@/components/data-source/data-source-navigator";
 import { DATA_SOURCES } from "@/components/data-source/sources";
 import type { RxMedLine } from "@/lib/prescriptions";
@@ -110,6 +111,7 @@ function MedicationNameInput({
   }) => void;
 }) {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [results, setResults] = React.useState<FavoriteItem[]>([]);
   const [stock, setStock] = React.useState<
     { id: string; name: string; quantity: number; unit: string | null; lowStock: boolean; outOfStock: boolean }[]
@@ -301,6 +303,7 @@ export function NewPrescriptionDialog({
   trigger,
 }: NewPrescriptionDialogProps) {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [patients, setPatients] = React.useState<PatientOption[]>([]);
@@ -367,7 +370,7 @@ export function NewPrescriptionDialog({
     void fetch(`/api/prescription-templates/${tpl.id}/use`, {
       method: "POST",
     }).catch(() => undefined);
-    toast.success(t("rx_template_loaded"));
+    triggerGuidance("prescription_created", t("rx_template_loaded"));
   };
 
   const saveTemplate = async () => {
@@ -396,7 +399,7 @@ export function NewPrescriptionDialog({
         }),
       });
       if (!response.ok) throw new Error("Failed to save template");
-      toast.success(t("rx_template_saved"));
+      triggerGuidance("prescription_created", t("rx_template_saved"));
       setSaveTemplateOpen(false);
       setTemplateName("");
       setTemplateSpecialty("");
@@ -474,7 +477,7 @@ export function NewPrescriptionDialog({
         return;
       }
 
-      toast.success(t("rx_createdSuccess"));
+      triggerGuidance("prescription_created", t("rx_createdSuccess"));
       setLines([{ ...EMPTY_LINE }]);
       setPatientId(defaultPatientId ?? "");
       setOpen(false);

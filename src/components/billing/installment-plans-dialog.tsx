@@ -17,6 +17,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 interface InstallmentRow {
   id: string;
@@ -45,6 +46,7 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
   const [creating, setCreating] = React.useState(false);
   const [payingId, setPayingId] = React.useState<string | null>(null);
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
 
   const fetchPlans = React.useCallback(async () => {
     try {
@@ -83,7 +85,7 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error || "Create failed");
       }
-      toast.success(t("inst_createSuccess"));
+      triggerGuidance("invoice_created", t("inst_createSuccess"));
       await fetchPlans();
       onSuccess?.();
     } catch (error) {
@@ -107,7 +109,7 @@ export function InstallmentPlansDialog({ invoiceId, onSuccess }: { invoiceId: st
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error || "Pay failed");
       }
-      toast.success(t("inst_paySuccess"));
+      triggerGuidance("payment_recorded", t("inst_paySuccess"));
       await fetchPlans();
       onSuccess?.();
     } catch (error) {

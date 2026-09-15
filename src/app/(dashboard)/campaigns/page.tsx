@@ -33,6 +33,7 @@ import { usePermissionState } from "@/hooks/use-permission-state";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { UpgradePrompt } from "@/components/plan/upgrade-prompt";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 interface Campaign {
   id: string;
@@ -45,6 +46,7 @@ interface Campaign {
 
 export default function CampaignsPage() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -283,7 +285,7 @@ export default function CampaignsPage() {
                               if (!response.ok) {
                                 throw new Error(data.error || "Launch failed");
                               }
-                              toast.success(`Launched: ${data.sent} sent, ${data.failed} failed`);
+                              triggerGuidance("campaign_launched", `Launched: ${data.sent} sent, ${data.failed} failed`);
                               fetchCampaigns();
                             } catch (error) {
                               toast.error(error instanceof Error ? error.message : "Launch failed");

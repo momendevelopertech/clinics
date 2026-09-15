@@ -17,6 +17,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import type { Patient } from "@/context/MedicalContext";
 
 interface MergePatientsDialogProps {
@@ -30,6 +31,7 @@ export function MergePatientsDialog({ patient, patients, onSuccess }: MergePatie
   const [survivorId, setSurvivorId] = React.useState("");
   const [saving, setSaving] = React.useState(false);
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
 
   const candidates = patients.filter((p) => p.id !== patient.id);
 
@@ -47,7 +49,7 @@ export function MergePatientsDialog({ patient, patients, onSuccess }: MergePatie
         return;
       }
       if (!response.ok) throw new Error("Merge failed");
-      toast.success(t("patients_mergeSuccess"));
+      triggerGuidance("patient_updated", t("patients_mergeSuccess"));
       setOpen(false);
       setSurvivorId("");
       onSuccess?.();

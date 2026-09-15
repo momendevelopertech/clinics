@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { isSoapEmpty, prefillSoap } from "@/lib/clinical-templates";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
@@ -32,6 +33,7 @@ type Encounter = {
 
 export function EncountersWorkspace() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [encounters, setEncounters] = useState<Encounter[]>([]);
   const [patientId, setPatientId] = useState("");
@@ -107,7 +109,7 @@ export function EncountersWorkspace() {
       /* ignore */
     }
     await refresh();
-    toast.success(t("common_added"));
+    triggerGuidance("encounter_saved", t("common_added"));
   };
 
   const applyTemplate = (encounterId: string, id: string) => {
@@ -129,7 +131,7 @@ export function EncountersWorkspace() {
     setSoapFor(selectedId, { ...EMPTY_SOAP });
     setTemplateId("");
     await refresh();
-    toast.success(t("common_added"));
+    triggerGuidance("encounter_saved", t("common_added"));
   };
 
   const saveTemplate = async () => {
@@ -144,7 +146,7 @@ export function EncountersWorkspace() {
     setTplName("");
     setTplSpecialty("");
     await refresh();
-    toast.success(t("common_saved"));
+    triggerGuidance("encounter_saved", t("common_saved"));
   };
 
   const deleteTemplate = async (id: string) => {
@@ -153,7 +155,7 @@ export function EncountersWorkspace() {
     if (!response.ok) throw new Error(t("enc_tplDeleteError"));
     if (templateId === id) setTemplateId("");
     await refresh();
-    toast.success(t("common_deleted"));
+    triggerGuidance("encounter_saved", t("common_deleted"));
   };
 
   const complete = async (id: string) => {
@@ -167,7 +169,7 @@ export function EncountersWorkspace() {
       autoInvoice?: { invoiceNumber: string; totalAmount: string } | null;
     } | null;
     await refresh();
-    toast.success(
+    triggerGuidance("encounter_saved",
       data?.autoInvoice
         ? `${t("common_saved")} · ${t("billing_title")}: ${data.autoInvoice.invoiceNumber}`
         : t("common_saved"),

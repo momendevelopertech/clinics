@@ -9,6 +9,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 interface IntakeField {
   id: string;
@@ -29,6 +30,7 @@ const KINDS = ["text", "multiline", "number", "date", "boolean", "choice"];
 
 export function IntakeFormsManager() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [forms, setForms] = React.useState<IntakeForm[]>([]);
   const [name, setName] = React.useState("");
   const [nameHint, setNameHint] = React.useState<string | null>(null);
@@ -71,7 +73,7 @@ export function IntakeFormsManager() {
       }
       if (!r.ok) throw new Error("create failed");
       setName("");
-      toast.success(t("common_added"));
+      triggerGuidance("document_generated", t("common_added"));
       await load();
     } catch (error) {
       toast.error(t("intake_error"));
@@ -98,7 +100,7 @@ export function IntakeFormsManager() {
       });
       if (!r.ok) throw new Error("field failed");
       setFieldForm({ ...fieldForm, [formId]: { label: "", kind: "text", required: false } });
-      toast.success(t("common_added"));
+      triggerGuidance("document_generated", t("common_added"));
       await load();
     } catch (error) {
       toast.error(t("intake_error"));

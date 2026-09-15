@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 interface LabOrder {
   id: string;
@@ -30,6 +31,7 @@ interface LabOrder {
 
 export function LabOrdersSection({ onChanged }: { onChanged?: () => void }) {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [orders, setOrders] = React.useState<LabOrder[]>([]);
   const [ingestId, setIngestId] = React.useState("");
   const [form, setForm] = React.useState({ resultValue: "", unit: "", referenceRange: "" });
@@ -62,7 +64,7 @@ export function LabOrdersSection({ onChanged }: { onChanged?: () => void }) {
       a.download = `lab-order-${data.externalRef}.json`;
       a.click();
       window.URL.revokeObjectURL(url);
-      toast.success(t("lab_transmitted"));
+      triggerGuidance("lab_order_created", t("lab_transmitted"));
       await load();
       onChanged?.();
     } catch (error) {
@@ -87,7 +89,7 @@ export function LabOrdersSection({ onChanged }: { onChanged?: () => void }) {
         const data = await r.json().catch(() => ({}));
         throw new Error(data.error || "ingest failed");
       }
-      toast.success(t("lab_ingested"));
+      triggerGuidance("lab_result_added", t("lab_ingested"));
       setIngestId("");
       setForm({ resultValue: "", unit: "", referenceRange: "" });
       await load();

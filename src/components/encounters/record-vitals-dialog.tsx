@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 function toNumOrNull(raw: string): number | null {
   const v = raw.trim();
@@ -43,6 +44,7 @@ export function RecordVitalsDialog({
   onSaved?: () => void;
 }) {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [open, setOpen] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const [weightKg, setWeightKg] = React.useState("");
@@ -99,7 +101,7 @@ export function RecordVitalsDialog({
         const data = await res.json().catch(() => ({}));
         throw new Error((data as { error?: string }).error || t("enc_vitalsSaveError"));
       }
-      toast.success(t("common_saved"));
+      triggerGuidance("vitals_recorded", t("common_saved"));
       reset();
       setOpen(false);
       onSaved?.();

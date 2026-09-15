@@ -21,6 +21,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { DataSourceLink } from "@/components/data-source/data-source-navigator";
 import { DATA_SOURCES } from "@/components/data-source/sources";
 
@@ -44,6 +45,7 @@ interface NewInvoiceDialogProps {
 
 export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [patients, setPatients] = React.useState<PatientOption[]>([]);
@@ -148,7 +150,7 @@ export function NewInvoiceDialog({ onSuccess }: NewInvoiceDialogProps) {
         throw new Error(data.error || "Failed to create invoice");
       }
 
-      toast.success("Invoice created successfully");
+      triggerGuidance("invoice_created", "Invoice created successfully");
       setFormData({
         patientId: "",
         serviceCatalogId: "",

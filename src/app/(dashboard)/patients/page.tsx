@@ -31,6 +31,7 @@ import { DataPagination } from "@/components/ui/data-pagination"
 import { EmptyState } from "@/components/ui/loading"
 import { paginate } from "@/lib/pagination"
 import { useLocale } from "@/components/locale/locale-provider"
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { FeatureTip } from "@/components/feature-tips/feature-tip"
 
 function PatientsPageContent() {
@@ -40,6 +41,7 @@ function PatientsPageContent() {
   const [page, setPage] = React.useState(1)
   const { patients, refetchPatients } = useMedical()
   const { t } = useLocale()
+  const { triggerGuidance } = usePostActionGuidance();
 
   const statusLabel = (status: string) => {
     const s = status.toLowerCase()
@@ -96,7 +98,7 @@ function PatientsPageContent() {
     a.download = `patients-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
-    toast.success(t("common_success"));
+    triggerGuidance("export_ready", t("common_success"));
   }
 
   return (

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { logClientError } from "@/lib/client-logger";
 
 type ProcedureRow = {
@@ -26,6 +27,7 @@ type ProcedureRow = {
  */
 export function TodayProceduresCard() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [rows, setRows] = React.useState<ProcedureRow[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [busyId, setBusyId] = React.useState<string | null>(null);
@@ -62,7 +64,7 @@ export function TodayProceduresCard() {
         body: JSON.stringify({ status: next }),
       });
       if (!res.ok) throw new Error("update");
-      toast.success(t("common_saved"));
+      triggerGuidance("encounter_saved", t("common_saved"));
       await load();
     } catch (e) {
       toast.error(t("common_error"));

@@ -65,8 +65,7 @@ export default function LocationsPage() {
         throw new Error(await parseApiError(response, t("locations_saveError")));
       }
       setBranchName("");
-      toast.success(t("locations_addBranchSuccess") || "Branch added");
-      triggerGuidance("branch_added");
+      triggerGuidance("branch_added", t("locations_addBranchSuccess") || "Branch added");
       await load();
     } catch (reason) {
       const message = handleApiError(reason, t);
@@ -103,8 +102,7 @@ export default function LocationsPage() {
       setRoomName("");
       setRoomNumber("");
       setRoomBranchId("");
-      toast.success(t("locations_addRoomSuccess") || "Room added");
-      triggerGuidance("room_added");
+      triggerGuidance("room_added", t("locations_addRoomSuccess") || "Room added");
       await load();
     } catch (reason) {
       const message = handleApiError(reason, t);

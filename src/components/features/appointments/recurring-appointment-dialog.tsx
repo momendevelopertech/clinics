@@ -19,6 +19,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { Input } from "@/components/ui/input";
 import { logClientError } from "@/lib/client-logger";
 
@@ -31,6 +32,7 @@ export function RecurringAppointmentDialog({
   appointmentId,
   onSuccess,
 }: RecurringAppointmentDialogProps) {
+  const { triggerGuidance } = usePostActionGuidance();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [formData, setFormData] = React.useState({
@@ -92,7 +94,7 @@ export function RecurringAppointmentDialog({
 
       if (!response.ok) throw new Error("Failed to set recurrence");
 
-      toast.success("Recurrence pattern set successfully");
+      triggerGuidance("appointment_updated", "Recurrence pattern set successfully");
       setFormData({
         frequency: "weekly",
         interval: "1",

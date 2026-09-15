@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 export function TelehealthLinkDialog({
   appointmentId,
@@ -30,6 +31,7 @@ export function TelehealthLinkDialog({
   const [url, setUrl] = React.useState(currentUrl ?? "");
   const [saving, setSaving] = React.useState(false);
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
 
   const handleSave = async () => {
     const trimmed = url.trim();
@@ -48,7 +50,7 @@ export function TelehealthLinkDialog({
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error || "save failed");
       }
-      toast.success(t("tele_saved"));
+      triggerGuidance("telehealth_link_saved", t("tele_saved"));
       setOpen(false);
       onSuccess?.();
     } catch (error) {

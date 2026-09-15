@@ -16,6 +16,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 interface Pkg {
   id: string;
@@ -36,6 +37,7 @@ interface Balance {
 
 export function PackagesSection() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [packages, setPackages] = useState<Pkg[]>([]);
   const [balances, setBalances] = useState<Balance[]>([]);
   const [patients, setPatients] = useState<Array<{ id: string; firstName: string; lastName: string }>>([]);
@@ -93,7 +95,7 @@ export function PackagesSection() {
         body: JSON.stringify({ patientId: assignPatient, packageId: assignPkg }),
       });
       if (!r.ok) throw new Error("assign failed");
-      toast.success(t("pkg_assignDone"));
+      triggerGuidance("invoice_created", t("pkg_assignDone"));
       setAssignOpen(false);
       await load();
     } catch (error) {
@@ -113,7 +115,7 @@ export function PackagesSection() {
         const data = await r.json().catch(() => ({}));
         throw new Error(data.error || "consume failed");
       }
-      toast.success(t("pkg_consumeDone"));
+      triggerGuidance("invoice_created", t("pkg_consumeDone"));
       await load();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("pkg_error"));

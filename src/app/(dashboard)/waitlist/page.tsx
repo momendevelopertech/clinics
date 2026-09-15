@@ -24,6 +24,7 @@ import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
@@ -43,6 +44,7 @@ interface WaitlistEntry {
 
 export default function WaitlistPage() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [entries, setEntries] = React.useState<WaitlistEntry[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -95,7 +97,7 @@ export default function WaitlistPage() {
     a.download = `waitlist-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
-    toast.success(t("wl_exportSuccess"));
+    triggerGuidance("export_ready", t("wl_exportSuccess"));
   };
 
   const filteredEntries = entries.filter((entry) => {

@@ -27,6 +27,7 @@ import { FilePreviewDialog } from "@/components/ui/file-preview-dialog";
 import { paginate } from "@/lib/pagination";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
@@ -47,6 +48,7 @@ interface LabResult {
 
 export default function LabResultsPage() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [results, setResults] = React.useState<LabResult[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -109,7 +111,7 @@ export default function LabResultsPage() {
     a.download = `lab-results-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
-    toast.success(t("labs_exportSuccess"));
+    triggerGuidance("export_ready", t("labs_exportSuccess"));
   };
 
   const filteredResults = results.filter((result) => {

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { useRoles } from "@/context/RoleContext";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { PackagesSection } from "@/components/packages/packages-section";
@@ -27,6 +28,7 @@ async function api(path: string, init?: RequestInit) {
 
 export default function CatalogsPage() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const { roles } = useRoles();
   const isOwner = roles.includes("Owner") || roles.includes("Super Admin");
   const [services, setServices] = useState<Service[]>([]);
@@ -110,14 +112,14 @@ export default function CatalogsPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        toast.success(t("common_updated"));
+        triggerGuidance("catalog_updated", t("common_updated"));
       } else {
         await api("/api/catalogs?kind=service", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        toast.success(t("common_added"));
+        triggerGuidance("catalog_updated", t("common_added"));
       }
       resetServiceForm();
       await reload();
@@ -133,7 +135,7 @@ export default function CatalogsPage() {
     if (!window.confirm(t("common_confirmDelete"))) return;
     try {
       const result = (await api(`/api/catalogs/${id}?kind=service`, { method: "DELETE" })) as { deactivated?: boolean };
-      toast.success(result.deactivated ? t("catalogs_deactivated") : t("common_deleted"));
+      triggerGuidance("catalog_updated", result.deactivated ? t("catalogs_deactivated") : t("common_deleted"));
       await reload();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t("catalogs_loadError"));
@@ -160,14 +162,14 @@ export default function CatalogsPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        toast.success(t("common_updated"));
+        triggerGuidance("catalog_updated", t("common_updated"));
       } else {
         await api("/api/catalogs?kind=clinical", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        toast.success(t("common_added"));
+        triggerGuidance("catalog_updated", t("common_added"));
       }
       resetClinicalForm();
       await reload();
@@ -183,7 +185,7 @@ export default function CatalogsPage() {
     if (!window.confirm(t("common_confirmDelete"))) return;
     try {
       await api(`/api/catalogs/${id}?kind=clinical`, { method: "DELETE" });
-      toast.success(t("common_deleted"));
+      triggerGuidance("catalog_updated", t("common_deleted"));
       await reload();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t("catalogs_loadError"));

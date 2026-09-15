@@ -17,6 +17,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { DataSourceLink } from "@/components/data-source/data-source-navigator";
 import { DATA_SOURCES } from "@/components/data-source/sources";
 
@@ -54,6 +55,7 @@ export function DispenseDialog({
   onDone: () => void;
 }) {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [open, setOpen] = React.useState(false);
   const [rows, setRows] = React.useState<DispenseLine[]>([]);
   const [saving, setSaving] = React.useState(false);
@@ -112,7 +114,7 @@ export function DispenseDialog({
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error((data as { error?: string }).error || t("rx_dispenseError"));
-      toast.success(t("rx_dispenseSuccess"));
+      triggerGuidance("prescription_dispensed", t("rx_dispenseSuccess"));
       setOpen(false);
       onDone();
     } catch (err) {

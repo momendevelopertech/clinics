@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 interface AddCommunicationDialogProps {
   onSuccess?: () => void;
@@ -29,6 +30,7 @@ export function AddCommunicationDialog({
   onSuccess,
 }: AddCommunicationDialogProps) {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [patients, setPatients] = useState<
@@ -86,7 +88,7 @@ export function AddCommunicationDialog({
 
       if (!response.ok) throw new Error("Failed to create communication");
 
-      toast.success(t("comm_sentSuccess"));
+      triggerGuidance("communication_sent", t("comm_sentSuccess"));
       setOpen(false);
       setFormData({
         patientId: "",

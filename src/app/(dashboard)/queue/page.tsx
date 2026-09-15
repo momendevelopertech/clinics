@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { TableSkeleton } from "@/components/ui/loading";
@@ -24,6 +25,7 @@ type QueueItem = {
 
 export default function QueuePage() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [error, setError] = useState("");
   const [forbidden, setForbidden] = useState(false);
@@ -76,7 +78,7 @@ export default function QueuePage() {
       }
       const data = (await response.json().catch(() => null)) as { encounterId?: string | null } | null;
       await load();
-      toast.success(t(successKey(action)));
+      triggerGuidance("queue_status_updated", t(successKey(action)));
       return data;
     } catch (reason: unknown) {
       const message = reason instanceof Error ? reason.message : t("queue_actionError");

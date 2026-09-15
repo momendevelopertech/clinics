@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import type { UploadPurpose } from "@/lib/validations/uploads";
 
 type ImageUploadPurpose = Extract<UploadPurpose, "avatar" | "clinic_logo" | "patient_photo">;
@@ -36,6 +37,7 @@ export function CloudinaryImageUpload({
   const [loading, setLoading] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -61,7 +63,7 @@ export function CloudinaryImageUpload({
         publicId: payload.publicId,
         mimeType: payload.mimeType,
       });
-      toast.success("Image uploaded");
+      triggerGuidance("document_uploaded", "Image uploaded");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Upload failed");
       logClientError("Cloudinary image upload failed", error);

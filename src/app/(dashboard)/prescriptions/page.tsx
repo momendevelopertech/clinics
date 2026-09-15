@@ -28,6 +28,7 @@ import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -46,6 +47,7 @@ interface PrescriptionRow {
 
 export default function PrescriptionsPage() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<string | null>(null);
   const [prescriptions, setPrescriptions] = React.useState<PrescriptionRow[]>([]);
@@ -116,7 +118,7 @@ export default function PrescriptionsPage() {
         body: JSON.stringify({ status }),
       });
       if (!response.ok) throw new Error("Failed to update status");
-      toast.success(
+      triggerGuidance("prescription_created",
         status === "completed" ? t("rx_completeSuccess") : t("rx_cancelSuccess"),
       );
       await fetchPrescriptions();
@@ -132,7 +134,7 @@ export default function PrescriptionsPage() {
       setDeleting(true);
       const response = await fetch(`/api/prescriptions/${deleteId}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Failed to delete prescription");
-      toast.success(t("rx_deleteSuccess"));
+      triggerGuidance("action_completed", t("rx_deleteSuccess"));
       setDeleteId(null);
       await fetchPrescriptions();
     } catch (error) {

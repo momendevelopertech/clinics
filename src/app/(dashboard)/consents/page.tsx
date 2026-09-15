@@ -33,6 +33,7 @@ import { logClientError } from "@/lib/client-logger";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { PageHelpBanner } from "@/components/ui/page-help-banner";
 
 interface Consent {
@@ -48,6 +49,7 @@ interface Consent {
 
 export default function ConsentsPage() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [consents, setConsents] = React.useState<Consent[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -109,7 +111,7 @@ export default function ConsentsPage() {
     a.download = `consents-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
-    toast.success(t("consent_exportSuccess"));
+    triggerGuidance("export_ready", t("consent_exportSuccess"));
   };
 
   const filteredConsents = consents.filter((consent) => {

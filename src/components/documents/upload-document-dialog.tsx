@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 type PatientOption = {
   id: string;
@@ -61,6 +62,7 @@ function uploadPurposeForDocType(
 
 export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [patients, setPatients] = React.useState<PatientOption[]>([]);
@@ -158,7 +160,7 @@ export function UploadDocumentDialog({ onSuccess }: UploadDocumentDialogProps) {
         throw new Error(docPayload.error || "Failed to save document");
       }
 
-      toast.success(t("doc_uploadedSuccess"));
+      triggerGuidance("document_uploaded", t("doc_uploadedSuccess"));
       setFormData({
         patientId: "",
         documentType: "medical_record",

@@ -15,6 +15,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { UpgradePrompt } from "@/components/plan/upgrade-prompt";
@@ -52,6 +53,7 @@ const MAINT_STATUSES = ["scheduled", "in_progress", "completed", "overdue"];
 
 export default function EquipmentPage() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const { forbidden, guardedFetch } = usePermissionState();
   const [items, setItems] = React.useState<Equipment[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -135,7 +137,7 @@ export default function EquipmentPage() {
         }),
       });
       if (!r.ok) throw new Error("create failed");
-      toast.success(t("common_success"));
+      triggerGuidance("equipment_added", t("common_success"));
       setForm({ name: "", type: "device", status: "active", nextCalibrationAt: "" });
       await loadItems();
     } catch (error) {
@@ -160,7 +162,7 @@ export default function EquipmentPage() {
         }),
       });
       if (!r.ok) throw new Error("save failed");
-      toast.success(t("common_success"));
+      triggerGuidance("equipment_log_added", t("common_success"));
       setMaintForm({ type: "preventive", status: "completed", description: "", technician: "", dueAt: "", cost: "" });
       await loadLog(selectedId);
       await loadItems();

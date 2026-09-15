@@ -5,6 +5,7 @@ import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { logClientError } from "@/lib/client-logger";
 import type { Dictionary } from "@/lib/i18n/locale";
 
@@ -15,6 +16,7 @@ export function SendRxButton({
   rxId: string;
   t: Dictionary;
 }) {
+  const { triggerGuidance } = usePostActionGuidance();
   const [channel, setChannel] = React.useState<"sms" | "whatsapp">("whatsapp");
   const [sending, setSending] = React.useState(false);
 
@@ -30,7 +32,7 @@ export function SendRxButton({
       if (!r.ok || data.ok !== true) {
         throw new Error(data.error || "Send failed");
       }
-      toast.success(t["rx_sent"]);
+      triggerGuidance("prescription_created", t["rx_sent"]);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : String(error));
       logClientError("Send prescription failed", error);

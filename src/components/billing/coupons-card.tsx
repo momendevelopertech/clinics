@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
@@ -29,6 +30,7 @@ type Coupon = {
  */
 export function CouponsCard() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const { guardedFetch } = usePermissionState();
   const [coupons, setCoupons] = React.useState<Coupon[]>([]);
   const [form, setForm] = React.useState({ code: "", kind: "percent", value: "", expiresAt: "" });
@@ -64,7 +66,7 @@ export function CouponsCard() {
         }),
       });
       if (!response.ok) throw new Error("create failed");
-      toast.success(t("common_added"));
+      triggerGuidance("catalog_updated", t("common_added"));
       setForm({ code: "", kind: "percent", value: "", expiresAt: "" });
       load();
     } catch (error) {
@@ -81,7 +83,7 @@ export function CouponsCard() {
         body: JSON.stringify({ active: !coupon.active }),
       });
       if (!response.ok) throw new Error("update failed");
-      toast.success(t("common_updated"));
+      triggerGuidance("catalog_updated", t("common_updated"));
       load();
     } catch (error) {
       toast.error(t("common_error"));

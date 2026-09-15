@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +21,7 @@ interface Schedule {
 }
 
 export function ReportScheduleCard({ t }: { t: Dictionary }) {
+  const { triggerGuidance } = usePostActionGuidance();
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [staff, setStaff] = useState<Array<{ id: string; name: string | null; email: string }>>([]);
   const [day, setDay] = useState("1");
@@ -57,7 +59,7 @@ export function ReportScheduleCard({ t }: { t: Dictionary }) {
         return;
       }
       if (!r.ok) throw new Error("create failed");
-      toast.success(t["reports_schedCreated"]);
+      triggerGuidance("report_scheduled", t["reports_schedCreated"]);
       await load();
     } catch (error) {
       toast.error(t["reports_schedError"]);

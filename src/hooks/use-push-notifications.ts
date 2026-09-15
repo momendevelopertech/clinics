@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { logClientError } from "@/lib/client-logger";
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -85,7 +86,7 @@ export function usePushNotifications() {
       });
       setIsSubscribed(true);
     } catch (error) {
-      console.error("Push subscription failed:", error);
+      logClientError("Push subscription failed", error);
     } finally {
       setLoading(false);
     }
@@ -108,7 +109,7 @@ export function usePushNotifications() {
       }
       setIsSubscribed(false);
     } catch (error) {
-      console.error("Push unsubscribe failed:", error);
+      logClientError("Push unsubscribe failed", error);
     } finally {
       setLoading(false);
     }

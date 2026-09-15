@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { logClientError } from "@/lib/client-logger";
 import type { Dictionary } from "@/lib/i18n/locale";
 
@@ -37,6 +38,7 @@ export function PatientAllergiesCard({
   patientId: string;
   t: Dictionary;
 }) {
+  const { triggerGuidance } = usePostActionGuidance();
   const [allergies, setAllergies] = React.useState<Allergy[]>([]);
   const [allergen, setAllergen] = React.useState("");
   const [severity, setSeverity] = React.useState("mild");
@@ -71,7 +73,7 @@ export function PatientAllergiesCard({
         const data = await r.json().catch(() => ({}));
         throw new Error(data.error || "Failed to add allergy");
       }
-      toast.success(t["allergy_saved"]);
+      triggerGuidance("patient_updated", t["allergy_saved"]);
       setAllergen("");
       setReaction("");
       await load();
@@ -88,7 +90,7 @@ export function PatientAllergiesCard({
         method: "DELETE",
       });
       if (!r.ok) throw new Error("Failed to remove allergy");
-      toast.success(t["allergy_deleted"]);
+      triggerGuidance("patient_updated", t["allergy_deleted"]);
       await load();
     } catch (error) {
       toast.error(String(error));

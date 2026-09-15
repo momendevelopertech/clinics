@@ -20,6 +20,7 @@ import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { canTransitionClaim } from "@/lib/insurance";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { useRoles } from "@/context/RoleContext";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { DataSourceLink } from "@/components/data-source/data-source-navigator";
@@ -64,6 +65,7 @@ const PAGE_SIZE = 10;
 
 export default function InsurancePage() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const { roles } = useRoles();
   const isOwner = roles.includes("Owner") || roles.includes("Super Admin");
   const { forbidden, guardedFetch } = usePermissionState();
@@ -163,7 +165,7 @@ export default function InsurancePage() {
         }),
       });
       if (!r.ok) throw new Error("create failed");
-      toast.success(t("ins_policyCreated"));
+      triggerGuidance("insurance_policy_created", t("ins_policyCreated"));
       setPolicyForm({ patientId: "", provider: "", policyNumber: "", groupNumber: "", type: "primary" });
       await loadAll();
     } catch (error) {
@@ -190,7 +192,7 @@ export default function InsurancePage() {
           body: JSON.stringify(payload),
         });
         if (!r.ok) throw new Error("update failed");
-        toast.success(t("ins_providerUpdated"));
+        triggerGuidance("insurance_policy_created", t("ins_providerUpdated"));
       } else {
         const r = await fetch("/api/insurance/providers", {
           method: "POST",
@@ -198,7 +200,7 @@ export default function InsurancePage() {
           body: JSON.stringify(payload),
         });
         if (!r.ok) throw new Error("create failed");
-        toast.success(t("ins_providerCreated"));
+        triggerGuidance("insurance_policy_created", t("ins_providerCreated"));
       }
       setProviderForm({ name: "", contactPhone: "", contactEmail: "" });
       setEditingProviderId(null);
@@ -215,7 +217,7 @@ export default function InsurancePage() {
       const r = await fetch(`/api/insurance/providers/${id}`, { method: "DELETE" });
       const data = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error("delete failed");
-      toast.success((data as { deactivated?: boolean }).deactivated ? t("ins_providerDeactivated") : t("common_deleted"));
+      triggerGuidance("insurance_policy_created", (data as { deactivated?: boolean }).deactivated ? t("ins_providerDeactivated") : t("common_deleted"));
       await loadAll();
     } catch (error) {
       toast.error(t("common_error"));
@@ -253,7 +255,7 @@ export default function InsurancePage() {
         }),
       });
       if (!r.ok) throw new Error("file failed");
-      toast.success(t("ins_claimFiled"));
+      triggerGuidance("insurance_claim_filed", t("ins_claimFiled"));
       setClaimForm({ patientId: "", invoiceId: "", amountClaimed: "" });
       await loadAll();
     } catch (error) {
@@ -276,7 +278,7 @@ export default function InsurancePage() {
       });
       const data = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(data?.error ?? "transition failed");
-      toast.success(t("common_success"));
+      triggerGuidance("insurance_claim_filed", t("common_success"));
       setAdvancing((prev) => ({ ...prev, [claim.id]: "" }));
       await loadAll();
     } catch (error) {

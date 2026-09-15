@@ -14,9 +14,11 @@ import {
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 export default function SecurityPage() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [enabled, setEnabled] = React.useState<boolean | null>(null);
   const [qr, setQr] = React.useState("");
   const [code, setCode] = React.useState("");
@@ -65,7 +67,7 @@ export default function SecurityPage() {
       setEnabled(true);
       setQr("");
       setCode("");
-      toast.success(t("sec_enabledOk"));
+      triggerGuidance("action_completed", t("sec_enabledOk"));
     } catch (error) {
       toast.error(t("sec_error"));
       logClientError("2FA verify failed", error);
@@ -85,7 +87,7 @@ export default function SecurityPage() {
       if (!r.ok) throw new Error("disable failed");
       setEnabled(false);
       setCode("");
-      toast.success(t("sec_disabledOk"));
+      triggerGuidance("action_completed", t("sec_disabledOk"));
     } catch (error) {
       toast.error(t("sec_error"));
       logClientError("2FA disable failed", error);

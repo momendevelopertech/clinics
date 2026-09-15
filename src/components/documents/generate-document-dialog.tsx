@@ -17,6 +17,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 interface TemplateMeta {
   id: string;
@@ -65,6 +66,7 @@ export function GenerateDocumentDialog({ onSuccess }: { onSuccess?: () => void }
   const [fields, setFields] = React.useState<Record<string, string>>({});
   const [saving, setSaving] = React.useState(false);
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
 
   const template = templates.find((x) => x.id === templateId) ?? null;
   const visibleFields = [
@@ -139,7 +141,7 @@ export function GenerateDocumentDialog({ onSuccess }: { onSuccess?: () => void }
         a.click();
         window.URL.revokeObjectURL(url);
       }
-      toast.success(t("doc_genSuccess"));
+      triggerGuidance("document_generated", t("doc_genSuccess"));
       setOpen(false);
       onSuccess?.();
     } catch (error) {

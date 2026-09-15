@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface StaffRow {
@@ -56,6 +57,7 @@ const WEEKDAY_KEYS = [
 
 export default function StaffPageClient() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [staff, setStaff] = React.useState<StaffRow[]>([]);
   const [roles, setRoles] = React.useState<Array<{ id: string; name: string }>>([]);
   const [branches, setBranches] = React.useState<Array<{ id: string; name: string }>>([]);
@@ -129,7 +131,7 @@ export default function StaffPageClient() {
         return;
       }
       if (!r.ok) throw new Error("assign failed");
-      toast.success(t("staff_assignedOk"));
+      triggerGuidance("staff_role_assigned", t("staff_assignedOk"));
       setAssignOpen(false);
       await loadAll();
     } catch (error) {
@@ -164,7 +166,7 @@ export default function StaffPageClient() {
         const data = await r.json().catch(() => ({}));
         throw new Error(data.error || "shift failed");
       }
-      toast.success(t("staff_shiftOk"));
+      triggerGuidance("shift_added", t("staff_shiftOk"));
       setShifts(await (await fetch(`/api/shifts?userId=${selectedId}`)).json());
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("staff_shiftError"));
@@ -181,7 +183,7 @@ export default function StaffPageClient() {
       const r = await fetch(`/api/shifts/${deleteId}`, { method: "DELETE" });
       if (!r.ok) throw new Error("delete failed");
       setShifts((prev) => prev.filter((s) => s.id !== deleteId));
-      toast.success(t("common_deleted"));
+      triggerGuidance("action_completed", t("common_deleted"));
       setDeleteId(null);
     } catch (error) {
       toast.error(t("staff_shiftError"));

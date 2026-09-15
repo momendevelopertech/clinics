@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { logClientError } from "@/lib/client-logger";
 import { ClinicalCatalogSelect } from "@/components/data-source/clinical-catalog-select";
 
@@ -19,6 +20,7 @@ type Patient = { id: string; firstName: string; lastName: string };
 
 export function AddLabOrderDialog({ onSuccess }: { onSuccess: () => void }) {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [open, setOpen] = React.useState(false);
   const [patients, setPatients] = React.useState<Patient[]>([]);
   const [loading, setLoading] = React.useState(false);
@@ -51,7 +53,7 @@ export function AddLabOrderDialog({ onSuccess }: { onSuccess: () => void }) {
       setLoading(true);
       const response = await fetch("/api/lab-orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
       if (!response.ok) throw new Error("Failed to create lab order");
-      toast.success(t("labs_orderAdded"));
+      triggerGuidance("lab_order_created", t("labs_orderAdded"));
       setOpen(false);
       setForm({ patientId: "", orderType: "lab", testName: "", priority: "routine", indication: "" });
       onSuccess();

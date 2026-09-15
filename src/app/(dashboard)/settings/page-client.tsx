@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { StaffProfiles } from "@/components/settings/staff-profiles";
 import { IntakeFormsManager } from "@/components/settings/intake-forms-manager";
 import { ProfileAvatarCard } from "@/components/settings/profile-avatar-card";
@@ -20,6 +21,7 @@ type Section = "general" | "billing" | "team" | "notifications" | "intake";
 
 export default function SettingsPageClient() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [activeSection, setActiveSection] = React.useState<Section>("general");
   const [settings, setSettings] = React.useState({
     appointmentDurationMins: 30,
@@ -62,7 +64,7 @@ export default function SettingsPageClient() {
       }
       return;
     }
-    toast.success(t("settings_saved"));
+    triggerGuidance("settings_saved", t("settings_saved"));
   };
 
   const navItems: { id: Section; label: string }[] = [
@@ -135,7 +137,7 @@ export default function SettingsPageClient() {
                         currentUrl={settings.clinicLogoUrl || null}
                         onUploaded={async (result) => {
                           setSettings((prev) => ({ ...prev, clinicLogoUrl: result.url, clinicLogoPublicId: result.publicId }));
-                          toast.success(t("settings_logoUploaded"));
+                          triggerGuidance("settings_saved", t("settings_logoUploaded"));
                         }}
                       />
                       <p className="text-xs text-muted-foreground mt-2">{t("settings_logoHelp")}</p>

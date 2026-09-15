@@ -34,6 +34,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { patientCreateSchema, type PatientCreateInput } from "@/lib/validations";
 
 const GENDERS = ["Male", "Female", "Other", "Prefer not to say"] as const;
@@ -47,6 +48,7 @@ interface AddPatientDialogProps {
 export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) {
   const [open, setOpen] = React.useState(false);
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
 
   const genderLabel = (g: string) => {
     const map: Record<string, string> = {
@@ -121,7 +123,7 @@ export function AddPatientDialog({ onSuccess, trigger }: AddPatientDialogProps) 
 
       setOpen(false);
       form.reset();
-      toast.success(t("addPatient_success"));
+      triggerGuidance("patient_created", t("addPatient_success"));
       onSuccess?.();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("common_error"));

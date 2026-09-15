@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { useFeatureTips } from "@/components/feature-tips/feature-tips-provider";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 
@@ -60,6 +61,7 @@ const quickLinks = [
 
 export default function HelpPage() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const { resetAll } = useFeatureTips();
   const [email, setEmail] = React.useState("");
   const [message, setMessage] = React.useState("");
@@ -67,7 +69,7 @@ export default function HelpPage() {
 
   const handleResetTips = () => {
     resetAll();
-    toast.success(t("help_tipsReset"));
+    triggerGuidance("action_completed", t("help_tipsReset"));
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

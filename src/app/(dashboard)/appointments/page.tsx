@@ -38,6 +38,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { DataPagination } from "@/components/ui/data-pagination"
 import { paginate } from "@/lib/pagination"
 import { useLocale } from "@/components/locale/locale-provider"
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { cn } from "@/lib/utils"
 import { FeatureTip } from "@/components/feature-tips/feature-tip"
 import { ConfirmDialog } from "@/components/ui/confirm-dialog"
@@ -84,6 +85,7 @@ function EditAppointmentDialog({
   }, [apt.provider, providerNames])
 
   const { t } = useLocale()
+  const { triggerGuidance } = usePostActionGuidance();
 
   const [provider, setProvider] = React.useState(apt.provider?.trim() || providerNames[0] || "")
   const [date, setDate] = React.useState(apt.date)
@@ -169,6 +171,7 @@ function AppointmentsPageContent() {
   const { appointments, patients, addAppointment, updateAppointment, refetchAppointments } = useMedical()
   const [providers, setProviders] = React.useState<{ id: string; name: string }[]>([])
   const { t } = useLocale()
+  const { triggerGuidance } = usePostActionGuidance();
   const [searchQuery, setSearchQuery] = React.useState("")
   const [view, setView] = React.useState<"list" | "day" | "calendar">("list")
   const [selectedDay, setSelectedDay] = React.useState(() => new Date().toISOString().split("T")[0])
@@ -247,7 +250,7 @@ function AppointmentsPageContent() {
       time: data.time,
       status: statusMap[data.status] || "Pending",
     })
-    toast.success(t("appts_updated"))
+    triggerGuidance("appointment_updated", t("appts_updated"))
   }
 
   const handleConfirmCancel = async () => {
@@ -255,7 +258,7 @@ function AppointmentsPageContent() {
     try {
       setCancelling(true)
       await updateAppointment(confirmId, { status: "Cancelled" })
-      toast.success(t("appts_cancelled"))
+      triggerGuidance("appointment_cancelled", t("appts_cancelled"))
       setConfirmId(null)
     } finally {
       setCancelling(false)
@@ -538,7 +541,7 @@ function AppointmentsPageContent() {
                                           status: "In Waiting Room",
                                           isWalkIn: true,
                                         });
-                                        toast.success(t("appts_markedWalkIn"));
+                                        triggerGuidance("queue_status_updated", t("appts_markedWalkIn"));
                                       }}><UserPlus className="me-1 h-3.5 w-3.5" />{t("appts_walkIn")}</Button>
                                       </FeatureTip>
                                     ) : null}

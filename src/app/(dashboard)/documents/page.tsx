@@ -39,6 +39,7 @@ import { FeatureNotConfiguredBanner } from "@/components/ui/feature-not-configur
 import { useFeatureConfig } from "@/hooks/use-feature-config";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 interface Document {
   id: string;
@@ -85,6 +86,7 @@ const DOC_TYPE_KEYS: Record<string, string> = {
 
 export default function DocumentsPage() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [documents, setDocuments] = React.useState<Document[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -141,7 +143,7 @@ export default function DocumentsPage() {
     a.download = `documents-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
-    toast.success(t("doc_exportSuccess"));
+    triggerGuidance("export_ready", t("doc_exportSuccess"));
   };
 
   const filteredDocuments = filterDocuments(documents, searchQuery, typeFilter);

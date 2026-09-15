@@ -17,6 +17,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { ClinicalCatalogSelect } from "@/components/data-source/clinical-catalog-select";
 
 type PatientOption = {
@@ -31,6 +32,7 @@ interface AddLabResultDialogProps {
 
 export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [patients, setPatients] = React.useState<PatientOption[]>([]);
@@ -96,7 +98,7 @@ export function AddLabResultDialog({ onSuccess }: AddLabResultDialogProps) {
 
       if (!response.ok) throw new Error("Failed to create lab result");
 
-      toast.success(t("labs_addedSuccess"));
+      triggerGuidance("lab_result_added", t("labs_addedSuccess"));
       setFormData({
         patientId: "",
         testName: "",

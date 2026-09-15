@@ -17,6 +17,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 
 export function BookFromWaitlistDialog({
   waitlistId,
@@ -34,6 +35,7 @@ export function BookFromWaitlistDialog({
   const [time, setTime] = React.useState("");
   const [saving, setSaving] = React.useState(false);
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
 
   React.useEffect(() => {
     if (!open) return;
@@ -64,7 +66,7 @@ export function BookFromWaitlistDialog({
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error || "Book failed");
       }
-      toast.success(t("wl_bookSuccess"));
+      triggerGuidance("waitlist_converted", t("wl_bookSuccess"));
       setOpen(false);
       onSuccess?.();
     } catch (error) {

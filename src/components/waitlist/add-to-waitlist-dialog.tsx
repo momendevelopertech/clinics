@@ -95,8 +95,7 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
         throw new Error(await parseApiError(response, t("wl_addError") ?? "Failed to add to waitlist"));
       }
 
-      toast.success(t("wl_addSuccess") ?? "Added to waitlist");
-      triggerGuidance("waitlist_added");
+      triggerGuidance("waitlist_added", t("wl_addSuccess") ?? "Added to waitlist");
       setFormData({ patientId: "", preferredDate: "", notes: "" });
       setOpen(false);
       onSuccess();

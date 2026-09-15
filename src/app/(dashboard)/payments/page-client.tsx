@@ -23,6 +23,7 @@ import { DataPagination } from "@/components/ui/data-pagination";
 import { paginate } from "@/lib/pagination";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
@@ -54,6 +55,7 @@ function toAmount(value: number | string) {
 
 export default function PaymentsPageClient() {
   const { t } = useLocale();
+  const { triggerGuidance } = usePostActionGuidance();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [payments, setPayments] = React.useState<Payment[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -116,7 +118,7 @@ export default function PaymentsPageClient() {
     a.download = `payments-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
-    toast.success(t("pay_exportSuccess"));
+    triggerGuidance("export_ready", t("pay_exportSuccess"));
   };
 
   const filteredPayments = payments.filter((payment) => {
@@ -190,7 +192,7 @@ export default function PaymentsPageClient() {
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error || "Refund failed");
       }
-      toast.success(t("pay_refundedSuccess"));
+      triggerGuidance("payment_recorded", t("pay_refundedSuccess"));
       await fetchPayments();
     } catch (error) {
       toast.error(t("pay_refundError"));
