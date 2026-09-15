@@ -429,9 +429,13 @@ export const ar: Dictionary = {
   locations_subtitle: "إدارة مواقع العيادة والغرف المستخدمة في جدولة المواعيد.",
   locations_branches: "الفروع",
   locations_branchName: "اسم الفرع",
+  locations_addBranch: "إضافة فرع",
   locations_rooms: "الغرف",
   locations_roomName: "اسم الغرفة",
   locations_roomNumber: "الرقم",
+  locations_addRoom: "إضافة غرفة",
+  locations_noBranches: "لا توجد فروع مضافة بعد.",
+  locations_noRooms: "لا توجد غرف مضافة بعد.",
   locations_unassigned: "غير مخصصة",
   locations_loadError: "تعذر تحميل المواقع.",
   locations_saveError: "تعذر حفظ الموقع.",
@@ -443,6 +447,12 @@ export const ar: Dictionary = {
   ph_locations_desc: "الفروع هي مواقع العيادة (العنوان وبيانات التواصل). والغرف هي غرف الكشف داخل كل فرع ويتم اختيارها عند حجز المواعيد.",
   ph_locations_audience: "المالك / المدير",
   ph_locations_action: "أضف فرعًا ثم أنشئ الغرف داخله.",
+
+  // PWA Install
+  pwa_installTitle: "تثبيت تطبيق العيادة Healthcare CRM",
+  pwa_installDesc: "أضف التطبيق للشاشة الرئيسية للوصول السريع والعمل السلس.",
+  pwa_installBtn: "تثبيت",
+  pwa_notNow: "ليس الآن",
 
   // Header
   header_searchPlaceholder: "ابحث عن المرضى والزيارات والمطالبات",

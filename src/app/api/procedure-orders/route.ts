@@ -11,8 +11,13 @@ export async function GET(request: Request) {
   try {
     const organizationId = await getOrgId();
     assertOrgScope(organizationId);
-    const moduleAuthz = await requireModulePermission(organizationId, "encounters");
-    if (moduleAuthz.response) return moduleAuthz.response;
+    const authz = await requireAnyPermission(organizationId, [
+      { action: "encounters:read", resource: "encounters" },
+      { action: "appointments:read", resource: "appointments" },
+      { action: "patients:read", resource: "patients" },
+      { action: "queue:read", resource: "queue" },
+    ]);
+    if (authz.response) return authz.response;
     const url = new URL(request.url);
     const patientId = url.searchParams.get("patientId");
     const status = url.searchParams.get("status");

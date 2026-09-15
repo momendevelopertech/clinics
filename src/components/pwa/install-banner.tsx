@@ -5,19 +5,23 @@ import { useMounted } from "@/hooks/use-mounted";
 import { Button } from "@/components/ui/button";
 import { Download, X } from "lucide-react";
 import { useState } from "react";
+import { useLocale } from "@/components/locale/locale-provider";
 
 export function InstallBanner() {
   const { isInstallable, install } = usePwaInstall();
+  const { t } = useLocale();
   const mounted = useMounted();
-  const [dismissed] = useState(
+  const [dismissed, setDismissed] = useState(
     () =>
       typeof window !== "undefined" &&
       localStorage.getItem("pwa-install-dismissed") === "true"
   );
 
   const handleDismiss = () => {
-    if (typeof window === "undefined") return;
-    localStorage.setItem("pwa-install-dismissed", "true");
+    if (typeof window !== "undefined") {
+      localStorage.setItem("pwa-install-dismissed", "true");
+    }
+    setDismissed(true);
   };
 
   if (!mounted || !isInstallable || dismissed) return null;
@@ -30,9 +34,11 @@ export function InstallBanner() {
             <Download className="h-5 w-5" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-foreground">Install Healthcare CRM</p>
+            <p className="text-sm font-semibold text-foreground">
+              {t("pwa_installTitle")}
+            </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Add to your home screen for quick access and offline support.
+              {t("pwa_installDesc")}
             </p>
             <div className="mt-3 flex items-center gap-2">
               <Button
@@ -40,7 +46,7 @@ export function InstallBanner() {
                 onClick={install}
                 className="h-8 rounded-md px-3 text-xs"
               >
-                Install
+                {t("pwa_installBtn")}
               </Button>
               <Button
                 size="sm"
@@ -48,7 +54,7 @@ export function InstallBanner() {
                 onClick={handleDismiss}
                 className="h-8 rounded-md px-3 text-xs"
               >
-                Not now
+                {t("pwa_notNow")}
               </Button>
             </div>
           </div>

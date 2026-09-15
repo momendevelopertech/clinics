@@ -428,9 +428,13 @@ export const en: Dictionary = {
   locations_subtitle: "Manage active clinic locations and rooms for scheduling.",
   locations_branches: "Branches",
   locations_branchName: "Branch name",
+  locations_addBranch: "Add Branch",
   locations_rooms: "Rooms",
   locations_roomName: "Room name",
   locations_roomNumber: "Number",
+  locations_addRoom: "Add Room",
+  locations_noBranches: "No branches added yet.",
+  locations_noRooms: "No rooms added yet.",
   locations_unassigned: "Unassigned",
   locations_loadError: "Could not load locations.",
   locations_saveError: "Could not save this location.",
@@ -442,6 +446,12 @@ export const en: Dictionary = {
   ph_locations_desc: "Branches are your clinic locations (address / contact info). Rooms are exam rooms inside a branch and are selected when scheduling appointments.",
   ph_locations_audience: "Owner / manager",
   ph_locations_action: "Add a branch, then create rooms inside it.",
+
+  // PWA Install
+  pwa_installTitle: "Install Healthcare CRM App",
+  pwa_installDesc: "Add to home screen for quick access and seamless offline workflow.",
+  pwa_installBtn: "Install",
+  pwa_notNow: "Not now",
 
   // Header
   header_searchPlaceholder: "Search patients, visits, claims",
