@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { auth } from "@/auth";
 import { getDictionary } from "@/lib/i18n/server";
-import { LanguageSwitcher } from "@/components/locale/language-switcher";
+import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { DemoLoginButtons } from "@/components/landing/demo-login-buttons";
 import { AppPreview } from "@/components/landing/app-preview";
 import { ClinicShowcase } from "@/components/landing/clinic-showcase";
@@ -37,74 +37,17 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen">
-      {/* Sticky nav */}
-      <header className="sticky top-0 z-40 px-4 pt-4 sm:px-6">
-        <div className="surface-panel mx-auto flex h-16 max-w-6xl items-center justify-between rounded-lg border border-border px-4 sm:px-6 shadow-sm">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="grid size-9 place-content-center rounded-md bg-primary text-primary-foreground shadow-sm">
-              <Activity className="h-4 w-4" />
-            </div>
-            <span className="text-lg font-semibold tracking-tight">{t["appName"]}</span>
-          </Link>
-
-          <nav className="hidden items-center gap-6 text-sm font-medium text-muted-foreground md:flex">
-            <a href="#features" className="transition-colors hover:text-foreground">
-              {t["landing_navFeatures"]}
-            </a>
-            <a href="#how-it-works" className="transition-colors hover:text-foreground">
-              {t["landing_navHowItWorks"]}
-            </a>
-            <a href="#pricing" className="transition-colors hover:text-foreground">
-              {t["landing_navPricing"]}
-            </a>
-            <a href="#clinics" className="transition-colors hover:text-foreground">
-              {t["landing_clinicsTitle"]}
-            </a>
-            <a href="#demo" className="transition-colors hover:text-foreground">
-              {t["landing_demoTitle"]}
-            </a>
-            <a href="/user-stories" className="transition-colors hover:text-foreground">
-              {t["landing_navUsers"]}
-            </a>
-          </nav>
-
-          <div className="flex items-center gap-2">
-            <LanguageSwitcher />
-            {isLoggedIn ? (
-              <Link
-                href={dashboardHref}
-                className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
-              >
-                {t["nav_dashboard"]}
-              </Link>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="hidden px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:text-primary sm:block"
-                >
-                  {t["landing_navSignIn"]}
-                </Link>
-                <Link
-                  href="/signup"
-                  className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
-                >
-                  {t["landing_navStartFree"]}
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
+      {/* Sticky nav (balanced RTL layout + mobile drawer) */}
+      <LandingNavbar isLoggedIn={isLoggedIn} dashboardHref={dashboardHref} />
 
       {/* Hero */}
-      <section className="px-4 pt-16 sm:px-6 lg:pt-24">
+      <section className="px-4 pt-14 sm:px-6 lg:pt-20">
         <div className="mx-auto max-w-6xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-primary shadow-sm">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold text-primary shadow-sm">
             <HeartPulse className="h-3.5 w-3.5" />
             {t["landing_badge"]}
           </div>
-          <h1 className="mx-auto mt-6 max-w-3xl text-5xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-6xl">
+          <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-bold leading-[1.15] tracking-[-0.04em] rtl:tracking-normal sm:text-6xl sm:leading-[1.1]">
             {t["landing_heroTitle"]}
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
@@ -114,7 +57,7 @@ export default async function HomePage() {
             {isLoggedIn ? (
               <Link
                 href={dashboardHref}
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 {t["nav_dashboard"]}
                 <ArrowRight className="h-4 w-4 rtl:rotate-180" />
@@ -123,14 +66,14 @@ export default async function HomePage() {
               <>
                 <Link
                   href="/signup"
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   {t["landing_heroCta"]}
                   <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                 </Link>
                 <Link
                   href="/login"
-                  className="inline-flex h-11 items-center justify-center rounded-md border border-border bg-card px-6 text-sm font-semibold text-foreground shadow-sm transition hover:bg-muted"
+                  className="inline-flex h-11 items-center justify-center rounded-xl border border-border bg-card px-6 text-sm font-semibold text-foreground shadow-sm transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   {t["landing_heroCtaSecondary"]}
                 </Link>
@@ -139,7 +82,7 @@ export default async function HomePage() {
           </div>
 
           {/* Stats strip */}
-          <div className="mt-14 grid gap-3 rounded-lg border border-border surface-panel p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid gap-3 rounded-2xl border border-border surface-panel p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
             {[
               { icon: Trophy, value: "3+", label: t["landing_statsClinics"] },
               { icon: Users, value: "7+", label: t["landing_statsDoctors"] },
@@ -147,7 +90,7 @@ export default async function HomePage() {
               { icon: CalendarCheck2, value: "200+", label: t["landing_statsAppointments"] },
             ].map((stat) => (
               <div key={stat.label} className="flex items-center justify-center gap-3">
-                <div className="grid size-11 place-content-center rounded-md bg-primary/10 text-primary">
+                <div className="grid size-11 place-content-center rounded-xl bg-primary/10 text-primary">
                   <stat.icon className="h-5 w-5" />
                 </div>
                 <div className="text-start">
@@ -164,12 +107,20 @@ export default async function HomePage() {
       </section>
 
       {/* How it works */}
-      <section id="how-it-works" className="px-4 py-20 sm:px-6">
+      <section id="how-it-works" className="px-4 py-16 sm:px-6 md:py-24">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-center text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
-            {t["landing_howTitle"]}
-          </h2>
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
+          <div className="text-center">
+            <p className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-primary shadow-sm">
+              {t["landing_howEyebrow"]}
+            </p>
+            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] rtl:tracking-normal sm:text-4xl">
+              {t["landing_howTitle"]}
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+              {t["landing_howSubtitle"]}
+            </p>
+          </div>
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
             {[
               { step: "01", title: t["landing_how1Title"], body: t["landing_how1Body"] },
               { step: "02", title: t["landing_how2Title"], body: t["landing_how2Body"] },
@@ -177,10 +128,12 @@ export default async function HomePage() {
             ].map((item) => (
               <div
                 key={item.step}
-                className="rounded-lg border border-border surface-panel p-6 shadow-sm"
+                className="surface-panel flex flex-col rounded-2xl border border-border p-7 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary/40 hover:shadow-md"
               >
-                <p className="font-mono text-sm font-semibold text-primary">{item.step}</p>
-                <h3 className="mt-3 text-xl font-semibold">{item.title}</h3>
+                <div className="grid size-11 place-content-center rounded-xl bg-primary text-primary-foreground font-mono text-sm font-semibold shadow-sm">
+                  {item.step}
+                </div>
+                <h3 className="mt-5 text-xl font-semibold">{item.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.body}</p>
               </div>
             ))}
@@ -189,12 +142,20 @@ export default async function HomePage() {
       </section>
 
       {/* Features grid */}
-      <section id="features" className="px-4 pb-20 sm:px-6">
+      <section id="features" className="px-4 pb-16 sm:px-6 md:pb-24">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-center text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
-            {t["landing_featuresTitle"]}
-          </h2>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="text-center">
+            <p className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-primary shadow-sm">
+              {t["landing_featuresEyebrow"]}
+            </p>
+            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] rtl:tracking-normal sm:text-4xl">
+              {t["landing_featuresTitle"]}
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+              {t["landing_featuresSubtitle"]}
+            </p>
+          </div>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
               { icon: CalendarCheck2, title: t["landing_feature_scheduling"], body: t["landing_feature_schedulingBody"] },
               { icon: ClipboardList, title: t["landing_feature_emr"], body: t["landing_feature_emrBody"] },
@@ -205,12 +166,12 @@ export default async function HomePage() {
             ].map((feature) => (
               <div
                 key={feature.title}
-                className="rounded-lg border border-border surface-panel p-6 shadow-sm"
+                className="surface-panel rounded-2xl border border-border p-7 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary/40 hover:shadow-md"
               >
-                <div className="grid size-11 place-content-center rounded-md bg-primary/10 text-primary">
+                <div className="grid size-11 place-content-center rounded-xl bg-primary/10 text-primary">
                   <feature.icon className="h-5 w-5" />
                 </div>
-                <h3 className="mt-4 text-lg font-semibold">{feature.title}</h3>
+                <h3 className="mt-5 text-lg font-semibold">{feature.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{feature.body}</p>
               </div>
             ))}
@@ -218,10 +179,10 @@ export default async function HomePage() {
         </div>
       
         {/* CTA: See all users & permissions */}
-        <div className="mt-8 text-center">
+        <div className="mt-12 text-center">
           <Link
             href="/user-stories"
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             {t["landing_ctaUserStories"]}
             <ArrowRight className="h-4 w-4 rtl:rotate-180" />
@@ -233,13 +194,13 @@ export default async function HomePage() {
       <PlanPricing t={t} />
 
       {/* Our clinics */}
-      <section id="clinics" className="px-4 pb-20 sm:px-6">
+      <section id="clinics" className="px-4 pb-16 sm:px-6 md:pb-24">
         <div className="mx-auto max-w-6xl">
           <div className="text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">
+            <p className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-primary shadow-sm">
               {t["landing_clinicsEyebrow"]}
             </p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] rtl:tracking-normal sm:text-4xl">
               {t["landing_clinicsTitle"]}
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
@@ -252,8 +213,11 @@ export default async function HomePage() {
 
       {/* Demo accounts */}
       <section id="demo" className="px-4 pb-24 sm:px-6">
-        <div className="surface-panel mx-auto max-w-4xl rounded-lg border border-border p-8 text-center shadow-sm">
-          <h2 className="text-3xl font-semibold tracking-[-0.04em]">{t["landing_demoTitle"]}</h2>
+        <div className="surface-panel mx-auto max-w-4xl rounded-2xl border border-border p-8 text-center shadow-sm">
+          <p className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-primary shadow-sm">
+            {t["landing_demoEyebrow"]}
+          </p>
+          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] rtl:tracking-normal">{t["landing_demoTitle"]}</h2>
           <p className="mt-3 text-sm text-muted-foreground">{t["landing_demoNote"]}</p>
           <DemoLoginButtons />
           <Link
