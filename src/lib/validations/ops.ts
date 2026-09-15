@@ -1,15 +1,25 @@
 import { z } from "zod";
 
+/**
+ * Accepts a full ISO-8601 datetime (new Date().toISOString()) or a bare
+ * "YYYY-MM-DD" value (raw <input type="date">). Both are normalized to a
+ * Date server-side.
+ */
+const dateInput = z
+  .union([z.string().datetime(), z.string().regex(/^\d{4}-\d{2}-\d{2}$/)])
+  .optional()
+  .nullable();
+
 export const waitlistCreateSchema = z.object({
   patientId: z.string().min(1),
-  preferredDate: z.string().datetime().optional().nullable(),
+  preferredDate: dateInput,
   notes: z.string().max(2000).optional().nullable(),
 });
 
 export const waitlistUpdateSchema = z.object({
   status: z.enum(["waiting", "offered", "cancelled", "booked"]).optional(),
   notes: z.string().max(2000).optional().nullable(),
-  preferredDate: z.string().datetime().optional().nullable(),
+  preferredDate: dateInput,
 });
 
 export const waitlistBookSchema = z.object({

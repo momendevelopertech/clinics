@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { logClientError } from "@/lib/client-logger";
+import { parseApiError } from "@/lib/client-errors";
 import { useLocale } from "@/components/locale/locale-provider";
 
 type PatientOption = {
@@ -78,19 +79,26 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           patientId: formData.patientId,
-          preferredDate: formData.preferredDate || null,
+          // Date inputs yield "YYYY-MM-DD"; the API expects ISO-8601 datetime.
+          preferredDate: formData.preferredDate
+            ? new Date(formData.preferredDate).toISOString()
+            : null,
           notes: formData.notes || null,
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to add to waitlist");
+      if (!response.ok) {
+        throw new Error(await parseApiError(response, t("wl_addError")));
+      }
 
       toast.success(t("wl_addedSuccess"));
       setFormData({ patientId: "", preferredDate: "", notes: "" });
       setOpen(false);
       onSuccess();
     } catch (error) {
-      toast.error(t("wl_addError"));
+      const message =
+        error instanceof Error && error.message ? error.message : t("wl_addError");
+      toast.error(message);
       logClientError("Create waitlist entry failed", error);
     } finally {
       setLoading(false);

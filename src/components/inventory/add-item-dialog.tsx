@@ -1,10 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Plus,
-  X,
-} from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,12 +15,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
+import { parseApiError } from "@/lib/client-errors";
+import { useLocale } from "@/components/locale/locale-provider";
 
 interface AddItemDialogProps {
   onSuccess: () => void;
 }
 
 export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
+  const { t } = useLocale();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [formData, setFormData] = React.useState({
@@ -41,7 +41,7 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
     e.preventDefault();
 
     if (!formData.name.trim()) {
-      toast.error("Item name is required");
+      toast.error(t("inv_nameRequired"));
       return;
     }
 
@@ -65,9 +65,11 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to create item");
+      if (!response.ok) {
+        throw new Error(await parseApiError(response, t("inv_addError")));
+      }
 
-      toast.success("Item added successfully");
+      toast.success(t("inv_addSuccess"));
       setFormData({
         name: "",
         sku: "",
@@ -81,7 +83,9 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
       setOpen(false);
       onSuccess();
     } catch (error) {
-      toast.error("Failed to add item");
+      const message =
+        error instanceof Error && error.message ? error.message : t("inv_addError");
+      toast.error(message);
       logClientError("Create inventory item failed", error);
     } finally {
       setLoading(false);
@@ -92,20 +96,18 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="h-9 gap-1.5 text-xs font-semibold shadow-2xs">
-          <Plus className="w-3.5 h-3.5" /> Add Item
+          <Plus className="w-3.5 h-3.5" /> {t("inv_addTrigger")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Inventory Item</DialogTitle>
-          <DialogDescription>
-            Add a new item to the clinic stock.
-          </DialogDescription>
+          <DialogTitle>{t("inv_addTitle")}</DialogTitle>
+          <DialogDescription>{t("inv_addDesc")}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 py-2">
           <div className="gap-1.5 flex flex-col">
-            <Label htmlFor="item-name" className="text-xs font-semibold">Name *</Label>
+            <Label htmlFor="item-name" className="text-xs font-semibold">{t("inv_nameLabel")}</Label>
             <Input
               id="item-name"
               value={formData.name}
@@ -119,7 +121,7 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="gap-1.5 flex flex-col">
-              <Label htmlFor="item-sku" className="text-xs font-semibold">SKU</Label>
+              <Label htmlFor="item-sku" className="text-xs font-semibold">{t("inv_colSku")}</Label>
               <Input
                 id="item-sku"
                 value={formData.sku}
@@ -131,7 +133,7 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
               />
             </div>
             <div className="gap-1.5 flex flex-col">
-              <Label htmlFor="item-category" className="text-xs font-semibold">Category</Label>
+              <Label htmlFor="item-category" className="text-xs font-semibold">{t("inv_colCategory")}</Label>
               <Input
                 id="item-category"
                 value={formData.category}
@@ -146,7 +148,7 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
 
           <div className="grid grid-cols-3 gap-3">
             <div className="gap-1.5 flex flex-col">
-              <Label htmlFor="item-quantity" className="text-xs font-semibold">Quantity</Label>
+              <Label htmlFor="item-quantity" className="text-xs font-semibold">{t("inv_colQty")}</Label>
               <Input
                 id="item-quantity"
                 type="number"
@@ -159,7 +161,7 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
               />
             </div>
             <div className="gap-1.5 flex flex-col">
-              <Label htmlFor="item-unit" className="text-xs font-semibold">Unit</Label>
+              <Label htmlFor="item-unit" className="text-xs font-semibold">{t("inv_colUnit")}</Label>
               <Input
                 id="item-unit"
                 value={formData.unit}
@@ -171,7 +173,7 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
               />
             </div>
             <div className="gap-1.5 flex flex-col">
-              <Label htmlFor="item-reorder" className="text-xs font-semibold">Reorder Level</Label>
+              <Label htmlFor="item-reorder" className="text-xs font-semibold">{t("inv_colReorder")}</Label>
               <Input
                 id="item-reorder"
                 type="number"
@@ -187,7 +189,7 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="gap-1.5 flex flex-col">
-              <Label htmlFor="item-expiry" className="text-xs font-semibold">Expiry date</Label>
+              <Label htmlFor="item-expiry" className="text-xs font-semibold">{t("inv_colExpiry")}</Label>
               <Input
                 id="item-expiry"
                 type="date"
@@ -199,7 +201,7 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
               />
             </div>
             <div className="gap-1.5 flex flex-col">
-              <Label htmlFor="item-batch" className="text-xs font-semibold">Batch number</Label>
+              <Label htmlFor="item-batch" className="text-xs font-semibold">{t("inv_colBatch")}</Label>
               <Input
                 id="item-batch"
                 value={formData.batchNumber}
@@ -220,10 +222,10 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
               disabled={loading}
               className="h-9 text-xs"
             >
-              <X className="mr-1 h-3.5 w-3.5" />Cancel
+              <X className="mr-1 h-3.5 w-3.5" />{t("common_cancel")}
             </Button>
             <Button type="submit" disabled={loading} className="h-9 text-xs font-semibold">
-              <Plus className="mr-1 h-3.5 w-3.5" />{loading ? "Adding..." : "Add Item"}
+              <Plus className="mr-1 h-3.5 w-3.5" />{loading ? t("inv_adding") : t("inv_addTrigger")}
             </Button>
           </div>
         </form>

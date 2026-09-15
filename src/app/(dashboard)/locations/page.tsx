@@ -2,10 +2,16 @@
 import { Plus } from "lucide-react";
 
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
+import { PageHelpBanner } from "@/components/ui/page-help-banner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SearchableSelect } from "@/components/ui/searchable-select";
+import { usePermissionState } from "@/hooks/use-permission-state";
+import { parseApiError } from "@/lib/client-errors";
+import { logClientError } from "@/lib/client-logger";
 
 type Branch = { id: string; name: string; status: string; _count?: { rooms: number } };
 type Room = { id: string; name: string; number: string | null; status: string; branch?: { name: string } | null };
@@ -17,39 +23,95 @@ export default function LocationsPage() {
   const [branchName, setBranchName] = useState("");
   const [roomName, setRoomName] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
+  const [roomBranchId, setRoomBranchId] = useState("");
   const [error, setError] = useState("");
-  const [forbidden, setForbidden] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const { forbidden, setForbidden, guardedFetch } = usePermissionState();
 
   const load = useCallback(async () => {
-    const [branchResponse, roomResponse] = await Promise.all([fetch("/api/branches"), fetch("/api/rooms")]);
-    if (branchResponse.status === 403 || roomResponse.status === 403) {
-      setForbidden(true);
-      return;
-    }
-    if (!branchResponse.ok || !roomResponse.ok) throw new Error(t("locations_loadError"));
-    setBranches(await branchResponse.json());
-    setRooms(await roomResponse.json());
-  }, [t]);
+    const [branchData, roomData] = await Promise.all([
+      guardedFetch<Branch[]>("/api/branches"),
+      guardedFetch<Room[]>("/api/rooms"),
+    ]);
+    if (branchData) setBranches(branchData);
+    if (roomData) setRooms(roomData);
+  }, [guardedFetch]);
 
   useEffect(() => {
-    // Initial API hydration is intentionally performed after mount.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void load().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : t("locations_loadError")));
+    void load().catch((reason: unknown) => {
+      setError(t("locations_loadError"));
+      logClientError("Locations load failed", reason);
+    });
   }, [load, t]);
 
   async function addBranch() {
-    const response = await fetch("/api/branches", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: branchName }) });
-    if (!response.ok) return setError(t("locations_saveError"));
-    setBranchName("");
-    await load();
+    const name = branchName.trim();
+    if (!name) return;
+    setSaving(true);
+    setError("");
+    try {
+      const response = await fetch("/api/branches", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      if (response.status === 403) {
+        setForbidden(true);
+        return;
+      }
+      if (!response.ok) {
+        throw new Error(await parseApiError(response, t("locations_saveError")));
+      }
+      setBranchName("");
+      toast.success(t("locations_addBranchSuccess"));
+      await load();
+    } catch (reason) {
+      const message =
+        reason instanceof Error && reason.message ? reason.message : t("locations_saveError");
+      setError(message);
+      toast.error(message);
+      logClientError("Create branch failed", reason);
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function addRoom() {
-    const response = await fetch("/api/rooms", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: roomName, number: roomNumber || null }) });
-    if (!response.ok) return setError(t("locations_saveError"));
-    setRoomName("");
-    setRoomNumber("");
-    await load();
+    const name = roomName.trim();
+    if (!name) return;
+    setSaving(true);
+    setError("");
+    try {
+      const response = await fetch("/api/rooms", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          name,
+          number: roomNumber.trim() || null,
+          branchId: roomBranchId || null,
+        }),
+      });
+      if (response.status === 403) {
+        setForbidden(true);
+        return;
+      }
+      if (!response.ok) {
+        throw new Error(await parseApiError(response, t("locations_saveError")));
+      }
+      setRoomName("");
+      setRoomNumber("");
+      setRoomBranchId("");
+      toast.success(t("locations_addRoomSuccess"));
+      await load();
+    } catch (reason) {
+      const message =
+        reason instanceof Error && reason.message ? reason.message : t("locations_saveError");
+      setError(message);
+      toast.error(message);
+      logClientError("Create room failed", reason);
+    } finally {
+      setSaving(false);
+    }
   }
 
   if (forbidden) {
@@ -73,6 +135,12 @@ export default function LocationsPage() {
         <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("locations_title")}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{t("locations_subtitle")}</p>
       </div>
+      <PageHelpBanner
+        title={t("ph_locations_title")}
+        description={t("ph_locations_desc")}
+        audience={t("ph_locations_audience")}
+        actionHint={t("ph_locations_action")}
+      />
       {error ? (
         <div className="rounded-md border border-critical/20 bg-critical-bg p-3 text-sm text-critical-text">
           {error}
@@ -87,10 +155,13 @@ export default function LocationsPage() {
               onChange={(event) => setBranchName(event.target.value)}
               placeholder={t("locations_branchName")}
               className="h-9 flex-1 bg-background"
+              onKeyDown={(event) => {
+                if (event.key === "Enter") void addBranch();
+              }}
             />
             <Button
               onClick={() => void addBranch()}
-              disabled={!branchName.trim()}
+              disabled={!branchName.trim() || saving}
               className="h-9 gap-1.5"
             >
               <Plus className="h-4 w-4" />{t("common_add")}
@@ -103,30 +174,46 @@ export default function LocationsPage() {
                 <span className="text-xs text-muted-foreground">{branch._count?.rooms ?? 0} {t("locations_rooms")}</span>
               </li>
             ))}
+            {!branches.length ? (
+              <li className="text-sm text-muted-foreground">{t("locations_empty")}</li>
+            ) : null}
           </ul>
         </section>
         <section className="rounded-lg border border-border bg-card p-5 shadow-xs">
           <h2 className="text-base font-semibold text-foreground">{t("locations_rooms")}</h2>
-          <div className="mt-4 grid gap-2 sm:grid-cols-[1fr_120px_auto]">
-            <Input
-              value={roomName}
-              onChange={(event) => setRoomName(event.target.value)}
-              placeholder={t("locations_roomName")}
-              className="h-9 bg-background"
+          <div className="mt-4 flex flex-col gap-2">
+            <div className="grid gap-2 sm:grid-cols-[1fr_120px_auto]">
+              <Input
+                value={roomName}
+                onChange={(event) => setRoomName(event.target.value)}
+                placeholder={t("locations_roomName")}
+                className="h-9 bg-background"
+              />
+              <Input
+                value={roomNumber}
+                onChange={(event) => setRoomNumber(event.target.value)}
+                placeholder={t("locations_roomNumber")}
+                className="h-9 bg-background"
+              />
+              <Button
+                onClick={() => void addRoom()}
+                disabled={!roomName.trim() || saving}
+                className="h-9 gap-1.5"
+              >
+                <Plus className="h-4 w-4" />{t("common_add")}
+              </Button>
+            </div>
+            <SearchableSelect
+              value={roomBranchId}
+              onValueChange={(value) => setRoomBranchId(value ?? "")}
+              options={[
+                { value: "", label: t("locations_unassigned") },
+                ...branches.map((branch) => ({ value: branch.id, label: branch.name })),
+              ]}
+              placeholder={t("locations_selectBranch")}
+              triggerClassName="h-9 w-full bg-background sm:max-w-xs"
+              contentClassName="text-sm"
             />
-            <Input
-              value={roomNumber}
-              onChange={(event) => setRoomNumber(event.target.value)}
-              placeholder={t("locations_roomNumber")}
-              className="h-9 bg-background"
-            />
-            <Button
-              onClick={() => void addRoom()}
-              disabled={!roomName.trim()}
-              className="h-9 gap-1.5"
-            >
-              <Plus className="h-4 w-4" />{t("common_add")}
-            </Button>
           </div>
           <ul className="mt-4 space-y-2">
             {rooms.map((room) => (
@@ -135,6 +222,9 @@ export default function LocationsPage() {
                 <span className="text-xs text-muted-foreground">{room.branch?.name ?? t("locations_unassigned")}</span>
               </li>
             ))}
+            {!rooms.length ? (
+              <li className="text-sm text-muted-foreground">{t("locations_empty")}</li>
+            ) : null}
           </ul>
         </section>
       </div>

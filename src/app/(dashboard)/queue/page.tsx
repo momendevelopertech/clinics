@@ -9,6 +9,7 @@ import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { TableSkeleton } from "@/components/ui/loading";
+import { PageHelpBanner } from "@/components/ui/page-help-banner";
 import { RecordVitalsDialog } from "@/components/encounters/record-vitals-dialog";
 import { TodayProceduresCard } from "@/components/encounters/today-procedures-card";
 
@@ -119,6 +120,12 @@ export default function QueuePage() {
           {busyId === "call-next-all" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Phone className="h-4 w-4" />}{t("queue_callNext")}
         </Button>
       </div>
+      <PageHelpBanner
+        title={t("ph_queue_title")}
+        description={t("ph_queue_desc")}
+        audience={t("ph_queue_audience")}
+        actionHint={t("ph_queue_action")}
+      />
       {error ? <p className="text-xs font-semibold text-destructive">{error}</p> : null}
       <TodayProceduresCard />
       {loading ? (
