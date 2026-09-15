@@ -1,6 +1,5 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { User, Building2, Shield } from "lucide-react";
 import { useLocale } from "@/components/locale/locale-provider";
 import { displayRoleName } from "@/lib/role-labels";
@@ -18,21 +17,11 @@ export function UserContextHeader({
   userName,
   compact = false,
 }: UserContextHeaderProps) {
-  let sessionUser: { name?: string | null; organizationId?: string; roles?: string[] } | null = null;
-  try {
-    const sessionRes = useSession?.();
-    if (sessionRes?.data?.user) {
-      sessionUser = sessionRes.data.user as { name?: string | null; organizationId?: string; roles?: string[] };
-    }
-  } catch {
-    // Fallback if called outside SessionProvider
-  }
-
   const { t } = useLocale();
 
-  const activeUser = userName || sessionUser?.name || t("shell_accountStaff");
-  const activeOrg = orgName || (sessionUser?.organizationId ? orgName : t("shell_defaultOrgName"));
-  const activeRoles = roles.length > 0 ? roles : (sessionUser?.roles ?? []);
+  const activeUser = userName || t("shell_accountStaff");
+  const activeOrg = orgName || t("shell_defaultOrgName");
+  const activeRoles = roles;
 
   const roleLabel = activeRoles.length > 0
     ? activeRoles.map((r: string) => displayRoleName(r)).join(", ")

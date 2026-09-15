@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Arabic, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-import { SessionProvider } from "next-auth/react";
 import { getDirAndLocale } from "@/lib/i18n/server";
 import { LocaleProvider } from "@/components/locale/locale-provider";
 import { SerwistProvider } from "@serwist/turbopack/react";
@@ -84,8 +83,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const [session, { lang, dir }] = await Promise.all([
-    import("@/auth").then(({ auth }) => auth()),
-    getDirAndLocale(),
+    import("@/auth").then(({ auth }) => auth().catch(() => null)).catch(() => null),
+    getDirAndLocale().catch(() => ({ lang: "ar" as const, dir: "rtl" as const })),
   ]);
 
   const orgId = session?.user?.organizationId ?? "";
@@ -96,17 +95,15 @@ export default async function RootLayout({
         className={`${ibmPlexSans.variable} ${ibmPlexSansArabic.variable} ${jetbrainsMono.variable} min-h-screen antialiased font-sans`}
         suppressHydrationWarning
       >
-        <SessionProvider session={session}>
-          <SerwistProvider swUrl="/serwist/sw.js">
-            <PWAProvider orgId={orgId}>
-              <LocaleProvider lang={lang}>
-                <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-                  {children}
-                </ThemeProvider>
-              </LocaleProvider>
-            </PWAProvider>
-          </SerwistProvider>
-        </SessionProvider>
+        <SerwistProvider swUrl="/serwist/sw.js">
+          <PWAProvider orgId={orgId}>
+            <LocaleProvider lang={lang}>
+              <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+                {children}
+              </ThemeProvider>
+            </LocaleProvider>
+          </PWAProvider>
+        </SerwistProvider>
       </body>
     </html>
   );
