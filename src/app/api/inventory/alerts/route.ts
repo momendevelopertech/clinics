@@ -19,11 +19,20 @@ export async function GET() {
     ]);
     if (authz.response) return authz.response;
 
-    const items = await prisma.inventoryItem.findMany({
-      where: { organizationId: orgId },
-      select: { id: true, name: true, quantity: true, reorderLevel: true, expiryDate: true, batchNumber: true, isStockManaged: true },
-      orderBy: { name: "asc" },
-    });
+    let items;
+    try {
+      items = await prisma.inventoryItem.findMany({
+        where: { organizationId: orgId },
+        select: { id: true, name: true, quantity: true, reorderLevel: true, expiryDate: true, batchNumber: true, isStockManaged: true },
+        orderBy: { name: "asc" },
+      });
+    } catch {
+      items = await prisma.inventoryItem.findMany({
+        where: { organizationId: orgId },
+        select: { id: true, name: true, quantity: true, reorderLevel: true, expiryDate: true, batchNumber: true },
+        orderBy: { name: "asc" },
+      });
+    }
     return NextResponse.json({ ...categorizeInventoryAlerts(items), generatedAt: new Date().toISOString() });
   } catch (error) {
     logServerError("Error computing inventory alerts", error);
@@ -50,10 +59,18 @@ export async function POST(request: NextRequest) {
     let digests = 0;
 
     for (const org of orgs) {
-      const items = await prisma.inventoryItem.findMany({
-        where: { organizationId: org.id },
-        select: { id: true, name: true, quantity: true, reorderLevel: true, expiryDate: true, batchNumber: true, isStockManaged: true },
-      });
+      let items;
+      try {
+        items = await prisma.inventoryItem.findMany({
+          where: { organizationId: org.id },
+          select: { id: true, name: true, quantity: true, reorderLevel: true, expiryDate: true, batchNumber: true, isStockManaged: true },
+        });
+      } catch {
+        items = await prisma.inventoryItem.findMany({
+          where: { organizationId: org.id },
+          select: { id: true, name: true, quantity: true, reorderLevel: true, expiryDate: true, batchNumber: true },
+        });
+      }
       const { expired, expiringSoon, lowStock } = categorizeInventoryAlerts(items);
       const total = expired.length + expiringSoon.length + lowStock.length;
       if (total === 0) continue;

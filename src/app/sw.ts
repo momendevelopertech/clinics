@@ -201,18 +201,8 @@ const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
   skipWaiting: false,
   clientsClaim: false,
-  navigationPreload: true,
+  navigationPreload: false,
   runtimeCaching: getRuntimeCaching(),
-  fallbacks: {
-    entries: [
-      {
-        url: "/~offline",
-        matcher({ request }: { request: Request }) {
-          return request.destination === "document";
-        },
-      },
-    ],
-  },
 });
 
 self.addEventListener("message", (event: ExtendableMessageEvent) => {
