@@ -98,7 +98,13 @@ export function LoginForm({ callbackUrl, error, t }: LoginFormProps) {
 
         <section className="flex min-h-[600px] items-center bg-card px-6 py-8 sm:px-10">
           <div className="mx-auto w-full max-w-sm">
-            <div className="space-y-1.5">
+            <div className="flex items-center justify-between lg:hidden mb-4">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                {t["auth_staffAccess"]}
+              </p>
+              <LanguageSwitcher compact />
+            </div>
+            <div className="hidden lg:block space-y-1.5">
               <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
                 {t["auth_staffAccess"]}
               </p>
