@@ -1,15 +1,22 @@
 import { z } from "zod";
 
+const flexDateString = z.union([
+  z.string().datetime(),
+  z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+]);
+
+const optionalUrl = z.union([z.string().url(), z.literal("")]);
+
 export const waitlistCreateSchema = z.object({
   patientId: z.string().min(1),
-  preferredDate: z.string().datetime().optional().nullable(),
+  preferredDate: flexDateString.optional().nullable(),
   notes: z.string().max(2000).optional().nullable(),
 });
 
 export const waitlistUpdateSchema = z.object({
   status: z.enum(["waiting", "offered", "cancelled", "booked"]).optional(),
   notes: z.string().max(2000).optional().nullable(),
-  preferredDate: z.string().datetime().optional().nullable(),
+  preferredDate: flexDateString.optional().nullable(),
 });
 
 export const waitlistBookSchema = z.object({
@@ -29,7 +36,7 @@ export const taskCreateSchema = z.object({
   description: z.string().max(4000).optional().nullable(),
   status: z.enum(["open", "in_progress", "completed", "cancelled"]).optional(),
   priority: z.enum(["low", "medium", "high", "urgent"]).optional().nullable(),
-  dueDate: z.string().datetime().optional().nullable(),
+  dueDate: flexDateString.optional().nullable(),
   patientId: z.string().min(1).optional().nullable(),
   assigneeId: z.string().min(1).optional().nullable(),
   taskType: z.string().max(80).optional().nullable(),
@@ -39,10 +46,11 @@ export const inventoryCreateSchema = z.object({
   name: z.string().trim().min(1).max(200),
   sku: z.string().max(80).optional().nullable(),
   category: z.string().max(80).optional().nullable(),
+  isStockManaged: z.boolean().optional(),
   quantity: z.number().int().min(0).optional(),
   reorderLevel: z.number().int().min(0).optional().nullable(),
   unit: z.string().max(40).optional().nullable(),
-  expiryDate: z.string().datetime().optional().nullable(),
+  expiryDate: flexDateString.optional().nullable(),
   batchNumber: z.string().trim().max(80).optional().nullable(),
 });
 
@@ -50,9 +58,10 @@ export const inventoryUpdateSchema = z.object({
   name: z.string().trim().min(1).max(200).optional(),
   sku: z.string().max(80).optional().nullable(),
   category: z.string().max(80).optional().nullable(),
+  isStockManaged: z.boolean().optional(),
   reorderLevel: z.number().int().min(0).optional().nullable(),
   unit: z.string().max(40).optional().nullable(),
-  expiryDate: z.string().datetime().optional().nullable(),
+  expiryDate: flexDateString.optional().nullable(),
   batchNumber: z.string().trim().max(80).optional().nullable(),
 });
 
@@ -68,15 +77,15 @@ export const consentCreateSchema = z.object({
   patientId: z.string().min(1),
   consentType: z.string().trim().min(1).max(80),
   isGranted: z.boolean().optional(),
-  signedAt: z.string().datetime().optional().nullable(),
-  documentUrl: z.string().url().optional().nullable(),
+  signedAt: flexDateString.optional().nullable(),
+  documentUrl: optionalUrl.optional().nullable(),
 });
 
 export const consentUpdateSchema = z.object({
   consentType: z.string().trim().min(1).max(80).optional(),
   isGranted: z.boolean().optional(),
-  signedAt: z.string().datetime().optional().nullable(),
-  documentUrl: z.string().url().max(2048).optional().nullable(),
+  signedAt: flexDateString.optional().nullable(),
+  documentUrl: optionalUrl.optional().nullable(),
 });
 
 /** Consent types every patient must sign (digital intake). */

@@ -33,6 +33,7 @@ import { logClientError } from "@/lib/client-logger";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { useLocale } from "@/components/locale/locale-provider";
+import { PageHelpBanner } from "@/components/ui/page-help-banner";
 
 interface Consent {
   id: string;
@@ -172,6 +173,8 @@ export default function ConsentsPage() {
           </span>
         </FeatureTip>
       </div>
+
+      <PageHelpBanner pageKey="consents" />
 
       <div className="bg-card border border-border rounded-lg flex-1 shadow-sm flex flex-col pt-2 overflow-hidden">
         <div className="px-6 py-4 border-b border-border">

@@ -27,6 +27,7 @@ import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
+import { PageHelpBanner } from "@/components/ui/page-help-banner";
 
 interface WaitlistEntry {
   id: string;
@@ -175,6 +176,8 @@ export default function WaitlistPage() {
 
         <AddToWaitlistDialog onSuccess={fetchWaitlist} />
       </div>
+
+      <PageHelpBanner pageKey="waitlist" />
 
       <div className="bg-card border border-border rounded-lg flex-1 shadow-sm flex flex-col pt-2">
         <div className="px-6 py-4 border-b border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

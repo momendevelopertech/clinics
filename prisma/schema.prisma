@@ -149,13 +149,16 @@ model WaitlistEntry {
   organization   Organization @relation(fields: [organizationId], references: [id])
   patientId      String
   patient        Patient      @relation(fields: [patientId], references: [id])
+  appointmentId  String?
+  appointment    Appointment? @relation(fields: [appointmentId], references: [id])
   preferredDate  DateTime?
   notes          String?
-  status         String       @default("waiting") // waiting, offered, cancelled
+  status         String       @default("waiting") // waiting, offered, cancelled, booked
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
   @@index([organizationId, status])
+  @@index([appointmentId])
 }
 
 model User {
@@ -455,6 +458,7 @@ model Appointment {
   encounter          Encounter?
   equipmentSlots     AppointmentEquipment[]
   feedbacks          Feedback[]
+  waitlistEntries    WaitlistEntry[]
 
   @@index([organizationId, startTime])
   @@index([providerId, startTime, status])
@@ -1112,6 +1116,7 @@ model InventoryItem {
   name           String
   sku            String?
   category       String? // medication, consumable, device
+  isStockManaged Boolean                @default(true) // true = managed stock with quantities, false = metadata medicine
   quantity       Int                    @default(0)
   reorderLevel   Int?
   unit           String?                @default("each")

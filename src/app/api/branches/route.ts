@@ -31,8 +31,14 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const context = await requireOrgContext();
-    const owner = await requireOwner({ json: true });
-    if (!owner.ok) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const moduleAuthz = await requireModulePermission(context.organizationId, "locations");
+    if (moduleAuthz.response) return moduleAuthz.response;
+    const authz = await requireAnyPermission(context.organizationId, [
+      { action: "appointments:write", resource: "appointments" },
+      { action: "settings:write", resource: "settings" },
+    ]);
+    if (authz.response) return authz.response;
+
     const parsed = branchCreateSchema.safeParse(await request.json());
     if (!parsed.success) return NextResponse.json({ error: "Invalid branch" }, { status: 400 });
     const branch = await prisma.branch.create({

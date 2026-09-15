@@ -22,6 +22,8 @@ import { toast } from "sonner";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
+import { handleApiError } from "@/lib/api-error-handler";
 
 type PatientOption = {
   id: string;
@@ -63,6 +65,8 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
     }
   }, [fetchPatients, open]);
 
+  const { triggerGuidance } = usePostActionGuidance();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -83,14 +87,16 @@ export function AddToWaitlistDialog({ onSuccess }: AddToWaitlistDialogProps) {
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to add to waitlist");
+      if (!response.ok) {
+        throw response;
+      }
 
-      toast.success(t("wl_addedSuccess"));
+      triggerGuidance("waitlist_added");
       setFormData({ patientId: "", preferredDate: "", notes: "" });
       setOpen(false);
       onSuccess();
     } catch (error) {
-      toast.error(t("wl_addError"));
+      toast.error(handleApiError(error, t));
       logClientError("Create waitlist entry failed", error);
     } finally {
       setLoading(false);

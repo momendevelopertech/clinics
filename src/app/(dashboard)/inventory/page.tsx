@@ -13,6 +13,7 @@ import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
 import { AddItemDialog } from "@/components/inventory/add-item-dialog";
+import { PageHelpBanner } from "@/components/ui/page-help-banner";
 
 export default function InventoryPage() {
   const { t } = useLocale();
@@ -116,6 +117,8 @@ export default function InventoryPage() {
         </div>
         <AddItemDialog onSuccess={loadItems} />
       </div>
+
+      <PageHelpBanner pageKey="inventory" />
 
       {expiredItems.length > 0 && (
         <div className="rounded-lg border border-critical/30 bg-critical-bg p-4 shadow-2xs">

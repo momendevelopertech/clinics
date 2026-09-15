@@ -65,6 +65,7 @@ import { PendingChangesButton } from "@/components/pwa/pending-changes";
 import { clearAllPwaData } from "@/lib/pwa/cache-clear";
 import { PushNotificationToggle } from "@/components/pwa/push-notification-toggle";
 import { useFeatureConfig } from "@/hooks/use-feature-config";
+import { UserContextHeader } from "@/components/ui/user-context-header";
 import type { ConfigGatedFeature } from "@/lib/feature-config";
 
 const routeTitleKeys: Array<[string, string]> = [
@@ -136,7 +137,7 @@ export function DashboardWithCollapsibleSidebar({
         orgName={orgName}
       />
       <div className="flex min-w-0 flex-1 flex-col">
-        <DashboardHeader onMenuClick={() => setMobileNavOpen(true)} orgName={orgName} />
+        <DashboardHeader onMenuClick={() => setMobileNavOpen(true)} orgName={orgName} roles={roles} />
         <main className="flex-1 overflow-auto px-4 pb-6 pt-4 sm:px-6 lg:px-8">
           <div className="mx-auto w-full max-w-[1440px]">{children}</div>
         </main>
@@ -511,9 +512,11 @@ function NavLink({
 function DashboardHeader({
   onMenuClick,
   orgName,
+  roles = [],
 }: {
   onMenuClick: () => void;
   orgName?: string;
+  roles?: string[];
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -839,13 +842,7 @@ function DashboardHeader({
                 variant="ghost"
                 className="h-9 rounded-md border border-border bg-card px-2 text-start hover:bg-muted transition-colors flex items-center gap-2"
               >
-                <div className="grid size-6 place-content-center rounded-full bg-primary text-primary-foreground font-semibold text-[11px]">
-                  <User className="h-3.5 w-3.5" />
-                </div>
-                <div className="hidden text-start sm:block">
-                  <p className="text-xs font-semibold text-foreground leading-none">{t("shell_accountStaff")}</p>
-                  <p className="text-[10px] text-muted-foreground leading-none mt-0.5">{orgName ?? t("shell_defaultOrgName")}</p>
-                </div>
+                <UserContextHeader roles={roles} orgName={orgName} compact />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 rounded-lg border border-border bg-popover text-popover-foreground p-1 shadow-lg">

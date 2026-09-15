@@ -29,10 +29,16 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const context = await requireOrgContext();
-    const owner = await requireOwner({ json: true });
-    if (!owner.ok) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const moduleAuthz = await requireModulePermission(context.organizationId, "locations");
+    if (moduleAuthz.response) return moduleAuthz.response;
+    const authz = await requireAnyPermission(context.organizationId, [
+      { action: "appointments:write", resource: "appointments" },
+      { action: "settings:write", resource: "settings" },
+    ]);
+    if (authz.response) return authz.response;
+
     const parsed = roomCreateSchema.safeParse(await request.json());
-    if (!parsed.success) return NextResponse.json({ error: "Invalid room" }, { status: 400 });
+    if (!parsed.success) return NextResponse.json({ error: "Invalid room payload" }, { status: 400 });
     if (parsed.data.branchId) {
       const branch = await prisma.branch.findFirst({ where: { id: parsed.data.branchId, organizationId: context.organizationId } });
       if (!branch) return NextResponse.json({ error: "Branch not found" }, { status: 400 });

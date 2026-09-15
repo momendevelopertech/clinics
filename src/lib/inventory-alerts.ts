@@ -10,6 +10,7 @@ export interface AlertableItem {
   reorderLevel: number | null;
   expiryDate: Date | string | null;
   batchNumber?: string | null;
+  isStockManaged?: boolean;
 }
 
 export interface InventoryAlertSummary {
@@ -31,6 +32,11 @@ export function categorizeInventoryAlerts(
   const soonLimit = now.getTime() + expiringDays * 24 * 60 * 60 * 1000;
 
   for (const item of items) {
+    // Standard medicines (isStockManaged === false) are not managed by stock quantity or expiry alerts
+    if (item.isStockManaged === false) {
+      continue;
+    }
+
     if (item.reorderLevel != null && item.quantity <= item.reorderLevel) {
       lowStock.push(item);
     }

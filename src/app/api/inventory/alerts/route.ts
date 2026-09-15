@@ -21,7 +21,7 @@ export async function GET() {
 
     const items = await prisma.inventoryItem.findMany({
       where: { organizationId: orgId },
-      select: { id: true, name: true, quantity: true, reorderLevel: true, expiryDate: true, batchNumber: true },
+      select: { id: true, name: true, quantity: true, reorderLevel: true, expiryDate: true, batchNumber: true, isStockManaged: true },
       orderBy: { name: "asc" },
     });
     return NextResponse.json({ ...categorizeInventoryAlerts(items), generatedAt: new Date().toISOString() });
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     for (const org of orgs) {
       const items = await prisma.inventoryItem.findMany({
         where: { organizationId: org.id },
-        select: { id: true, name: true, quantity: true, reorderLevel: true, expiryDate: true, batchNumber: true },
+        select: { id: true, name: true, quantity: true, reorderLevel: true, expiryDate: true, batchNumber: true, isStockManaged: true },
       });
       const { expired, expiringSoon, lowStock } = categorizeInventoryAlerts(items);
       const total = expired.length + expiringSoon.length + lowStock.length;

@@ -8,68 +8,86 @@ import { logServerError } from "@/lib/safe-logger";
 import { waitlistUpdateSchema } from "@/lib/validations/ops";
 
 export async function PATCH(
-    request: Request,
-    { params }: { params: Promise<{ id: string }> }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-    try {
-        const orgId = await getOrgId();
-        const moduleAuthz = await requireModulePermission(orgId, "waitlist");
-        if (moduleAuthz.response) return moduleAuthz.response;
-        assertOrgScope(orgId);
-        const authz = await requireAnyPermission(orgId, [
-            { action: "patients:write", resource: "patients" },
-            { action: "appointments:write", resource: "appointments" },
-        ]);
-        if (authz.response) return authz.response;
-        const { userId } = authz;
+  try {
+    const orgId = await getOrgId();
+    const moduleAuthz = await requireModulePermission(orgId, "waitlist");
+    if (moduleAuthz.response) return moduleAuthz.response;
+    assertOrgScope(orgId);
+    const authz = await requireAnyPermission(orgId, [
+      { action: "patients:write", resource: "patients" },
+      { action: "appointments:write", resource: "appointments" },
+    ]);
+    if (authz.response) return authz.response;
+    const { userId } = authz;
 
-        const { id } = await params;
-        const parsed = waitlistUpdateSchema.safeParse(await request.json().catch(() => ({})));
-        if (!parsed.success) {
-            return NextResponse.json(
-                { error: "Invalid waitlist update", details: parsed.error.flatten() },
-                { status: 400 },
-            );
-        }
-        const { status, notes, preferredDate } = parsed.data;
-
-        const existing = await prisma.waitlistEntry.findFirst({
-            where: { id, organizationId: orgId },
-        });
-        if (!existing) {
-            return NextResponse.json({ error: "Waitlist entry not found" }, { status: 404 });
-        }
-
-        const updated = await prisma.waitlistEntry.update({
-            where: { id },
-            data: {
-                ...(status ? { status } : {}),
-                ...(notes !== undefined ? { notes } : {}),
-                ...(preferredDate ? { preferredDate: new Date(preferredDate) } : {}),
-            },
-            include: { patient: { select: { firstName: true, lastName: true } } },
-        });
-
-        await createAuditLog({
-            organizationId: orgId,
-            userId,
-            action: "UPDATE",
-            entityType: "WaitlistEntry",
-            entityId: id,
-            beforeState: JSON.stringify({ status: existing.status }),
-            afterState: JSON.stringify({ status: updated.status }),
-        });
-
-        return NextResponse.json({
-            id: updated.id,
-            patientId: updated.patientId,
-            patientName: `${updated.patient.firstName} ${updated.patient.lastName}`,
-            status: updated.status,
-            notes: updated.notes,
-            preferredDate: updated.preferredDate?.toISOString() ?? null,
-        });
-    } catch (error) {
-        logServerError("Error updating waitlist entry", error);
-        return NextResponse.json({ error: "Failed to update waitlist entry" }, { status: 500 });
+    const { id } = await params;
+    const parsed = waitlistUpdateSchema.safeParse(await request.json().catch(() => ({})));
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid waitlist update", details: parsed.error.flatten() },
+        { status: 400 },
+      );
     }
+    const { status, notes, preferredDate } = parsed.data;
+
+    const existing = await prisma.waitlistEntry.findFirst({
+      where: { id, organizationId: orgId },
+    });
+    if (!existing) {
+      return NextResponse.json({ error: "Waitlist entry not found" }, { status: 404 });
+    }
+
+    // Atomic transaction for two-way sync
+    const [updated] = await prisma.$transaction([
+      prisma.waitlistEntry.update({
+        where: { id },
+        data: {
+          ...(status ? { status } : {}),
+          ...(notes !== undefined ? { notes } : {}),
+          ...(preferredDate ? { preferredDate: new Date(preferredDate) } : {}),
+        },
+        include: { patient: { select: { firstName: true, lastName: true } } },
+      }),
+      ...(existing.appointmentId && status
+        ? [
+            prisma.appointment.updateMany({
+              where: { id: existing.appointmentId, organizationId: orgId },
+              data: {
+                status:
+                  status === "cancelled"
+                    ? "cancelled"
+                    : status === "booked"
+                    ? "confirmed"
+                    : "scheduled",
+              },
+            }),
+          ]
+        : []),
+    ]);
+
+    await createAuditLog({
+      organizationId: orgId,
+      userId,
+      action: "UPDATE",
+      entityType: "WaitlistEntry",
+      entityId: id,
+      beforeState: JSON.stringify({ status: existing.status }),
+      afterState: JSON.stringify({ status: updated.status }),
+    });
+
+    return NextResponse.json({
+      id: updated.id,
+      patientId: updated.patientId,
+      patientName: `${updated.patient.firstName} ${updated.patient.lastName}`,
+      status: updated.status,
+      notes: updated.notes,
+      preferredDate: updated.preferredDate?.toISOString() ?? null,
+    });
+  } catch (error) {
+    logServerError("Error updating waitlist entry", error);
+    return NextResponse.json({ error: "Failed to update waitlist entry" }, { status: 500 });
+  }
 }

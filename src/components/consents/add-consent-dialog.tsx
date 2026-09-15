@@ -22,6 +22,8 @@ import { toast } from "sonner";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { logClientError } from "@/lib/client-logger";
 import { useLocale } from "@/components/locale/locale-provider";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
+import { handleApiError } from "@/lib/api-error-handler";
 
 type PatientOption = {
   id: string;
@@ -88,6 +90,8 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
     }
   }, [fetchPatients, open]);
 
+  const { triggerGuidance } = usePostActionGuidance();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -106,13 +110,15 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
           consentType: formData.consentType,
           isGranted: formData.isGranted,
           signedAt: formData.signedAt,
-          documentUrl: formData.documentUrl || null,
+          documentUrl: formData.documentUrl.trim() || null,
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to create consent");
+      if (!response.ok) {
+        throw response;
+      }
 
-      toast.success(t("consent_recordedSuccess"));
+      triggerGuidance("consent_added");
       setFormData({
         patientId: "",
         consentType: "",
@@ -123,7 +129,7 @@ export function AddConsentDialog({ onSuccess }: AddConsentDialogProps) {
       setOpen(false);
       onSuccess();
     } catch (error) {
-      toast.error(t("consent_recordError"));
+      toast.error(handleApiError(error, t));
       logClientError("Create consent failed", error);
     } finally {
       setLoading(false);

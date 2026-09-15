@@ -12,6 +12,8 @@ import { TableSkeleton } from "@/components/ui/loading";
 import { RecordVitalsDialog } from "@/components/encounters/record-vitals-dialog";
 import { TodayProceduresCard } from "@/components/encounters/today-procedures-card";
 
+import { PageHelpBanner } from "@/components/ui/page-help-banner";
+
 type QueueItem = {
   id: string;
   tokenNumber: string | null;
@@ -119,6 +121,7 @@ export default function QueuePage() {
           {busyId === "call-next-all" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Phone className="h-4 w-4" />}{t("queue_callNext")}
         </Button>
       </div>
+      <PageHelpBanner pageKey="queue" />
       {error ? <p className="text-xs font-semibold text-destructive">{error}</p> : null}
       <TodayProceduresCard />
       {loading ? (
