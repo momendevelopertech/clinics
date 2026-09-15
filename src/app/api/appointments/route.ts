@@ -217,17 +217,19 @@ export async function POST(request: Request) {
       if (!room) return NextResponse.json({ error: "Room not found" }, { status: 404 });
     }
 
-    // Doctor availability windows (regular schedule pattern).
-    const availability = isDoctorAvailable(provider, startDateTime);
-    if (!availability.available) {
-      return NextResponse.json(
-        { error: "Doctor is not available at this time." },
-        { status: 400 },
-      );
-    }
-
     const isWalkInFlag = isWalkIn === true;
     const appointmentStatus = status ?? (isWalkInFlag ? "arrived" : "scheduled");
+
+    // Doctor availability windows (regular schedule pattern for booked visits).
+    if (!isWalkInFlag && provider.availabilityType === "regular") {
+      const availability = isDoctorAvailable(provider, startDateTime);
+      if (!availability.available) {
+        return NextResponse.json(
+          { error: "Doctor is not available at this time." },
+          { status: 400 },
+        );
+      }
+    }
 
     // Transactional double-booking protection: the conflict check runs inside
     // the request transaction, backstopped by the partial unique index

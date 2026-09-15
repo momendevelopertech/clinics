@@ -1,6 +1,12 @@
 import { z } from "zod";
 
-const appointmentStatusSchema = z.enum([
+const appointmentStatusSchema = z.preprocess((val) => {
+  if (typeof val !== "string") return val;
+  const s = val.toLowerCase().trim();
+  if (s === "in waiting room" || s === "waiting") return "arrived";
+  if (s === "pending") return "scheduled";
+  return s;
+}, z.enum([
   "scheduled",
   "confirmed",
   "arrived",
@@ -8,7 +14,7 @@ const appointmentStatusSchema = z.enum([
   "completed",
   "cancelled",
   "no_show",
-]);
+]));
 
 export const appointmentCreateSchema = z
   .object({

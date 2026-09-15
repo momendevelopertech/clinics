@@ -194,7 +194,7 @@ export function BookAppointmentDialog({
       ...appointmentData,
       providerId: provider,
       duration: data.duration || "30 min",
-      status: walkIn ? "arrived" : "Scheduled",
+      status: walkIn ? "arrived" : "scheduled",
       isWalkIn: walkIn,
     });
     setOpen(false);
