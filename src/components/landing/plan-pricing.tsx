@@ -79,13 +79,13 @@ export async function PlanPricing({ t }: { t: Dictionary }) {
   if (plans.length === 0) plans = FALLBACK_PLANS;
 
   return (
-    <section id="pricing" className="px-4 pb-20 sm:px-6">
+    <section id="pricing" className="px-4 pb-16 sm:px-6 md:pb-20">
       <div className="mx-auto max-w-6xl">
         <div className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">
+          <p className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-primary shadow-sm">
             {t["landing_pricingEyebrow"]}
           </p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] rtl:tracking-normal sm:text-4xl">
             {t["landing_pricingTitle"]}
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
@@ -93,45 +93,45 @@ export async function PlanPricing({ t }: { t: Dictionary }) {
           </p>
         </div>
 
-        <div className="mt-10 grid items-stretch gap-4 md:grid-cols-3">
+        <div className="mt-12 grid items-stretch gap-6 lg:grid-cols-3">
           {plans.map((plan) => {
             const highlights = buildPlanHighlights(plan, t);
             const popular = plan.popular;
             return (
               <div
                 key={plan.code}
-                className={`surface-panel relative flex flex-col rounded-lg border p-6 shadow-sm ${
+                className={
                   popular
-                    ? "border-primary/50 shadow-md"
-                    : "border-border"
-                }`}
+                    ? "surface-panel relative flex flex-col rounded-2xl border-2 border-primary p-6 shadow-lg transition-shadow duration-200 lg:scale-[1.02]"
+                    : "surface-panel relative flex flex-col rounded-2xl border border-border p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
+                }
               >
                 {popular ? (
-                  <span className="absolute right-5 top-5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+                  <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-sm">
                     {t["landing_pricingPopular"]}
                   </span>
                 ) : null}
-                <div className="grid size-11 place-content-center rounded-md bg-primary/10 text-primary">
+                <div className="grid size-11 place-content-center rounded-lg bg-primary/10 text-primary">
                   <PlanIcon code={plan.code} />
                 </div>
                 <h3 className="mt-4 text-xl font-semibold text-foreground">
                   {lang === "ar" ? plan.nameAr : plan.nameEn}
                 </h3>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="mt-1 text-sm leading-5 text-muted-foreground">
                   {lang === "ar" ? plan.descriptionAr : plan.descriptionEn}
                 </p>
-                <p className="mt-4 text-3xl font-semibold tracking-tight">
+                <p className="mt-4 text-3xl font-semibold tracking-tight rtl:tracking-normal">
                   {formatPrice(plan.price)}
                   <span className="text-sm font-normal text-muted-foreground">
                     {" "}
                     {t["landing_pricingPerMonth"]}
                   </span>
                 </p>
-                <ul className="mt-5 flex-1 space-y-2">
+                <ul className="mt-5 flex-1 space-y-2.5">
                   {highlights.map((highlight, index) => (
-                    <li key={index} className="flex items-start gap-2 text-sm">
+                    <li key={index} className="flex items-start gap-2.5 text-sm">
                       <Check
-                        className={`mt-0.5 h-4 w-4 shrink-0 ${
+                        className={`mt-0.5 h-5 w-5 shrink-0 ${
                           highlight.unlimited
                             ? "text-warning-text"
                             : "text-success-text"
@@ -141,10 +141,10 @@ export async function PlanPricing({ t }: { t: Dictionary }) {
                     </li>
                   ))}
                 </ul>
-                <div className="mt-6">
+                <div className="mt-6 pt-5">
                   <Link
                     href="/signup"
-                    className={`inline-flex h-9 w-full items-center justify-center gap-2 rounded-md text-sm font-semibold transition hover:opacity-90 ${
+                    className={`inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg text-sm font-semibold transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                       plan.code === "free"
                         ? "border border-border bg-card text-foreground shadow-sm hover:bg-muted"
                         : "bg-primary text-primary-foreground shadow-sm"

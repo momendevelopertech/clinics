@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { logClientError } from "@/lib/client-logger";
+import { parseApiError } from "@/lib/client-errors";
 import { useLocale } from "@/components/locale/locale-provider";
 import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
 import { handleApiError } from "@/lib/api-error-handler";
@@ -68,9 +69,10 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
       });
 
       if (!response.ok) {
-        throw response;
+        throw new Error(await parseApiError(response, t("inv_addError") ?? "Failed to create item"));
       }
 
+      toast.success(t("inv_addSuccess") ?? "Item added");
       triggerGuidance(isStockManaged ? "inventory_item_added" : "medicine_added");
 
       setFormData({
@@ -97,15 +99,13 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="h-9 gap-1.5 text-xs font-semibold shadow-2xs">
-          <Plus className="w-3.5 h-3.5" /> {t("inv_addMedicineOrStock") ?? "Add Medicine / Stock"}
+          <Plus className="w-3.5 h-3.5" /> {t("inv_addMedicineOrStock") ?? t("inv_addTrigger") ?? "Add Medicine / Stock"}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>{t("inv_addTitle") ?? "Add Medicine or Stock Item"}</DialogTitle>
-          <DialogDescription>
-            {t("inv_addDesc") ?? "Select item type and provide details."}
-          </DialogDescription>
+          <DialogDescription>{t("inv_addDesc") ?? "Select item type and provide details."}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 py-2">
@@ -148,7 +148,7 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
           </div>
 
           <div className="gap-1.5 flex flex-col">
-            <Label htmlFor="item-name" className="text-xs font-semibold">{t("inv_colName") ?? "Name"} *</Label>
+            <Label htmlFor="item-name" className="text-xs font-semibold">{t("inv_nameLabel") ?? t("inv_colName") ?? "Name"} *</Label>
             <Input
               id="item-name"
               value={formData.name}
@@ -175,7 +175,7 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
 
           {/* Full fields displayed only when isStockManaged === true */}
           {isStockManaged ? (
-            <>
+            <React.Fragment>
               <div className="grid grid-cols-2 gap-3">
                 <div className="gap-1.5 flex flex-col">
                   <Label htmlFor="item-sku" className="text-xs font-semibold">{t("inv_colSku") ?? "SKU"}</Label>
@@ -258,7 +258,7 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
                   />
                 </div>
               </div>
-            </>
+            </React.Fragment>
           ) : null}
 
           <div className="flex gap-2 justify-end pt-2">
@@ -272,7 +272,7 @@ export function AddItemDialog({ onSuccess }: AddItemDialogProps) {
               <X className="mr-1 h-3.5 w-3.5" />{t("common_cancel")}
             </Button>
             <Button type="submit" disabled={loading} className="h-9 text-xs font-semibold">
-              <Plus className="mr-1 h-3.5 w-3.5" />{loading ? t("common_saving") : t("common_add")}
+              <Plus className="mr-1 h-3.5 w-3.5" />{loading ? (t("common_saving") ?? "Saving...") : (t("common_add") ?? t("inv_addTrigger") ?? "Add")}
             </Button>
           </div>
         </form>

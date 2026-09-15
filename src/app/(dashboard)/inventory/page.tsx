@@ -12,8 +12,8 @@ import { useLocale } from "@/components/locale/locale-provider";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { usePermissionState } from "@/hooks/use-permission-state";
-import { AddItemDialog } from "@/components/inventory/add-item-dialog";
 import { PageHelpBanner } from "@/components/ui/page-help-banner";
+import { AddItemDialog } from "@/components/inventory/add-item-dialog";
 
 export default function InventoryPage() {
   const { t } = useLocale();

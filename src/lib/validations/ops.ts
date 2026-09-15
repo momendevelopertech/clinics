@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+/**
+ * Accepts a full ISO-8601 datetime (new Date().toISOString()) or a bare
+ * "YYYY-MM-DD" value (raw <input type="date">). Both are normalized to a
+ * Date server-side.
+ */
 const flexDateString = z.union([
   z.string().datetime(),
   z.string().regex(/^\d{4}-\d{2}-\d{2}$/),

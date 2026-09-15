@@ -1,15 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { toast } from "sonner";
 import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
+import { PageHelpBanner } from "@/components/ui/page-help-banner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PageHelpBanner } from "@/components/ui/page-help-banner";
-import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
-import { handleApiError } from "@/lib/api-error-handler";
 import { SearchableSelect } from "@/components/ui/searchable-select";
+import { usePermissionState } from "@/hooks/use-permission-state";
+import { usePostActionGuidance } from "@/hooks/use-post-action-guidance";
+import { parseApiError } from "@/lib/client-errors";
+import { logClientError } from "@/lib/client-logger";
+import { handleApiError } from "@/lib/api-error-handler";
 
 type Branch = { id: string; name: string; status: string; _count?: { rooms: number } };
 type Room = { id: string; name: string; number: string | null; status: string; branch?: { name: string } | null };
@@ -22,75 +25,92 @@ export default function LocationsPage() {
   const [branchName, setBranchName] = useState("");
   const [roomName, setRoomName] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
-  const [selectedBranchId, setSelectedBranchId] = useState("");
+  const [roomBranchId, setRoomBranchId] = useState("");
   const [error, setError] = useState("");
-  const [forbidden, setForbidden] = useState(false);
   const [saving, setSaving] = useState(false);
+  const { forbidden, setForbidden, guardedFetch } = usePermissionState();
 
   const load = useCallback(async () => {
-    const [branchResponse, roomResponse] = await Promise.all([fetch("/api/branches"), fetch("/api/rooms")]);
-    if (branchResponse.status === 403 || roomResponse.status === 403) {
-      setForbidden(true);
-      return;
-    }
-    if (!branchResponse.ok || !roomResponse.ok) throw new Error(t("locations_loadError"));
-    const branchData: Branch[] = await branchResponse.json();
-    const roomData: Room[] = await roomResponse.json();
-    setBranches(branchData);
-    setRooms(roomData);
-  }, [t]);
+    const [branchData, roomData] = await Promise.all([
+      guardedFetch<Branch[]>("/api/branches"),
+      guardedFetch<Room[]>("/api/rooms"),
+    ]);
+    if (branchData) setBranches(branchData);
+    if (roomData) setRooms(roomData);
+  }, [guardedFetch]);
 
   useEffect(() => {
-    void load().catch((reason: unknown) => setError(handleApiError(reason, t)));
+    void load().catch((reason: unknown) => {
+      setError(handleApiError(reason, t));
+      logClientError("Locations load failed", reason);
+    });
   }, [load, t]);
 
   async function addBranch() {
-    if (!branchName.trim()) return;
+    const name = branchName.trim();
+    if (!name) return;
+    setSaving(true);
+    setError("");
     try {
-      setSaving(true);
-      setError("");
       const response = await fetch("/api/branches", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name: branchName.trim() }),
+        body: JSON.stringify({ name }),
       });
+      if (response.status === 403) {
+        setForbidden(true);
+        return;
+      }
       if (!response.ok) {
-        throw response;
+        throw new Error(await parseApiError(response, t("locations_saveError")));
       }
       setBranchName("");
-      await load();
+      toast.success(t("locations_addBranchSuccess") || "Branch added");
       triggerGuidance("branch_added");
-    } catch (err) {
-      setError(handleApiError(err, t));
+      await load();
+    } catch (reason) {
+      const message = handleApiError(reason, t);
+      setError(message);
+      toast.error(message);
+      logClientError("Create branch failed", reason);
     } finally {
       setSaving(false);
     }
   }
 
   async function addRoom() {
-    if (!roomName.trim()) return;
+    const name = roomName.trim();
+    if (!name) return;
+    setSaving(true);
+    setError("");
     try {
-      setSaving(true);
-      setError("");
       const response = await fetch("/api/rooms", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          name: roomName.trim(),
+          name,
           number: roomNumber.trim() || null,
-          branchId: selectedBranchId || null,
+          branchId: roomBranchId || null,
         }),
       });
+      if (response.status === 403) {
+        setForbidden(true);
+        return;
+      }
       if (!response.ok) {
-        throw response;
+        throw new Error(await parseApiError(response, t("locations_saveError")));
       }
       setRoomName("");
       setRoomNumber("");
-      setSelectedBranchId("");
-      await load();
+      setRoomBranchId("");
+      toast.success(t("locations_addRoomSuccess") || "Room added");
       triggerGuidance("room_added");
-    } catch (err) {
-      setError(handleApiError(err, t));
+      await load();
+    } catch (reason) {
+      const message = handleApiError(reason, t);
+      setError(message);
+      toast.error(message);
+      logClientError("Create room failed", reason);
     } finally {
       setSaving(false);
     }
@@ -137,67 +157,94 @@ export default function LocationsPage() {
               onChange={(event) => setBranchName(event.target.value)}
               placeholder={t("locations_branchName")}
               className="h-9 flex-1 bg-background"
+              onKeyDown={(event) => {
+                if (event.key === "Enter") void addBranch();
+              }}
             />
-            <Button
-              onClick={() => void addBranch()}
-              disabled={saving || !branchName.trim()}
-              className="h-9 gap-1.5"
-            >
-              <Plus className="h-4 w-4" />{t("common_add")}
+            <Button onClick={addBranch} disabled={saving || !branchName.trim()} className="h-9 text-xs">
+              {t("locations_addBranch")}
             </Button>
           </div>
-          <ul className="mt-4 space-y-2">
-            {branches.map((branch) => (
-              <li key={branch.id} className="flex justify-between items-center rounded-md border border-border bg-background p-3 text-sm transition-colors hover:bg-muted-bg/50">
-                <span className="font-medium">{branch.name}</span>
-                <span className="text-xs text-muted-foreground">{branch._count?.rooms ?? 0} {t("locations_rooms")}</span>
-              </li>
+
+          <div className="mt-4 space-y-2">
+            {branches.map((b) => (
+              <div
+                key={b.id}
+                className="flex items-center justify-between rounded-md border border-border p-3 text-sm bg-background"
+              >
+                <div>
+                  <span className="font-medium text-foreground">{b.name}</span>
+                  <span className="ml-2 text-xs text-muted-foreground">
+                    ({b._count?.rooms ?? 0} {t("locations_rooms")})
+                  </span>
+                </div>
+                <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                  {b.status}
+                </span>
+              </div>
             ))}
-          </ul>
+            {branches.length === 0 ? (
+              <p className="py-4 text-center text-xs text-muted-foreground">{t("locations_noBranches")}</p>
+            ) : null}
+          </div>
         </section>
 
         <section className="rounded-lg border border-border bg-card p-5 shadow-xs">
           <h2 className="text-base font-semibold text-foreground">{t("locations_rooms")}</h2>
-          <div className="mt-4 flex flex-col gap-2">
-            <div className="grid gap-2 sm:grid-cols-2">
+          <div className="mt-4 space-y-2">
+            <div className="flex gap-2">
               <Input
                 value={roomName}
                 onChange={(event) => setRoomName(event.target.value)}
                 placeholder={t("locations_roomName")}
-                className="h-9 bg-background"
+                className="h-9 flex-1 bg-background"
               />
               <Input
                 value={roomNumber}
                 onChange={(event) => setRoomNumber(event.target.value)}
                 placeholder={t("locations_roomNumber")}
-                className="h-9 bg-background"
+                className="h-9 w-24 bg-background"
               />
             </div>
             <div className="flex gap-2">
-              <SearchableSelect
-                value={selectedBranchId}
-                onValueChange={setSelectedBranchId}
-                options={branches.map((b) => ({ value: b.id, label: b.name }))}
-                placeholder={t("locations_selectBranch")}
-                triggerClassName="h-9 flex-1 bg-background"
-              />
-              <Button
-                onClick={() => void addRoom()}
-                disabled={saving || !roomName.trim()}
-                className="h-9 gap-1.5"
-              >
-                <Plus className="h-4 w-4" />{t("common_add")}
+              <div className="flex-1">
+                <SearchableSelect
+                  value={roomBranchId}
+                  onValueChange={setRoomBranchId}
+                  placeholder={t("locations_selectBranch") ?? "Select branch..."}
+                  options={branches.map((b) => ({ value: b.id, label: b.name }))}
+                />
+              </div>
+              <Button onClick={addRoom} disabled={saving || !roomName.trim()} className="h-9 text-xs">
+                {t("locations_addRoom")}
               </Button>
             </div>
           </div>
-          <ul className="mt-4 space-y-2">
-            {rooms.map((room) => (
-              <li key={room.id} className="flex justify-between items-center rounded-md border border-border bg-background p-3 text-sm transition-colors hover:bg-muted-bg/50">
-                <span className="font-medium">{room.name}{room.number ? ` · ${room.number}` : ""}</span>
-                <span className="text-xs text-muted-foreground">{room.branch?.name ?? t("locations_unassigned")}</span>
-              </li>
+
+          <div className="mt-4 space-y-2">
+            {rooms.map((r) => (
+              <div
+                key={r.id}
+                className="flex items-center justify-between rounded-md border border-border p-3 text-sm bg-background"
+              >
+                <div>
+                  <span className="font-medium text-foreground">{r.name}</span>
+                  {r.number ? <span className="ml-1 text-xs text-muted-foreground">({r.number})</span> : null}
+                  {r.branch?.name ? (
+                    <span className="ml-2 rounded-md bg-secondary px-2 py-0.5 text-[11px] text-muted-foreground">
+                      {r.branch.name}
+                    </span>
+                  ) : null}
+                </div>
+                <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                  {r.status}
+                </span>
+              </div>
             ))}
-          </ul>
+            {rooms.length === 0 ? (
+              <p className="py-4 text-center text-xs text-muted-foreground">{t("locations_noRooms")}</p>
+            ) : null}
+          </div>
         </section>
       </div>
     </div>

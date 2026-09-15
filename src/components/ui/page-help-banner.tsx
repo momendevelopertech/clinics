@@ -1,16 +1,23 @@
 "use client";
 
 import * as React from "react";
-import { Info, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Info, X, ChevronDown, ChevronUp, Users, Clock } from "lucide-react";
 import { useLocale } from "@/components/locale/locale-provider";
 import { cn } from "@/lib/utils";
 
-interface PageHelpBannerProps {
-  pageKey: string;
+export interface PageHelpBannerProps {
+  pageKey?: string;
   titleKey?: string;
   descriptionKey?: string;
   targetRolesKey?: string;
   actionHintKey?: string;
+
+  // Direct props from remote version
+  title?: string;
+  description?: string;
+  audience?: string;
+  actionHint?: string;
+
   className?: string;
 }
 
@@ -20,15 +27,20 @@ export function PageHelpBanner({
   descriptionKey,
   targetRolesKey,
   actionHintKey,
+  title: directTitle,
+  description: directDescription,
+  audience: directAudience,
+  actionHint: directActionHint,
   className,
 }: PageHelpBannerProps) {
   const { t } = useLocale();
   const [dismissed, setDismissed] = React.useState(false);
   const [collapsed, setCollapsed] = React.useState(false);
 
-  const storageKey = `banner_dismissed_${pageKey}`;
+  const storageKey = pageKey ? `banner_dismissed_${pageKey}` : null;
 
   React.useEffect(() => {
+    if (!storageKey) return;
     try {
       const isDismissed = sessionStorage.getItem(storageKey);
       if (isDismissed === "true") {
@@ -41,37 +53,41 @@ export function PageHelpBanner({
 
   if (dismissed) return null;
 
-  const title = titleKey ? t(titleKey) : t(`banner_${pageKey}_title`);
-  const description = descriptionKey ? t(descriptionKey) : t(`banner_${pageKey}_desc`);
-  const targetRoles = targetRolesKey ? t(targetRolesKey) : t(`banner_${pageKey}_roles`);
-  const actionHint = actionHintKey ? t(actionHintKey) : t(`banner_${pageKey}_action`);
+  const title = directTitle ?? (titleKey ? t(titleKey) : pageKey ? t(`banner_${pageKey}_title`) : "");
+  const description = directDescription ?? (descriptionKey ? t(descriptionKey) : pageKey ? t(`banner_${pageKey}_desc`) : "");
+  const targetRoles = directAudience ?? (targetRolesKey ? t(targetRolesKey) : pageKey ? t(`banner_${pageKey}_roles`) : "");
+  const actionHint = directActionHint ?? (actionHintKey ? t(actionHintKey) : pageKey ? t(`banner_${pageKey}_action`) : "");
 
   const handleDismiss = () => {
     setDismissed(true);
-    try {
-      sessionStorage.setItem(storageKey, "true");
-    } catch {
-      // Ignore
+    if (storageKey) {
+      try {
+        sessionStorage.setItem(storageKey, "true");
+      } catch {
+        // Ignore
+      }
     }
   };
 
   return (
-    <div
+    <section
       className={cn(
-        "relative rounded-lg border border-primary/20 bg-primary/5 p-4 text-xs shadow-2xs transition-all",
+        "relative rounded-lg border border-primary/20 bg-card p-4 text-xs shadow-2xs transition-all",
         className,
       )}
+      aria-label={title || "Help Banner"}
     >
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-2.5">
-          <div className="grid size-6 shrink-0 place-content-center rounded-md bg-primary/10 text-primary mt-0.5">
+        <div className="flex items-start gap-3 min-w-0 flex-1">
+          <div className="grid size-7 shrink-0 place-content-center rounded-md bg-primary/10 text-primary mt-0.5">
             <Info className="h-4 w-4" />
           </div>
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-foreground text-xs sm:text-sm">{title}</h3>
+          <div className="space-y-1.5 min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="font-bold text-foreground text-xs sm:text-sm">{title}</h2>
               {targetRoles ? (
-                <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium text-primary">
+                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                  <Users className="h-3 w-3" />
                   {targetRoles}
                 </span>
               ) : null}
@@ -79,10 +95,11 @@ export function PageHelpBanner({
 
             {!collapsed ? (
               <>
-                <p className="text-muted-foreground leading-relaxed">{description}</p>
+                <p className="text-muted-foreground leading-relaxed text-xs">{description}</p>
                 {actionHint ? (
-                  <p className="font-medium text-foreground pt-1 flex items-center gap-1 text-[11px]">
-                    <span className="text-primary font-bold">💡 {t("banner_quick_tip")}:</span> {actionHint}
+                  <p className="font-medium text-foreground pt-1 flex items-center gap-1.5 text-[11px]">
+                    <Clock className="h-3.5 w-3.5 text-primary shrink-0" />
+                    <span className="text-primary font-bold">{t("banner_quick_tip") || "Tip"}:</span> {actionHint}
                   </p>
                 ) : null}
               </>
@@ -95,7 +112,7 @@ export function PageHelpBanner({
             type="button"
             onClick={() => setCollapsed(!collapsed)}
             className="rounded-md p-1 text-muted-foreground hover:bg-primary/10 hover:text-foreground transition-colors"
-            title={collapsed ? t("common_expand") : t("common_collapse")}
+            title={collapsed ? t("common_expand") || "Expand" : t("common_collapse") || "Collapse"}
           >
             {collapsed ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronUp className="h-3.5 w-3.5" />}
           </button>
@@ -103,12 +120,12 @@ export function PageHelpBanner({
             type="button"
             onClick={handleDismiss}
             className="rounded-md p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-            title={t("common_close")}
+            title={t("common_close") || "Close"}
           >
             <X className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

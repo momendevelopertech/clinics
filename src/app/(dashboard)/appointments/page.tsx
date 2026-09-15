@@ -341,7 +341,8 @@ function AppointmentsPageContent() {
               time: data.time,
               type: data.type,
               duration: data.duration,
-              status: "Scheduled",
+              status: data.status,
+              isWalkIn: data.isWalkIn,
             })
           }
         />

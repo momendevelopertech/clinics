@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
-import { requireOwner } from "@/lib/roles";
 import { createAuditLog } from "@/lib/audit";
 import { branchCreateSchema } from "@/lib/validations/location";
 
@@ -38,15 +37,30 @@ export async function POST(request: Request) {
       { action: "settings:write", resource: "settings" },
     ]);
     if (authz.response) return authz.response;
-
     const parsed = branchCreateSchema.safeParse(await request.json());
-    if (!parsed.success) return NextResponse.json({ error: "Invalid branch" }, { status: 400 });
+    if (!parsed.success)
+      return NextResponse.json(
+        { error: "Branch name is required" },
+        { status: 400 },
+      );
+    const existing = await prisma.branch.findFirst({
+      where: {
+        organizationId: context.organizationId,
+        name: { equals: parsed.data.name, mode: "insensitive" },
+      },
+      select: { id: true },
+    });
+    if (existing)
+      return NextResponse.json(
+        { error: "A branch with this name already exists" },
+        { status: 409 },
+      );
     const branch = await prisma.branch.create({
       data: { ...parsed.data, organizationId: context.organizationId },
     });
     await createAuditLog({
       organizationId: context.organizationId,
-      userId: context.userId,
+      userId: authz.userId,
       action: "CREATE",
       entityType: "branch",
       entityId: branch.id,

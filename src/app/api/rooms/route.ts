@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { requireOrgContext } from "@/lib/org";
 import { requireAnyPermission } from "@/lib/authorization";
 import { requireModulePermission } from "@/lib/permissions";
-import { requireOwner } from "@/lib/roles";
 import { createAuditLog } from "@/lib/audit";
 import { roomCreateSchema } from "@/lib/validations/location";
 
@@ -38,15 +37,34 @@ export async function POST(request: Request) {
     if (authz.response) return authz.response;
 
     const parsed = roomCreateSchema.safeParse(await request.json());
-    if (!parsed.success) return NextResponse.json({ error: "Invalid room payload" }, { status: 400 });
+    if (!parsed.success)
+      return NextResponse.json(
+        { error: "Room name is required" },
+        { status: 400 },
+      );
     if (parsed.data.branchId) {
-      const branch = await prisma.branch.findFirst({ where: { id: parsed.data.branchId, organizationId: context.organizationId } });
-      if (!branch) return NextResponse.json({ error: "Branch not found" }, { status: 400 });
+      const branch = await prisma.branch.findFirst({
+        where: {
+          id: parsed.data.branchId,
+          organizationId: context.organizationId,
+        },
+      });
+      if (!branch)
+        return NextResponse.json(
+          { error: "Selected branch was not found" },
+          { status: 400 },
+        );
     }
-    const room = await prisma.room.create({ data: { ...parsed.data, organizationId: context.organizationId } });
+    const room = await prisma.room.create({
+      data: { ...parsed.data, organizationId: context.organizationId },
+    });
     await createAuditLog({
-      organizationId: context.organizationId, userId: context.userId, action: "CREATE",
-      entityType: "room", entityId: room.id, afterState: JSON.stringify(room),
+      organizationId: context.organizationId,
+      userId: authz.userId,
+      action: "CREATE",
+      entityType: "room",
+      entityId: room.id,
+      afterState: JSON.stringify(room),
     });
     return NextResponse.json(room, { status: 201 });
   } catch {

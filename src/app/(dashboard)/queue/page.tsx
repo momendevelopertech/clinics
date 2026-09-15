@@ -9,10 +9,9 @@ import { useLocale } from "@/components/locale/locale-provider";
 import { PermissionDenied } from "@/components/ui/permission-denied";
 import { FeatureTip } from "@/components/feature-tips/feature-tip";
 import { TableSkeleton } from "@/components/ui/loading";
+import { PageHelpBanner } from "@/components/ui/page-help-banner";
 import { RecordVitalsDialog } from "@/components/encounters/record-vitals-dialog";
 import { TodayProceduresCard } from "@/components/encounters/today-procedures-card";
-
-import { PageHelpBanner } from "@/components/ui/page-help-banner";
 
 type QueueItem = {
   id: string;

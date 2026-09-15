@@ -12,8 +12,9 @@ import {
   Clock,
   Stethoscope,
   User,
+  UserPlus,
   X,
-} from "lucide-react";;
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +28,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { SearchableSelect } from "@/components/ui/searchable-select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/components/locale/locale-provider";
@@ -82,6 +84,7 @@ interface BookAppointmentDialogProps {
     type: string;
     duration: string;
     status: string;
+    isWalkIn: boolean;
   }) => void;
   trigger?: React.ReactNode;
   open?: boolean;
@@ -99,6 +102,7 @@ export function BookAppointmentDialog({
   onOpenChange: controlledOnOpenChange,
 }: BookAppointmentDialogProps) {
   const [internalOpen, setInternalOpen] = React.useState(false);
+  const [walkIn, setWalkIn] = React.useState(false);
   const isControlled = controlledOpen !== undefined && controlledOnOpenChange !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? controlledOnOpenChange : setInternalOpen;
@@ -190,11 +194,12 @@ export function BookAppointmentDialog({
       ...appointmentData,
       providerId: provider,
       duration: data.duration || "30 min",
-      status: "Scheduled",
+      status: walkIn ? "arrived" : "Scheduled",
+      isWalkIn: walkIn,
     });
     setOpen(false);
     form.reset();
-    toast.success(t("book_success"));
+    toast.success(walkIn ? t("book_walkInSuccess") : t("book_success"));
   };
 
   return (
@@ -330,6 +335,25 @@ export function BookAppointmentDialog({
                       )}
                     </div>
                   </div>
+
+                  {/* Walk-in */}
+                  <label className="flex items-start gap-3 rounded-md border border-border bg-muted-bg/50 p-3 cursor-pointer">
+                    <Checkbox
+                      checked={walkIn}
+                      onCheckedChange={(checked) => setWalkIn(checked === true)}
+                      aria-label={t("book_walkIn")}
+                      className="mt-0.5"
+                    />
+                    <span className="flex flex-col gap-1">
+                      <span className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+                        <UserPlus className="h-3.5 w-3.5 text-primary" />
+                        {t("book_walkIn")}
+                      </span>
+                      <span className="text-[11px] leading-4 text-muted-foreground">
+                        {t("book_walkInHint")}
+                      </span>
+                    </span>
+                  </label>
 
                   {/* Type */}
                   <div className="space-y-2">
