@@ -18,15 +18,24 @@ export function UserContextHeader({
   userName,
   compact = false,
 }: UserContextHeaderProps) {
-  const { data: session } = useSession();
+  let sessionUser: { name?: string | null; organizationId?: string; roles?: string[] } | null = null;
+  try {
+    const sessionRes = useSession?.();
+    if (sessionRes?.data?.user) {
+      sessionUser = sessionRes.data.user as { name?: string | null; organizationId?: string; roles?: string[] };
+    }
+  } catch {
+    // Fallback if called outside SessionProvider
+  }
+
   const { t } = useLocale();
 
-  const activeUser = userName || session?.user?.name || t("shell_accountStaff");
-  const activeOrg = orgName || session?.user?.organizationId ? orgName : t("shell_defaultOrgName");
-  const activeRoles = roles.length > 0 ? roles : session?.user?.roles ?? [];
+  const activeUser = userName || sessionUser?.name || t("shell_accountStaff");
+  const activeOrg = orgName || (sessionUser?.organizationId ? orgName : t("shell_defaultOrgName"));
+  const activeRoles = roles.length > 0 ? roles : (sessionUser?.roles ?? []);
 
   const roleLabel = activeRoles.length > 0
-    ? activeRoles.map((r) => displayRoleName(r)).join(", ")
+    ? activeRoles.map((r: string) => displayRoleName(r)).join(", ")
     : t("role_staff");
 
   if (compact) {
@@ -48,7 +57,7 @@ export function UserContextHeader({
       <div className="grid size-9 shrink-0 place-content-center rounded-full bg-primary/10 text-primary font-bold text-xs">
         {activeUser
           .split(" ")
-          .map((n) => n[0])
+          .map((n: string) => n[0])
           .join("")
           .slice(0, 2)
           .toUpperCase()}

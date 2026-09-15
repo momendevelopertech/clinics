@@ -44,6 +44,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 roles={roles}
                 isSuperAdmin={superAdmin.ok}
                 orgName={org.name}
+                userName={session?.user?.name ?? null}
                 planModules={planModules}
               >
                 {children}

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Arabic, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { SessionProvider } from "next-auth/react";
 import { getDirAndLocale } from "@/lib/i18n/server";
 import { LocaleProvider } from "@/components/locale/locale-provider";
 import { SerwistProvider } from "@serwist/turbopack/react";
@@ -95,15 +96,17 @@ export default async function RootLayout({
         className={`${ibmPlexSans.variable} ${ibmPlexSansArabic.variable} ${jetbrainsMono.variable} min-h-screen antialiased font-sans`}
         suppressHydrationWarning
       >
-        <SerwistProvider swUrl="/serwist/sw.js">
-          <PWAProvider orgId={orgId}>
-            <LocaleProvider lang={lang}>
-              <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-                {children}
-              </ThemeProvider>
-            </LocaleProvider>
-          </PWAProvider>
-        </SerwistProvider>
+        <SessionProvider session={session}>
+          <SerwistProvider swUrl="/serwist/sw.js">
+            <PWAProvider orgId={orgId}>
+              <LocaleProvider lang={lang}>
+                <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+                  {children}
+                </ThemeProvider>
+              </LocaleProvider>
+            </PWAProvider>
+          </SerwistProvider>
+        </SessionProvider>
       </body>
     </html>
   );

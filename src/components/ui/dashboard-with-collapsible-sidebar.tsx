@@ -109,6 +109,7 @@ interface DashboardWithCollapsibleSidebarProps {
   roles?: string[];
   isSuperAdmin?: boolean;
   orgName?: string;
+  userName?: string | null;
   planModules?: Record<string, boolean> | null;
 }
 
@@ -117,6 +118,7 @@ export function DashboardWithCollapsibleSidebar({
   roles = [],
   isSuperAdmin = false,
   orgName,
+  userName,
   planModules = null,
 }: DashboardWithCollapsibleSidebarProps) {
   const [open, setOpen] = useState(true);
@@ -137,7 +139,7 @@ export function DashboardWithCollapsibleSidebar({
         orgName={orgName}
       />
       <div className="flex min-w-0 flex-1 flex-col">
-        <DashboardHeader onMenuClick={() => setMobileNavOpen(true)} orgName={orgName} roles={roles} />
+        <DashboardHeader onMenuClick={() => setMobileNavOpen(true)} orgName={orgName} userName={userName} roles={roles} />
         <main className="flex-1 overflow-auto px-4 pb-6 pt-4 sm:px-6 lg:px-8">
           <div className="mx-auto w-full max-w-[1440px]">{children}</div>
         </main>
@@ -512,10 +514,12 @@ function NavLink({
 function DashboardHeader({
   onMenuClick,
   orgName,
+  userName,
   roles = [],
 }: {
   onMenuClick: () => void;
   orgName?: string;
+  userName?: string | null;
   roles?: string[];
 }) {
   const router = useRouter();
@@ -842,7 +846,7 @@ function DashboardHeader({
                 variant="ghost"
                 className="h-9 rounded-md border border-border bg-card px-2 text-start hover:bg-muted transition-colors flex items-center gap-2"
               >
-                <UserContextHeader roles={roles} orgName={orgName} compact />
+                <UserContextHeader roles={roles} orgName={orgName} userName={userName} compact />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 rounded-lg border border-border bg-popover text-popover-foreground p-1 shadow-lg">
